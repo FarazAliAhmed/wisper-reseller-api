@@ -2,18 +2,22 @@
   "name": "wisper-reseller-api",
   "version": "1.0.0",
   "description": "Serve ISP data endpoints to businesses",
-  "main": "server.js",
+  "main": "src/server.js",
   "repository": "https://github.com/wisperng/wisper-reseller-api.git",
   "author": "Wisper <wisperng@gmail.com>",
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "config": "^3.3.7",
     "cors": "^2.8.5",
     "express": "^4.17.2",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
     "mongoose": "^6.1.8"
   },
   "devDependencies": {
-    "dotenv": "^14.3.2",
     "jest": "^27.4.7"
   }
 }
