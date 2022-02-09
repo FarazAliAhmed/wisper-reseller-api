@@ -1,34 +1,32 @@
-const mongoose = require('mongoose')
-const joi = require('joi')
-const Schema = mongoose.Schema
+const mongoose = require("mongoose");
+const joi = require("joi");
+const Schema = mongoose.Schema;
 
-const PaymentHistory = new Schema({
+const paymentHistorySchema = new Schema({
   business_name: {
-    type: String
+    type: String,
   },
   business_id: {
     type: String,
-    required: true
+    required: true,
   },
   amount: {
     type: Number,
-    required: true
+    required: true,
   },
   date_of_payment: {
     type: Date,
-    default: Date.now()
+    default: Date.now(),
   },
   payment_ref: {
     type: String,
     required: true,
-    unique: true
-  }
-})
+    unique: true,
+  },
+});
 
-const validatePayment = () => {
-
-}
+const validatePayment = () => {};
 
 module.exports = {
-  paymentHistory: mongoose.model('payments', PaymentHistory)
-}
+  PaymentHistory: mongoose.model("payments", paymentHistorySchema),
+};

@@ -1,37 +1,38 @@
-const mongoose = require('mongoose')
-const joi = require('joi')
-const Schema = mongoose.Schema
+const mongoose = require("mongoose");
+const Joi = require("joi");
+const Schema = mongoose.Schema;
 
-const TransactionHistory = new Schema({
-  transaction_ref: {
-    type: String,
-    required: true,
-    unique: true
+const transactionHistorySchema = new Schema(
+  {
+    transaction_ref: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    phone_number: {
+      type: String,
+      required: true,
+    },
+    data_volume: {
+      type: Number,
+    },
+    data_price: {
+      type: Number,
+    },
+    business_id: {
+      type: String,
+      required: true,
+    },
+    network_provider: {
+      type: String,
+      maxlength: 10,
+    },
   },
-  phone_number: {
-    type: String,
-    required: true
-  },
-  data_volume: {
-    type: Number
-  },
-  data_price: {
-    type: Number
-  },
-  business_id: {
-    type: String,
-    required: true
-  },
-  network_provider: {
-    type: String,
-    maxlength: 10
+  {
+    timestamp: true,
   }
-},
-{
-  timestamp: true
-}
-)
+);
 
 module.exports = {
-  transactionHistory: mongoose.model('transaction', TransactionHistory)
-}
+  TransactionHistory: mongoose.model("transaction", transactionHistorySchema),
+};
