@@ -1,7 +1,10 @@
 const Joi = require("joi");
+const uuid = require("uuid");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+
+const { create: createEmptyBalance } = require("../services/balance.service");
 
 const accountSchema = mongoose.Schema(
   {
@@ -19,24 +22,42 @@ const accountSchema = mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    mobile_number: String,
+    username: {
+      type: String,
+      lowercase: true,
+    },
     password: {
       type: String,
       required: true,
       minlength: 5,
       maxlength: 1024,
     },
-    token: String,
-    isAdmin: Boolean,
+    access_token: {
+      type: String,
+      default: uuid.v4(),
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    mobile_number: String,
+    address: String,
   },
   { timestamps: true }
 );
+
+// automatically create an empty balance when a business Account is created
+accountSchema.post("save", async function (next) {
+  const businessId = this._id;
+  await createEmptyBalance(businessId);
+  next();
+});
 
 accountSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     {
       _id: this._id,
-      name: this.name,
+      username: this.username,
       email: this.email,
     },
     config.get("jwtSecret")
@@ -50,6 +71,7 @@ const validateUser = (user) => {
   const schema = Joi.object({
     name: Joi.string().min(5).max(50).required(),
     email: Joi.string().min(5).max(255).required().email(),
+    username: Joi.string().min(5).max(10).required(),
     password: Joi.string().min(5).max(255).required(),
     mobile_number: Joi.number().required(),
   });
