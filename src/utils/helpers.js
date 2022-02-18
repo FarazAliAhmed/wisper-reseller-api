@@ -7,7 +7,7 @@ const {update} = require('../services/balance.service')
 const {units, plans, network_ids} = require('./networkData')
 
 
-export const get_plan_details = (plan_id) => {
+exports.get_plan_details = (plan_id) => {
     if (!plans.hasOwnProperty(plan_id)) return {error: true, status: 401, message: "Invalid Plan Id"}
     
     const selectedPlan = plans[plan_id]
@@ -20,7 +20,7 @@ export const get_plan_details = (plan_id) => {
 }
 
 
-export const get_network_provider = (network_provider) => {
+exports.get_network_provider = (network_provider) => {
     for (let ID in network_ids){
         if(network_ids[ID] === network_provider.trim().toLowerCase()){
             return {network: network_provider.trim().toLowerCase(), id: ID, error: false}
@@ -30,16 +30,16 @@ export const get_network_provider = (network_provider) => {
 }
 
 
-export const validate_phone_number = (number) => {
+exports.validate_phone_number = (number) => {
     if (number.length !== 11 && parseInt(number).length !== 10) {
       return {error: true, status: 401, message: "Invalid Phone Number"};
     }
-    const ported = number.slice(0, 4) === "0913" ? "true" : "false",
+    const ported = number.slice(0, 4) === "0913" ? "true" : "false"
     return {number, ported, error: false, message: "Phone Number is Valid"};
 }
 
 
-export const get_request_payload = (network, mobile_number, plan, Ported_number) => {
+exports.get_request_payload = (network, mobile_number, plan, Ported_number) => {
     return {
         network,
         mobile_number,
@@ -49,14 +49,14 @@ export const get_request_payload = (network, mobile_number, plan, Ported_number)
 }
 
 
-export const debit_account_balance = async (account_id, planDetails) => {
+exports.debit_account_balance = async (account_id, planDetails) => {
     const updatedBalance = await update(account_id, planDetails.volume)
     if(updatedBalance.error) return updatedBalance
     return {error: false, status: 201, balance: updatedBalance.balance}
 }
 
 
-export const revert_debit_account_balance = async (account_id, planDetails) => {
+exports.revert_debit_account_balance = async (account_id, planDetails) => {
     const incrementBy = planDetails.volume * -1
     const updatedBalance = await update(account_id, incrementBy)
     if(updatedBalance.error) return updatedBalance
@@ -64,10 +64,11 @@ export const revert_debit_account_balance = async (account_id, planDetails) => {
 }
 
 
-export const initiate_data_transfer = async (requestPayload) => {
+exports.initiate_data_transfer = async (requestPayload) => {
     const url = "https://www.superjara.com/api/data/"
     const config = {
         headers: {
+            "Authorization": `Token ${process.env.SUPERJARA_AUTH_KEY}`,
             "Content-Type": "application/json"
         }
     }
@@ -79,13 +80,13 @@ export const initiate_data_transfer = async (requestPayload) => {
 }
 
 
-export const format_transaction_response = (responseObject) => {
+exports.format_transaction_response = (responseObject) => {
     // This function might be used later to format all response before sending
     return responseObject
 }
 
 
-export const save_transaction = async (business_id, details) => {
+exports.save_transaction = async (business_id, details) => {
     // validate the transaction body
     // The below object is kept for reference. Incase i get confused.
 

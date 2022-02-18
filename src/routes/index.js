@@ -10,6 +10,7 @@ const {getTransaction, getAllTransaction, getAllBusinessTransactions} = require(
 const {getPayment, getAllPayments, getAllBusinessPayments} = require('../controllers/payment.controller')
 
 const {getPlans} = require('../controllers/plans.controller')
+const sendData = require('../controllers/sendData.controller')
 
 
 router.post('/auth', handleLogin)

@@ -1,17 +1,17 @@
-export const units = { //what to multiply by, to convert to MB
+exports.units = { //what to multiply by, to convert to MB
     "gb": 1024,
     "mb": 1,
     "tb": 1048576
 }
 
-export const network_ids = {
+exports.network_ids = {
     1: "mtn",
     2: "glo",
     3: "9mobile",
     4: "airtel"
 }
 
-export const plans = {
+exports.plans = {
     "43": {
        "network": "mtn",
        "plan_type": "gifting",
