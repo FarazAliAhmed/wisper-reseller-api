@@ -1,18 +1,17 @@
-const bcrypt = require('bcrypt')
-const _ = require('lodash')
+const bcrypt = require("bcrypt");
 
-const { Account } = require('../models/account')
+const { Account } = require("../models/account");
 
-const register = async (requestBody, email) => {
-  let user = await Account.findOne({ email }).exec()
-  if (user) return { status: 400, message: 'User already registered.' }
+const register = async (requestBody) => {
+  let user = await Account.findOne({ email: requestBody.email }).exec();
+  if (user) return { status: 400, message: "User already registered." };
 
-  user = new Account(_.pick(requestBody, ['name', 'email', 'password']))
-  const salt = await bcrypt.genSalt(10)
-  user.password = await bcrypt.hash(user.password, salt)
-  await user.save()
+  user = new Account(requestBody);
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(user.password, salt);
+  await user.save();
 
-  return { user }
-}
+  return { user };
+};
 
-module.exports = { register }
+module.exports = { register };
