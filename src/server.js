@@ -10,8 +10,8 @@ const PORT = config.get("port");
 
 const apiRoutes = require("./routes");
 
-app.use(compression);
-app.use(morgan("combined"));
+app.use(compression());
+app.use(morgan("tiny"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());

@@ -4,8 +4,8 @@ const Schema = mongoose.Schema
 
 const DataBalance = new Schema({
   business: {
-    type: Schema.Types.objectId,
-    ref: 'business'
+    type: Schema.Types.ObjectId,
+    ref: 'account'
   },
   data_volume: {
     type: Number,

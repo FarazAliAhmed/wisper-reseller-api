@@ -35,6 +35,7 @@ const accountSchema = mongoose.Schema(
     access_token: {
       type: String,
       default: uuid.v4(),
+      unique: true,
     },
     isAdmin: {
       type: Boolean,
@@ -46,8 +47,8 @@ const accountSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-// automatically create an empty balance when a business Account is created
-accountSchema.post("save", async function (next) {
+// automatically create an empty balance when an Account is created
+accountSchema.post("save", async function (doc, next) {
   const businessId = this._id;
   await createEmptyBalance(businessId);
   next();

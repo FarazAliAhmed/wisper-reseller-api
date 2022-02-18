@@ -1,14 +1,21 @@
 const { paymentHistory: Payment } = require('../models/paymentHistory')
 
-const getAll = async () => {
+const getAll = async (id) => {
+  const businessId = id
+  const payments = Payment.find({business_id: businessId}).exec()
+  if (payments) return {payments}
+  return { status: 400, message: 'Unable to retreive your payments history' }
+}
+
+const getAllB = async () => {
   const payments = Payment.find().exec()
-  if (payments) return payments
+  if (payments) return {payments}
   return { status: 400, message: 'Unable to retreive payments history' }
 }
 
 const getOne = async (id) => {
   const payment = Payment.find({ _id: id }).exec()
-  if (payment) return payment
+  if (payment) return {payment}
   return { status: 400, message: `Unable to retreive payment with id: ${id}` }
 }
 
@@ -32,6 +39,7 @@ const deleteOne = async (id) => {
 
 module.exports = {
   getAll,
+  getAllB,
   getOne,
   create,
   update,

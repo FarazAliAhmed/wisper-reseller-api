@@ -8,7 +8,9 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "axios": "^0.26.0",
     "bcrypt": "^5.0.1",
+    "compression": "^1.7.4",
     "config": "^3.3.7",
     "cors": "^2.8.5",
     "express": "^4.17.2",
@@ -19,6 +21,11 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "jest": "^27.4.7"
+    "jest": "^27.4.7",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15"
+  },
+  "scripts": {
+    "dev": "nodemon src/server.js"
   }
 }
