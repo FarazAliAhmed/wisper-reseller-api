@@ -3,8 +3,14 @@ const bcrypt = require("bcrypt");
 const { Account } = require("../models/account");
 
 const register = async (requestBody) => {
-  let user = await Account.findOne({ email: requestBody.email }).exec();
-  if (user) return { status: 400, message: "User already registered." };
+  let userWithEmail = await Account.findOne({
+    email: requestBody.email,
+  }).exec();
+  let userWithUsername = await Account.findOne({
+    username: requestBody.username,
+  }).exec();
+  if (userWithEmail || userWithUsername)
+    return { status: 400, message: "User already registered." };
 
   user = new Account(requestBody);
   const salt = await bcrypt.genSalt(10);

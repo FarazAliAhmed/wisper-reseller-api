@@ -24,6 +24,7 @@ const accountSchema = mongoose.Schema(
     },
     username: {
       type: String,
+      unique: true,
       lowercase: true,
     },
     password: {
@@ -47,10 +48,9 @@ const accountSchema = mongoose.Schema(
 );
 
 // automatically create an empty balance when a business Account is created
-accountSchema.post("save", async function (next) {
+accountSchema.post("save", async function () {
   const businessId = this._id;
   await createEmptyBalance(businessId);
-  next();
 });
 
 accountSchema.methods.generateAuthToken = function () {
@@ -74,6 +74,7 @@ const validateUser = (user) => {
     username: Joi.string().min(5).max(10).required(),
     password: Joi.string().min(5).max(255).required(),
     mobile_number: Joi.number().required(),
+    address: Joi.string(),
   });
 
   return schema.validate(user);

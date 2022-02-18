@@ -33,6 +33,4 @@ const transactionHistorySchema = new Schema(
   }
 );
 
-module.exports = {
-  TransactionHistory: mongoose.model("transaction", transactionHistorySchema),
-};
+module.exports = mongoose.model("transaction", transactionHistorySchema);
