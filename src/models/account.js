@@ -24,6 +24,7 @@ const accountSchema = mongoose.Schema(
     },
     username: {
       type: String,
+      unique: true,
       lowercase: true,
     },
     password: {
@@ -60,6 +61,7 @@ accountSchema.methods.generateAuthToken = function () {
       _id: this._id,
       username: this.username,
       email: this.email,
+      isAdmin: this.isAdmin,
     },
     config.get("jwtSecret")
   );
@@ -75,6 +77,7 @@ const validateUser = (user) => {
     username: Joi.string().min(5).max(10).required(),
     password: Joi.string().min(5).max(255).required(),
     mobile_number: Joi.number().required(),
+    address: Joi.string(),
   });
 
   return schema.validate(user);

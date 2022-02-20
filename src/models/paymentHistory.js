@@ -29,6 +29,4 @@ const validatePayment = () => {
 
 }
 
-module.exports = {
-  paymentHistory: mongoose.model('payments', PaymentHistory)
-}
+module.exports = mongoose.model('payments', PaymentHistory)

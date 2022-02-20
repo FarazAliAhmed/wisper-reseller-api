@@ -1,4 +1,4 @@
-const { paymentHistory: Payment } = require('../models/paymentHistory')
+const Payment = require('../models/paymentHistory')
 
 const getAll = async (id) => {
   const businessId = id

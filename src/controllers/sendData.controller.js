@@ -26,21 +26,26 @@ const responseObject = {
 const sendData = async (req, res) => {
     const {_id, email} = req.user
 
+    console.log("Check 1")
     // validate request body
     const {network, plan_id, phone_number} = req.body
     
+    console.log("Check 2")
     // validate and get data plan details
     const planDetails = await get_plan_details(plan_id)
     if (planDetails.error) return res.status(planDetails.status).json(planDetails)
 
+    console.log("Check 3")
     // check that network is valid
     const providerId = await get_network_provider(network)
     if (providerId.error) return res.status(providerId.status).json(providerId)
 
+    console.log("Check 4")
     // check that phone number is valid
     const validNumber = await validate_phone_number(phone_number)
     if (validNumber.error) return res.status(validNumber.status).json(validNumber)
 
+    console.log("Check 5")
     // prepare superjara request link
     const r_provider = providerId.id
     const r_number = validNumber.number
@@ -49,6 +54,7 @@ const sendData = async (req, res) => {
 
     const requestPayload = await get_request_payload(r_provider, r_number, r_planId, r_ported)
 
+    console.log("Check 6")
     // check account balance and debit
     const debitAccount = await debit_account_balance(_id, planDetails)
     if (debitAccount.error){
@@ -56,6 +62,7 @@ const sendData = async (req, res) => {
         return revert_debit_account_balance(_id, planDetails)
     }
     
+    console.log("Check 7")
     // transfer data to phone number
     const send_response = await initiate_data_transfer(requestPayload)
     if (send_response.error){
@@ -73,11 +80,12 @@ const sendData = async (req, res) => {
     responseObject.data_volume = planDetails.volume
     responseObject.plan_id = planDetails.id
     
-
+    console.log("Check 8")
     // return response on data transfer
     const transactionResponse = await format_transaction_response(responseObject)
     res.status(200).json(transactionResponse)
 
+    console.log("Check 9")
     // save the transaction to database
     const savedTransaction = await save_transaction(_id, responseObject)
     if (savedTransaction.error) console.log(savedTransaction)

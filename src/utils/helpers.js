@@ -102,12 +102,8 @@ exports.save_transaction = async (business_id, details) => {
     let newTransaction = _.omit(details, ["previous_balance", "new_balance"])
     newTransaction.transaction_ref = uuid.v4()
     newTransaction.business_id = business_id
-    console.log("Transaction to save: ", newTransaction)
     try {
         const savedTransaction = await addTransaction(newTransaction)
-        // if (savedTransaction.transaction) return {error: false, status: 201, transaction: savedTransaction.transaction}
-        // savedTransaction.error = true
-        // return savedTransaction
         return {error: false, status: 201, transaction: savedTransaction.transaction}
     }catch(e){
         newTransaction.error = true

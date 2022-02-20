@@ -25,6 +25,4 @@ const validateBalance = () => {
 
 }
 
-module.exports = {
-  dataBalance: mongoose.model('balance', DataBalance)
-}
+module.exports = mongoose.model('balance', DataBalance)

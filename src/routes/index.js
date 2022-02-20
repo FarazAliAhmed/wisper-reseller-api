@@ -33,11 +33,10 @@ router.get('/payments', getUser, getAllPayments)
 /**Routes Called by Admin
  * remember to set auth tokens to expire
  */
-router.get('/business/balances', getAdmin, getAllBusinessBalances)
-router.get('/business/transactions', getAdmin, getAllBusinessTransactions)
-router.get('/business/payments', getAdmin, getAllBusinessPayments)
-
-router.post('/business/credit', getAdmin, creditBalance)
+router.get('/admin/balances', getAdmin, getAllBusinessBalances)
+router.get('/admin/transactions', getAdmin, getAllBusinessTransactions)
+router.get('/admin/payments', getAdmin, getAllBusinessPayments)
+router.post('/admin/credit', getAdmin, creditBalance)
 
 
 /**END USER ROUTES

@@ -1,4 +1,4 @@
-const { transactionHistory: Transaction } = require('../models/transactionHistory')
+const Transaction = require('../models/transactionHistory')
 
 // called by admin and gets all for all businesses
 const getAllB = async () => {

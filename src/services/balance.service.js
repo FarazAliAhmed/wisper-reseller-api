@@ -1,4 +1,4 @@
-const { dataBalance: Balance } = require('../models/dataBalance')
+const Balance = require('../models/dataBalance')
 
 
 const getBalance = async (id) => {
