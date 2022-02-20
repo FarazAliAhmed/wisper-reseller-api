@@ -3,7 +3,7 @@ const uuid = require('uuid')
 const _ = require('lodash')
 
 const {create: addTransaction} = require('../services/transaction.service')
-const {update} = require('../services/balance.service')
+const {debit} = require('../services/balance.service')
 const {units, plans, network_ids} = require('./networkData')
 
 
@@ -20,7 +20,7 @@ exports.get_plan_details = (plan_id) => {
 }
 
 
-exports.get_network_provider = (network_provider) => {
+exports.get_network_provider = async (network_provider) => {
     for (let ID in network_ids){
         if(network_ids[ID] === network_provider.trim().toLowerCase()){
             return {network: network_provider.trim().toLowerCase(), id: ID, error: false}
@@ -30,7 +30,7 @@ exports.get_network_provider = (network_provider) => {
 }
 
 
-exports.validate_phone_number = (number) => {
+exports.validate_phone_number = async (number) => {
     if (number.length !== 11 && parseInt(number).length !== 10) {
       return {error: true, status: 401, message: "Invalid Phone Number"};
     }
@@ -39,7 +39,7 @@ exports.validate_phone_number = (number) => {
 }
 
 
-exports.get_request_payload = (network, mobile_number, plan, Ported_number) => {
+exports.get_request_payload = async (network, mobile_number, plan, Ported_number) => {
     return {
         network,
         mobile_number,
@@ -50,7 +50,7 @@ exports.get_request_payload = (network, mobile_number, plan, Ported_number) => {
 
 
 exports.debit_account_balance = async (account_id, planDetails) => {
-    const updatedBalance = await update(account_id, planDetails.volume)
+    const updatedBalance = await debit(account_id, planDetails.volume)
     if(updatedBalance.error) return updatedBalance
     return {error: false, status: 201, balance: updatedBalance.balance}
 }
@@ -58,7 +58,7 @@ exports.debit_account_balance = async (account_id, planDetails) => {
 
 exports.revert_debit_account_balance = async (account_id, planDetails) => {
     const incrementBy = planDetails.volume * -1
-    const updatedBalance = await update(account_id, incrementBy)
+    const updatedBalance = await debit(account_id, incrementBy)
     if(updatedBalance.error) return updatedBalance
     return {error: false, status: 201, balance: updatedBalance.balance}
 }
@@ -72,15 +72,14 @@ exports.initiate_data_transfer = async (requestPayload) => {
             "Content-Type": "application/json"
         }
     }
-    axios.post(url, requestPayload, config).then(data => {
-        return {error: false, response: data.data}
-    }).catch(e => {
-        return {error: true, message: "Data volume transafer failed"}
-    })
+
+    const response = await axios.post(url, requestPayload, config)
+    if(response.data) return {error: false, response: response.data}
+    return {error: true, message: "Data volume transafer failed"}
 }
 
 
-exports.format_transaction_response = (responseObject) => {
+exports.format_transaction_response = async (responseObject) => {
     // This function might be used later to format all response before sending
     return responseObject
 }
@@ -100,12 +99,18 @@ exports.save_transaction = async (business_id, details) => {
     //       network_provider: details.network_provider,
     // }
 
-    const newTransaction = _.omit(details, ["previous_balance", "new_balance"])
+    let newTransaction = _.omit(details, ["previous_balance", "new_balance"])
     newTransaction.transaction_ref = uuid.v4()
     newTransaction.business_id = business_id
-
-    const savedTransaction = await addTransaction(newTransaction)
-    if (savedTransaction.transaction) return {error: false, status: 201, transaction: savedTransaction.transaction}
-    savedTransaction.error = true
-    return savedTransaction
+    console.log("Transaction to save: ", newTransaction)
+    try {
+        const savedTransaction = await addTransaction(newTransaction)
+        // if (savedTransaction.transaction) return {error: false, status: 201, transaction: savedTransaction.transaction}
+        // savedTransaction.error = true
+        // return savedTransaction
+        return {error: false, status: 201, transaction: savedTransaction.transaction}
+    }catch(e){
+        newTransaction.error = true
+        return newTransaction 
+    }
 }

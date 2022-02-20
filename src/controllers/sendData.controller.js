@@ -34,7 +34,7 @@ const sendData = async (req, res) => {
     if (planDetails.error) return res.status(planDetails.status).json(planDetails)
 
     // check that network is valid
-    const providerId = get_network_provider(network)
+    const providerId = await get_network_provider(network)
     if (providerId.error) return res.status(providerId.status).json(providerId)
 
     // check that phone number is valid
@@ -46,7 +46,8 @@ const sendData = async (req, res) => {
     const r_number = validNumber.number
     const r_planId = planDetails.id
     const r_ported = validNumber.ported
-    const requestPayload = get_request_payload(r_provider, r_number, r_planId, r_ported)
+
+    const requestPayload = await get_request_payload(r_provider, r_number, r_planId, r_ported)
 
     // check account balance and debit
     const debitAccount = await debit_account_balance(_id, planDetails)
@@ -64,9 +65,9 @@ const sendData = async (req, res) => {
 
 
     // *****
-    responseObject.new_balance = debitAccount.balance
-    responseObject.previous_balance = debitAccount.balance + planDetails.volume
-    responseObject.pnone_number = validNumber.number
+    responseObject.new_balance = `${debitAccount.balance.data_volume} ${debitAccount.balance.data_unit}`
+    responseObject.previous_balance = `${debitAccount.balance.data_volume  + planDetails.volume} ${debitAccount.balance.data_unit}`
+    responseObject.phone_number = validNumber.number
     responseObject.status = "success"
     responseObject.network_provider = providerId.network
     responseObject.data_volume = planDetails.volume
@@ -74,11 +75,11 @@ const sendData = async (req, res) => {
     
 
     // return response on data transfer
-    const transactionResponse = format_transaction_response(responseObject)
+    const transactionResponse = await format_transaction_response(responseObject)
     res.status(200).json(transactionResponse)
 
     // save the transaction to database
-    savedTransaction = save_transaction(_id, responseObject)
+    const savedTransaction = await save_transaction(_id, responseObject)
     if (savedTransaction.error) console.log(savedTransaction)
     return
 }

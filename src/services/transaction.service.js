@@ -23,12 +23,12 @@ const getOne = async (id) => {
 
 const create = async (body) => {
   // save to db if validation passes
-  const newTransaction = new Transaction(body)
-  newTransaction.save().then(newTrans => {
-    return {transaction: newTrans}
-  }).catch(e => {
-    return { status: 400, messsage: 'Unable to add a Transaction' }
-  })
+  let newTransaction = new Transaction(body)
+
+  newTransaction = await newTransaction.save()
+  return {transaction: newTransaction}
+  // will add try-catch to ensure success of save
+  // return { status: 400, messsage: 'Unable to add a Transaction' }
 }
 
 const update = async (id, body) => {

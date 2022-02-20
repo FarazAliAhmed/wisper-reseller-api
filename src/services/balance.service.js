@@ -1,7 +1,6 @@
 const { dataBalance: Balance } = require('../models/dataBalance')
 
 
-
 const getBalance = async (id) => {
   const balance = await Balance.findOne({business: id}).exec()
   if (balance) return {balance}
@@ -38,7 +37,7 @@ const credit = async (id, creditAmount) => {
 }
 
 
-const update = async (id, debitAmount) => {
+const debit = async (id, debitAmount) => {
   console.log(debitAmount)
   const balance = await Balance.
     findOneAndUpdate(
@@ -63,6 +62,7 @@ module.exports = {
   getBalance,
   getAllBalance,
   create,
-  update,
+  debit,
+  credit,
   reset
 }
