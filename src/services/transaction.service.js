@@ -1,9 +1,20 @@
 const Transaction = require("../models/transactionHistory");
 
-const getAll = async () => {
+// called by admin and gets all for all businesses
+const getAllB = async () => {
   const transactions = await Transaction.find().exec();
   if (transactions) return { transactions };
   return { status: 400, messsage: "Unable to retrieve all Transactions" };
+};
+
+// Called by single user for just himself
+const getAll = async (id) => {
+  const businessId = id;
+  const transactions = await Transaction.find({
+    business_id: businessId,
+  }).exec();
+  if (transactions) return { transactions };
+  return { status: 400, messsage: "Unable to retrieve all your Transactions" };
 };
 
 const getOne = async (id) => {
@@ -14,7 +25,12 @@ const getOne = async (id) => {
 
 const create = async (body) => {
   // save to db if validation passes
-  // Return response of success or failure
+  let newTransaction = new Transaction(body);
+
+  newTransaction = await newTransaction.save();
+  return { transaction: newTransaction };
+  // will add try-catch to ensure success of save
+  // return { status: 400, messsage: 'Unable to add a Transaction' }
 };
 
 const update = async (id, body) => {
@@ -34,6 +50,7 @@ const deleteOne = async (id) => {
 };
 
 module.exports = {
+  getAllB,
   getAll,
   getOne,
   create,

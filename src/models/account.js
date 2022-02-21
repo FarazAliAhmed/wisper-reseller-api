@@ -36,6 +36,7 @@ const accountSchema = mongoose.Schema(
     access_token: {
       type: String,
       default: uuid.v4(),
+      unique: true,
     },
     isAdmin: {
       type: Boolean,
@@ -59,6 +60,7 @@ accountSchema.methods.generateAuthToken = function () {
       _id: this._id,
       username: this.username,
       email: this.email,
+      isAdmin: this.isAdmin,
     },
     config.get("jwtSecret")
   );

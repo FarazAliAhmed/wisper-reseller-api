@@ -3,16 +3,12 @@ const bcrypt = require("bcrypt");
 const { Account } = require("../models/account");
 
 const register = async (requestBody) => {
-  let userWithEmail = await Account.findOne({
-    email: requestBody.email,
-  }).exec();
-  let userWithUsername = await Account.findOne({
-    username: requestBody.username,
-  }).exec();
+  let userWithEmail = await Account.findOne({ email: requestBody.email }).exec();
+  let userWithUsername = await Account.findOne({ username: requestBody.username }).exec();
   if (userWithEmail || userWithUsername)
     return { status: 400, message: "User already registered." };
 
-  user = new Account(requestBody);
+  let user = new Account(requestBody);
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
   await user.save();
