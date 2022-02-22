@@ -17,26 +17,34 @@ const getAll = async (id) => {
   return { status: 400, messsage: "Unable to retrieve all your Transactions" };
 };
 
-const getOne = async (id) => {
-  const transaction = await Transaction.find({ _id: id }).exec();
+const getOne = async (transaction_ref) => {
+  const transaction = await Transaction.find({ transaction_ref }).exec();
   if (transaction) return { transaction };
-  return { status: 400, message: `Unable to find transaction with Id: ${id}` };
+  return { status: 400, message: `Unable to find transaction with Ref code: ${transaction_ref}` };
 };
 
 const create = async (body) => {
   // save to db if validation passes
   let newTransaction = new Transaction(body);
-
-  newTransaction = await newTransaction.save();
-  return { transaction: newTransaction };
+  try{
+    newTransaction = await newTransaction.save();
+    return { transaction: newTransaction };
+  }catch(e){
+    console.log("Create Transaction Error: ", e)
+  }
   // will add try-catch to ensure success of save
   // return { status: 400, messsage: 'Unable to add a Transaction' }
 };
 
-const update = async (id, body) => {
+const update = async (query, body) => {
   // Find the transaction to be updated
-  // update and save data to database
-  // Return response
+  let transaction;
+  try{
+    transaction = await Transaction.findOneAndUpdate(query, body, { new: true }).exec();
+    if(transaction) return {transaction};
+  }catch(e){
+    console.log("Transaction error: ", e)
+  }
 };
 
 const deleteOne = async (id) => {

@@ -10,8 +10,8 @@ const postTransaction = async (req, res) => {
 
 const getTransaction = async (req, res) => {
   // used by both admin and user to get single transaction
-  const transactionId = req.params.id
-  const resp = await getOne(transactionId)
+  const transaction_ref = req.params.id
+  const resp = await getOne(transaction_ref)
   if(resp.transaction) return res.status(200).json(resp.transaction)
   return res.status(resp.status).json(resp)
 }

@@ -1,8 +1,7 @@
 const axios = require('axios')
-const uuid = require('uuid')
 const _ = require('lodash')
 
-const {create: addTransaction} = require('../services/transaction.service')
+const {create: addTransaction, update: updateTransaction} = require('../services/transaction.service')
 const {debit} = require('../services/balance.service')
 const {units, plans, network_ids} = require('./networkData')
 
@@ -72,10 +71,12 @@ exports.initiate_data_transfer = async (requestPayload) => {
             "Content-Type": "application/json"
         }
     }
-
-    const response = await axios.post(url, requestPayload, config)
-    if(response.data) return {error: false, response: response.data}
-    return {error: true, message: "Data volume transafer failed"}
+    try{
+        const response = await axios.post(url, requestPayload, config)
+        if(response.data) return {error: false, response: response.data}
+    }catch(e){
+        return {error: true, message: "Data volume transafer failed"}
+    }
 }
 
 
@@ -100,7 +101,6 @@ exports.save_transaction = async (business_id, details) => {
     // }
 
     let newTransaction = _.omit(details, ["previous_balance", "new_balance"])
-    newTransaction.transaction_ref = uuid.v4()
     newTransaction.business_id = business_id
     try {
         const savedTransaction = await addTransaction(newTransaction)
@@ -108,5 +108,16 @@ exports.save_transaction = async (business_id, details) => {
     }catch(e){
         newTransaction.error = true
         return newTransaction 
+    }
+}
+
+exports.update_transaction_status = async (transaction_ref, status) => {
+    const updateQuery = {transaction_ref}
+    const updateBody = {status}
+    try{
+        const response = await updateTransaction(updateQuery, updateBody)
+        return {error: false, status: 201, transaction: response.transaction}
+    }catch(e){
+        return { error: true, status: 400, message: `Unable to update transaction` };
     }
 }

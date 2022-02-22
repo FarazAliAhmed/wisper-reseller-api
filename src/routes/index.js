@@ -19,6 +19,9 @@ const {
   getPayment,
   getAllPayments,
   getAllBusinessPayments,
+  postPayment,
+  updatePayment,
+  deletePayment,
 } = require("../controllers/payment.controller");
 
 const { getPlans } = require("../controllers/plans.controller");
@@ -45,8 +48,13 @@ router.get("/payments", getUser, getAllPayments);
  */
 router.get("/admin/balances", getAdmin, getAllBusinessBalances);
 router.get("/admin/transactions", getAdmin, getAllBusinessTransactions);
-router.get("/admin/payments", getAdmin, getAllBusinessPayments);
+
 router.post("/admin/credit", getAdmin, creditBalance);
+
+router.get("/admin/payments", getAdmin, getAllBusinessPayments);
+router.post("/admin/payments", getAdmin, postPayment);
+router.patch("/admin/payments/:id", getAdmin, updatePayment);
+router.delete("/admin/payments/:id", getAdmin, deletePayment);
 
 /**END USER ROUTES
  */
