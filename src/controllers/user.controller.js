@@ -11,8 +11,10 @@ const handleRegister = async (req, res) => {
 
   if (data.user) {
     const token = data.user.generateAuthToken();
-    return res.header("Authorization", `Bearer ${token}`).send(data.user);
-    // .send(_.pick(data.user, ["_id", "name", "email"]));
+    return res
+      .header("x-auth-token", token)
+      .header("access-control-expose-headers", "x-auth-token")
+      .send(_.pick(data.user, ["_id", "name", "email"]));
   }
   return res.status(data.status).send(data.message);
 };

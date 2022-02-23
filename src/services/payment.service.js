@@ -1,39 +1,57 @@
-const { paymentHistory: Payment } = require('../models/paymentHistory')
+const Payment = require("../models/paymentHistory");
 
-const getAll = async () => {
-  const payments = Payment.find().exec()
-  if (payments) return payments
-  return { status: 400, message: 'Unable to retreive payments history' }
-}
+const getAll = async (id) => {
+  const businessId = id;
+  const payments = Payment.find({ business_id: businessId }).exec();
+  if (payments) return { payments };
+  return { status: 400, message: "Unable to retreive your payments history" };
+};
 
-const getOne = async (id) => {
-  const payment = Payment.find({ _id: id }).exec()
-  if (payment) return payment
-  return { status: 400, message: `Unable to retreive payment with id: ${id}` }
-}
+const getAllB = async () => {
+  const payments = Payment.find().exec();
+  if (payments) return { payments };
+  return { status: 400, message: "Unable to retreive payments history" };
+};
+
+const getOne = async (payment_ref) => {
+  const payment = Payment.find({ payment_ref }).exec();
+  if (payment) return { payment };
+  return { status: 400, message: `Unable to retreive payment with id: ${id}` };
+};
 
 const create = async (fields) => {
-  // save payment to DB
+  try{
+    let payment = new Payment(fields)
+    payment = await payment.save()
+    return {payment}
+  }catch(e){
+    console.log("Payment Create Error: ", e)
+    return { status: 400, message: `Unable to create payment` };
+  }
+};
 
-  // Send save payment ass response
-}
+const update = async (payment_ref, fields) => {
+  let payment;
+  try{
+    payment = await Payment.findOneAndUpdate({ payment_ref }, fields, {new: true}).exec()
+    if (payment) return {payment}
+  }catch(e){
+    console.log("Error updating payment: ", e)
+    return { status: 400, message: `Unable to update payment` };
+  }
+};
 
-const update = async (id, fields) => {
-  // Get payment to update
-
-  // save changes and return response
-}
-
-const deleteOne = async (id) => {
-  const payment = Payment.findOneAndDelete({ _id: id }).exec()
-  if (payment) return { payment, message: 'Successfully deleted payment' }
-  return { status: 400, message: `Error deleteling payment with id: ${id}` }
-}
+const deleteOne = async (payment_ref) => {
+  const payment = await Payment.findOneAndDelete({ payment_ref }).exec();
+  if (payment) return { payment, message: "Successfully deleted payment" };
+  return { status: 400, message: `Error deleteing payment with id: ${id}` };
+};
 
 module.exports = {
   getAll,
+  getAllB,
   getOne,
   create,
   update,
-  deleteOne
-}
+  deleteOne,
+};

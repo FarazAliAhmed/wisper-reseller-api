@@ -23,6 +23,4 @@ const dataBalanceSchema = new Schema({
 
 const validateBalance = () => {};
 
-module.exports = {
-  DataBalance: mongoose.model("balance", dataBalanceSchema),
-};
+module.exports = mongoose.model("balance", dataBalanceSchema);

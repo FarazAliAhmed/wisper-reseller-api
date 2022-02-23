@@ -22,11 +22,10 @@ const paymentHistorySchema = new Schema({
     type: String,
     required: true,
     unique: true,
+    index: true,
   },
 });
 
 const validatePayment = () => {};
 
-module.exports = {
-  PaymentHistory: mongoose.model("payments", paymentHistorySchema),
-};
+module.exports = mongoose.model("payments", paymentHistorySchema);
