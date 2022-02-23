@@ -2,19 +2,20 @@ const Payment = require("../models/paymentHistory");
 
 const getAll = async (id) => {
   const businessId = id;
-  const payments = Payment.find({ business_id: businessId }).exec();
+  const payments = await Payment.find({ business_id: businessId }).exec();
+  console.log(payments)
   if (payments) return { payments };
   return { status: 400, message: "Unable to retreive your payments history" };
 };
 
 const getAllB = async () => {
-  const payments = Payment.find().exec();
+  const payments = await Payment.find().exec();
   if (payments) return { payments };
   return { status: 400, message: "Unable to retreive payments history" };
 };
 
 const getOne = async (payment_ref) => {
-  const payment = Payment.find({ payment_ref }).exec();
+  const payment = await Payment.find({ payment_ref }).exec();
   if (payment) return { payment };
   return { status: 400, message: `Unable to retreive payment with id: ${id}` };
 };

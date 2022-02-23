@@ -32,6 +32,10 @@ const transactionHistorySchema = new Schema(
       type: String,
       maxlength: 20,
       required: true,
+    },
+    created_at: {
+      type: Date,
+      default: Date.now()
     }
   },
   {
