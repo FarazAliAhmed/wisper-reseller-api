@@ -19,5 +19,6 @@ module.exports = {
     get_request_payload: require('./helpers').get_request_payload,
     initiate_data_transfer: require('./helpers').initiate_data_transfer,
     format_transaction_response : require('./helpers').format_transaction_response,
-    save_transaction : require('./helpers').save_transaction
+    save_transaction : require('./helpers').save_transaction,
+    update_transaction_status: require('./helpers').update_transaction_status,
 }

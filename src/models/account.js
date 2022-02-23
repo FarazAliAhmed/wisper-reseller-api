@@ -37,6 +37,7 @@ const accountSchema = mongoose.Schema(
       type: String,
       default: uuid.v4(),
       unique: true,
+      index: true,
     },
     isAdmin: {
       type: Boolean,

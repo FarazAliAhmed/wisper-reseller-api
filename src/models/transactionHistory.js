@@ -8,6 +8,7 @@ const transactionHistorySchema = new Schema(
       type: String,
       required: true,
       unique: true,
+      index: true,
     },
     phone_number: {
       type: String,
@@ -27,6 +28,11 @@ const transactionHistorySchema = new Schema(
       type: String,
       maxlength: 10,
     },
+    status: {
+      type: String,
+      maxlength: 20,
+      required: true,
+    }
   },
   {
     timestamp: true,
