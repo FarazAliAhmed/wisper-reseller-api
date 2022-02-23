@@ -3,8 +3,12 @@ const bcrypt = require("bcrypt");
 const { Account } = require("../models/account");
 
 const register = async (requestBody) => {
-  let userWithEmail = await Account.findOne({ email: requestBody.email }).exec();
-  let userWithUsername = await Account.findOne({ username: requestBody.username }).exec();
+  let userWithEmail = await Account.findOne({
+    email: requestBody.email,
+  }).exec();
+  let userWithUsername = await Account.findOne({
+    username: requestBody.username,
+  }).exec();
   if (userWithEmail || userWithUsername)
     return { status: 400, message: "User already registered." };
 
@@ -16,4 +20,16 @@ const register = async (requestBody) => {
   return { user };
 };
 
-module.exports = { register };
+const update = async (requestBody, username) => {
+  const query = { username };
+  let user;
+  user = await Account.findOneAndUpdate(
+    query,
+    { ...requestBody },
+    { new: true }
+  ).exec();
+  if (!user) return { status: 404, message: "User not found." };
+  return { user };
+};
+
+module.exports = { register, update };

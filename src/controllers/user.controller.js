@@ -19,4 +19,17 @@ const handleRegister = async (req, res) => {
   return res.status(data.status).send(data.message);
 };
 
-module.exports = handleRegister;
+const handleUpdate = async (req, res) => {
+  const { username } = req.params;
+  const { error } = validateUser(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const data = await userService.update(req.body, username);
+
+  if (data.user) {
+    return res.send(data.user);
+  }
+  return res.status(data.status).send(data.message);
+};
+
+module.exports = { handleRegister, handleUpdate };

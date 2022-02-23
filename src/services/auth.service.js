@@ -17,7 +17,7 @@ const auth = async (email, password) => {
 const whoami = async (email) => {
   const user = await Account.findOne(
     { email },
-    { password: 0, createdAt: 0, updatedAt: 0, __v: 0 }
+    { createdAt: 0, updatedAt: 0, __v: 0 }
   ).exec();
 
   if (!user) return { status: 404, message: "User not found" };

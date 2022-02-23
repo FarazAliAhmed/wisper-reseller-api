@@ -3,7 +3,10 @@ const router = express.Router();
 const { getUser, getAdmin, parseKey } = require("../utils").middleware;
 
 const { handleLogin, whoami } = require("../controllers/auth.controller");
-const handleRegister = require("../controllers/user.controller");
+const {
+  handleRegister,
+  handleUpdate,
+} = require("../controllers/user.controller");
 
 const {
   getAccountBalance,
@@ -30,6 +33,7 @@ const sendData = require("../controllers/sendData.controller");
 router.get("/whoami", whoami);
 router.post("/auth", handleLogin);
 router.post("/users", handleRegister);
+router.patch("/users/:username", handleUpdate);
 
 // Dashboard Routes
 // Routes Called by businesses
