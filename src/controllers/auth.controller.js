@@ -19,9 +19,9 @@ const handleLogin = async (req, res) => {
 
 const whoami = async (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
-  if (!token) return null;
+  if (!token) return res.status(403).send("No token provided");
   const user = jwt.decode(token);
-  if (!user) return null;
+  if (!user) return res.status(403).send("Invalid token");
   const data = await authService.whoami(user.email);
   return res.send(data?.user);
 };
