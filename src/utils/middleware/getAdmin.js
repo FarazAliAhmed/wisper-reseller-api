@@ -9,9 +9,11 @@ const getAdmin = async (req, res, next) => {
         const authToken = req.get('authorization').split(" ")[1]
         try{
             const decode = await jwt.verify(authToken, config.get('jwtSecret'))
-            req.user = decode
-            // fetch user account and check of isAdmin is True. If true, call next()
-            return next()
+            if(decode.isAdmin){
+                req.user = decode
+                return next()
+            }
+            return res.status(403).json({error: "Invalid Access Rights"})
         }catch(e){
             return res.status(400).json({error: "Authorization Token is invalid"})
         }

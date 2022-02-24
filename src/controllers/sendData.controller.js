@@ -23,16 +23,16 @@ const sendData = async (req, res) => {
     // validate request body
     const {network, plan_id, phone_number} = req.body
     
+    // check that network is valid
+    const providerId = await get_network_provider(network)
+    if (providerId.error) return res.status(providerId.status).json(providerId)
+    
     // validate and get data plan details
     const planDetails = await get_plan_details(plan_id)
     if (planDetails.error) return res.status(planDetails.status).json(planDetails)
 
-    // check that network is valid
-    const providerId = await get_network_provider(network)
-    if (providerId.error) return res.status(providerId.status).json(providerId)
-
     // check that phone number is valid
-    const validNumber = await validate_phone_number(phone_number)
+    const validNumber = await validate_phone_number(phone_number, providerId.network)
     if (validNumber.error) return res.status(validNumber.status).json(validNumber)
 
     // prepare superjara request link

@@ -3,7 +3,7 @@ const _ = require('lodash')
 
 const {create: addTransaction, update: updateTransaction} = require('../services/transaction.service')
 const {debit} = require('../services/balance.service')
-const {units, plans, network_ids} = require('./networkData')
+const {units, plans, network_ids, numbers: network_numbers} = require('./networkData')
 
 
 exports.get_plan_details = (plan_id) => {
@@ -29,11 +29,15 @@ exports.get_network_provider = async (network_provider) => {
 }
 
 
-exports.validate_phone_number = async (number) => {
+exports.validate_phone_number = async (number, network_provider) => {
     if (number.length !== 11 && parseInt(number).length !== 10) {
       return {error: true, status: 401, message: "Invalid Phone Number"};
     }
-    const ported = number.slice(0, 4) === "0913" ? "true" : "false"
+    const init = number.slice(0, 4)
+    if(!(network_numbers[network_provider].includes(init)))
+        return {error: true, status: 401, message: "Network Provider and Phone Number do not match"};
+
+    const ported = init === "0913" ? "true" : "false";
     return {number, ported, error: false, message: "Phone Number is Valid"};
 }
 
