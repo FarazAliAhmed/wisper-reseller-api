@@ -68,7 +68,9 @@ exports.revert_debit_account_balance = async (account_id, planDetails) => {
 
 
 exports.initiate_data_transfer = async (requestPayload) => {
-    const url = "https://www.superjara.com/api/data/"
+    // const url = "https://www.superjara.com/api/data/"
+    // const url = "https://superjarang.com/api/data"
+    const url = "https://www.superjaraapi.com/api/data/"
     const config = {
         headers: {
             "Authorization": `Token ${process.env.SUPERJARA_AUTH_KEY}`,
@@ -79,6 +81,7 @@ exports.initiate_data_transfer = async (requestPayload) => {
         const response = await axios.post(url, requestPayload, config)
         if(response.data) return {error: false, response: response.data}
     }catch(e){
+        console.log("ERROOORR::", e)
         return {error: true, message: "Data volume transafer failed"}
     }
 }
