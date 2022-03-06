@@ -3,7 +3,6 @@ const Payment = require("../models/paymentHistory");
 const getAll = async (id) => {
   const businessId = id;
   const payments = await Payment.find({ business_id: businessId }).exec();
-  console.log(payments)
   if (payments) return { payments };
   return { status: 400, message: "Unable to retreive your payments history" };
 };

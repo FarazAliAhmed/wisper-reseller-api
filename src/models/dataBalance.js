@@ -21,6 +21,15 @@ const dataBalanceSchema = new Schema({
   },
 });
 
+dataBalanceSchema.virtual("walletBalance")
+  .get(function(){
+    return (this.data_volume / 1024) * 300
+  })
+  .set(function(v){
+    const moneyToData = (parseInt(v) / 300) * 1024
+    this.set({ data_volume: moneyToData})
+  });
+
 const validateBalance = () => {};
 
 module.exports = mongoose.model("balance", dataBalanceSchema);

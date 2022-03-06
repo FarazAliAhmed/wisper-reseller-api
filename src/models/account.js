@@ -43,6 +43,10 @@ const accountSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    type: {
+      type: String,
+      default: "lite"
+    },
     mobile_number: String,
     address: String,
   },

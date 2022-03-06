@@ -47,6 +47,14 @@ router.get("/transactions", getUser, getAllTransaction);
 router.get("/payment/:id", getUser, getPayment);
 router.get("/payments", getUser, getAllPayments);
 
+// User Routes to verify
+// Create route to allow user add a payment after verifying payment ref from paystack
+// middlewares: getUser, verifyWithPaystack
+router.post("/payments", getUser, postPayment, creditBalance);
+
+// router.post("/payments", getUser, verifyWithPaystack, postPayment);
+// 
+
 /**Routes Called by Admin
  * remember to set auth tokens to expire
  */
@@ -59,6 +67,7 @@ router.get("/admin/payments", getAdmin, getAllBusinessPayments);
 router.post("/admin/payments", getAdmin, postPayment);
 router.patch("/admin/payments/:id", getAdmin, updatePayment);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
+// Endpoint for admin to upgrade user from lite to mega
 
 /**END USER ROUTES
  */

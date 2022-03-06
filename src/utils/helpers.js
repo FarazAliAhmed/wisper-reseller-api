@@ -128,3 +128,7 @@ exports.update_transaction_status = async (transaction_ref, status) => {
         return { error: true, status: 400, message: `Unable to update transaction` };
     }
 }
+
+exports.nairaToData = (nairaAmount) => {
+    return (parseInt(nairaAmount) / 300) * 1024
+}
