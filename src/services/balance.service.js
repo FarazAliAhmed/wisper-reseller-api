@@ -1,3 +1,4 @@
+const { updateMany } = require("../models/dataBalance");
 const Balance = require("../models/dataBalance");
 
 const getBalance = async (id) => {
@@ -26,10 +27,39 @@ const create = async (id) => {
   return { status: 500, message: "Error creating wallet for business" };
 };
 
-const credit = async (id, creditAmount) => {
+const upgradeBalance = async (id) => { //change the unit from MB to ₦
   const balance = await Balance.findOneAndUpdate(
     { business: id },
-    { $inc: { data_volume: creditAmount } },
+    { data_unit: "MB", data_volume: 0 },
+    { new: true }
+  ).exec();
+
+  return {
+    balance,
+    error: false,
+    status: 201,
+    message: `Data Balance Unit Updated`,
+  };
+}
+
+const upgradeAllBalance = async () => {
+  const balance = await Balance.updateMany({},
+      {$set : {"wallet_balance":0 , data_unit: "₦" }},
+      {upsert:false}
+    ).exec();
+
+  return {
+    balance,
+    error: false,
+    status: 201,
+    message: `All Balance Accounts upgraded`,
+  };
+}
+
+const credit = async (id, creditAmount, field) => {
+  const balance = await Balance.findOneAndUpdate(
+    { business: id },
+    { $inc: { [field]: creditAmount } },
     { new: true }
   ).exec();
 
@@ -41,11 +71,10 @@ const credit = async (id, creditAmount) => {
   };
 };
 
-const debit = async (id, debitAmount) => {
-  console.log(debitAmount);
+const debit = async (id, debitAmount, field) => {
   const balance = await Balance.findOneAndUpdate(
     { business: id },
-    { $inc: { data_volume: -1 * debitAmount } },
+    { $inc: { [field] : -1 * debitAmount } },
     { new: true }
   ).exec();
 
@@ -73,4 +102,6 @@ module.exports = {
   debit,
   credit,
   reset,
+  upgradeBalance,
+  upgradeAllBalance,
 };

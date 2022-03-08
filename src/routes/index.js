@@ -12,6 +12,7 @@ const {
   getAccountBalance,
   getAllBusinessBalances,
   creditBalance,
+  updateAllBalance,
 } = require("../controllers/balance.controller");
 const {
   getTransaction,
@@ -33,7 +34,8 @@ const sendData = require("../controllers/sendData.controller");
 router.get("/whoami", whoami);
 router.post("/auth", handleLogin);
 router.post("/users", handleRegister);
-router.patch("/users/:username", handleUpdate);
+router.patch("/users/:username", getUser, handleUpdate);
+//handleUpdate route should be protected
 
 // Dashboard Routes
 // Routes Called by businesses
@@ -67,6 +69,7 @@ router.get("/admin/payments", getAdmin, getAllBusinessPayments);
 router.post("/admin/payments", getAdmin, postPayment);
 router.patch("/admin/payments/:id", getAdmin, updatePayment);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
+router.post("/admin/balance/upgrade", getAdmin, updateAllBalance);
 // Endpoint for admin to upgrade user from lite to mega
 
 /**END USER ROUTES

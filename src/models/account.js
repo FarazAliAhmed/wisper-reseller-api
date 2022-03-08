@@ -66,6 +66,7 @@ accountSchema.methods.generateAuthToken = function () {
       username: this.username,
       email: this.email,
       isAdmin: this.isAdmin,
+      type: this.type,
     },
     config.get("jwtSecret")
   );

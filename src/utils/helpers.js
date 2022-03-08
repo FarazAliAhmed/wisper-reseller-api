@@ -14,7 +14,7 @@ exports.get_plan_details = (plan_id) => {
     const volume = parseInt(volume_strings[0]) * units[volume_strings[1]]
     
     return {
-        ..._.pick(selectedPlan, ["validity"]), volume, id : plan_id, error: false
+        ..._.pick(selectedPlan, ["validity", "price"]), volume, id : plan_id, error: false
     }
 }
 
@@ -51,17 +51,28 @@ exports.get_request_payload = async (network, mobile_number, plan, Ported_number
     }
 }
 
+// 
 
-exports.debit_account_balance = async (account_id, planDetails) => {
-    const updatedBalance = await debit(account_id, planDetails.volume)
+const getFieldAndAmount = (type, planDetails) => {
+    if(type === "mega"){
+        return {field: "data_volume", amount: planDetails.volume}
+    }else{
+        return {field: "wallet_balance", amount: planDetails.price}
+    }
+}
+
+exports.debit_account_balance = async (account_id, planDetails, type) => {
+    const {amount, field} = getFieldAndAmount(type, planDetails)
+    const updatedBalance = await debit(account_id, amount, field)
     if(updatedBalance.error) return updatedBalance
     return {error: false, status: 201, balance: updatedBalance.balance}
 }
 
 
-exports.revert_debit_account_balance = async (account_id, planDetails) => {
-    const incrementBy = planDetails.volume * -1
-    const updatedBalance = await debit(account_id, incrementBy)
+exports.revert_debit_account_balance = async (account_id, planDetails, type) => {
+    const {amount, field} = getFieldAndAmount(type, planDetails)
+    const incrementBy = amount * -1
+    const updatedBalance = await debit(account_id, incrementBy, field)
     if(updatedBalance.error) return updatedBalance
     return {error: false, status: 201, balance: updatedBalance.balance}
 }

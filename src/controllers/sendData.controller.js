@@ -18,7 +18,10 @@ const {
 const responseObject = {}
 
 const sendData = async (req, res) => {
-    const {_id, email} = req.user
+    const {_id, email, type} = req.user
+
+    // Ensure user Type is provided
+    if (!type) return res.status(400).json({status: 400, message: "Unrecognised User. Try Loging in again"})
 
     // validate request body
     const {network, plan_id, phone_number} = req.body
@@ -44,10 +47,10 @@ const sendData = async (req, res) => {
     const requestPayload = await get_request_payload(r_provider, r_number, r_planId, r_ported)
 
     // check account balance and debit
-    const debitAccount = await debit_account_balance(_id, planDetails)
+    const debitAccount = await debit_account_balance(_id, planDetails, type)
     if (debitAccount.error){
         res.status(debitAccount.status).json({status: debitAccount.status, message: debitAccount.message})
-        return revert_debit_account_balance(_id, planDetails)
+        return revert_debit_account_balance(_id, planDetails, type)
     }
 
 

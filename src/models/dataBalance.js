@@ -9,26 +9,21 @@ const dataBalanceSchema = new Schema({
   },
   data_volume: {
     type: Number,
+    default: null,
+  },
+  wallet_balance: {
+    type: Number,
     default: 0,
   },
   data_unit: {
     type: String,
-    default: "MB",
+    default: "₦",
   },
   last_purchase: {
     type: Date,
     default: Date.now(),
   },
 });
-
-dataBalanceSchema.virtual("walletBalance")
-  .get(function(){
-    return (this.data_volume / 1024) * 300
-  })
-  .set(function(v){
-    const moneyToData = (parseInt(v) / 300) * 1024
-    this.set({ data_volume: moneyToData})
-  });
 
 const validateBalance = () => {};
 
