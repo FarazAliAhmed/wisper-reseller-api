@@ -1,5 +1,4 @@
 const {getAll, getAllB, getOne, create, update, deleteOne} = require('../services/payment.service')
-const { nairaToData } = require('../utils').helpers
 
 
 const postPayment = async (req, res, next) => {
@@ -10,7 +9,7 @@ const postPayment = async (req, res, next) => {
     const user = req.user
     if(!user.isAdmin){
       req.body.business_id = user._id
-      req.body.credit_amount = nairaToData(fields.amount)
+      req.body.credit_amount = fields.amount
       return next()
     }
     return res.status(201).json(resp.payment)
