@@ -18,7 +18,7 @@ const {
 const responseObject = {}
 
 const sendData = async (req, res) => {
-    const {_id, email, type} = req.user
+    const {_id, type} = req.user
 
     // Ensure user Type is provided
     if (!type) return res.status(400).json({status: 400, message: "Unrecognised User. Try Loging in again"})
