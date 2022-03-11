@@ -71,6 +71,8 @@ router.patch("/admin/payments/:id", getAdmin, updatePayment);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
 router.post("/admin/balance/upgrade", getAdmin, updateAllBalance);
 // Endpoint for admin to upgrade user from lite to mega
+// Define a get all accounts route for admin
+// Define endpoint for admin to debit a user's account
 
 /**END USER ROUTES
  */

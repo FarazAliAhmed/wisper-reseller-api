@@ -77,10 +77,10 @@ const debit = async (id, debitAmount, field) => {
     { $inc: { [field] : -1 * debitAmount } },
     { new: true }
   ).exec();
-
-  if (balance.data_volume < 0)
-    return { error: true, status: 401, message: `Insufficient Data Balance` };
-  return { balance };
+  
+  if (balance[field] <= 0)
+    return { error: true, status: 401, message: `Insufficient Balance` };
+  return { balance, error: false };
 };
 
 const reset = async (id) => {
