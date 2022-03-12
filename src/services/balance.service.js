@@ -78,7 +78,7 @@ const debit = async (id, debitAmount, field) => {
     { new: true }
   ).exec();
   
-  if (balance[field] <= 0)
+  if (balance[field] < 0)
     return { error: true, status: 401, message: `Insufficient Balance` };
   return { balance, error: false };
 };
