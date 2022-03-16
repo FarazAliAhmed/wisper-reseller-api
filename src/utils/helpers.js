@@ -90,7 +90,12 @@ exports.initiate_data_transfer = async (requestPayload) => {
     }
     try{
         const response = await axios.post(url, requestPayload, config)
-        if(response.data) return {error: false, response: response.data}
+        // Status: 'successful'
+        if(response.data && response.data.Status && response.data.Status === "successful"){
+            return {error: false, response: response.data}
+        }else{
+            return {error: true, message: "An error occured with data transfer server"}
+        }
     }catch(e){
         console.log("ERROOORR::", e)
         return {error: true, message: "Data volume transafer failed"}
@@ -105,9 +110,8 @@ exports.format_transaction_response = async (responseObject) => {
 
 
 exports.save_transaction = async (business_id, details) => {
-    // validate the transaction body
+    
     // The below object is kept for reference. Incase i get confused.
-
     // const newTransaction = {
     //     transaction_ref: uuid.v4(),
     //       phone_number: details.phone_number,
@@ -117,8 +121,9 @@ exports.save_transaction = async (business_id, details) => {
     //       status: details.status,
     //       network_provider: details.network_provider,
     // }
+    // let newTransaction = _.omit(details, ["previous_balance", "new_balance"])
 
-    let newTransaction = _.omit(details, ["previous_balance", "new_balance"])
+    const newTransaction = details
     newTransaction.business_id = business_id
     try {
         const savedTransaction = await addTransaction(newTransaction)
