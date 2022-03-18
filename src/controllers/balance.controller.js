@@ -29,7 +29,6 @@ const creditBalance = async (req, res) => {
 
   // unit: "money" is for lite user type. Which should be the default.
   // unit: "data" is for mega user type
-
   let unit = req.body.unit || "money"
   let field = getFieldFromUnit(unit)
   
@@ -60,4 +59,5 @@ module.exports = {
   resetBalance,
   creditBalance,
   updateAllBalance,
+  getFieldFromUnit,
 }

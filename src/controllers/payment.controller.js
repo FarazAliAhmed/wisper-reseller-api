@@ -5,15 +5,7 @@ const postPayment = async (req, res, next) => {
   const fields = req.body
   
   const resp = await create(fields)
-  if (resp.payment) {
-    const user = req.user
-    if(!user.isAdmin){
-      req.body.business_id = user._id
-      req.body.credit_amount = fields.amount
-      return next()
-    }
-    return res.status(201).json(resp.payment)
-  }
+  if (resp.payment) return res.status(201).json(resp.payment)
   return res.status(resp.status).json(resp)
 }
 

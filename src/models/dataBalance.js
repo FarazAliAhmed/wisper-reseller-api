@@ -9,7 +9,7 @@ const dataBalanceSchema = new Schema({
   },
   data_volume: {
     type: Number,
-    default: null,
+    default: 0,
   },
   wallet_balance: {
     type: Number,

@@ -8,6 +8,7 @@ const dbSetUp = require("./models");
 const PORT = config.get("port");
 
 const apiRoutes = require("./routes");
+const hookRoute = require("./routes/hooks")
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
   res.status(200).send({ status: "healthy" });
 });
 app.use("/api", apiRoutes);
+app.use("/hook", hookRoute)
 
 dbSetUp();
 app.listen(PORT, () => console.log(`Server running on PORT: ${PORT}`));
