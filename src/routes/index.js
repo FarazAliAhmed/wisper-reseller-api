@@ -29,6 +29,7 @@ const {
 } = require("../controllers/payment.controller");
 
 const { getPlans } = require("../controllers/plans.controller");
+const { getNetworks } = require("../controllers/networks.controller")
 const sendData = require("../controllers/sendData.controller");
 
 router.get("/whoami", whoami);
@@ -40,6 +41,7 @@ router.patch("/users/:username", getUser, handleUpdate);
 // Dashboard Routes
 // Routes Called by businesses
 router.get("/plans", getUser, getPlans);
+router.get("/networks", getUser, getNetworks);
 
 router.get("/balance", getUser, getAccountBalance);
 
