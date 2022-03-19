@@ -306,7 +306,7 @@ exports.plans = {
          "network": "airtel",
          "plan_type": "corporate gifting",
          // "amount": "₦220",
-         "price": 180,
+         "price": 200,
          "size": "500.0 mb",
          "validity": "monthly"
       },
@@ -314,7 +314,7 @@ exports.plans = {
          "network": "airtel",
          "plan_type": "corporate gifting",
          // "amount": "₦430",
-         "price": 350,
+         "price": 380,
          "size": "1.0 gb",
          "validity": "monthly"
       },
@@ -322,7 +322,7 @@ exports.plans = {
          "network": "airtel",
          "plan_type": "corporate gifting",
          // "amount": "₦860",
-         "price": 700,
+         "price": 760,
          "size": "2.0 gb",
          "validity": "monthly"
       },
@@ -330,7 +330,7 @@ exports.plans = {
          "network": "airtel",
          "plan_type": "corporate gifting",
          // "amount": "₦2150",
-         "price": 1700,
+         "price": 1850,
          "size": "5.0 gb",
          "validity": "monthly"
       },
