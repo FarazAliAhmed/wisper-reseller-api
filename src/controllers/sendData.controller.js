@@ -82,7 +82,7 @@ const sendData = async (req, res) => {
     const send_response = await initiate_data_transfer(requestPayload)
     if (send_response.error){
         // res.status(send_response.status).json(send_response)
-        revert_debit_account_balance(_id, planDetails)
+        revert_debit_account_balance(_id, planDetails, type)
         update_transaction_status(responseObject.transaction_ref, "failed")
         return
     }
