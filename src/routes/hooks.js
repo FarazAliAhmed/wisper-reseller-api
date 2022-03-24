@@ -3,9 +3,7 @@ const router = express.Router()
 const { create: addPayment } = require('../services/payment.service')
 const { credit: creditBalance } = require('../services/balance.service')
 const { whoami } = require('../services/auth.service')
-const { getFieldFromUnit } = require('../controllers/balance.controller')
 const { WEBHOOK_VERIFY_HASH } = process.env
-const Balance = require('../models/dataBalance')
 
 // const sampleWebhookPayload = {
 //     event: 'charge.completed',
@@ -93,11 +91,7 @@ router.post("/",
         const businessId = req.body.business_id
         const creditAmount = parseInt(req.body.amount)
 
-        // unit: "money" is for lite user type. Which should be the default.
-        // unit: "data" is for mega user type
-        let unit = req.body.unit || "money"
-        let field = getFieldFromUnit(unit)
-        
+        let field = "wallet_balance"        
         const newBalance = await creditBalance(businessId, creditAmount, field)
         if (newBalance.error) console.log(newBalance)
     }

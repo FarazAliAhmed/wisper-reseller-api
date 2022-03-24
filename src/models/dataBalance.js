@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const moment = require('moment')
 const Schema = mongoose.Schema;
 
 const dataBalanceSchema = new Schema({
@@ -19,9 +20,31 @@ const dataBalanceSchema = new Schema({
     type: String,
     default: "₦",
   },
+  mega_wallet: {
+    mtn_sme: {
+      type: Number,
+      default: 0
+    },
+    mtn_gifting: {
+      type: Number,
+      default: 0
+    },
+    airtel: {
+      type: Number,
+      default: 0
+    },
+    glo: {
+      type: Number,
+      default: 0
+    },
+    unit: {
+      type: String,
+      default: "MB"
+    }
+  },
   last_purchase: {
-    type: Date,
-    default: Date.now(),
+    type: String,
+    default: moment().format('YYYY/MM/D hh:mm:ss A')
   },
 });
 

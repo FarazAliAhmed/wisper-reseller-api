@@ -44,7 +44,17 @@ const upgradeBalance = async (id) => { //change the unit from MB to ₦
 
 const upgradeAllBalance = async () => {
   const balance = await Balance.updateMany({},
-      {$set : {"wallet_balance":0 , data_unit: "₦" }},
+      {
+        $set : {
+          "mega_wallet": {
+                  mtn_sme: 0,
+                  mtn_gifting: 0,
+                  airtel: 0,
+                  glo: 0,
+                  unit: "MB"
+          }, data_unit: "₦" 
+        }
+      },
       {upsert:false}
     ).exec();
 
@@ -78,8 +88,25 @@ const debit = async (id, debitAmount, field) => {
     { new: true }
   ).exec();
   
-  if (balance[field] < 0)
-    return { error: true, status: 401, message: `Insufficient Balance` };
+  const [parent, child] = field.split(".")
+  
+  let checker;
+  if(child){
+    checker = balance[parent][child]
+  }else{
+    checker = balance[parent]
+  }
+
+  let wallet_name;
+
+  if(child){
+    wallet_name = `in ${child.toUpperCase().replace("_", " ")} wallet`
+  }else{
+    wallet_name = "in wallet"
+  }
+
+  if (checker < 0)
+    return { error: true, status: 401, message: `Insufficient Balance ${wallet_name}` };
   return { balance, error: false };
 };
 

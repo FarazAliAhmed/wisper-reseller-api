@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const moment = require('moment')
 const Schema = mongoose.Schema;
 
 const transactionHistorySchema = new Schema(
@@ -34,8 +35,8 @@ const transactionHistorySchema = new Schema(
       required: true,
     },
     created_at: {
-      type: Date,
-      default: Date.now()
+      type: String,
+      default: moment().format('YYYY/MM/D hh:mm:ss A')
     }
   },
   {

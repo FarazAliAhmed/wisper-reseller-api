@@ -1,4 +1,9 @@
-const {getBalance, getAllBalance, credit, upgradeAllBalance} = require('../services/balance.service')
+const {
+  getBalance,
+  getAllBalance,
+  credit,
+  upgradeAllBalance
+} = require('../services/balance.service')
 
 // Balance is created when business account is created. Check "post" middleware in balance Schema defination
 const getAccountBalance = async (req, res) => {
@@ -14,23 +19,33 @@ const getAllBusinessBalances = async (req, res) => {
   return res.status(allBalance.status).json(allBalance)
 }
 
-const getFieldFromUnit = (unit) => {
-  if (unit === "data"){
-    return "data_volume"
-  }else {
-    return "wallet_balance"
-  }
-}
-
 const creditBalance = async (req, res) => {
 
   const businessId = req.body.business_id
   const creditAmount = req.body.credit_amount
-
+  
   // unit: "money" is for lite user type. Which should be the default.
   // unit: "data" is for mega user type
   let unit = req.body.unit || "money"
-  let field = getFieldFromUnit(unit)
+  
+  // add field wallet to request body when the unit is in data
+  // check dataBalance schema to see proper values for 
+  const wallet = req.body.wallet
+  const allowedWallets = ["mtn_sme", "mtn_gifting", "airtel", "glo"]
+
+  let field;
+  if(unit === "data" && wallet){
+    if(allowedWallets.includes(wallet)){
+      field = `mega_wallet.${wallet}`
+    }else{
+      return res.status(400).json({status: 400, message: "This wallet type does not exist"})
+    }
+  }else if(unit === "money"){
+    field = "wallet_balance"
+  }else {
+    return res.status(400).json({status: 400, message: "You must set a wallet when allocating to a data wallet"})
+  }
+  
   
   const newBalance = await credit(businessId, creditAmount, field)
   if (newBalance.error) return res.status(400).json({status: 400, message: "Error. Unable to credit account balance"})
@@ -59,5 +74,4 @@ module.exports = {
   resetBalance,
   creditBalance,
   updateAllBalance,
-  getFieldFromUnit,
 }

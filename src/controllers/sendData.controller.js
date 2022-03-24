@@ -56,13 +56,13 @@ const sendData = async (req, res) => {
 
     // *****
     responseObject.new_balance = type === "mega" ? 
-        `${debitAccount.balance.data_volume} ${debitAccount.balance.data_unit}`
+        debitAccount.balance.mega_wallet
             :
         `${debitAccount.balance.data_unit} ${debitAccount.balance.wallet_balance}`
-    responseObject.previous_balance = type === "mega" ?
-        `${debitAccount.balance.data_volume  + planDetails.volume} ${debitAccount.balance.data_unit}`
-            :
-        `${debitAccount.balance.data_unit} ${debitAccount.balance.wallet_balance  + planDetails.price}`
+    // responseObject.previous_balance = type === "mega" ?
+    //     `${debitAccount.balance.data_volume  + planDetails.volume} ${debitAccount.balance.data_unit}`
+    //         :
+    //     `${debitAccount.balance.data_unit} ${debitAccount.balance.wallet_balance  + planDetails.price}`
     responseObject.phone_number = validNumber.number
     responseObject.status = "processing"
     responseObject.network_provider = providerId.network

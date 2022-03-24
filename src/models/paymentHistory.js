@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const moment = require('moment')
 const joi = require("joi");
 const Schema = mongoose.Schema;
 
@@ -15,8 +16,8 @@ const paymentHistorySchema = new Schema({
     required: true,
   },
   date_of_payment: {
-    type: Date,
-    default: Date.now(),
+    type: String,
+    default: moment().format('YYYY/MM/D hh:mm:ss A')
   },
   payment_ref: {
     type: String,

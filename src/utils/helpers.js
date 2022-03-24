@@ -14,7 +14,7 @@ exports.get_plan_details = (plan_id) => {
     const volume = parseInt(volume_strings[0]) * units[volume_strings[1]]
     
     return {
-        ..._.pick(selectedPlan, ["validity", "price"]), volume, id : plan_id, error: false
+        ..._.pick(selectedPlan, ["validity", "price", "network", "plan_type"]), volume, id : plan_id, error: false
     }
 }
 
@@ -54,10 +54,24 @@ exports.get_request_payload = async (network, mobile_number, plan, Ported_number
 // 
 
 const getFieldAndAmount = (type, planDetails) => {
+    const { volume, price, network, plan_type,  } = planDetails
+
     if(type === "mega"){
-        return {field: "data_volume", amount: planDetails.volume}
+        let pType;
+        if(network === "mtn"){
+            if(plan_type === "sme"){
+                pType = `${network}_sme`
+            }else if(plan_type.includes("gifting")){
+                pType = `${network}_gifting`
+            }else{
+                pType = `${network}`
+            }
+        }else{
+            pType = `${network}`
+        }
+        return {field: `mega_wallet.${pType}`, amount: volume}
     }else{
-        return {field: "wallet_balance", amount: planDetails.price}
+        return {field: "wallet_balance", amount: price}
     }
 }
 
@@ -97,7 +111,7 @@ exports.initiate_data_transfer = async (requestPayload) => {
             return {error: true, message: "An error occured with data transfer server"}
         }
     }catch(e){
-        console.log("ERROOORR::", e)
+        console.log("ERROOORR::", e.stack)
         return {error: true, message: "Data volume transafer failed"}
     }
 }
