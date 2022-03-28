@@ -54,12 +54,13 @@ exports.get_request_payload = async (network, mobile_number, plan, Ported_number
 // 
 
 const getFieldAndAmount = (type, planDetails) => {
-    const { volume, price, network, plan_type,  } = planDetails
+    let { volume, price, network, plan_type, } = planDetails
 
     if(type === "mega"){
         let pType;
         if(network === "mtn"){
             if(plan_type === "sme"){
+                volume = volume < 1024 ? volume : volume < 1048576 ? ~~(volume / 1024) * 1000 : ~~(volume / 1048576) * 1000000
                 pType = `${network}_sme`
             }else if(plan_type.includes("gifting")){
                 pType = `${network}_gifting`
