@@ -53,16 +53,11 @@ const sendData = async (req, res) => {
         return revert_debit_account_balance(_id, planDetails, type)
     }
 
-
-    // *****
+    // **********************
     responseObject.new_balance = type === "mega" ? 
         debitAccount.balance.mega_wallet
             :
         `${debitAccount.balance.data_unit} ${debitAccount.balance.wallet_balance}`
-    // responseObject.previous_balance = type === "mega" ?
-    //     `${debitAccount.balance.data_volume  + planDetails.volume} ${debitAccount.balance.data_unit}`
-    //         :
-    //     `${debitAccount.balance.data_unit} ${debitAccount.balance.wallet_balance  + planDetails.price}`
     responseObject.phone_number = validNumber.number
     responseObject.status = "processing"
     responseObject.network_provider = providerId.network
@@ -70,26 +65,26 @@ const sendData = async (req, res) => {
     responseObject.plan_id = planDetails.id
     responseObject.transaction_ref = uuid.v4();
     
-    // return response on data transfer
-    const transactionResponse = await format_transaction_response(responseObject)
-    res.status(200).json(transactionResponse)
-
-    // save the transaction to database
-    const savedTransaction = await save_transaction(_id, responseObject)
-    if (savedTransaction.error) console.log(savedTransaction)
     
     // transfer data to phone number
     const send_response = await initiate_data_transfer(requestPayload)
     if (send_response.error){
-        // res.status(send_response.status).json(send_response)
         revert_debit_account_balance(_id, planDetails, type)
-        update_transaction_status(responseObject.transaction_ref, "failed")
-        return
+        responseObject.status = "failed"
+        delete responseObject.new_balance
+        // update_transaction_status(responseObject.transaction_ref, "failed")
+    }else{
+        // update_transaction_status(responseObject.transaction_ref, "success")
+        responseObject.status = "success"
     }
-
-    // update transaction to successful if no error
-    update_transaction_status(responseObject.transaction_ref, "success")
     
+    // return response on data transfer
+    const transactionResponse = await format_transaction_response(responseObject)
+    res.status(200).json(transactionResponse)
+    
+    // save the transaction to database
+    const savedTransaction = await save_transaction(_id, responseObject)
+    if (savedTransaction.error) console.log(savedTransaction)
 }
 
 

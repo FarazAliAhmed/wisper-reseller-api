@@ -10,6 +10,8 @@ exports.units = { //what to multiply by, to convert to MB
     "tb": 1048576
 }
 
+exports.ported_numbers = ["0913", "0912"]
+
 exports.network_ids = {
     1: "mtn",
    //  2: "glo",
@@ -30,7 +32,7 @@ exports.plans = {
          "network": "mtn",
          "plan_type": "sme",
          // "amount": "₦240",
-         "price": 265,
+         "price": 245,
          "size": "1.0 gb",
          "validity": "30 days"
       },
@@ -38,7 +40,7 @@ exports.plans = {
          "network": "mtn",
          "plan_type": "sme",
          // "amount": "₦480",
-         "price": 530,
+         "price": 490,
          "size": "2.0 gb",
          "validity": "30 days"
       },
@@ -46,7 +48,7 @@ exports.plans = {
          "network": "mtn",
          "plan_type": "sme",
          // "amount": "₦1200",
-         "price": 1320,
+         "price": 1250,
          "size": "5.0 gb",
          "validity": "30 days"
       },
@@ -62,7 +64,7 @@ exports.plans = {
          "network": "mtn",
          "plan_type": "sme",
          // "amount": "₦720",
-         "price": 790,
+         "price": 725,
          "size": "3.0 gb",
          "validity": "30 days"
       },
@@ -298,7 +300,7 @@ exports.plans = {
          "network": "mtn",
          "plan_type": "sme",
          // "amount": "₦2400",
-         "price": 2600,
+         "price": 2450,
          "size": "10.0 gb",
          "validity": "30 days"
       },
