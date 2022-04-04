@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const moment = require('moment')
+const moment = require('moment-timezone')
 const Schema = mongoose.Schema;
 
 const dataBalanceSchema = new Schema({
@@ -44,7 +44,7 @@ const dataBalanceSchema = new Schema({
   },
   last_purchase: {
     type: String,
-    default: moment().format('YYYY/MM/D hh:mm:ss A')
+    default: moment().tz('Africa/Lagos').format('YYYY/MM/D hh:mm:ss A')
   },
 });
 

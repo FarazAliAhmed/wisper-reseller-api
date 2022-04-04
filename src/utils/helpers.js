@@ -19,7 +19,7 @@ exports.get_plan_details = (plan_id) => {
 }
 
 
-exports.get_network_provider = async (network_provider) => {
+exports.get_network_provider = (network_provider) => {
     for (let ID in network_ids){
         if(network_ids[ID] === network_provider.trim().toLowerCase()){
             return {network: network_provider.trim().toLowerCase(), id: ID, error: false}
@@ -29,7 +29,7 @@ exports.get_network_provider = async (network_provider) => {
 }
 
 
-exports.validate_phone_number = async (number, network_provider) => {
+exports.validate_phone_number = (number, network_provider) => {
     if (number.length !== 11 && parseInt(number).length !== 10) {
       return {error: true, status: 401, message: "Invalid Phone Number"};
     }
@@ -42,7 +42,7 @@ exports.validate_phone_number = async (number, network_provider) => {
 }
 
 
-exports.get_request_payload = async (network, mobile_number, plan, Ported_number) => {
+exports.get_request_payload = (network, mobile_number, plan, Ported_number) => {
     return {
         network,
         mobile_number,
@@ -109,16 +109,16 @@ exports.initiate_data_transfer = async (requestPayload) => {
         if(response.data && response.data.Status && response.data.Status === "successful"){
             return {error: false, response: response.data}
         }else{
-            return {error: true, message: "An error occured with data transfer server"}
+            return {error: true, status: 400, message: "An error occured with data transfer server"}
         }
     }catch(e){
         console.log("ERROOORR::", e.stack)
-        return {error: true, message: "Data volume transafer failed"}
+        return {error: true, status: 400, message: "Data volume transafer failed"}
     }
 }
 
 
-exports.format_transaction_response = async (responseObject) => {
+exports.format_transaction_response = (responseObject) => {
     // This function might be used later to format all response before sending
     return responseObject
 }
@@ -144,8 +144,7 @@ exports.save_transaction = async (business_id, details) => {
         const savedTransaction = await addTransaction(newTransaction)
         return {error: false, status: 201, transaction: savedTransaction.transaction}
     }catch(e){
-        newTransaction.error = true
-        return newTransaction 
+        return {error: true, status: 400, transaction: newTransaction}
     }
 }
 
