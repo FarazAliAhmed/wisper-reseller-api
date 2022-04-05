@@ -2,7 +2,8 @@ const uuid = require('uuid')
 const {
     get_plan_details,
     get_network_provider,
-    validate_phone_number
+    validate_phone_number,
+    getCurrentTime
 } = require('../utils').helpers
 
 const {
@@ -135,31 +136,33 @@ const sendData = async (req, res) => {
         responseObject.data_volume = planDetails.volume
         responseObject.plan_id = planDetails.id
         responseObject.transaction_ref = uuid.v4();
+        responseObject.created_at = getCurrentTime()
 
+        // save the transaction to database
+        save_transaction(_id, responseObject)
+        .then(savedTransaction => {
+            if (savedTransaction.error) return res.status(400).json({status: 400, message: "Server Error! Please try again later"})
 
-        // transfer data to phone number
-        initiate_data_transfer(requestPayload)
-        .then(send_response => {
-            if (send_response.error){
-                revert_debit_account_balance(_id, planDetails, type)
-                responseObject.status = "failed"
-                delete responseObject.new_balance
-                // update_transaction_status(responseObject.transaction_ref, "failed")
-            }else{
-                // update_transaction_status(responseObject.transaction_ref, "success")
-                responseObject.status = "success"
-            }
-            
-            // return response on data transfer
-            const transactionResponse = format_transaction_response(responseObject)
-            res.status(200).json(transactionResponse)
-            
-            // save the transaction to database
-            save_transaction(_id, responseObject)
-            .then(savedTransaction => {
-                if (savedTransaction.error) console.log(savedTransaction)
+            // transfer data to phone number
+            initiate_data_transfer(requestPayload)
+            .then(send_response => {
+                if (send_response.error){
+                    responseObject.status = "failed"
+                    delete responseObject.new_balance
+                    revert_debit_account_balance(_id, planDetails, type).then(() => {
+                        update_transaction_status(responseObject.transaction_ref, "failed")
+                    })
+                }else{
+                    responseObject.status = "success"
+                    update_transaction_status(responseObject.transaction_ref, "success")
+                }
+                
+                // return response on data transfer
+                const transactionResponse = format_transaction_response(responseObject)
+                res.status(200).json(transactionResponse)                
             })
         })
+
     })    
 }
 

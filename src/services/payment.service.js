@@ -1,4 +1,5 @@
 const Payment = require("../models/paymentHistory");
+const { getCurrentTime } = require('../utils').helpers
 
 const getAll = async (id) => {
   const businessId = id;
@@ -21,6 +22,7 @@ const getOne = async (payment_ref) => {
 
 const create = async (fields) => {
   try{
+    fields.date_of_payment = getCurrentTime()
     let payment = new Payment(fields)
     payment = await payment.save()
     return {payment}

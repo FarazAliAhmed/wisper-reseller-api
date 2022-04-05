@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const moment = require('moment-timezone')
 const Schema = mongoose.Schema;
 
 const transactionHistorySchema = new Schema(
@@ -36,7 +35,7 @@ const transactionHistorySchema = new Schema(
     },
     created_at: {
       type: String,
-      default: moment().tz('Africa/Lagos').format('YYYY/MM/D hh:mm:ss A')
+      default: `${new Date()}`
     }
   }
 );

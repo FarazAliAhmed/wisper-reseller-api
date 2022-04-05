@@ -1,5 +1,6 @@
 const axios = require('axios')
 const _ = require('lodash')
+const moment = require('moment-timezone')
 
 const {create: addTransaction, update: updateTransaction} = require('../services/transaction.service')
 const {debit} = require('../services/balance.service')
@@ -161,4 +162,8 @@ exports.update_transaction_status = async (transaction_ref, status) => {
 
 exports.nairaToData = (nairaAmount) => {
     return (parseInt(nairaAmount) / 300) * 1024
+}
+
+exports.getCurrentTime = () => {
+    return moment().tz('Africa/Lagos').format('YYYY/MM/D hh:mm:ss A')
 }

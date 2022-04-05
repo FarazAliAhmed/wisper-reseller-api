@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const moment = require('moment-timezone')
 const joi = require("joi");
 const Schema = mongoose.Schema;
 
@@ -17,7 +16,7 @@ const paymentHistorySchema = new Schema({
   },
   date_of_payment: {
     type: String,
-    default: moment().tz('Africa/Lagos').format('YYYY/MM/D hh:mm:ss A')
+    default: `${new Date()}`
   },
   payment_ref: {
     type: String,

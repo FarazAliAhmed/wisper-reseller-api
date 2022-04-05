@@ -13,7 +13,8 @@ module.exports = {
         get_plan_details: require('./helpers').get_plan_details,
         get_network_provider: require('./helpers').get_network_provider,
         validate_phone_number: require('./helpers').validate_phone_number,
-        nairaToData: require('./helpers').nairaToData
+        nairaToData: require('./helpers').nairaToData,
+        getCurrentTime: require('./helpers').getCurrentTime,
     },
     debit_account_balance: require('./helpers').debit_account_balance,
     revert_debit_account_balance: require('./helpers').revert_debit_account_balance,

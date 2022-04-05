@@ -24,7 +24,6 @@ const getOne = async (transaction_ref) => {
 };
 
 const create = async (body) => {
-  // save to db if validation passes
   let newTransaction = new Transaction(body);
   try{
     newTransaction = await newTransaction.save();
@@ -32,12 +31,9 @@ const create = async (body) => {
   }catch(e){
     console.log("Create Transaction Error: ", e)
   }
-  // will add try-catch to ensure success of save
-  // return { status: 400, messsage: 'Unable to add a Transaction' }
 };
 
 const update = async (query, body) => {
-  // Find the transaction to be updated
   let transaction;
   try{
     transaction = await Transaction.findOneAndUpdate(query, body, { new: true }).exec();
