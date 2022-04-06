@@ -60,14 +60,14 @@ exports.plans = {
          "size": "10.0 gb",
          "validity": "monthly"
       },
-      "44": {
-         "network": "mtn",
-         "plan_type": "sme",
-         // "amount": "₦720",
-         "price": 725,
-         "size": "3.0 gb",
-         "validity": "30 days"
-      },
+      // "44": {
+      //    "network": "mtn",
+      //    "plan_type": "sme",
+      //    // "amount": "₦720",
+      //    "price": 725,
+      //    "size": "3.0 gb",
+      //    "validity": "30 days"
+      // },
       // "50": {
       //    "network": "mtn",
       //    "plan_type": "gifting",
