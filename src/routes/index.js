@@ -63,6 +63,7 @@ router.get("/payments", getUser, getAllPayments);
  */
 router.get("/admin/business", getAdmin, getAllBusiness);
 router.get("/admin/admins", getAdmin, getSystemAdmins);
+router.get("/admin/business/get/:account_id", getOneBusiness);
 router.get("/admin/balances", getAdmin, getAllBusinessBalances);
 router.get("/admin/transactions", getAdmin, getAllBusinessTransactions);
 

@@ -7,11 +7,24 @@ const {
 const getAllBusiness = async (req, res, next) => {
     const resp = await getAll()
     if(resp.error) return res.status(400).json(resp)
-    return res.status(200).json(resp.business)
+
+    let business = {
+        mega: [],
+        lite: []
+    }
+    resp.business.forEach(buss => {
+        if(buss.type === "mega"){
+            business.mega.push(buss)
+        }else{
+            business.lite.push(buss)
+        }
+    })
+    return res.status(200).json(business)
 }
 
 const getOneBusiness = async (req, res, next) => {
-    const resp = await getOne()
+    const account_id = req.params.account_id
+    const resp = await getOne(account_id)
     if(resp.error) return res.status(400).json(resp)
     return res.status(200).json(resp.business)
 }
