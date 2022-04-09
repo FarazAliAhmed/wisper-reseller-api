@@ -9,6 +9,12 @@ const {
 } = require("../controllers/user.controller");
 
 const {
+  getAllBusiness,
+  getOneBusiness,
+  getSystemAdmins
+} = require('../controllers/business.controller')
+
+const {
   getAccountBalance,
   getAllBusinessBalances,
   creditBalance,
@@ -55,6 +61,8 @@ router.get("/payments", getUser, getAllPayments);
 /**Routes Called by Admin
  * remember to set auth tokens to expire
  */
+router.get("/admin/business", getAdmin, getAllBusiness);
+router.get("/admin/admins", getAdmin, getSystemAdmins);
 router.get("/admin/balances", getAdmin, getAllBusinessBalances);
 router.get("/admin/transactions", getAdmin, getAllBusinessTransactions);
 
@@ -66,7 +74,6 @@ router.patch("/admin/payments/:id", getAdmin, updatePayment);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
 router.post("/admin/balance/upgrade", getAdmin, updateAllBalance);
 // Endpoint for admin to upgrade user from lite to mega
-// Define a get all accounts route for admin
 // Define endpoint for admin to debit a user's account
 
 /**END USER ROUTES

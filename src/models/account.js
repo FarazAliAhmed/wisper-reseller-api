@@ -42,6 +42,7 @@ const accountSchema = mongoose.Schema(
     isAdmin: {
       type: Boolean,
       default: false,
+      index: true,
     },
     type: {
       type: String,
