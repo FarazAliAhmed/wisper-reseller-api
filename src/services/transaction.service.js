@@ -2,7 +2,11 @@ const Transaction = require("../models/transactionHistory");
 
 // called by admin and gets all for all businesses
 const getAllB = async () => {
-  const transactions = await Transaction.find().exec();
+  const transactions = await Transaction
+                            .find()
+                            .sort({_id: -1})
+                            .limit(300)
+                            .exec();
   if (transactions) return { transactions };
   return { status: 400, messsage: "Unable to retrieve all Transactions" };
 };

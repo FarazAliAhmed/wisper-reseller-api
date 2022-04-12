@@ -18,12 +18,16 @@ const {
   getAccountBalance,
   getAllBusinessBalances,
   creditBalance,
+  debitBalance,
   updateAllBalance,
 } = require("../controllers/balance.controller");
 const {
+  postTransaction,
   getTransaction,
   getAllTransaction,
   getAllBusinessTransactions,
+  updateTransaction,
+  deleteTransaction,
 } = require("../controllers/transaction.controller");
 const {
   getPayment,
@@ -62,20 +66,25 @@ router.get("/payments", getUser, getAllPayments);
  * remember to set auth tokens to expire
  */
 router.get("/admin/business", getAdmin, getAllBusiness);
-router.get("/admin/admins", getAdmin, getSystemAdmins);
 router.get("/admin/business/get/:account_id", getOneBusiness);
+router.get("/admin/admins", getAdmin, getSystemAdmins);
+
 router.get("/admin/balances", getAdmin, getAllBusinessBalances);
-router.get("/admin/transactions", getAdmin, getAllBusinessTransactions);
 
 router.post("/admin/credit", getAdmin, creditBalance);
+router.post("/admin/debit", getAdmin, debitBalance);
+
+router.get("/admin/transactions", getAdmin, getAllBusinessTransactions);
+router.post("/admin/transactions", getAdmin, postTransaction);
+router.patch("/admin/transactions/:id", getAdmin, updateTransaction);
+router.delete("/admin/transactions/:id", getAdmin, updateTransaction);
 
 router.get("/admin/payments", getAdmin, getAllBusinessPayments);
 router.post("/admin/payments", getAdmin, postPayment);
 router.patch("/admin/payments/:id", getAdmin, updatePayment);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
-router.post("/admin/balance/upgrade", getAdmin, updateAllBalance);
+// router.post("/admin/balance/upgrade", getAdmin, updateAllBalance);
 // Endpoint for admin to upgrade user from lite to mega
-// Define endpoint for admin to debit a user's account
 
 /**END USER ROUTES
  */

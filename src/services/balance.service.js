@@ -1,10 +1,11 @@
 const Balance = require("../models/dataBalance");
 
 const getBalance = async (id) => {
-  const balance = await Balance.findOne({ business: id }).exec();
+  const balance = await Balance.findOne({ business: id }).populate('business').exec();
   if (balance) return { balance };
   return {
     status: 500,
+    error: true,
     message: `Error getting balance of user with id: ${id}`,
   };
 };

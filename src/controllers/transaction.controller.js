@@ -1,11 +1,17 @@
 const {
   getAll,
   getAllB,
-  getOne
+  getOne,
+  deleteOne,
+  update,
+  create
 } = require('../services/transaction.service')
 
 const postTransaction = async (req, res) => {
-
+  const {body} = req
+  const resp = await create(body)
+  if(resp) return res.status(201).json({...resp, message: "Successfully added transaction"})
+  return res.status(500).json({status: 500, message: "Error adding transaction"})
 }
 
 const getTransaction = async (req, res) => {
@@ -34,10 +40,19 @@ const getAllBusinessTransactions = async (req, res) => {
 
 const updateTransaction = async (req, res) => {
   const transactionId = req.params.id
+  const {body} = req
+  const query = {_id: transactionId}  //What to search the transaction by
+  
+  const resp = await update(query, body)
+  if(resp) return res.status(201).json({...resp, message: "Record deleted successfully"})
+  return res.status(500).json({status: 500, message: "Error deleting transaction"})
 }
 
 const deleteTransaction = async (req, res) => {
   const transactionId = req.params.id
+  const resp = await deleteOne(transactionId)
+  if(resp) return res.status(200).json(resp)
+  return res.status(500).json({status: 500, message: "Unable to delete transaction at this time"})
 }
 
 module.exports = {

@@ -2,6 +2,7 @@ const {
   getBalance,
   getAllBalance,
   credit,
+  debit,
   upgradeAllBalance
 } = require('../services/balance.service')
 
@@ -38,17 +39,44 @@ const creditBalance = async (req, res) => {
     if(allowedWallets.includes(wallet)){
       field = `mega_wallet.${wallet}`
     }else{
-      return res.status(400).json({status: 400, message: "This wallet type does not exist"})
+      return res.status(400).json({status: 400, message: "This wallet type does not exist. Allowed types are: [\"mtn_sme\", \"mtn_gifting\", \"airtel\", \"glo\"] "})
     }
   }else if(unit === "money"){
     field = "wallet_balance"
   }else {
-    return res.status(400).json({status: 400, message: "You must set a wallet when allocating to a data wallet"})
+    return res.status(400).json({status: 400, message: "You must set a 'wallet' field when allocating to a data wallet"})
   }
   
   
   const newBalance = await credit(businessId, creditAmount, field)
   if (newBalance.error) return res.status(400).json({status: 400, message: "Error. Unable to credit account balance"})
+  res.status(newBalance.status).json({status: newBalance.status, message: newBalance.message, newBalance: newBalance.balance})
+}
+
+const debitBalance = async (req, res) => {
+
+  const businessId = req.body.business_id
+  const debitAmount = req.body.debit_amount
+  
+  let unit = req.body.unit || "money"
+  const wallet = req.body.wallet
+  const allowedWallets = ["mtn_sme", "mtn_gifting", "airtel", "glo"]
+
+  let field;
+  if(unit === "data" && wallet){
+    if(allowedWallets.includes(wallet)){
+      field = `mega_wallet.${wallet}`
+    }else{
+      return res.status(400).json({status: 400, message: "This wallet type does not exist. Allowed types are: [\"mtn_sme\", \"mtn_gifting\", \"airtel\", \"glo\"] "})
+    }
+  }else if(unit === "money"){
+    field = "wallet_balance"
+  }else {
+    return res.status(400).json({status: 400, message: "You must set a 'wallet' field when allocating to a data wallet"})
+  } 
+  
+  const newBalance = await debit(businessId, debitAmount, field)
+  if (newBalance.error) return res.status(200).json({status: 200, message: "Warning! Account balance is now negative"})
   res.status(newBalance.status).json({status: newBalance.status, message: newBalance.message, newBalance: newBalance.balance})
 }
 
@@ -73,5 +101,6 @@ module.exports = {
   updateBalance,
   resetBalance,
   creditBalance,
+  debitBalance,
   updateAllBalance,
 }
