@@ -77,7 +77,7 @@ router.post("/admin/debit", getAdmin, debitBalance);
 router.get("/admin/transactions", getAdmin, getAllBusinessTransactions);
 router.post("/admin/transactions", getAdmin, postTransaction);
 router.patch("/admin/transactions/:id", getAdmin, updateTransaction);
-router.delete("/admin/transactions/:id", getAdmin, updateTransaction);
+router.delete("/admin/transactions/:id", getAdmin, deleteTransaction);
 
 router.get("/admin/payments", getAdmin, getAllBusinessPayments);
 router.post("/admin/payments", getAdmin, postPayment);

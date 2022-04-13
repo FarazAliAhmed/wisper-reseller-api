@@ -1,3 +1,4 @@
+const Joi = require('joi')
 const {
   getAll,
   getAllB,
@@ -9,6 +10,8 @@ const {
 
 const postTransaction = async (req, res) => {
   const {body} = req
+  const {error} = validatePostTransaction(body)
+  if(error) return res.status(500).json({status: 500, message: error.details[0].message})
   const resp = await create(body)
   if(resp) return res.status(201).json({...resp, message: "Successfully added transaction"})
   return res.status(500).json({status: 500, message: "Error adding transaction"})
@@ -53,6 +56,27 @@ const deleteTransaction = async (req, res) => {
   const resp = await deleteOne(transactionId)
   if(resp) return res.status(200).json(resp)
   return res.status(500).json({status: 500, message: "Unable to delete transaction at this time"})
+}
+
+const validatePostTransaction = (body) => {
+  const schema = Joi.object({
+    transaction_ref: Joi.string()
+            .required(),
+    phone_number: Joi.string()
+            .required(),
+    data_volume: Joi.number(),
+    data_price: Joi.number()
+            .required(),
+    business_id: Joi.string()
+            .required(),
+    network_provider: Joi.string()
+            .max(10),
+    status: Joi.string()
+            .valid("success", "failed", "processing")
+            .required()
+            .max(20),
+  })
+  return schema.validate(body)
 }
 
 module.exports = {

@@ -1,7 +1,9 @@
+const mongoose = require('mongoose')
 const Balance = require("../models/dataBalance");
 
 const getBalance = async (id) => {
-  const balance = await Balance.findOne({ business: id }).populate('business').exec();
+  const business_id = mongoose.Types.ObjectId(id)
+  const balance = await Balance.findOne({ business: business_id }).populate('business').exec();
   if (balance) return { balance };
   return {
     status: 500,
@@ -11,7 +13,7 @@ const getBalance = async (id) => {
 };
 
 const getAllBalance = async () => {
-  const balances = await Balance.find().exec();
+  const balances = await Balance.find().populate('business').exec();
   if (balances) return { balances };
   return { status: 500, message: `Unable to fetch balances of all accounts` };
 };
