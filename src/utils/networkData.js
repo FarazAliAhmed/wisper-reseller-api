@@ -20,7 +20,8 @@ exports.network_ids = {
 }
 
 
-exports.plans = {
+// Use this for Superjaraapi: New
+exports.plans_new = {
       // "6": {
       //    "network": "mtn",
       //    "plan_type": "sme",
@@ -375,14 +376,16 @@ exports.plans = {
       // }
 }
 
-exports.plans_old = {
-   //  "43": {
-   //     "network": "mtn",
-   //     "plan_type": "gifting",
-   //     "amount": "₦2200",
-   //     "size": "10.0 gb",
-   //     "validity": "monthly"
-   //  },
+// Use this for Superjara: Original
+exports.plans = {
+    "43": {
+       "network": "mtn",
+       "plan_type": "gifting",
+      //  "amount": "₦2200",
+      "price": 2500,
+       "size": "10.0 gb",
+       "validity": "monthly"
+    },
    //  "49": {
    //     "network": "mtn",
    //     "plan_type": "gifting",
@@ -409,6 +412,73 @@ exports.plans_old = {
    //     "plan_type": "gifting",
    //     "amount": "₦3300",
    //     "size": "15.0 gb",
+   //     "validity": "monthly"
+   //  },
+    "208": {
+       "network": "mtn",
+       "plan_type": "gifting",
+      //  "amount": "₦220",
+      "price": 255,
+       "size": "1.0 gb",
+       "validity": "monthly"
+    },
+    "209": {
+       "network": "mtn",
+       "plan_type": "gifting",
+      //  "amount": "₦440",
+      "price": 510,
+       "size": "2.0 gb",
+       "validity": "monthly"
+    },
+    "210": {
+       "network": "mtn",
+       "plan_type": "gifting",
+      //  "amount": "₦660",
+      "price": 765,
+       "size": "3.0 gb",
+       "validity": "monthly"
+    },
+    "211": {
+       "network": "mtn",
+       "plan_type": "gifting",
+      //  "amount": "₦1100",
+      "price": 1275,
+       "size": "5.0 gb",
+       "validity": "monthly"
+    },
+   //  "212": {
+   //     "network": "mtn",
+   //     "plan_type": "gifting",
+   //     "amount": "₦25",
+   //     "size": "50.0 mb",
+   //     "validity": "monthly"
+   //  },
+   //  "213": {
+   //     "network": "mtn",
+   //     "plan_type": "gifting",
+   //     "amount": "₦35",
+   //     "size": "150.0 mb",
+   //     "validity": "monthly"
+   //  },
+   //  "214": {
+   //     "network": "mtn",
+   //     "plan_type": "gifting",
+   //     "amount": "₦60",
+   //     "size": "250.0 mb",
+   //     "validity": "monthly"
+   //  },
+   //  "224": {
+   //     "network": "mtn",
+   //     "plan_type": "gifting",
+   //     "amount": "₦16500",
+   //     "size": "75.0 gb",
+   //     "validity": "monthly"
+   //  },
+   //  "225": {
+   //     "network": "mtn",
+   //     "plan_type": "gifting",
+   //     "amount": "₦22000",
+   //     "size": "100.0 gb",
    //     "validity": "monthly"
    //  },
    //  "182": {
@@ -473,6 +543,13 @@ exports.plans_old = {
    //     "amount": "₦13500",
    //     "size": "75.0 gb",
    //     "validity": "30 days{gifting}"
+   //  },
+   //  "215": {
+   //     "network": "9mobile",
+   //     "plan_type": "gifting",
+   //     "amount": "₦1450",
+   //     "size": "7.0 gb",
+   //     "validity": "10days"
    //  },
    //  "194": {
    //     "network": "glo",
@@ -565,62 +642,6 @@ exports.plans_old = {
    //     "size": "138.0 gb",
    //     "validity": "30 days"
    //  },
-   //  "208": {
-   //     "network": "mtn",
-   //     "plan_type": "gifting",
-   //     "amount": "₦220",
-   //     "size": "1.0 gb",
-   //     "validity": "monthly"
-   //  },
-   //  "209": {
-   //     "network": "mtn",
-   //     "plan_type": "gifting",
-   //     "amount": "₦440",
-   //     "size": "2.0 gb",
-   //     "validity": "monthly"
-   //  },
-   //  "210": {
-   //     "network": "mtn",
-   //     "plan_type": "gifting",
-   //     "amount": "₦660",
-   //     "size": "3.0 gb",
-   //     "validity": "monthly"
-   //  },
-   //  "211": {
-   //     "network": "mtn",
-   //     "plan_type": "gifting",
-   //     "amount": "₦1100",
-   //     "size": "5.0 gb",
-   //     "validity": "monthly"
-   //  },
-   //  "212": {
-   //     "network": "mtn",
-   //     "plan_type": "gifting",
-   //     "amount": "₦25",
-   //     "size": "50.0 mb",
-   //     "validity": "monthly"
-   //  },
-   //  "213": {
-   //     "network": "mtn",
-   //     "plan_type": "gifting",
-   //     "amount": "₦35",
-   //     "size": "150.0 mb",
-   //     "validity": "monthly"
-   //  },
-   //  "214": {
-   //     "network": "mtn",
-   //     "plan_type": "gifting",
-   //     "amount": "₦60",
-   //     "size": "250.0 mb",
-   //     "validity": "monthly"
-   //  },
-   //  "215": {
-   //     "network": "9mobile",
-   //     "plan_type": "gifting",
-   //     "amount": "₦1450",
-   //     "size": "7.0 gb",
-   //     "validity": "10days"
-   //  },
    //  "219": {
    //     "network": "glo",
    //     "plan_type": "gifting",
@@ -628,41 +649,30 @@ exports.plans_old = {
    //     "size": "350.0 mb",
    //     "validity": "3days"
    //  },
-   //  "224": {
-   //     "network": "mtn",
-   //     "plan_type": "gifting",
-   //     "amount": "₦16500",
-   //     "size": "75.0 gb",
-   //     "validity": "monthly"
-   //  },
-   //  "225": {
-   //     "network": "mtn",
-   //     "plan_type": "gifting",
-   //     "amount": "₦22000",
-   //     "size": "100.0 gb",
-   //     "validity": "monthly"
-   //  },
-   //  "234": {
-   //     "network": "mtn",
-   //     "plan_type": "sme",
-   //     "amount": "₦240",
-   //     "size": "1.0 gb",
-   //     "validity": "30 days"
-   //  },
-   //  "235": {
-   //     "network": "mtn",
-   //     "plan_type": "sme",
-   //     "amount": "₦480",
-   //     "size": "2.0 gb",
-   //     "validity": "30 days"
-   //  },
-   //  "237": {
-   //     "network": "mtn",
-   //     "plan_type": "sme",
-   //     "amount": "₦1198",
-   //     "size": "5.0 gb",
-   //     "validity": "30 days"
-   //  },
+    "234": {
+       "network": "mtn",
+       "plan_type": "sme",
+      //  "amount": "₦240",
+      "price": 245,
+      "size": "1.0 gb",
+      "validity": "30 days"
+    },
+    "235": {
+       "network": "mtn",
+       "plan_type": "sme",
+      //  "amount": "₦480",
+      "price": 490,
+       "size": "2.0 gb",
+       "validity": "30 days"
+    },
+    "237": {
+       "network": "mtn",
+       "plan_type": "sme",
+      //  "amount": "₦1198",
+      "price": 1250,
+       "size": "5.0 gb",
+       "validity": "30 days"
+    },
    //  "242": {
    //     "network": "mtn",
    //     "plan_type": "sme",
@@ -670,52 +680,59 @@ exports.plans_old = {
    //     "size": "500.0 mb",
    //     "validity": "monthly"
    //  },
-   //  "246": {
-   //     "network": "mtn",
-   //     "plan_type": "sme",
-   //     "amount": "₦2400",
-   //     "size": "10.0 gb",
-   //     "validity": "monthly"
-   //  },
+    "246": {
+       "network": "mtn",
+       "plan_type": "sme",
+      //  "amount": "₦2400",
+      "price": 2450,
+       "size": "10.0 gb",
+       "validity": "monthly"
+    },
     "253": {
        "network": "airtel",
        "plan_type": "gifting",
-       "amount": "₦220",
+      //  "amount": "₦220",
+      "price": 200,
        "size": "500.0 mb",
        "validity": "monthly"
     },
     "254": {
        "network": "airtel",
        "plan_type": "gifting",
-       "amount": "₦430",
+      //  "amount": "₦430",
+      "price": 380,
        "size": "1.0 gb",
        "validity": "monthly"
     },
     "255": {
        "network": "airtel",
        "plan_type": "gifting",
-       "amount": "₦860",
+      //  "amount": "₦860",
+      "price": 760,
        "size": "2.0 gb",
        "validity": "monthly"
     },
     "256": {
        "network": "airtel",
        "plan_type": "gifting",
-       "amount": "₦2150",
+      //  "amount": "₦2150",
+      "price": 1850,
        "size": "5.0 gb",
        "validity": "monthly"
     },
     "257": {
        "network": "airtel",
        "plan_type": "gifting",
-       "amount": "₦50",
+      //  "amount": "₦50",
+      "price": 50,
        "size": "100.0 mb",
        "validity": "7 days"
     },
     "258": {
        "network": "airtel",
        "plan_type": "gifting",
-       "amount": "₦150",
+      //  "amount": "₦150",
+      "price": 100,
        "size": "300.0 mb",
        "validity": "7 days"
     }
