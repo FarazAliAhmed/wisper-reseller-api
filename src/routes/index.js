@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getUser, getAdmin, parseKey } = require("../utils").middleware;
+const { getUser, getAdmin, parseKey, transactionOnAllocate } = require("../utils").middleware;
 
 const { handleLogin, whoami } = require("../controllers/auth.controller");
 const {
@@ -88,6 +88,6 @@ router.delete("/admin/payments/:id", getAdmin, deletePayment);
 
 /**END USER ROUTES
  */
-router.post("/buy", parseKey, sendData);
+router.post("/buy", parseKey, sendData, transactionOnAllocate);
 
 module.exports = router;

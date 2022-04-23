@@ -109,7 +109,7 @@ const debit = async (id, debitAmount, field) => {
 
   if (checker < 0)
     return { error: true, status: 401, message: `Insufficient Balance ${wallet_name}` };
-  return { balance, error: false };
+  return { balance, error: false, status: 201 };
 };
 
 const reset = async (id) => {

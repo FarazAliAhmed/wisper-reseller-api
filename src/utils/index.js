@@ -2,7 +2,8 @@ module.exports = {
     middleware: {
         getUser: require('./middleware/getUser'),
         getAdmin: require('./middleware/getAdmin'),
-        parseKey: require('./middleware/parseKey')
+        parseKey: require('./middleware/parseKey'),
+        transactionOnAllocate: require('./middleware/transactionOnAllocate')
     },
     data: {
         unit: require('./networkData').unit,

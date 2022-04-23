@@ -88,7 +88,7 @@ const responseObject = {}
 //     if (savedTransaction.error) console.log(savedTransaction)
 // }
 
-const sendData = async (req, res) => {
+const sendData = async (req, res, next) => {
     const {_id, type} = req.user
 
     // Ensure user Type is provided
@@ -159,7 +159,9 @@ const sendData = async (req, res) => {
                 
                 // return response on data transfer
                 const transactionResponse = format_transaction_response(responseObject)
-                res.status(200).json(transactionResponse)                
+                // res.status(200).json(transactionResponse)           
+                req.transactionResponse = transactionResponse
+                next()
             })
         })
 

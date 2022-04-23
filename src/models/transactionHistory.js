@@ -7,8 +7,12 @@ const transactionHistorySchema = new Schema(
     transaction_ref: {
       type: String,
       required: true,
-      unique: true,
+      unique: true,  //We want the admin allocation reference to be same with that of the business when the admin allocates for a business
       index: true,
+    },
+    admin_ref: {
+      type: String,
+      default: null,
     },
     phone_number: {
       type: String,
