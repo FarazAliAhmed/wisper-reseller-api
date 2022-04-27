@@ -95,6 +95,7 @@ exports.revert_debit_account_balance = async (account_id, planDetails, type) => 
 
 
 exports.initiate_data_transfer = async (requestPayload) => {
+    return {error: false, response: {}}
     const url = "https://www.superjara.com/api/data/"
     // const url = "https://superjarang.com/api/data"
     // const url = "https://www.superjaraapi.com/api/data/"
@@ -115,6 +116,27 @@ exports.initiate_data_transfer = async (requestPayload) => {
     }catch(e){
         console.log("ERROOORR::", e.stack)
         return {error: true, status: 400, message: "Data volume transafer failed"}
+    }
+}
+
+
+exports.superjara_balance = async () => {
+    const url = "https://www.superjara.com/api/data/"
+    // const url = "https://superjarang.com/api/data"
+    // const url = "https://www.superjaraapi.com/api/data/"
+    const config = {
+        headers: {
+            "Authorization": `Token ${process.env.SUPERJARA_AUTH_KEY_OLD}`,
+            "Content-Type": "application/json"
+        }
+    }
+    try{
+        const response = await axios.get(url, config)
+        const balance = response.results[0].balance_after
+        return {balance, message: "API balance successfully fetched"}
+    }catch(e){
+        console.log("ERROOORR::", e.stack)
+        return {error: true, message: "Error! Unable to fetch data balance"}
     }
 }
 

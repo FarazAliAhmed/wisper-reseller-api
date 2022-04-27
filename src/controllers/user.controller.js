@@ -40,4 +40,22 @@ const handleUpdate = async (req, res) => {
   return res.status(data.status).send(data.message);
 };
 
-module.exports = { handleRegister, handleUpdate };
+
+const createAdmin = async (req, res) => {
+  const {email} = req.body
+  if(!email) return res.status(400).json({status: "failed", message: "You must provide the email of account to be upgraded"})
+  const createResponse = await userService.addAdmin(email)
+  if(!createResponse.user) return res.status(400).json({status: "failed", message: createResponse.message})
+  return res.status(201).json(createResponse)
+}
+
+
+const deleteAdmin = async (req, res) => {
+  const {email} = req.params
+  if(!email) return res.status(400).json({status: "failed", message: "You must provide the email of account to be upgraded"})
+  const createResponse = await userService.removeAdmin(email)
+  if(!createResponse.user) return res.status(400).json({status: "failed", message: createResponse.message})
+  return res.status(201).json(createResponse)
+}
+
+module.exports = { handleRegister, handleUpdate, createAdmin, deleteAdmin };

@@ -21,4 +21,5 @@ app.use("/api", apiRoutes);
 app.use("/hook", hookRoute)
 
 dbSetUp();
+console.log(require('./utils/networkData').plans_test)
 app.listen(PORT, () => console.log(`Server running on PORT: ${PORT}`));

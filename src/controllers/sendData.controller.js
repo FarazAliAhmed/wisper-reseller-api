@@ -145,16 +145,16 @@ const sendData = async (req, res, next) => {
 
             // transfer data to phone number
             initiate_data_transfer(requestPayload)
-            .then(send_response => {
+            .then(async (send_response) => {
                 if (send_response.error){
                     responseObject.status = "failed"
                     delete responseObject.new_balance
-                    revert_debit_account_balance(_id, planDetails, type).then(() => {
-                        update_transaction_status(responseObject.transaction_ref, "failed")
+                    revert_debit_account_balance(_id, planDetails, type).then(async () => {
+                        await update_transaction_status(responseObject.transaction_ref, "failed")
                     })
                 }else{
                     responseObject.status = "success"
-                    update_transaction_status(responseObject.transaction_ref, "success")
+                    await update_transaction_status(responseObject.transaction_ref, "success")
                 }
                 
                 // return response on data transfer

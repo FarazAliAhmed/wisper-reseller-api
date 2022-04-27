@@ -6,6 +6,8 @@ const {
   upgradeAllBalance
 } = require('../services/balance.service')
 
+const { superjara_balance } = require('../utils');
+
 // Balance is created when business account is created. Check "post" middleware in balance Schema defination
 const getAccountBalance = async (req, res) => {
   const businessId = req.user._id
@@ -94,6 +96,12 @@ const resetBalance = async (req, res) => {
 
 }
 
+const getApiBalance = async (req, res) => {
+  const balanceRes = await superjara_balance()
+  if(balanceRes.error) return res.status(400).json({status: "failed", message: balanceRes.message})
+  return res.status(200).json(balanceRes)
+}
+
 
 module.exports = {
   getAccountBalance,
@@ -103,4 +111,5 @@ module.exports = {
   creditBalance,
   debitBalance,
   updateAllBalance,
+  getApiBalance,
 }

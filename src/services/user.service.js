@@ -21,6 +21,7 @@ const register = async (requestBody) => {
 };
 
 const update = async (requestBody, username) => {
+  if (requestBody.isAdmin && requestBody.isAdmin == true) return { status: 404, message: "Only Admin can update user access rights" };
   const query = { username };
   let user;
   user = await Account.findOneAndUpdate(
@@ -32,4 +33,30 @@ const update = async (requestBody, username) => {
   return { user };
 };
 
-module.exports = { register, update };
+
+const addAdmin = async (email) => {
+  const query = { email };
+  let user;
+  user = await Account.findOneAndUpdate(
+    query,
+    { isAdmin: true },
+    { new: true }
+  ).exec();
+  if (!user) return { status: 404, message: "User not found." };
+  return { user, message: "New Admin added successfully" };
+}
+
+
+const removeAdmin = async (email) => {
+  const query = { email };
+  let user;
+  user = await Account.findOneAndUpdate(
+    query,
+    { isAdmin: false },
+    { new: true }
+  ).exec();
+  if (!user) return { status: 404, message: "User not found." };
+  return { user, message: "Admin successfully removed" };
+}
+
+module.exports = { register, update, addAdmin, removeAdmin };

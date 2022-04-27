@@ -1,3 +1,4 @@
+const plansJSON = require('./plans.json')
 exports.numbers = {
    "mtn": [ "0803", "0806", "0810", "0813", "0814", "0816", "0702", "0703", "0704", "0706", "0903", "0906", "0913", "0916",],
    "glo": ["0805", "0807", "0811", "0815", "0705", "0905", "0915"],
@@ -375,6 +376,8 @@ exports.plans_new = {
       //    "validity": "monthly"
       // }
 }
+
+exports.plans_test = JSON.parse(plansJSON)
 
 // Use this for Superjara: Original
 exports.plans = {

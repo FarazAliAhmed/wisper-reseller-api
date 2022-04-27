@@ -6,6 +6,7 @@ const { handleLogin, whoami } = require("../controllers/auth.controller");
 const {
   handleRegister,
   handleUpdate,
+  createAdmin,
 } = require("../controllers/user.controller");
 
 const {
@@ -20,6 +21,7 @@ const {
   creditBalance,
   debitBalance,
   updateAllBalance,
+  getApiBalance
 } = require("../controllers/balance.controller");
 const {
   postTransaction,
@@ -38,7 +40,15 @@ const {
   deletePayment,
 } = require("../controllers/payment.controller");
 
-const { getPlans } = require("../controllers/plans.controller");
+const {
+  getOnePlan,
+  getAllPlans,
+  createOnePlan,
+  updateOnePlan,
+  deleteOnePlan,
+  deleteNetworkPlans,
+  deleteAllPlans,
+} = require("../controllers/plans.controller");
 const { getNetworks } = require("../controllers/networks.controller")
 const sendData = require("../controllers/sendData.controller");
 
@@ -50,7 +60,7 @@ router.patch("/users/:username", getUser, handleUpdate);
 
 // Dashboard Routes
 // Routes Called by businesses
-router.get("/plans", getUser, getPlans);
+router.get("/plans", getUser, getAllPlans);
 router.get("/networks", getUser, getNetworks);
 
 router.get("/balance", getUser, getAccountBalance);
@@ -83,6 +93,20 @@ router.get("/admin/payments", getAdmin, getAllBusinessPayments);
 router.post("/admin/payments", getAdmin, postPayment);
 router.patch("/admin/payments/:id", getAdmin, updatePayment);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
+
+router.get("/admin/plans", getAdmin, getAllPlans)
+router.get("/admin/plans/:plan_id", getAdmin, getOnePlan)
+router.post("/admin/plans/create", getAdmin, createOnePlan)
+router.patch("/admin/plans/:plan_id", getAdmin, updateOnePlan)
+router.delete("/admin/plans/:plan_id", getAdmin, deleteOnePlan)
+router.delete("/admin/plans/:network", getAdmin, deleteNetworkPlans)
+router.delete("/admin/plans/all", getAdmin, deleteAllPlans)
+
+router.post("/admin/admin/create", getAdmin, createAdmin)
+router.delete("/admin/admin/remove/:email", getAdmin, createAdmin)
+
+router.get("/admin/api/balance", getAdmin, getApiBalance)
+
 // router.post("/admin/balance/upgrade", getAdmin, updateAllBalance);
 // Endpoint for admin to upgrade user from lite to mega
 
