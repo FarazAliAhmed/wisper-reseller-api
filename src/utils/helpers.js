@@ -140,8 +140,10 @@ exports.superjara_balance = async () => {
         }
     }
     try{
-        const response_1 = await axios.get(url, config_1)
-        const response_2 = await axios.get(url, config_2)
+        const [response_1, response_2] = await Promise.all([
+            axios.get(url, config_1),
+            axios.get(url, config_2)
+        ])
         const account_1 = (response_1.data.results[0] && response_1.data.results[0].balance_after) || 0
         const account_2 = (response_2.data.results[0] && response_2.data.results[0].balance_after) || 0
         return {balance: {account_1, account_2}, message: "API balance successfully fetched"}
