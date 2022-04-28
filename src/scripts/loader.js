@@ -3,7 +3,7 @@ const path = require('path')
 const { getAll } = require('../services/plan.service')
 
 const fileName = 'plans.json'
-const filePath = './src/scripts/'
+const filePath = '../utils/'
 
 const loadPlans = async () => {
     const allPlans = await getAll()
@@ -13,6 +13,7 @@ const loadPlans = async () => {
     fs.writeFile(fullPath, plansObject, (error) => {
         if(error){
             console.log("Error while writing all plans to file")
+            console.log(error)
             return
         }
     })

@@ -51,7 +51,7 @@ const createAdmin = async (req, res) => {
 
 
 const deleteAdmin = async (req, res) => {
-  const {email} = req.params
+  const {email} = req.body
   if(!email) return res.status(400).json({status: "failed", message: "You must provide the email of account to be upgraded"})
   const createResponse = await userService.removeAdmin(email)
   if(!createResponse.user) return res.status(400).json({status: "failed", message: createResponse.message})

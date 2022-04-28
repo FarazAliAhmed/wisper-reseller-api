@@ -8,8 +8,10 @@ const {units, plans, network_ids, numbers: network_numbers, ported_numbers} = re
 
 
 exports.get_plan_details = (plan_id) => {
-    if (!plans.hasOwnProperty(plan_id)) return {error: true, status: 401, message: "Invalid Plan Id"}
+    delete require.cache[require.resolve('./networkData')]
+    const plans = require('./networkData').plans
     
+    if (!plans.hasOwnProperty(plan_id)) return {error: true, status: 401, message: "Invalid Plan Id"}
     const selectedPlan = plans[plan_id]
     const volume_strings = selectedPlan.size.split(" ")
     const volume = parseInt(volume_strings[0]) * units[volume_strings[1]]
@@ -95,13 +97,15 @@ exports.revert_debit_account_balance = async (account_id, planDetails, type) => 
 
 
 exports.initiate_data_transfer = async (requestPayload) => {
-    return {error: false, response: {}}
-    const url = "https://www.superjara.com/api/data/"
     // const url = "https://superjarang.com/api/data"
     // const url = "https://www.superjaraapi.com/api/data/"
+    
+    const url = "https://www.superjara.com/api/data/"
+    const airtel_authorization = `Token ${process.env.SUPERJARA_AUTH_KEY_AIRTEL}`
+    const authorization = `Token ${process.env.SUPERJARA_AUTH_KEY_OLD}`
     const config = {
         headers: {
-            "Authorization": `Token ${process.env.SUPERJARA_AUTH_KEY_OLD}`,
+            "Authorization": requestPayload.network == 4 ? airtel_authorization : authorization,
             "Content-Type": "application/json"
         }
     }
@@ -114,7 +118,7 @@ exports.initiate_data_transfer = async (requestPayload) => {
             return {error: true, status: 400, message: "An error occured with data transfer server"}
         }
     }catch(e){
-        console.log("ERROOORR::", e.stack)
+        console.log("ERROOORR::", e.message)
         return {error: true, status: 400, message: "Data volume transafer failed"}
     }
 }
@@ -122,18 +126,25 @@ exports.initiate_data_transfer = async (requestPayload) => {
 
 exports.superjara_balance = async () => {
     const url = "https://www.superjara.com/api/data/"
-    // const url = "https://superjarang.com/api/data"
-    // const url = "https://www.superjaraapi.com/api/data/"
-    const config = {
+    const config_1 = {
         headers: {
             "Authorization": `Token ${process.env.SUPERJARA_AUTH_KEY_OLD}`,
             "Content-Type": "application/json"
         }
     }
+
+    const config_2 = {
+        headers: {
+            "Authorization": `Token ${process.env.SUPERJARA_AUTH_KEY_AIRTEL}`,
+            "Content-Type": "application/json"
+        }
+    }
     try{
-        const response = await axios.get(url, config)
-        const balance = response.results[0].balance_after
-        return {balance, message: "API balance successfully fetched"}
+        const response_1 = await axios.get(url, config_1)
+        const response_2 = await axios.get(url, config_2)
+        const account_1 = (response_1.data.results[0] && response_1.data.results[0].balance_after) || 0
+        const account_2 = (response_2.data.results[0] && response_2.data.results[0].balance_after) || 0
+        return {balance: {account_1, account_2}, message: "API balance successfully fetched"}
     }catch(e){
         console.log("ERROOORR::", e.stack)
         return {error: true, message: "Error! Unable to fetch data balance"}

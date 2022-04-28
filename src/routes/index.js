@@ -7,6 +7,7 @@ const {
   handleRegister,
   handleUpdate,
   createAdmin,
+  deleteAdmin,
 } = require("../controllers/user.controller");
 
 const {
@@ -49,9 +50,19 @@ const {
   deleteNetworkPlans,
   deleteAllPlans,
 } = require("../controllers/plans.controller");
+
 const { getNetworks } = require("../controllers/networks.controller")
+
 const sendData = require("../controllers/sendData.controller");
 
+const {
+  createMaintenance,
+  getMaintenance,
+  enterMaintenance,
+  exitMaintenance,
+} = require('../controllers/maintenance.controller')
+
+router.get("/maintenance", getMaintenance)
 router.get("/whoami", whoami);
 router.post("/auth", handleLogin);
 router.post("/users", handleRegister);
@@ -97,15 +108,19 @@ router.delete("/admin/payments/:id", getAdmin, deletePayment);
 router.get("/admin/plans", getAdmin, getAllPlans)
 router.get("/admin/plans/:plan_id", getAdmin, getOnePlan)
 router.post("/admin/plans/create", getAdmin, createOnePlan)
+router.delete("/admin/plans/delete", getAdmin, deleteAllPlans)
 router.patch("/admin/plans/:plan_id", getAdmin, updateOnePlan)
 router.delete("/admin/plans/:plan_id", getAdmin, deleteOnePlan)
-router.delete("/admin/plans/:network", getAdmin, deleteNetworkPlans)
-router.delete("/admin/plans/all", getAdmin, deleteAllPlans)
+router.delete("/admin/plans/network/:network", getAdmin, deleteNetworkPlans)
 
 router.post("/admin/admin/create", getAdmin, createAdmin)
-router.delete("/admin/admin/remove/:email", getAdmin, createAdmin)
+router.delete("/admin/admin/remove", getAdmin, deleteAdmin)
 
 router.get("/admin/api/balance", getAdmin, getApiBalance)
+
+router.post("/admin/maintenance/create", getAdmin, createMaintenance)
+router.patch("/admin/maintenance/enter/:network", getAdmin, enterMaintenance)
+router.patch("/admin/maintenance/exit/:network", getAdmin, exitMaintenance)
 
 // router.post("/admin/balance/upgrade", getAdmin, updateAllBalance);
 // Endpoint for admin to upgrade user from lite to mega

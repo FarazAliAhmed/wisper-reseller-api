@@ -135,6 +135,7 @@ const sendData = async (req, res, next) => {
         responseObject.network_provider = providerId.network
         responseObject.data_volume = planDetails.volume
         responseObject.plan_id = planDetails.id
+        responseObject.price = planDetails.price
         responseObject.transaction_ref = uuid.v4();
         responseObject.created_at = getCurrentTime()
 

@@ -1,4 +1,6 @@
-const plansJSON = require('./plans.json')
+const _ = require('lodash')
+const fs = require('fs')
+
 exports.numbers = {
    "mtn": [ "0803", "0806", "0810", "0813", "0814", "0816", "0702", "0703", "0704", "0706", "0903", "0906", "0913", "0916",],
    "glo": ["0805", "0807", "0811", "0815", "0705", "0905", "0915"],
@@ -19,6 +21,16 @@ exports.network_ids = {
    //  3: "9mobile",
     4: "airtel"
 }
+
+exports.plans = (function() {
+   const allPlans = {}
+   // const plansJSON = require('./plans.json')
+   let plansJSON = JSON.parse(fs.readFileSync(`${__dirname}/plans.json`))
+   plansJSON.forEach(planObject => {
+      allPlans[planObject.plan_id] = _.pick(planObject, ["network", "plan_type", "price", "size", "validity"])
+   })
+   return allPlans
+})()
 
 
 // Use this for Superjaraapi: New
@@ -377,10 +389,8 @@ exports.plans_new = {
       // }
 }
 
-exports.plans_test = JSON.parse(plansJSON)
-
 // Use this for Superjara: Original
-exports.plans = {
+exports.plans_old = {
     "43": {
        "network": "mtn",
        "plan_type": "gifting",

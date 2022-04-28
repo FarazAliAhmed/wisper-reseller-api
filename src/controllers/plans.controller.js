@@ -10,6 +10,8 @@ const {
     deleteAll,
 } = require('../services/plan.service')
 
+const { loadPlans } = require('../scripts/loader')
+
 const getAllPlans = async (req, res) => {
     const planResponse = await getAll()
     if(planResponse.error) return res.status(400).json({..._.omit(planResponse, ['error']), status: "failed"})
@@ -31,6 +33,7 @@ const createOnePlan = async (req, res) => {
     if(error) return res.status(400).json({status: "failed", message: error.details[0].message})
     const planResponse = await createOne(fields)
     if(planResponse.error) return res.status(400).json({..._.omit(planResponse, ['error']), status: "failed"})
+    await loadPlans()
     return res.status(200).json({...planResponse, status: "success"})
 }
 
@@ -42,6 +45,7 @@ const updateOnePlan = async (req, res) => {
     if(error) return res.status(400).json({status: "failed", message: error.details[0].message})
     const planResponse = await updateOne(plan_id, fields)
     if(planResponse.error) return res.status(400).json({..._.omit(planResponse, ['error']), status: "failed"})
+    await loadPlans()
     return res.status(200).json({...planResponse, status: "success"})
 }
 
@@ -50,6 +54,7 @@ const deleteOnePlan = async (req, res) => {
     const {plan_id} = req.params
     const planResponse = await deleteOne(plan_id)
     if(planResponse.error) return res.status(400).json({..._.omit(planResponse, ['error']), status: "failed"})
+    await loadPlans()
     return res.status(200).json({...planResponse, status: "success"})
 }
 
@@ -57,12 +62,14 @@ const deleteNetworkPlans = async (req, res) => {
     const {network} = req.params
     const planResponse = await deleteNetwork(network)
     if(planResponse.error) return res.status(400).json({..._.omit(planResponse, ['error']), status: "failed"})
+    await loadPlans()
     return res.status(200).json({...planResponse, status: "success"})
 }
 
 const deleteAllPlans = async (req, res) => {
     const planResponse = await deleteAll()
     if(planResponse.error) return res.status(400).json({..._.omit(planResponse, ['error']), status: "failed"})
+    await loadPlans()
     return res.status(200).json({...planResponse, status: "success"})
 }
 
@@ -75,12 +82,12 @@ const validateCreate = (fields) => {
                     .valid('mtn', 'airtel', 'glo', '9mobile')
                     .required(),
         plan_type: Joi.string()
-                    .required(),
-        price: Joi.number()
                     .valid('gifting', 'sme')
                     .required(),
+        price: Joi.number()
+                    .required(),
         volume: Joi.number()
-                    .require(),
+                    .required(),
         unit: Joi.string()
                     .valid('mb', 'gb', 'tb')
                     .required(),
@@ -97,9 +104,9 @@ const validateUpdate = (fields) => {
         plan_id: Joi.number(),
         network: Joi.string()
                     .valid('mtn', 'airtel', 'glo', '9mobile'),
-        plan_type: Joi.string(),
-        price: Joi.number()
+        plan_type: Joi.string()
                     .valid('gifting', 'sme'),
+        price: Joi.number(),
         volume: Joi.number(),
         unit: Joi.string()
                     .valid('mb', 'gb', 'tb'),

@@ -50,6 +50,7 @@ const updateOne = async (plan_id, fields) => {
 const deleteOne = async (plan_id) => {
     try{
         const deleteResponse = await Plan.findOneAndDelete({plan_id}).exec()
+        if(!deleteResponse) return {error: true, message: "Error! Plan Does not exist"}
         return {plan: deleteResponse, message: "Plan Successfully deleted"}
     }catch(e){
         console.log(e.message)
