@@ -44,6 +44,7 @@ const upgradeBalance = async (id) => { //change the unit from MB to ₦
   };
 }
 
+// Made use of this as an alternative to migration. Should not be used in production
 const upgradeAllBalance = async () => {
   const balance = await Balance.updateMany({},
       {
@@ -91,19 +92,13 @@ const debit = async (id, debitAmount, field) => {
   ).exec();
   
   const [parent, child] = field.split(".")
+  let checker, wallet_name;
   
-  let checker;
   if(child){
     checker = balance[parent][child]
-  }else{
-    checker = balance[parent]
-  }
-
-  let wallet_name;
-
-  if(child){
     wallet_name = `in ${child.toUpperCase().replace("_", " ")} wallet`
   }else{
+    checker = balance[parent]
     wallet_name = "in wallet"
   }
 
@@ -115,7 +110,15 @@ const debit = async (id, debitAmount, field) => {
 const reset = async (id) => {
   const balance = Balance.findOneAndUpdate(
     { business: id },
-    { data_volume: 0 }
+    {
+      data_volume: 0,
+      mega_wallet: {
+        mtn_sme: 0,
+        mtn_gifting: 0,
+        airtel: 0,
+        glo: 0,
+      }
+    }
   ).exec();
   if (balance) return { balance };
   return {

@@ -127,6 +127,6 @@ router.patch("/admin/maintenance/exit/:network", getAdmin, exitMaintenance)
 
 /**END USER ROUTES
  */
-router.post("/buy", parseKey, sendData, transactionOnAllocate);
+router.post("/buy", parseKey, sendData);
 
 module.exports = router;

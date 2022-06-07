@@ -10,16 +10,7 @@ const transactionOnAllocate = async (req, res, next) => {
     const { transactionResponse } = req
     const {allocate_for_business, business_id} = req.body
     const {_id} = req.user
-// {
-//     transaction_ref: uuid.v4(),
-//     phone_number,
-//     data_volume: ,
-//     data_price: ,
-//     business_id,
-//     network_provider: ,
-//     status: "processing",
-//     created_at: getCurrentTime(),
-// }
+    
     if(allocate_for_business && allocate_for_business == true && business_id){
         if(transactionResponse.status === "success"){
             transactionResponse.admin_ref = transactionResponse.transaction_ref

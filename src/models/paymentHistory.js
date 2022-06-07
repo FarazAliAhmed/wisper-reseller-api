@@ -26,6 +26,4 @@ const paymentHistorySchema = new Schema({
   },
 });
 
-const validatePayment = () => {};
-
 module.exports = mongoose.model("payments", paymentHistorySchema);

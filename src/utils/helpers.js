@@ -4,10 +4,10 @@ const moment = require('moment-timezone')
 
 const {create: addTransaction, update: updateTransaction} = require('../services/transaction.service')
 const {debit} = require('../services/balance.service')
-const {units, plans, network_ids, numbers: network_numbers, ported_numbers} = require('./networkData')
+const {units, plans, network_ids, numbers: network_numbers, ported_numbers, simservers_size_map} = require('./networkData')
 
 
-exports.get_plan_details = (plan_id) => {
+exports.get_plan_details = async (plan_id) => {
     delete require.cache[require.resolve('./networkData')]
     const plans = require('./networkData').plans
     
@@ -17,7 +17,7 @@ exports.get_plan_details = (plan_id) => {
     const volume = parseInt(volume_strings[0]) * units[volume_strings[1]]
     
     return {
-        ..._.pick(selectedPlan, ["validity", "price", "network", "plan_type"]), volume, id : plan_id, error: false
+        ..._.pick(selectedPlan, ["validity", "price", "network", "plan_type", "size"]), volume, id : plan_id, error: false
     }
 }
 
@@ -96,26 +96,46 @@ exports.revert_debit_account_balance = async (account_id, planDetails, type) => 
 }
 
 
-exports.initiate_data_transfer = async (requestPayload) => {
-    // const url = "https://superjarang.com/api/data"
-    // const url = "https://www.superjaraapi.com/api/data/"
-    
+exports.initiate_data_transfer = async (requestPayload, {size, ref}) => {  
     const url = "https://www.superjara.com/api/data/"
-    const airtel_authorization = `Token ${process.env.SUPERJARA_AUTH_KEY_AIRTEL}`
     const authorization = `Token ${process.env.SUPERJARA_AUTH_KEY_OLD}`
-    const config = {
-        headers: {
-            "Authorization": requestPayload.network == 4 ? airtel_authorization : authorization,
-            "Content-Type": "application/json"
-        }
-    }
+
+    const simservers_url = "https://api.simservers.io"
+    const simservers_key = process.env.SIMSERVERS_KEY
+
     try{
-        const response = await axios.post(url, requestPayload, config)
-        // Status: 'successful'
-        if(response.data && response.data.Status && response.data.Status === "successful"){
-            return {error: false, response: response.data}
+        if(requestPayload.network == 4){
+            const {error, param} = simservers_size_map(size)
+            if (error) return {error: true, status: 400, message: "This data plan is not available"}
+
+            const req_body = {
+                "process": "buy",
+                "product_code": param,
+                "recipient": requestPayload.mobile_number,
+                "user_reference": ref,
+                "api_key": simservers_key,
+            }
+            const response = await axios.post(
+                simservers_url,
+                req_body,
+                {headers: {'Content-Type': 'application/json'}}
+            )
+            if(response.data && response.data["status"] == true && response.data["data"]["text_status"] == "success"){
+                return {error: false, response: response.data}
+            }else{
+                return {error: true, status: 400, message: "An error occured with data transfer server"}
+            }
         }else{
-            return {error: true, status: 400, message: "An error occured with data transfer server"}
+            const response = await axios.post(
+                url,
+                requestPayload,
+                {headers: {"Authorization": authorization,"Content-Type": "application/json"}}
+            )
+            if(response.data && response.data.Status && response.data.Status === "successful"){
+                return {error: false, response: response.data}
+            }else{
+                return {error: true, status: 400, message: "An error occured with data transfer server"}
+            }
         }
     }catch(e){
         console.log("ERROOORR::", e.message)
@@ -154,25 +174,28 @@ exports.superjara_balance = async () => {
 }
 
 
-exports.format_transaction_response = (responseObject) => {
-    // This function might be used later to format all response before sending
+exports.format_transaction_response = ({
+    type, debitAccount, validNumber, providerId,
+    planDetails, uuid, getCurrentTime
+}) => {
+    const responseObject = {}
+    responseObject.new_balance = type === "mega" ? 
+        debitAccount.balance.mega_wallet
+            :
+        `${debitAccount.balance.data_unit} ${debitAccount.balance.wallet_balance}`;
+    responseObject.phone_number = validNumber.number;
+    responseObject.status = "success";
+    responseObject.network_provider = providerId.network;
+    responseObject.data_volume = planDetails.volume;
+    responseObject.plan_id = planDetails.id;
+    responseObject.price = planDetails.price;
+    responseObject.transaction_ref = uuid.v4();
+    responseObject.created_at = getCurrentTime();
     return responseObject
 }
 
 
 exports.save_transaction = async (business_id, details) => {
-    
-    // The below object is kept for reference. Incase i get confused.
-    // const newTransaction = {
-    //     transaction_ref: uuid.v4(),
-    //       phone_number: details.phone_number,
-    //       data_volume: details.data_volume,
-    //       business_id,
-    //       plan_id: details.plan_id,
-    //       status: details.status,
-    //       network_provider: details.network_provider,
-    // }
-    // let newTransaction = _.omit(details, ["previous_balance", "new_balance"])
 
     const newTransaction = details
     newTransaction.business_id = business_id
