@@ -1,4 +1,5 @@
 const axios = require('axios')
+const joi = require('joi')
 const _ = require('lodash')
 const moment = require('moment-timezone')
 
@@ -6,6 +7,22 @@ const {create: addTransaction, update: updateTransaction} = require('../services
 const {debit} = require('../services/balance.service')
 const {units, plans, network_ids, numbers: network_numbers, ported_numbers, simservers_size_map} = require('./networkData')
 
+
+exports.validateSendData = (body) => {
+    const schema = joi.object({
+        network: joi.string()
+            .valid("mtn", "glo", "9mobile", "airtel")
+            .required(),
+        plan_id: joi.number()
+            .required(),
+        phone_number: joi.string()
+            .required(),
+        allocate_for_business: joi.boolean(),
+        business_id: joi.string()
+    })
+
+    return schema.validate(body, {abortEarly: false})
+}
 
 exports.get_plan_details = async (plan_id) => {
     delete require.cache[require.resolve('./networkData')]
@@ -97,8 +114,8 @@ exports.revert_debit_account_balance = async (account_id, planDetails, type) => 
 
 
 exports.initiate_data_transfer = async (requestPayload, {size, ref}) => {  
-    const url = "https://www.superjara.com/api/data/"
-    const authorization = `Token ${process.env.SUPERJARA_AUTH_KEY_OLD}`
+    const url = "https://www.fastlink.com.ng/api/data/"
+    const authorization = `Token ${process.env.FASTLINK_AUTH_KEY}`
 
     const simservers_url = "https://api.simservers.io"
     const simservers_key = process.env.SIMSERVERS_KEY
@@ -145,27 +162,20 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref}) => {
 
 
 exports.superjara_balance = async () => {
-    const url = "https://www.superjara.com/api/data/"
+    const url = "https://www.fastlink.com.ng/api/data/"
     const config_1 = {
         headers: {
-            "Authorization": `Token ${process.env.SUPERJARA_AUTH_KEY_OLD}`,
+            "Authorization": `Token ${process.env.FASTLINK_AUTH_KEY}`,
             "Content-Type": "application/json"
         }
     }
 
-    const config_2 = {
-        headers: {
-            "Authorization": `Token ${process.env.SUPERJARA_AUTH_KEY_AIRTEL}`,
-            "Content-Type": "application/json"
-        }
-    }
     try{
-        const [response_1, response_2] = await Promise.all([
+        const [response_1] = await Promise.all([
             axios.get(url, config_1),
-            axios.get(url, config_2)
         ])
         const account_1 = (response_1.data.results[0] && response_1.data.results[0].balance_after) || 0
-        const account_2 = (response_2.data.results[0] && response_2.data.results[0].balance_after) || 0
+        const account_2 = 0
         return {balance: {account_1, account_2}, message: "API balance successfully fetched"}
     }catch(e){
         console.log("ERROOORR::", e.stack)
@@ -188,7 +198,7 @@ exports.format_transaction_response = ({
     responseObject.network_provider = providerId.network;
     responseObject.data_volume = planDetails.volume;
     responseObject.plan_id = planDetails.id;
-    responseObject.price = planDetails.price;
+    // responseObject.price = planDetails.price;
     responseObject.transaction_ref = uuid.v4();
     responseObject.created_at = getCurrentTime();
     return responseObject

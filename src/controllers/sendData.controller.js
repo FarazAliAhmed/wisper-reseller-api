@@ -1,5 +1,7 @@
 const uuid = require('uuid')
+const _ = require('lodash')
 const {
+    validateSendData,
     get_plan_details,
     get_network_provider,
     validate_phone_number,
@@ -20,10 +22,14 @@ const sendData = async (req, res, next) => {
     const {_id, type} = req.user;
 
     // Ensure user Type is provided
-    if (!type) return res.status(400).json({status: 400, message: "Unrecognised User. Try Loging in again"});
+    if (!type) return res.status(400).json({error: true, status: 400, message: "Unrecognised User. Try Loging in again"});
 
-    // validate request body
+    // 
     const {network, plan_id, phone_number, allocate_for_business, business_id} = req.body;
+    
+    // validate request body
+    const {error} = validateSendData(req.body)
+    if (error) return res.status(401).json({error: true, status: 401, message: _.map(error.details, 'message')})
     
     // check that network is valid
     const providerId = get_network_provider(network);
@@ -94,6 +100,5 @@ const sendData = async (req, res, next) => {
         await revert_debit_account_balance(_id, planDetails, type)
     }
 }
-
 
 module.exports = sendData

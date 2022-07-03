@@ -35,6 +35,7 @@ exports.plans = (function() {
 exports.simservers_size_map = (size) => {
    const f_size = size.trim().toLowerCase().replace(" ", "")
    let error = false, param;
+   
    switch(f_size){
        case "100mb":
            param = "airtel_100mb_7days:cg:nil";
@@ -53,6 +54,12 @@ exports.simservers_size_map = (size) => {
            break;
        case "5gb":
            param = "airtel_5gb_30days:cg:nil";
+           break;
+       case "10gb":
+           param = "airtel_10gb_30days:cg:nil";
+           break;
+       case "20gb":
+           param = "airtel_20gb_30days:cg:nil";
            break;
        default:
            error = true;

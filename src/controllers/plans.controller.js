@@ -13,9 +13,19 @@ const {
 const { loadPlans } = require('../scripts/loader')
 
 const getAllPlans = async (req, res) => {
-    const planResponse = await getAll()
-    if(planResponse.error) return res.status(400).json({..._.omit(planResponse, ['error']), status: "failed"})
-    return res.status(200).json({...planResponse, status: "success"})
+    const {plan, message, error} = await getAll()
+    if(error) return res.status(400).json({message, status: "failed"})
+    return res.status(200).json({
+        plan: _.map(plan, _.partialRight(_.pick, [
+            "plan_id", "network",
+            "plan_type", "volume",
+            "unit", "validity",
+            "size", "id"
+        ])),
+        message,
+        status: "success"
+    })
+    // "price",
 }
 
 

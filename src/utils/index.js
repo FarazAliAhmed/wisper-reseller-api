@@ -6,11 +6,12 @@ module.exports = {
         transactionOnAllocate: require('./middleware/transactionOnAllocate')
     },
     data: {
-        unit: require('./networkData').unit,
-        network_id: require('./networkData').network_id,
+        units: require('./networkData').units,
+        network_ids: require('./networkData').network_ids,
         plans: require('./networkData').plans
     },
     helpers: {
+        validateSendData: require('./helpers').validateSendData,
         get_plan_details: require('./helpers').get_plan_details,
         get_network_provider: require('./helpers').get_network_provider,
         validate_phone_number: require('./helpers').validate_phone_number,
