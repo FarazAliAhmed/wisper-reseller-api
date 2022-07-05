@@ -28,8 +28,8 @@ const sendData = async (req, res, next) => {
     const {network, plan_id, phone_number, allocate_for_business, business_id} = req.body;
     
     // validate request body
-    const {error} = validateSendData(req.body)
-    if (error) return res.status(401).json({error: true, status: 401, message: _.map(error.details, 'message')})
+    // const {error} = validateSendData(req.body)
+    // if (error) return res.status(401).json({error: true, status: 401, message: _.map(error.details, 'message')})
     
     // check that network is valid
     const providerId = get_network_provider(network);
