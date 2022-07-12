@@ -76,7 +76,7 @@ const sendData = async (req, res, next) => {
         // transfer data to phone number
         const send_response = await initiate_data_transfer(
             requestPayload,
-            {size: planDetails.size, ref: responseObject.transaction_ref}
+            {size: planDetails.size, ref: responseObject.transaction_ref, type: planDetails.plan_type}
         )
         if (send_response.error){
             responseObject.status = "failed";

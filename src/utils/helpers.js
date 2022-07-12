@@ -7,6 +7,15 @@ const {create: addTransaction, update: updateTransaction} = require('../services
 const {debit} = require('../services/balance.service')
 const {units, plans, network_ids, numbers: network_numbers, ported_numbers, simservers_size_map} = require('./networkData')
 
+// Config variables
+const fastlink_url = "https://www.fastlink.com.ng/api/data/"
+const fastlink_gifting_auth = `Token ${process.env.FASTLINK_AUTH_KEY}`
+const fastlink_sme_auth = `Token ${process.env.FASTLINK_AUTH_KEY_SME}`
+
+const simservers_url = "https://api.simservers.io"
+const simservers_key = process.env.SIMSERVERS_KEY
+
+
 
 exports.validateSendData = (body) => {
     const schema = joi.object({
@@ -113,13 +122,18 @@ exports.revert_debit_account_balance = async (account_id, planDetails, type) => 
 }
 
 
-exports.initiate_data_transfer = async (requestPayload, {size, ref}) => {  
-    const url = "https://www.fastlink.com.ng/api/data/"
-    const authorization = `Token ${process.env.FASTLINK_AUTH_KEY}`
+// Get config header for fastlink API calls
+function getConfig(type){
+    return {
+        headers: {
+            "Authorization": (type == "gifting") ? fastlink_gifting_auth : fastlink_sme_auth,
+            "Content-Type": "application/json"
+        }
+    }
+}
 
-    const simservers_url = "https://api.simservers.io"
-    const simservers_key = process.env.SIMSERVERS_KEY
 
+exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {  
     try{
         if(requestPayload.network == 4){
             const {error, param} = simservers_size_map(size)
@@ -144,9 +158,9 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref}) => {
             }
         }else{
             const response = await axios.post(
-                url,
+                fastlink_url,
                 requestPayload,
-                {headers: {"Authorization": authorization,"Content-Type": "application/json"}}
+                getConfig(type),
             )
             if(response.data && response.data.Status && response.data.Status === "successful"){
                 return {error: false, response: response.data}
@@ -162,20 +176,13 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref}) => {
 
 
 exports.superjara_balance = async () => {
-    const url = "https://www.fastlink.com.ng/api/data/"
-    const config_1 = {
-        headers: {
-            "Authorization": `Token ${process.env.FASTLINK_AUTH_KEY}`,
-            "Content-Type": "application/json"
-        }
-    }
-
     try{
         const [response_1] = await Promise.all([
-            axios.get(url, config_1),
+            axios.get(fastlink_url, getConfig('gifting')),
+            axios.get(fastlink_url, getConfig('sme')),
         ])
         const account_1 = (response_1.data.results[0] && response_1.data.results[0].balance_after) || 0
-        const account_2 = 0
+        const account_2 = (response_1.data.results[1] && response_1.data.results[1].balance_after) || 0
         return {balance: {account_1, account_2}, message: "API balance successfully fetched"}
     }catch(e){
         console.log("ERROOORR::", e.stack)
