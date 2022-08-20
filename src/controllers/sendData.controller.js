@@ -87,6 +87,9 @@ const sendData = async (req, res, next) => {
             throw new Error(send_response.message)
         }
 
+        // send gateway response along with API response
+        responseObject['gateway_response'] = send_response.message;
+        
         // If endpoint is called by Admin
         if(allocate_for_business && allocate_for_business == true && business_id){
             responseObject.admin_ref = responseObject.transaction_ref

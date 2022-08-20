@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const Balance = require("../models/dataBalance");
+const BalanceEvent = require('../events/balance.event');
+const { balance_update } = require('../events/_eventTypes');
 
 const getBalance = async (id) => {
   const business_id = mongoose.Types.ObjectId(id)
@@ -70,11 +72,15 @@ const upgradeAllBalance = async () => {
 }
 
 const credit = async (id, creditAmount, field) => {
+
+  const old_balance = await Balance.findOne({ business: id }).exec()
   const balance = await Balance.findOneAndUpdate(
-    { business: id },
-    { $inc: { [field]: creditAmount } },
-    { new: true }
-  ).exec();
+      { business: id },
+      { $inc: { [field]: creditAmount } },
+      { new: true }
+    ).exec()
+
+  BalanceEvent.emit(balance_update, {new_balance: balance, old_balance})
 
   return {
     balance,
@@ -84,7 +90,15 @@ const credit = async (id, creditAmount, field) => {
   };
 };
 
+/**
+ * This function is used in two scenarios:
+ * 1. To debit a user's balance
+ * 2. To refund initial debit in case user balance is insufficient
+ * 3. when refund occure as a result of insufficient funds,
+ *    the debitAmount value is negative(-)
+ */
 const debit = async (id, debitAmount, field) => {
+  const old_balance = await Balance.findOne({ business: id }).exec()
   const balance = await Balance.findOneAndUpdate(
     { business: id },
     { $inc: { [field] : -1 * debitAmount } },
@@ -102,8 +116,9 @@ const debit = async (id, debitAmount, field) => {
     wallet_name = "in wallet"
   }
 
-  if (checker < 0)
-    return { error: true, status: 401, message: `Insufficient Balance ${wallet_name}` };
+  if (checker < 0) return { error: true, status: 401, message: `Insufficient Balance ${wallet_name}` };
+  if (debitAmount > 0) BalanceEvent.emit(balance_update, {new_balance: balance, old_balance});
+
   return { balance, error: false, status: 201 };
 };
 

@@ -1,3 +1,4 @@
+const IntegrationResponse = require('../models/integrationResponse');
 const {
   getBalance,
   getAllBalance,
@@ -6,7 +7,7 @@ const {
   upgradeAllBalance
 } = require('../services/balance.service')
 
-const { superjara_balance } = require('../utils');
+const { superjara_balance, simserver_balance } = require('../utils');
 
 // Balance is created when business account is created. Check "post" middleware in balance Schema defination
 const getAccountBalance = async (req, res) => {
@@ -99,7 +100,15 @@ const resetBalance = async (req, res) => {
 const getApiBalance = async (req, res) => {
   const balanceRes = await superjara_balance()
   if(balanceRes.error) return res.status(400).json({status: "failed", message: balanceRes.message})
-  return res.status(200).json(balanceRes)
+
+  let simBalance = "";
+  const integResp = await IntegrationResponse.findOne().sort({_id: -1}).exec()
+
+  if(integResp){
+    simBalance =  simserver_balance(integResp.response)
+  }
+
+  return res.status(200).json({simserver: simBalance, ...balanceRes })
 }
 
 

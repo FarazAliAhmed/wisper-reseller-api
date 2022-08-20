@@ -33,36 +33,39 @@ exports.plans = (function() {
 })()
 
 exports.simservers_size_map = (size) => {
-   const f_size = size.trim().toLowerCase().replace(" ", "")
-   let error = false, param;
+    const f_size = size.trim().toLowerCase().replace(" ", "")
+    let error = false, param;
    
-   switch(f_size){
-       case "100mb":
-           param = "airtel_100mb_7days:cg:nil";
-           break;
-       case "300mb":
-           param = "airtel_300mb_7days:cg:nil";
-           break;
-       case "500mb":
-           param = "airtel_500mb_30days:cg:nil";
-           break;
-       case "1gb":
-           param = "airtel_1gb_30days:cg:nil";
-           break;
-       case "2gb":
-           param = "airtel_2gb_30days:cg:nil";
-           break;
-       case "5gb":
-           param = "airtel_5gb_30days:cg:nil";
-           break;
-       case "10gb":
-           param = "airtel_10gb_30days:cg:nil";
-           break;
-       case "20gb":
-           param = "airtel_20gb_30days:cg:nil";
-           break;
-       default:
-           error = true;
-   }
+    switch(f_size){
+        case "100mb":
+            param = "airtel_100mb_7days:cg:nil";
+            break;
+        case "300mb":
+            param = "airtel_300mb_7days:cg:nil";
+            break;
+        case "500mb":
+            param = "airtel_500mb_30days:cg:nil";
+            break;
+        case "1gb":
+            param = "airtel_1gb_30days:cg:nil";
+            break;
+        case "2gb":
+            param = "airtel_2gb_30days:cg:nil";
+            break;
+        case "5gb":
+            param = "airtel_5gb_30days:cg:nil";
+            break;
+        case "10gb":
+            param = "airtel_10gb_30days:cg:nil";
+            break;
+        case "15gb":
+            param = "airtel_15gb_30days:cg:nil";
+            break;
+        case "20gb":
+            param = "airtel_20gb_30days:cg:nil";
+            break;
+        default:
+            error = true;
+    }
    return {error, param}
 }

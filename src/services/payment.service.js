@@ -1,4 +1,5 @@
 const Payment = require("../models/paymentHistory");
+const BalanceLog = require('../models/balanceLog')
 const { getCurrentTime } = require('../utils').helpers
 
 const getAll = async (id) => {
@@ -16,7 +17,12 @@ const getAllB = async () => {
 
 const getOne = async (payment_ref) => {
   const payment = await Payment.find({ payment_ref }).exec();
-  if (payment) return { payment };
+
+  if (payment) {
+    const receipt = await BalanceLog.findOne({business: payment.business_id, type: 'CREDIT'}).sort({_id: -1}).exec()
+    return { payment, receipt };
+  }
+  
   return { status: 400, message: `Unable to retreive payment with id: ${id}` };
 };
 

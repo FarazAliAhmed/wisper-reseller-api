@@ -3,6 +3,9 @@ const joi = require('joi')
 const _ = require('lodash')
 const moment = require('moment-timezone')
 
+const {integration_response} = require('../events/_eventTypes')
+const IntegrationEvents = require('../events/integration.event')
+
 const {create: addTransaction, update: updateTransaction} = require('../services/transaction.service')
 const {debit} = require('../services/balance.service')
 const {units, plans, network_ids, numbers: network_numbers, ported_numbers, simservers_size_map} = require('./networkData')
@@ -14,6 +17,13 @@ const fastlink_sme_auth = `Token ${process.env.FASTLINK_AUTH_KEY_SME}`
 
 const simservers_url = "https://api.simservers.io"
 const simservers_key = process.env.SIMSERVERS_KEY
+
+// Names of integration used in saving gateway response to DB
+const integrationTypes = {
+    SUPERJARA: 'SUPERJARA',
+    FASTLINK: 'FASTLINK',
+    SIMSERVER: 'SIMSERVER',
+}
 
 
 
@@ -151,8 +161,19 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 req_body,
                 {headers: {'Content-Type': 'application/json'}}
             )
-            if(response.data && response.data["status"] == true && response.data["data"]["text_status"] == "success"){
-                return {error: false, response: response.data}
+
+            // Fire event to save SIMSERVER gateway response to DB
+            const integResp = response.data
+            const integName = integrationTypes.SIMSERVER
+            
+            IntegrationEvents.emit(integration_response, {
+                integration: integName,
+                response: integResp,
+            })
+
+            if(integResp && integResp["status"] == true && integResp["data"]["text_status"] == "success"){
+                const message = integResp["data"]["true_response"]
+                return {error: false, response: integResp, message}
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
@@ -162,8 +183,11 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 requestPayload,
                 getConfig(type),
             )
+
+            // Fire event to save fastlink gateway response to DB
             if(response.data && response.data.Status && response.data.Status === "successful"){
-                return {error: false, response: response.data}
+                const message = "Data purchase was successful. Check Balance to confirm."
+                return {error: false, response: response.data, message}
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
@@ -188,6 +212,11 @@ exports.superjara_balance = async () => {
         console.log("ERROOORR::", e.stack)
         return {error: true, message: "Error! Unable to fetch data balance"}
     }
+}
+
+exports.simserver_balance = (response) => {
+    const balance = response['data']['after_balance']
+    return {account_1: balance}
 }
 
 

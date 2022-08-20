@@ -26,4 +26,5 @@ module.exports = {
     save_transaction : require('./helpers').save_transaction,
     update_transaction_status: require('./helpers').update_transaction_status,
     superjara_balance: require('./helpers').superjara_balance,
+    simserver_balance: require('./helpers').simserver_balance,
 }
