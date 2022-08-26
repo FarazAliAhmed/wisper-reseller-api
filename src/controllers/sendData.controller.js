@@ -1,4 +1,6 @@
 const uuid = require('uuid')
+const CallbackEvent = require('../events/callback.event')
+const { handle_callback } = require('../events/_eventTypes')
 const _ = require('lodash')
 const {
     validateSendData,
@@ -27,6 +29,9 @@ const sendData = async (req, res, next) => {
     // 
     const {network, plan_id, phone_number, allocate_for_business, business_id} = req.body;
     
+    // Check for Callback url
+    const { callback } = req.query
+
     // validate request body
     // const {error} = validateSendData(req.body)
     // if (error) return res.status(401).json({error: true, status: 401, message: _.map(error.details, 'message')})
@@ -96,6 +101,9 @@ const sendData = async (req, res, next) => {
             responseObject.transaction_ref = uuid.v4()
             await save_transaction(business_id, responseObject)
         }
+
+        // Fire callback event to send callback
+        if(callback) CallbackEvent.emit(handle_callback, {callback, payload: {...responseObject, message: "Transaction Successful!"}})
         return res.status(201).json({...responseObject, message: "Transaction Successful!"})
 
     }catch(error){
