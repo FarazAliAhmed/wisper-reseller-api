@@ -17,6 +17,7 @@ const getAll = async (id) => {
   const transactions = await Transaction.find({
     business_id: businessId,
   })
+  .sort({_id: -1})
   .limit(800)
   .exec();
   if (transactions) return { transactions };
