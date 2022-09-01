@@ -4,13 +4,13 @@ const { getCurrentTime } = require('../utils').helpers
 
 const getAll = async (id) => {
   const businessId = id;
-  const payments = await Payment.find({ business_id: businessId }).exec();
+  const payments = await Payment.find({ business_id: businessId }).limit(300).exec();
   if (payments) return { payments };
   return { status: 400, message: "Unable to retreive your payments history" };
 };
 
 const getAllB = async () => {
-  const payments = await Payment.find().exec();
+  const payments = await Payment.find().limit(600).exec();
   if (payments) return { payments };
   return { status: 400, message: "Unable to retreive payments history" };
 };

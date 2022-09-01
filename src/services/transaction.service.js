@@ -5,7 +5,7 @@ const getAllB = async () => {
   const transactions = await Transaction
                             .find()
                             .sort({_id: -1})
-                            .limit(300)
+                            .limit(400)
                             .exec();
   if (transactions) return { transactions };
   return { status: 400, messsage: "Unable to retrieve all Transactions" };
@@ -16,7 +16,9 @@ const getAll = async (id) => {
   const businessId = id;
   const transactions = await Transaction.find({
     business_id: businessId,
-  }).exec();
+  })
+  .limit(800)
+  .exec();
   if (transactions) return { transactions };
   return { status: 400, messsage: "Unable to retrieve all your Transactions" };
 };
