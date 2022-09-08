@@ -59,4 +59,28 @@ const removeAdmin = async (email) => {
   return { user, message: "Admin successfully removed" };
 }
 
-module.exports = { register, update, addAdmin, removeAdmin };
+const saveCallback = async (username, callback_url) => {
+  let user;
+  user = await Account.findOneAndUpdate(
+    {username},
+    { callback: callback_url },
+    { new: true }
+  ).exec();
+
+  if (!user) return { status: 404, message: "Error occured while updating callback." };
+  return { user };
+}
+
+const saveWebhook = async (username, webhook_url) => {
+  let user;
+  user = await Account.findOneAndUpdate(
+    {username},
+    { webhook: webhook_url },
+    { new: true }
+  ).exec();
+
+  if (!user) return { status: 404, message: "Error occured while updating webhook url." };
+  return { user };
+}
+
+module.exports = { register, update, addAdmin, removeAdmin, saveCallback, saveWebhook };

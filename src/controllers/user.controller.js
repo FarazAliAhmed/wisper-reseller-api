@@ -2,7 +2,8 @@ const _ = require("lodash");
 const { validateUser } = require("../models/account");
 
 const userService = require("../services/user.service");
-const { upgradeBalance } = require("../services/balance.service")
+const { upgradeBalance } = require("../services/balance.service");
+const Joi = require("joi");
 
 const handleRegister = async (req, res) => {
   const { error } = validateUser(req.body);
@@ -35,7 +36,7 @@ const handleUpdate = async (req, res) => {
   const data = await userService.update(req.body, username);
 
   if (data.user) {
-    return res.send(data.user);
+    return res.json(_.omit(data.user._doc, ['password', 'access_token', 'isAdmin']));
   }
   return res.status(data.status).send(data.message);
 };
@@ -58,4 +59,49 @@ const deleteAdmin = async (req, res) => {
   return res.status(201).json(createResponse)
 }
 
-module.exports = { handleRegister, handleUpdate, createAdmin, deleteAdmin };
+const addWebhook = async (req, res) => {
+  const { username, url } = req.body;
+
+  const { error } = validateAddUrl(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  
+  const data = await userService.saveWebhook(username, url);
+
+  if (data.user) {
+    return res.json(_.omit(data.user._doc, ['password', 'access_token', 'isAdmin']));
+  }
+  return res.status(data.status).send(data.message);
+}
+
+const addCallback = async (req, res) => {
+  const { username, url } = req.body;
+
+  const { error } = validateAddUrl(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  
+  const data = await userService.saveCallback(username, url);
+
+  if (data.user) {
+    return res.json(_.omit(data.user._doc, 'password', 'access_token', 'isAdmin'));
+  }
+  return res.status(data.status).send(data.message);
+}
+
+const validateAddUrl = (fields) => {
+  const schema = Joi.object({
+    username: Joi.string().required(),
+    url: Joi.string().uri()
+  })
+
+  return schema.validate(fields)
+}
+
+
+module.exports = {
+  handleRegister,
+  handleUpdate,
+  createAdmin,
+  deleteAdmin,
+  addCallback,
+  addWebhook,
+};

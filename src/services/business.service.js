@@ -30,8 +30,32 @@ const getAdmins = async () => {
 }
 
 
-const deleteAccount = async (account_id) => {
-    
+const disableAccount = async (account_id) => {
+    try{
+        const resp = await Account.findOneAndUpdate({account_id}, {active: false}, {new: true}).exec()
+        return {account: resp, message: "Account has been disabled"}
+    }catch(err){
+        return {error: true, message: "Unable to disable user account"}
+    }
+}
+
+const enableAccount = async (account_id) => {
+    try{
+        const resp = await Account.findOneAndUpdate({account_id}, {active: true}, {new: true}).exec()
+        return {account: resp, message: "Account has been enabled"}
+    }catch(err){
+        return {error: true, message: "Unable to enable user account"}
+    }
+}
+
+
+const updateAccountType = async (account_id, type) => {
+    try{
+        const resp = await Account.findOneAndUpdate({account_id}, {type}, {new: true}).exec()
+        return {account: resp, message: `User account type has been update to ${type}`}
+    }catch(err){
+        return {error: true, message: "Unable to update user account type"}
+    }
 }
 
 
@@ -39,4 +63,7 @@ module.exports = {
     getAll,
     getOne,
     getAdmins,
+    enableAccount,
+    disableAccount,
+    updateAccountType,
 }

@@ -50,6 +50,18 @@ const accountSchema = mongoose.Schema(
     },
     mobile_number: String,
     address: String,
+    callback: {
+      type: String,
+      default: null
+    },
+    webhook: {
+      type: String,
+      default: null
+    },
+    active: {
+      type: Boolean,
+      default: true
+    }
   },
   { timestamps: true }
 );

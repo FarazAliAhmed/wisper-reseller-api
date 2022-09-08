@@ -38,6 +38,19 @@ const exitMaintenance = async (req, res) => {
 }
 
 
+const setNoticeMessag = async (req, res) => {
+    const {message} = req.body
+    const {error} = validateMaintenaceMessage(req.body)
+    if(error) return res.status(400).json({status: 'failed', message: error.details[0].message})
+    const setMessage = await Maintenance.findOneAndUpdate({}, {notice: message}, {new: true}).exec()
+    return res.status(201).json({maintenance: setMessage, message:  "The maintenace messsage has been set successfully"})
+}
+
+const clearNoticeMessag = async (req, res) => {
+    const setMessage = await Maintenance.findOneAndUpdate({}, {notice: null}, {new: true}).exec()
+    return res.status(201).json({maintenance: setMessage, message:  "Maintenace messsage has been cleared successfully"})
+}
+
 const validateMaintenaceUpdate = (field) => {
     const schema = Joi.string()
                     .valid('glo', 'mtn_sme', 'mtn_gifting', 'airtel', '9mobile')
@@ -45,9 +58,18 @@ const validateMaintenaceUpdate = (field) => {
     return schema.validate(field)
 }
 
+const validateMaintenaceMessage = (fields) => {
+    const schema = Joi.object({
+        message: Joi.string()
+    })
+    return schema.validate(fields)
+}
+
 module.exports = {
     getMaintenance,
     createMaintenance,
     enterMaintenance,
     exitMaintenance,
+    setNoticeMessag,
+    clearNoticeMessag,
 }

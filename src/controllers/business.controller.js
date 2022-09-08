@@ -1,7 +1,11 @@
+const Joi = require('joi')
 const {
     getAll,
     getOne,
-    getAdmins
+    getAdmins,
+    enableAccount,
+    disableAccount,
+    updateAccountType
 } = require('../services/business.service')
 
 const {
@@ -47,9 +51,47 @@ const getSystemAdmins = async (req, res, next) => {
     return res.status(200).json(resp.admin)
 }
 
+const enableBusinessAccount = async (req, res) => {
+    const {account_id} = req.params
+    const resp = await enableAccount(account_id)
+    if(resp.error) return res.status(400).json(resp)
+    return res.status(201).json({status: "success", message: resp.message})
+}
+
+const disableBusinessAccount = async (req, res) => {
+    const {account_id} = req.params
+    const resp = await disableAccount(account_id)
+    if(resp.error) return res.status(400).json(resp)
+    return res.status(201).json({status: "success", message: resp.message})
+}
+
+
+const setBusinessAccountType = async (req, res) => {
+    const {account_id, type} = req.body
+    const {error} = validateAccountType(req.body)
+    if(error) return res.status(400).json(
+        {status: "failed", message: error.details[0].message}
+    )
+    const resp = await updateAccountType(account_id, type)
+    if(resp.error) return res.status(400).json(resp)
+    return res.status(201).json({status: "success", message: resp.message})
+}
+
+
+const validateAccountType = (fields) => {
+    const schema = Joi.object({
+        account_id: Joi.string().required(),
+        type: Joi.string().valid('lite', 'mega')
+    })
+    return schema.validate(fields)
+}
+
 
 module.exports = {
     getAllBusiness,
     getOneBusiness,
     getSystemAdmins,
+    enableBusinessAccount,
+    disableBusinessAccount,
+    setBusinessAccountType,
 }

@@ -83,19 +83,12 @@ const debitBalance = async (req, res) => {
   res.status(newBalance.status).json({status: newBalance.status, message: newBalance.message, newBalance: newBalance.balance})
 }
 
-const updateBalance = async (req, res) => {
-
-}
-
 const updateAllBalance = async (req, res) => {
   const allBalance = await upgradeAllBalance()
   if (allBalance.error) return res.status(400).json({status: 400, message: "Error. Unable to upgrade all balance accounts"})
   res.status(allBalance.status).json({status: allBalance.status, message: allBalance.message, allBalance})
 }
 
-const resetBalance = async (req, res) => {
-
-}
 
 const getApiBalance = async (req, res) => {
   const balanceRes = await superjara_balance()
@@ -111,6 +104,13 @@ const getApiBalance = async (req, res) => {
   return res.status(200).json({simserver: simBalance, ...balanceRes })
 }
 
+const updateBalance = async (req, res) => {
+
+}
+
+const resetBalance = async (req, res) => {
+
+}
 
 module.exports = {
   getAccountBalance,

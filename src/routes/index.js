@@ -8,12 +8,17 @@ const {
   handleUpdate,
   createAdmin,
   deleteAdmin,
+  addWebhook,
+  addCallback,
 } = require("../controllers/user.controller");
 
 const {
   getAllBusiness,
   getOneBusiness,
-  getSystemAdmins
+  getSystemAdmins,
+  enableBusinessAccount,
+  disableBusinessAccount,
+  setBusinessAccountType
 } = require('../controllers/business.controller')
 
 const {
@@ -60,6 +65,8 @@ const {
   getMaintenance,
   enterMaintenance,
   exitMaintenance,
+  setNoticeMessag,
+  clearNoticeMessag,
 } = require('../controllers/maintenance.controller')
 
 router.get("/maintenance", getMaintenance)
@@ -81,6 +88,9 @@ router.get("/transactions", getUser, getAllTransaction);
 
 router.get("/payment/:id", getUser, getPayment);
 router.get("/payments", getUser, getAllPayments);
+
+router.post("/url/webhook", getUser, addWebhook);
+router.post("/url/callback", getUser, addCallback);
 
 
 /**Routes Called by Admin
@@ -121,6 +131,12 @@ router.get("/admin/api/balance", getAdmin, getApiBalance)
 router.post("/admin/maintenance/create", getAdmin, createMaintenance)
 router.patch("/admin/maintenance/enter/:network", getAdmin, enterMaintenance)
 router.patch("/admin/maintenance/exit/:network", getAdmin, exitMaintenance)
+router.post("/admin/maintenance/notice", getAdmin, setNoticeMessag)
+router.get("/admin/maintenance/clear", getAdmin, clearNoticeMessag)
+
+router.get("/admin/account/enable/:account_id", getAdmin, enableBusinessAccount)
+router.get("/admin/account/disable/:account_id", getAdmin, disableBusinessAccount)
+router.post("/admin/account/type", getAdmin, setBusinessAccountType)
 
 // router.post("/admin/balance/upgrade", getAdmin, updateAllBalance);
 // Endpoint for admin to upgrade user from lite to mega

@@ -18,7 +18,7 @@ const getAll = async (id) => {
     business_id: businessId,
   })
   .sort({_id: -1})
-  .limit(800)
+  .limit(400)
   .exec();
   if (transactions) return { transactions };
   return { status: 400, messsage: "Unable to retrieve all your Transactions" };

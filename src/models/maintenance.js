@@ -21,6 +21,10 @@ const Maintenance = new Schema({
     "9mobile": {
         type: Boolean,
         default: false,
+    },
+    notice: {
+        type: String,
+        default: null
     }
 })
 
