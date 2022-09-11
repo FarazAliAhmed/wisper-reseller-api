@@ -138,6 +138,8 @@ router.get("/admin/account/enable/:account_id", getAdmin, enableBusinessAccount)
 router.get("/admin/account/disable/:account_id", getAdmin, disableBusinessAccount)
 router.post("/admin/account/type", getAdmin, setBusinessAccountType)
 
+// upgrade user from lite to mega and back to lite
+
 // router.post("/admin/balance/upgrade", getAdmin, updateAllBalance);
 // Endpoint for admin to upgrade user from lite to mega
 

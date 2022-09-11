@@ -60,7 +60,8 @@ const deleteAdmin = async (req, res) => {
 }
 
 const addWebhook = async (req, res) => {
-  const { username, url } = req.body;
+  const { url } = req.body;
+  const { username } = req.user
 
   const { error } = validateAddUrl(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -74,7 +75,8 @@ const addWebhook = async (req, res) => {
 }
 
 const addCallback = async (req, res) => {
-  const { username, url } = req.body;
+  const { url } = req.body;
+  const { username } = req.user
 
   const { error } = validateAddUrl(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -89,8 +91,7 @@ const addCallback = async (req, res) => {
 
 const validateAddUrl = (fields) => {
   const schema = Joi.object({
-    username: Joi.string().required(),
-    url: Joi.string().uri()
+    url: Joi.string().uri().required()
   })
 
   return schema.validate(fields)
