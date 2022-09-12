@@ -91,7 +91,7 @@ const addCallback = async (req, res) => {
 
 const validateAddUrl = (fields) => {
   const schema = Joi.object({
-    url: Joi.string().uri().required()
+    url: Joi.string().required()
   })
 
   return schema.validate(fields)
