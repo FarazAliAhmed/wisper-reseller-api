@@ -14,6 +14,17 @@ const getBalance = async (id) => {
   };
 };
 
+const getWallet = async (id) => {
+  const business_id = mongoose.Types.ObjectId(id)
+  const balance = await Balance.findOne({ business: business_id }).exec();
+  if (balance) return { balance };
+  return {
+    status: 500,
+    error: true,
+    message: `Error getting balance of user with id: ${id}`,
+  };
+};
+
 const getAllBalance = async () => {
   const balances = await Balance.find().populate('business').exec();
   if (balances) return { balances };
@@ -80,7 +91,7 @@ const credit = async (id, creditAmount, field) => {
       { new: true }
     ).exec()
 
-  BalanceEvent.emit(balance_update, {new_balance: balance, old_balance})
+  // BalanceEvent.emit(balance_update, {new_balance: balance, old_balance})
 
   return {
     balance,
@@ -117,7 +128,7 @@ const debit = async (id, debitAmount, field) => {
   }
 
   if (checker < 0) return { error: true, status: 401, message: `Insufficient Balance ${wallet_name}` };
-  if (debitAmount > 0) BalanceEvent.emit(balance_update, {new_balance: balance, old_balance});
+  // if (debitAmount > 0) BalanceEvent.emit(balance_update, {new_balance: balance, old_balance});
 
   return { balance, error: false, status: 201 };
 };
@@ -144,6 +155,7 @@ const reset = async (id) => {
 
 module.exports = {
   getBalance,
+  getWallet,
   getAllBalance,
   create,
   debit,

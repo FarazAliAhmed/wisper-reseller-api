@@ -1,6 +1,8 @@
+const lodash = require('lodash')
 const IntegrationResponse = require('../models/integrationResponse');
 const {
   getBalance,
+  getWallet,
   getAllBalance,
   credit,
   debit,
@@ -14,6 +16,23 @@ const getAccountBalance = async (req, res) => {
   const businessId = req.user._id
   const resp = await getBalance(businessId)
   if(resp.balance) return res.status(200).json(resp.balance)
+  return res.status(resp.status).json(resp)
+}
+
+const getWalletBalance = async (req, res) => {
+  const businessId = req.user._id
+  const resp = await getWallet(businessId)
+  if(resp.balance){
+    const wResp = {
+      ...lodash.pick(resp.balance, 'mega_wallet'),
+      lite_wallet: {
+        cash_balance: resp.balance.wallet_balance,
+        unit: resp.balance.data_unit,
+      },
+      last_purchase: resp.balance.last_purchase
+    }
+    return res.status(200).json(wResp)
+  }
   return res.status(resp.status).json(resp)
 }
 
@@ -114,6 +133,7 @@ const resetBalance = async (req, res) => {
 
 module.exports = {
   getAccountBalance,
+  getWalletBalance,
   getAllBusinessBalances,
   updateBalance,
   resetBalance,

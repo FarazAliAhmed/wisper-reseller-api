@@ -27,6 +27,9 @@ const transactionHistorySchema = new Schema(
     data_price: {
       type: Number,
     },
+    new_balance: {
+      type: Schema.Types.Mixed,
+    },
     business_id: {
       type: String,
       required: true,

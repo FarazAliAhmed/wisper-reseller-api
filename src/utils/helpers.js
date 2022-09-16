@@ -106,6 +106,9 @@ const getFieldAndAmount = (type, planDetails) => {
             }else{
                 pType = `${network}`
             }
+        }else if(network === "airtel"){
+            volume = volume < 1024 ? volume : volume < 1048576 ? ~~(volume / 1024) * 1000 : ~~(volume / 1048576) * 1000000
+            pType = `${network}`
         }else{
             pType = `${network}`
         }
@@ -119,7 +122,7 @@ exports.debit_account_balance = async (account_id, planDetails, type) => {
     const {amount, field} = getFieldAndAmount(type, planDetails)
     const updatedBalance = await debit(account_id, amount, field)
     if(updatedBalance.error) return updatedBalance
-    return {error: false, status: 201, balance: updatedBalance.balance}
+    return {error: false, status: 201, balance: updatedBalance.balance, debited: amount}
 }
 
 
@@ -228,11 +231,14 @@ exports.format_transaction_response = ({
     responseObject.new_balance = type === "mega" ? 
         debitAccount.balance.mega_wallet
             :
-        `${debitAccount.balance.data_unit} ${debitAccount.balance.wallet_balance}`;
+        {
+            cash_balance: debitAccount.balance.wallet_balance,
+            unit: debitAccount.balance.data_unit
+        };
     responseObject.phone_number = validNumber.number;
     responseObject.status = "success";
     responseObject.network_provider = providerId.network;
-    responseObject.data_volume = planDetails.volume;
+    responseObject.data_volume = debitAccount.debited;
     responseObject.plan_id = planDetails.id;
     // responseObject.price = planDetails.price;
     responseObject.transaction_ref = uuid.v4();

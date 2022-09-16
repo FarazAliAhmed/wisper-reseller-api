@@ -23,6 +23,7 @@ const {
 
 const {
   getAccountBalance,
+  getWalletBalance,
   getAllBusinessBalances,
   creditBalance,
   debitBalance,
@@ -82,6 +83,7 @@ router.get("/plans", getUser, getAllPlans);
 router.get("/networks", getUser, getNetworks);
 
 router.get("/balance", getUser, getAccountBalance);
+router.get("/wallet", getUser, getWalletBalance)
 
 router.get("/transaction/:id", getUser, getTransaction);
 router.get("/transactions", getUser, getAllTransaction);
