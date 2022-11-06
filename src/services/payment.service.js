@@ -7,7 +7,7 @@ const getAll = async (id) => {
   const payments = await Payment
                         .find({ business_id: businessId })
                         .sort({_id: -1})
-                        .limit(400)
+                        .limit(900)
                         .exec();
   if (payments) return { payments };
   return { status: 400, message: "Unable to retreive your payments history" };
@@ -17,7 +17,7 @@ const getAllB = async () => {
   const payments = await Payment
                         .find()
                         .sort({_id: -1})
-                        .limit(400)
+                        .limit(900)
                         .exec();
   if (payments) return { payments };
   return { status: 400, message: "Unable to retreive payments history" };
