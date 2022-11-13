@@ -9,12 +9,12 @@ const PORT = config.get("port");
 
 const apiRoutes = require("./routes");
 const hookRoute = require("./routes/hooks")
-// const corsOptions = {
-//   origin: '*'
-// }
+const corsOptions = {
+  origin: '*'
+}
 
-// app.use(cors(corsOptions));
-app.use(cors());
+app.use(cors(corsOptions));
+// app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
