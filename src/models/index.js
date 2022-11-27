@@ -9,7 +9,7 @@ const dbSetUp = async () => {
       useUnifiedTopology: true,
     });
     await loadPlans()
-    console.log(`Connected to database successfully...`);
+    console.log(`Connected to DB:: `, config.get('db'));
   } catch (error) {
     console.error(error);
   }

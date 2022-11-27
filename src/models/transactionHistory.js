@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Joi = require("joi");
+const mongoosePaginate = require('mongoose-paginate-v2');
 const Schema = mongoose.Schema;
 
 const transactionHistorySchema = new Schema(
@@ -49,5 +49,7 @@ const transactionHistorySchema = new Schema(
     }
   }
 );
+
+transactionHistorySchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("transaction", transactionHistorySchema);
