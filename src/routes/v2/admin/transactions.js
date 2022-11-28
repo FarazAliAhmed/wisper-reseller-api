@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const {celebrate, Joi} = require('celebrate');
-const { fetchBusinessTransactions, filterBusinessTransactions } = require('../../controllers/v2/transactions');
+const { fetchTransactions, filterTransactions } = require('../../../controllers/v2/transactions');
 
 router.get(
     '/',
@@ -12,7 +12,7 @@ router.get(
             sort: Joi.string()
         })
     }),
-    fetchBusinessTransactions
+    fetchTransactions
 );
 
 router.post(
@@ -33,7 +33,7 @@ router.post(
             reference: Joi.string()
         })
     }),
-    filterBusinessTransactions
+    filterTransactions
 )
 
 module.exports = {

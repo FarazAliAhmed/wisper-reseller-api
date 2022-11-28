@@ -10,8 +10,12 @@ const { errors } = require('celebrate');
 
 const PORT = config.get("port");
 
+const getAdmin = require('./utils/middleware/getAdmin');
+const getUser = require('./utils/middleware/getUser');
+
 const apiRoutes = require("./routes");
 const apiV2Routes = require('./routes/v2');
+const apiV2AdminRoutes = require('./routes/v2/admin')
 const hookRoute = require("./routes/hooks")
 const corsOptions = {
   origin: '*'
@@ -30,7 +34,8 @@ app.get("/", (req, res) => {
   res.status(200).send({ status: "healthy" });
 });
 app.use("/api", apiRoutes);
-app.use("/api/v2", apiV2Routes);
+app.use("/api/v2", getUser, apiV2Routes);
+app.use("/api/v2/admin", getAdmin, apiV2AdminRoutes);
 app.use("/hook", hookRoute);
 
 app.use(errors());
