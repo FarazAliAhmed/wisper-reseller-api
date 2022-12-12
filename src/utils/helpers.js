@@ -10,21 +10,27 @@ const IntegrationEvents = require('../events/integration.event')
 
 const {create: addTransaction, update: updateTransaction} = require('../services/transaction.service')
 const {debit} = require('../services/balance.service')
-const {units, plans, network_ids, numbers: network_numbers, ported_numbers, simservers_size_map} = require('./networkData')
+const {units, plans, network_ids, numbers: network_numbers, ported_numbers, simservers_size_map, ogdams_size_map} = require('./networkData')
 
 // Config variables
-const fastlink_url = "https://www.fastlink.com.ng/api/data/"
-const fastlink_gifting_auth = `Token ${process.env.FASTLINK_AUTH_KEY}`
-const fastlink_sme_auth = `Token ${process.env.FASTLINK_AUTH_KEY_SME}`
+const fastlink_url = "https://www.fastlink.com.ng/api/data/";
+const fastlink_gifting_auth = `Token ${process.env.FASTLINK_AUTH_KEY}`;
+const fastlink_sme_auth = `Token ${process.env.FASTLINK_AUTH_KEY_SME}`;
 
-const simservers_url = "https://api.simservers.io"
-const simservers_key = process.env.SIMSERVERS_KEY
+const simservers_url = "https://api.simservers.io";
+const simservers_key = process.env.SIMSERVERS_KEY;
+
+const ogdams_url = "https://simhosting.ogdams.ng/api/v1/vend/data";
+const ogdams_key = process.env.OGDAMS_KEY
+
 
 // Names of integration used in saving gateway response to DB
 const integrationTypes = {
     SUPERJARA: 'SUPERJARA',
     FASTLINK: 'FASTLINK',
     SIMSERVER: 'SIMSERVER',
+    OGDAMS: 'OGDAMS',
+    UNKNOWN: 'UNKNOWN',
 }
 
 
@@ -151,6 +157,10 @@ function getConfig(type){
 exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {  
     try{
         if(requestPayload.network == 4){
+            // Data purchase for Airtel
+
+            // Purchase from SIMSERVER
+            /*
             const {error, param} = simservers_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is not available"}
 
@@ -166,28 +176,73 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 req_body,
                 {headers: {'Content-Type': 'application/json'}}
             )
+            */
 
-            // Fire event to save SIMSERVER gateway response to DB
+            // Purchase from OGDAMS SIMHOSTING
+            const {error, plan_id} = ogdams_size_map(size)
+            if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+            const req_header = {
+                headers: {
+                    'Authorization': `Bearer ${ogdams_key}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+
+            const req_body = {
+                "networkId" : 2,    // Do not change this: networkId = 2 is for Airtel
+                "planId" : plan_id,
+                "phoneNumber" : requestPayload.mobile_number
+            }
+
+            const response = await axios.post(
+                ogdams_url,
+                req_body,
+                req_header
+            )
+            console.log({response: response.data})
+
+            // Fire event to save gateway response to DB
             const integResp = response.data
-            const integName = integrationTypes.SIMSERVER
-            
+            const integName = integrationTypes.OGDAMS
             IntegrationEvents.emit(integration_response, {
                 integration: integName,
                 response: integResp,
             })
 
+            // SIMSERVER RESPONSE CHECK
+            /*
             if(integResp && integResp["status"] == true && integResp["data"]["text_status"] == "success"){
                 const message = integResp["data"]["true_response"]
                 return {error: false, response: integResp, message}
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
+            */
+
+            // OGDAMS RESPONSE CHECK
+            if(integResp && [200, 201, 202].includes(integResp["code"])){
+                const message = integResp["data"]["msg"]
+                return {error: false, response: integResp, message}
+            }else{
+                return {error: true, status: 400, message: "An error occured with data transfer server"}
+            }
         }else{
+            // Data purchase for other network
             const response = await axios.post(
                 fastlink_url,
                 requestPayload,
                 getConfig(type),
             )
+
+             // Fire event to save gateway response to DB
+            const integResp = response.data
+            const integName = integrationTypes.FASTLINK
+            IntegrationEvents.emit(integration_response, {
+                integration: integName,
+                response: integResp,
+            })
 
             // Fire event to save fastlink gateway response to DB
             if(response.data && response.data.Status && response.data.Status === "successful"){
@@ -199,6 +254,12 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
         }
     }catch(e){
         console.log("ERROOORR::", e.message)
+        
+        // Fire event to save gateway response to DB
+        IntegrationEvents.emit(integration_response, {
+            integration: integrationTypes.UNKNOWN,
+            response: e?.response?.data,
+        })
         return {error: true, status: 400, message: "Data volume transafer failed"}
     }
 }

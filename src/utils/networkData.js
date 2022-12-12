@@ -78,3 +78,41 @@ exports.simservers_size_map = (size) => {
     }
    return {error, param}
 }
+
+exports.ogdams_size_map = (size) => {
+    const f_size = size.trim().toLowerCase().replace(" ", "")
+    let error = false, plan_id;
+   
+    switch(f_size){
+        case "100mb":
+            plan_id = 110;
+            break;
+        case "300mb":
+            plan_id = 111;
+            break;
+        case "500mb":
+            plan_id = 112;
+            break;
+        case "1gb":
+            plan_id = 113;
+            break;
+        case "2gb":
+            plan_id = 114;
+            break;
+        case "5gb":
+            plan_id = 115;
+            break;
+        case "10gb":
+            plan_id = 116;
+            break;
+        case "15gb":
+            plan_id = 117;
+            break;
+        case "20gb":
+            plan_id = 118;
+            break;
+        default:
+            error = true;
+    }
+   return {error, plan_id}
+}
