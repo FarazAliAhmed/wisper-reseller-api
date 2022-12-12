@@ -28,5 +28,11 @@ const Maintenance = new Schema({
     }
 })
 
+// NOTE - About Maintenance Mood
+/**
+ * The network provider is under maintenance and not available for use when the value is TRUE
+ * When the value is FALSE, the provider is NOT under maintenance and hence available for use by customers
+ */
+
 module.exports = mongoose.model("maintenance", Maintenance)
 

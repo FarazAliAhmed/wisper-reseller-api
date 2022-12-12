@@ -3,6 +3,8 @@ const joi = require('joi')
 const _ = require('lodash')
 const moment = require('moment-timezone')
 
+const Maintenance = require('../models/maintenance');
+
 const {integration_response} = require('../events/_eventTypes')
 const IntegrationEvents = require('../events/integration.event')
 
@@ -276,4 +278,26 @@ exports.nairaToData = (nairaAmount) => {
 
 exports.getCurrentTime = () => {
     return moment().tz('Africa/Lagos').format('YYYY/MM/D hh:mm:ss A')
+}
+
+exports.checkMaintenance = async (planDetails) => {
+    const { network, plan_type } = planDetails;
+    const maintenance = await Maintenance.findOne();
+    const { mtn_sme, mtn_gifting, airtel } = maintenance;
+    if(network === 'airtel'){
+        if(airtel == true){
+            return {error: true, status: 400, message: "Airtel is currently NOT available. We'll let you know when it is back up."}
+        }
+        return {error: false, status: 200, message: "Airtel is available for use"}
+    }else if(network === 'mtn'){
+        if(plan_type === 'sme' && mtn_sme == true){
+            return {error: true, status: 400, message: "MTN SME is currently NOT available. We'll let you know when it is back up."}
+        }
+        if(plan_type === 'gifting' && mtn_gifting == true){
+            return {error: true, status: 400, message: "MTN GIFTING is currently NOT available. We'll let you know when it is back up."}
+        }
+        return {error: false, status: 200, message: "MTN is available for use"}
+    }else{
+        return {error: false, status: 200, message: "Network is available for use"}
+    }
 }

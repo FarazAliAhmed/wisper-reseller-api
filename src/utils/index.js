@@ -17,6 +17,7 @@ module.exports = {
         validate_phone_number: require('./helpers').validate_phone_number,
         nairaToData: require('./helpers').nairaToData,
         getCurrentTime: require('./helpers').getCurrentTime,
+        checkMaintenance: require('./helpers').checkMaintenance,
     },
     debit_account_balance: require('./helpers').debit_account_balance,
     revert_debit_account_balance: require('./helpers').revert_debit_account_balance,

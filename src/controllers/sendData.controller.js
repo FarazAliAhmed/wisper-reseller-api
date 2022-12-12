@@ -7,7 +7,8 @@ const {
     get_plan_details,
     get_network_provider,
     validate_phone_number,
-    getCurrentTime
+    getCurrentTime,
+    checkMaintenance,
 } = require('../utils').helpers
 
 const {
@@ -40,9 +41,14 @@ const sendData = async (req, res, next) => {
     const providerId = get_network_provider(network);
     if (providerId.error) return res.status(providerId.status).json(providerId);
     
+    // TODO - Optimize process by merging "fetching plan details" and "fetching Maintenance Info from DB" 
     // validate and get data plan details
     const planDetails = await get_plan_details(plan_id);
     if (planDetails.error) return res.status(planDetails.status).json(planDetails);
+
+    // Check if data purchase provider is under maintenance
+    const maintenance = await checkMaintenance(planDetails);
+    if(maintenance.error) return res.status(maintenance.status).json(maintenance);
 
     // check that phone number is valid
     const validNumber = validate_phone_number(phone_number, providerId.network);
