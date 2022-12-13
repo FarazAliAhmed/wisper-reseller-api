@@ -201,7 +201,6 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 req_body,
                 req_header
             )
-            console.log({response: response.data})
 
             // Fire event to save gateway response to DB
             const integResp = response.data
@@ -222,7 +221,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             */
 
             // OGDAMS RESPONSE CHECK
-            if(integResp && [200, 201, 202].includes(integResp["code"])){
+            if(integResp && integResp["status"] == true && [200, 201, 202].includes(integResp["code"])){
                 const message = integResp["data"]["msg"]
                 return {error: false, response: integResp, message}
             }else{
