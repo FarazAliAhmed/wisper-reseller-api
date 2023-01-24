@@ -89,7 +89,7 @@ const sendData = async (req, res, next) => {
             requestPayload,
             {size: planDetails.size, ref: responseObject.transaction_ref, type: planDetails.plan_type}
         )
-        if (send_response.error){
+        if (send_response?.error){
             responseObject.status = "failed";
             delete responseObject.new_balance;
             await update_transaction_status(responseObject.transaction_ref, "failed")
@@ -113,6 +113,7 @@ const sendData = async (req, res, next) => {
         return res.status(201).json({...responseObject, message: "Transaction Successful!"})
 
     }catch(error){
+        console.log(error)
         console.log("In catch: " + error.message)
         await revert_debit_account_balance(_id, planDetails, type)
     }

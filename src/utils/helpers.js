@@ -10,7 +10,7 @@ const IntegrationEvents = require('../events/integration.event')
 
 const {create: addTransaction, update: updateTransaction} = require('../services/transaction.service')
 const {debit} = require('../services/balance.service')
-const {units, plans, network_ids, numbers: network_numbers, ported_numbers, simservers_size_map, ogdams_size_map} = require('./networkData')
+const {units, plans, network_ids, numbers: network_numbers, ported_numbers, simservers_size_map, ogdams_size_map, cloudsimhost_size_map} = require('./networkData')
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -23,6 +23,9 @@ const simservers_key = process.env.SIMSERVERS_KEY;
 const ogdams_url = "https://simhosting.ogdams.ng/api/v1/vend/data";
 const ogdams_key = process.env.OGDAMS_KEY
 
+const cloudsimhost_url = "https://www.cloudsimhost.com/api/buy-data/";
+const cloudsimhost_key = process.env.CLOUDSIMHOST_KEY;
+
 
 // Names of integration used in saving gateway response to DB
 const integrationTypes = {
@@ -30,6 +33,7 @@ const integrationTypes = {
     FASTLINK: 'FASTLINK',
     SIMSERVER: 'SIMSERVER',
     OGDAMS: 'OGDAMS',
+    CLOUDSIMHOST: 'CLOUDSIMHOST',
     UNKNOWN: 'UNKNOWN',
 }
 
@@ -179,6 +183,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             */
 
             // Purchase from OGDAMS SIMHOSTING
+            /*
             const {error, plan_id} = ogdams_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
 
@@ -201,14 +206,40 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 req_body,
                 req_header
             )
+            */
+
+            // PURCHASE FOR CLOUDSIMHOST
+            const {error, plan_id} = cloudsimhost_size_map(size)
+            if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+            const req_header = {
+                headers: {
+                    'Authorization': `Token ${cloudsimhost_key}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+
+            const req_body = {
+                "plan" : plan_id,
+                "phone" : requestPayload.mobile_number,
+                "customer_ref": ref
+            }
+
+            const response = await axios.post(
+                cloudsimhost_url,
+                req_body,
+                req_header
+            )
 
             // Fire event to save gateway response to DB
             const integResp = response.data
-            const integName = integrationTypes.OGDAMS
+            const integName = integrationTypes.CLOUDSIMHOST
             IntegrationEvents.emit(integration_response, {
                 integration: integName,
                 response: integResp,
             })
+
 
             // SIMSERVER RESPONSE CHECK
             /*
@@ -221,8 +252,16 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             */
 
             // OGDAMS RESPONSE CHECK
-            if(integResp && integResp["status"] == true && [200, 201, 202].includes(integResp["code"])){
-                const message = integResp["data"]["msg"]
+            // if(integResp && integResp["status"] == true && [200, 201, 202].includes(integResp["code"])){
+            //     const message = integResp["data"]["msg"]
+            //     return {error: false, response: integResp, message}
+            // }else{
+            //     return {error: true, status: 400, message: "An error occured with data transfer server"}
+            // }
+
+            // CLOUDSIMHOST RESPONSE CHECK
+            if(integResp && integResp.data["status"] == "success" && integResp.data["success"] == true){
+                const message = integResp.data["msg"]
                 return {error: false, response: integResp, message}
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}

@@ -116,3 +116,40 @@ exports.ogdams_size_map = (size) => {
     }
    return {error, plan_id}
 }
+exports.cloudsimhost_size_map = (size) => {
+    const f_size = size.trim().toLowerCase().replace(" ", "")
+    let error = false, plan_id;
+   
+    switch(f_size){
+        case "100mb":
+            plan_id = 8;
+            break;
+        case "300mb":
+            plan_id = 11;
+            break;
+        case "500mb":
+            plan_id = 14;
+            break;
+        case "1gb":
+            plan_id = 15;
+            break;
+        case "2gb":
+            plan_id = 16;
+            break;
+        case "5gb":
+            plan_id = 17;
+            break;
+        case "10gb":
+            plan_id = 19;
+            break;
+        case "15gb":
+            plan_id = 20;
+            break;
+        case "20gb":
+            plan_id = 21;
+            break;
+        default:
+            error = true;
+    }
+   return {error, plan_id}
+}
