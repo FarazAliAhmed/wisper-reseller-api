@@ -17,7 +17,7 @@ exports.ported_numbers = ["0913", "0912"]
 
 exports.network_ids = {
     1: "mtn",
-   //  2: "glo",
+    2: "glo",
    //  3: "9mobile",
     4: "airtel"
 }

@@ -266,6 +266,9 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
+        }
+        else if(requestPayload.network == 2){
+            // Call Alma management API to call GLO API
         }else{
             // Data purchase for other network
             const response = await axios.post(
