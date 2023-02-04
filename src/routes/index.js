@@ -126,7 +126,7 @@ router.delete("/admin/plans/:plan_id", getAdmin, deleteOnePlan)
 router.delete("/admin/plans/network/:network", getAdmin, deleteNetworkPlans)
 
 router.post("/admin/admin/create", getAdmin, createAdmin)
-router.delete("/admin/admin/remove", getAdmin, deleteAdmin)
+router.delete("/admin/admin/remove/:email", getAdmin, deleteAdmin)
 
 router.get("/admin/api/balance", getAdmin, getApiBalance)
 
