@@ -10,7 +10,17 @@ const IntegrationEvents = require('../events/integration.event')
 
 const {create: addTransaction, update: updateTransaction} = require('../services/transaction.service')
 const {debit} = require('../services/balance.service')
-const {units, plans, network_ids, numbers: network_numbers, ported_numbers, simservers_size_map, ogdams_size_map, cloudsimhost_size_map} = require('./networkData')
+const {
+    units,
+    plans,
+    network_ids,
+    numbers: network_numbers,
+    ported_numbers,
+    simservers_size_map,
+    ogdams_size_map,
+    cloudsimhost_size_map,
+    cloudsimhost_glo_size_map
+} = require('./networkData')
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -24,7 +34,11 @@ const ogdams_url = "https://simhosting.ogdams.ng/api/v1/vend/data";
 const ogdams_key = process.env.OGDAMS_KEY
 
 const cloudsimhost_url = "https://www.cloudsimhost.com/api/buy-data/";
+const cloudsimhost_glo_url = "https://apiconnect.cloudsimhost.com/api/buy-data/";
 const cloudsimhost_key = process.env.CLOUDSIMHOST_KEY;
+
+const almamgt_url = process.env.ALMA_GLO_URL
+const almamgt_key = process.env.ALMA_API_KEY
 
 
 // Names of integration used in saving gateway response to DB
@@ -34,6 +48,7 @@ const integrationTypes = {
     SIMSERVER: 'SIMSERVER',
     OGDAMS: 'OGDAMS',
     CLOUDSIMHOST: 'CLOUDSIMHOST',
+    ALMAMGT_GLO: 'ALMAMGT_GLO',
     UNKNOWN: 'UNKNOWN',
 }
 
@@ -62,7 +77,7 @@ exports.get_plan_details = async (plan_id) => {
     if (!plans.hasOwnProperty(plan_id)) return {error: true, status: 401, message: "Invalid Plan Id"}
     const selectedPlan = plans[plan_id]
     const volume_strings = selectedPlan.size.split(" ")
-    const volume = parseInt(volume_strings[0]) * units[volume_strings[1]]
+    const volume = Number(volume_strings[0]) * units[volume_strings[1]]
     
     return {
         ..._.pick(selectedPlan, ["validity", "price", "network", "plan_type", "size"]), volume, id : plan_id, error: false
@@ -268,7 +283,47 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }
         }
         else if(requestPayload.network == 2){
-            // Call Alma management API to call GLO API
+            // PURCHASE FOR ALMAGMT GLO
+            const {error, plan_id} = cloudsimhost_glo_size_map(size)
+            if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+            const req_header = {
+                headers: {
+                    'x-api-key': almamgt_key,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+
+            const req_body = {
+                "tx_ref": ref.slice(0, 12),
+                "phone_number": requestPayload.mobile_number,
+                "plan_id": plan_id
+            }
+
+            const response = await axios.post(
+                `${almamgt_url}/api/purchase`,
+                req_body,
+                req_header
+            )
+
+            console.log({response})
+
+            // Fire event to save gateway response to DB
+            const integResp = response.data
+            const integName = integrationTypes.ALMAMGT_GLO
+            IntegrationEvents.emit(integration_response, {
+                integration: integName,
+                response: integResp,
+            })
+
+            // ALMAMGT GLO RESPONSE CHECK
+            if(integResp && integResp.data["status"] == "ok" && integResp.data["resultCode"] == "0001"){
+                const message = integResp.data["message"]
+                return {error: false, response: integResp, message}
+            }else{
+                return {error: true, status: 400, message: "An error occured with data transfer server"}
+            }
         }else{
             // Data purchase for other network
             const response = await axios.post(
@@ -277,7 +332,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 getConfig(type),
             )
 
-             // Fire event to save gateway response to DB
+            // Fire event to save gateway response to DB
             const integResp = response.data
             const integName = integrationTypes.FASTLINK
             IntegrationEvents.emit(integration_response, {
