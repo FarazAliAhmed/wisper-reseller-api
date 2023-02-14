@@ -18,7 +18,8 @@ const dataBalanceSchema = new Schema({
   },
   data_unit: {
     type: String,
-    default: "₦",
+    default: "MB",
+    // default: "₦",
   },
   mega_wallet: {
     mtn_sme: {

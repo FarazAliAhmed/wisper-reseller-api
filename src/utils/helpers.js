@@ -307,7 +307,6 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 req_header
             )
 
-            console.log({response})
 
             // Fire event to save gateway response to DB
             const integResp = response.data
@@ -440,12 +439,18 @@ exports.getCurrentTime = () => {
 exports.checkMaintenance = async (planDetails) => {
     const { network, plan_type } = planDetails;
     const maintenance = await Maintenance.findOne();
-    const { mtn_sme, mtn_gifting, airtel } = maintenance;
+    const { mtn_sme, mtn_gifting, airtel, glo } = maintenance;
     if(network === 'airtel'){
         if(airtel == true){
             return {error: true, status: 400, message: "Airtel is currently NOT available. We'll let you know when it is back up."}
         }
         return {error: false, status: 200, message: "Airtel is available for use"}
+    }
+    else if(network === 'glo'){
+        if(glo == true){
+            return {error: true, status: 400, message: "GLO is currently NOT available. We'll let you know when it is back up."}
+        }
+        return {error: false, status: 200, message: "GLO is available for use"}
     }else if(network === 'mtn'){
         if(plan_type === 'sme' && mtn_sme == true){
             return {error: true, status: 400, message: "MTN SME is currently NOT available. We'll let you know when it is back up."}
