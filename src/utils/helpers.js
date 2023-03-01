@@ -19,7 +19,8 @@ const {
     simservers_size_map,
     ogdams_size_map,
     cloudsimhost_size_map,
-    cloudsimhost_glo_size_map
+    cloudsimhost_glo_size_map,
+    eazymobile_glo_size_map
 } = require('./networkData')
 
 // Config variables
@@ -40,6 +41,10 @@ const cloudsimhost_key = process.env.CLOUDSIMHOST_KEY;
 const almamgt_url = process.env.ALMA_GLO_URL
 const almamgt_key = process.env.ALMA_API_KEY
 
+const eazymobile_url = process.env.EAZYMOBILE_URL
+const eazymobile_key = process.env.EAZYMOBILE_API_KEY
+const eazymobile_token = process.env.EAZYMOBILE_TOKEN
+
 
 // Names of integration used in saving gateway response to DB
 const integrationTypes = {
@@ -49,6 +54,7 @@ const integrationTypes = {
     OGDAMS: 'OGDAMS',
     CLOUDSIMHOST: 'CLOUDSIMHOST',
     ALMAMGT_GLO: 'ALMAMGT_GLO',
+    EAZYMOBILE: "EAZYMOBILE",
     UNKNOWN: 'UNKNOWN',
 }
 
@@ -178,7 +184,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
         if(requestPayload.network == 4){
             // Data purchase for Airtel
 
-            // Purchase from SIMSERVER
+            // SECTION - Purchase from SIMSERVER
             /*
             const {error, param} = simservers_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is not available"}
@@ -197,7 +203,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             )
             */
 
-            // Purchase from OGDAMS SIMHOSTING
+            // SECTION - Purchase from OGDAMS SIMHOSTING
             /*
             const {error, plan_id} = ogdams_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
@@ -223,7 +229,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             )
             */
 
-            // PURCHASE FOR CLOUDSIMHOST
+            // SECTION - PURCHASE FOR CLOUDSIMHOST
             const {error, plan_id} = cloudsimhost_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
 
@@ -256,7 +262,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             })
 
 
-            // SIMSERVER RESPONSE CHECK
+            // !SECTION - SIMSERVER RESPONSE CHECK
             /*
             if(integResp && integResp["status"] == true && integResp["data"]["text_status"] == "success"){
                 const message = integResp["data"]["true_response"]
@@ -266,7 +272,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }
             */
 
-            // OGDAMS RESPONSE CHECK
+            // !SECTION - OGDAMS RESPONSE CHECK
             // if(integResp && integResp["status"] == true && [200, 201, 202].includes(integResp["code"])){
             //     const message = integResp["data"]["msg"]
             //     return {error: false, response: integResp, message}
@@ -274,7 +280,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             //     return {error: true, status: 400, message: "An error occured with data transfer server"}
             // }
 
-            // CLOUDSIMHOST RESPONSE CHECK
+            // !SECTION - CLOUDSIMHOST RESPONSE CHECK
             if(integResp && integResp.data["status"] == "success" && integResp.data["success"] == true){
                 const message = integResp.data["msg"]
                 return {error: false, response: integResp, message}
@@ -283,26 +289,71 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }
         }
         else if(requestPayload.network == 2){
-            // PURCHASE FOR ALMAGMT GLO
-            const {error, plan_id} = cloudsimhost_glo_size_map(size)
+            // // SECTION - PURCHASE FOR ALMAGMT GLO
+            // const {error, plan_id} = cloudsimhost_glo_size_map(size)
+            // if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+            // const req_header = {
+            //     headers: {
+            //         'x-api-key': almamgt_key,
+            //         'Content-Type': 'application/json',
+            //         'Accept': 'application/json'
+            //     }
+            // }
+
+            // const req_body = {
+            //     "tx_ref": ref.slice(0, 12),
+            //     "phone_number": requestPayload.mobile_number,
+            //     "plan_id": plan_id
+            // }
+
+            // const response = await axios.post(
+            //     `${almamgt_url}/api/purchase`,
+            //     req_body,
+            //     req_header
+            // )
+
+
+            // // Fire event to save gateway response to DB
+            // const integResp = response.data
+            // const integName = integrationTypes.ALMAMGT_GLO
+            // IntegrationEvents.emit(integration_response, {
+            //     integration: integName,
+            //     response: integResp,
+            // })
+
+            // // ALMAMGT GLO RESPONSE CHECK
+            // if(integResp && integResp.data["status"] == "ok" && integResp.data["resultCode"] == "0001"){
+            //     const message = integResp.data["message"]
+            //     return {error: false, response: integResp, message}
+            // }else{
+            //     return {error: true, status: 400, message: "An error occured with data transfer server"}
+            // }
+
+
+            // SECTION - PURCHASE FOR EAZYMOBILE GLO
+            const {error, plan_id} = eazymobile_glo_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
 
             const req_header = {
                 headers: {
-                    'x-api-key': almamgt_key,
+                    'Authorization': `Bearer ${eazymobile_key}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 }
             }
 
-            const req_body = {
-                "tx_ref": ref.slice(0, 12),
-                "phone_number": requestPayload.mobile_number,
-                "plan_id": plan_id
+            const req_body = {  
+                "accessToken" : eazymobile_token,
+                "transID" : ref.slice(0, 12),
+                "merchantUrl" : "wisper-reseller.herokuapp.com",
+                "phone" : `${requestPayload.mobile_number}`,
+                "network" : `${4}`,
+                "planID" : `${plan_id}`
             }
 
             const response = await axios.post(
-                `${almamgt_url}/api/purchase`,
+                `${eazymobile_url}/api/v2/seamless/purchase/data`,
                 req_body,
                 req_header
             )
@@ -310,15 +361,15 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
 
             // Fire event to save gateway response to DB
             const integResp = response.data
-            const integName = integrationTypes.ALMAMGT_GLO
+            const integName = integrationTypes.EAZYMOBILE
             IntegrationEvents.emit(integration_response, {
                 integration: integName,
                 response: integResp,
             })
 
             // ALMAMGT GLO RESPONSE CHECK
-            if(integResp && integResp.data["status"] == "ok" && integResp.data["resultCode"] == "0001"){
-                const message = integResp.data["message"]
+            if(integResp && integResp["status"] == true && integResp["response"]["code"] == "200"){
+                const message = integResp["response"]["provider_response"]
                 return {error: false, response: integResp, message}
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}

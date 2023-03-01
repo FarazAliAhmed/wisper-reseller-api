@@ -186,3 +186,34 @@ exports.cloudsimhost_glo_size_map = (size) => {
     }
    return {error, plan_id}
 }
+exports.eazymobile_glo_size_map = (size) => {
+    const f_size = size.trim().toLowerCase().replace(" ", "")
+    let error = false, plan_id;
+   
+    switch(f_size){
+        case "200mb":
+            plan_id = 344;
+            break;
+        case "500mb":
+            plan_id = 345;
+            break;
+        case "1gb":
+            plan_id = 346;
+            break;
+        case "2gb":
+            plan_id = 347;
+            break;
+        case "3gb":
+            plan_id = 348;
+            break;
+        case "5gb":
+            plan_id = 349;
+            break;
+        case "10gb":
+            plan_id = 350;
+            break;
+        default:
+            error = true;
+    }
+   return {error, plan_id}
+}
