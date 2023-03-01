@@ -289,71 +289,26 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }
         }
         else if(requestPayload.network == 2){
-            // // SECTION - PURCHASE FOR ALMAGMT GLO
-            // const {error, plan_id} = cloudsimhost_glo_size_map(size)
-            // if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
-
-            // const req_header = {
-            //     headers: {
-            //         'x-api-key': almamgt_key,
-            //         'Content-Type': 'application/json',
-            //         'Accept': 'application/json'
-            //     }
-            // }
-
-            // const req_body = {
-            //     "tx_ref": ref.slice(0, 12),
-            //     "phone_number": requestPayload.mobile_number,
-            //     "plan_id": plan_id
-            // }
-
-            // const response = await axios.post(
-            //     `${almamgt_url}/api/purchase`,
-            //     req_body,
-            //     req_header
-            // )
-
-
-            // // Fire event to save gateway response to DB
-            // const integResp = response.data
-            // const integName = integrationTypes.ALMAMGT_GLO
-            // IntegrationEvents.emit(integration_response, {
-            //     integration: integName,
-            //     response: integResp,
-            // })
-
-            // // ALMAMGT GLO RESPONSE CHECK
-            // if(integResp && integResp.data["status"] == "ok" && integResp.data["resultCode"] == "0001"){
-            //     const message = integResp.data["message"]
-            //     return {error: false, response: integResp, message}
-            // }else{
-            //     return {error: true, status: 400, message: "An error occured with data transfer server"}
-            // }
-
-
-            // SECTION - PURCHASE FOR EAZYMOBILE GLO
-            const {error, plan_id} = eazymobile_glo_size_map(size)
+            // SECTION - PURCHASE FOR ALMAGMT GLO
+            const {error, plan_id} = cloudsimhost_glo_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
 
             const req_header = {
                 headers: {
-                    'Authorization': `Bearer ${eazymobile_key}`,
+                    'x-api-key': almamgt_key,
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 }
             }
 
-            const req_body = {  
-                "accessToken" : eazymobile_token,
-                "transID" : ref.slice(0, 12),
-                "merchantUrl" : "wisper-reseller.herokuapp.com",
-                "phone" : `${requestPayload.mobile_number}`,
-                "network" : `${4}`,
-                "planID" : `${plan_id}`
+            const req_body = {
+                "tx_ref": ref.slice(0, 12),
+                "phone_number": requestPayload.mobile_number,
+                "plan_id": plan_id
             }
 
             const response = await axios.post(
-                `${eazymobile_url}/api/v2/seamless/purchase/data`,
+                `${almamgt_url}/api/purchase`,
                 req_body,
                 req_header
             )
@@ -361,19 +316,64 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
 
             // Fire event to save gateway response to DB
             const integResp = response.data
-            const integName = integrationTypes.EAZYMOBILE
+            const integName = integrationTypes.ALMAMGT_GLO
             IntegrationEvents.emit(integration_response, {
                 integration: integName,
                 response: integResp,
             })
 
             // ALMAMGT GLO RESPONSE CHECK
-            if(integResp && integResp["status"] == true && integResp["response"]["code"] == "200"){
-                const message = integResp["response"]["provider_response"]
+            if(integResp && integResp.data["status"] == "ok" && integResp.data["resultCode"] == "0001"){
+                const message = integResp.data["message"]
                 return {error: false, response: integResp, message}
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
+
+
+            // SECTION - PURCHASE FOR EAZYMOBILE GLO
+            // const {error, plan_id} = eazymobile_glo_size_map(size)
+            // if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+            // const req_header = {
+            //     headers: {
+            //         'Authorization': `Bearer ${eazymobile_key}`,
+            //         'Content-Type': 'application/json',
+            //         'Accept': 'application/json'
+            //     }
+            // }
+
+            // const req_body = {  
+            //     "accessToken" : eazymobile_token,
+            //     "transID" : ref.slice(0, 12),
+            //     "merchantUrl" : "wisper-reseller.herokuapp.com",
+            //     "phone" : `${requestPayload.mobile_number}`,
+            //     "network" : `${4}`,
+            //     "planID" : `${plan_id}`
+            // }
+
+            // const response = await axios.post(
+            //     `${eazymobile_url}/api/v2/seamless/purchase/data`,
+            //     req_body,
+            //     req_header
+            // )
+
+
+            // // Fire event to save gateway response to DB
+            // const integResp = response.data
+            // const integName = integrationTypes.EAZYMOBILE
+            // IntegrationEvents.emit(integration_response, {
+            //     integration: integName,
+            //     response: integResp,
+            // })
+
+            // // ALMAMGT GLO RESPONSE CHECK
+            // if(integResp && integResp["status"] == true && integResp["response"]["code"] == "200"){
+            //     const message = integResp["response"]["provider_response"]
+            //     return {error: false, response: integResp, message}
+            // }else{
+            //     return {error: true, status: 400, message: "An error occured with data transfer server"}
+            // }
         }else{
             // Data purchase for other network
             const response = await axios.post(
