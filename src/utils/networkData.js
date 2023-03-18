@@ -117,6 +117,44 @@ exports.ogdams_size_map = (size) => {
    return {error, plan_id}
 }
 
+exports.zoedata_size_map = (size) => {
+    const f_size = size.trim().toLowerCase().replace(" ", "")
+    let error = false, plan_id;
+   
+    switch(f_size){
+        case "100mb":
+            plan_id = 219;
+            break;
+        case "300mb":
+            plan_id = 218;
+            break;
+        case "500mb":
+            plan_id = 217;
+            break;
+        case "1gb":
+            plan_id = 211;
+            break;
+        case "2gb":
+            plan_id = 212;
+            break;
+        case "5gb":
+            plan_id = 213;
+            break;
+        case "10gb":
+            plan_id = 214;
+            break;
+        case "15gb":
+            plan_id = 215;
+            break;
+        case "20gb":
+            plan_id = 216;
+            break;
+        default:
+            error = true;
+    }
+   return {error, plan_id}
+}
+
 exports.cloudsimhost_size_map = (size) => {
     const f_size = size.trim().toLowerCase().replace(" ", "")
     let error = false, plan_id;

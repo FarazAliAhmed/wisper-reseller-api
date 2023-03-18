@@ -20,7 +20,8 @@ const {
     ogdams_size_map,
     cloudsimhost_size_map,
     cloudsimhost_glo_size_map,
-    eazymobile_glo_size_map
+    eazymobile_glo_size_map,
+    zoedata_size_map
 } = require('./networkData')
 
 // Config variables
@@ -45,6 +46,8 @@ const eazymobile_url = process.env.EAZYMOBILE_URL
 const eazymobile_key = process.env.EAZYMOBILE_API_KEY
 const eazymobile_token = process.env.EAZYMOBILE_TOKEN
 
+const zoedata_url = "https://zoedatahub.com/api/data/";
+const zoedata_auth = `Token ${process.env.ZOEDATA_AUTH_KEY}`;
 
 // Names of integration used in saving gateway response to DB
 const integrationTypes = {
@@ -55,6 +58,7 @@ const integrationTypes = {
     CLOUDSIMHOST: 'CLOUDSIMHOST',
     ALMAMGT_GLO: 'ALMAMGT_GLO',
     EAZYMOBILE: "EAZYMOBILE",
+    ZOEDATA: "ZOEDATA",
     UNKNOWN: 'UNKNOWN',
 }
 
@@ -170,9 +174,10 @@ exports.revert_debit_account_balance = async (account_id, planDetails, type) => 
 
 // Get config header for fastlink API calls
 function getConfig(type){
+    // "Authorization": (type == "gifting") ? fastlink_gifting_auth : fastlink_sme_auth,
     return {
         headers: {
-            "Authorization": (type == "gifting") ? fastlink_gifting_auth : fastlink_sme_auth,
+            "Authorization": zoedata_auth,
             "Content-Type": "application/json"
         }
     }
@@ -181,7 +186,7 @@ function getConfig(type){
 
 exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {  
     try{
-        if(requestPayload.network == 4){
+        if(requestPayload.network == 400){ // FIXME - Should be 4. Temporarily 400 for now
             // Data purchase for Airtel
 
             // SECTION - Purchase from SIMSERVER
@@ -374,6 +379,42 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             // }else{
             //     return {error: true, status: 400, message: "An error occured with data transfer server"}
             // }
+        }else if(requestPayload.network == 4){
+            // FIXME - New Data purcahse for Airtel
+
+            const {error, plan_id} = zoedata_size_map(size)
+            if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+            
+            const response = await axios.post(
+                zoedata_url,
+                {
+                    network: requestPayload.network,
+                    mobile_number: requestPayload.mobile_number,
+                    plan: plan_id,
+                    Ported_number: requestPayload.Ported_number
+                    
+                },
+                getConfig(type),
+            )
+
+            console.log({response_zoe: response.data})
+
+            // Fire event to save gateway response to DB
+            const integResp = response.data
+            const integName = integrationTypes.ZOEDATA
+            IntegrationEvents.emit(integration_response, {
+                integration: integName,
+                response: integResp,
+            })
+
+            // Fire event to save fastlink gateway response to DB
+            if(response.data && response.data.Status && response.data.Status === "successful"){
+                const full_message = response.data.api_response.split('with')[1]
+                const message = "You have successfully purchased" + full_message
+                return {error: false, response: response.data, message}
+            }else{
+                return {error: true, status: 400, message: "An error occured with data transfer server"}
+            }
         }else{
             // Data purchase for other network
             const response = await axios.post(
@@ -399,6 +440,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }
         }
     }catch(e){
+        console.log({error: e})
         console.log("ERROOORR::", e.message)
         
         // Fire event to save gateway response to DB
