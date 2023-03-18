@@ -397,8 +397,6 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 getConfig(type),
             )
 
-            console.log({response_zoe: response.data})
-
             // Fire event to save gateway response to DB
             const integResp = response.data
             const integName = integrationTypes.ZOEDATA
