@@ -186,7 +186,7 @@ function getConfig(type){
 
 exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {  
     try{
-        if(requestPayload.network == 400){ // FIXME - Should be 4. Temporarily 400 for now
+        if(requestPayload.network == 4){ // FIXME - Should be 4. Temporarily 400 for now
             // Data purchase for Airtel
 
             // SECTION - Purchase from SIMSERVER
@@ -379,7 +379,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             // }else{
             //     return {error: true, status: 400, message: "An error occured with data transfer server"}
             // }
-        }else if(requestPayload.network == 4){
+        }else if(requestPayload.network == 400){
             // FIXME - New Data purcahse for Airtel
 
             const {error, plan_id} = zoedata_size_map(size)
