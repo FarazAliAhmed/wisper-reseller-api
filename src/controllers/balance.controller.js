@@ -54,14 +54,14 @@ const creditBalance = async (req, res) => {
   // add field wallet to request body when the unit is in data
   // check dataBalance schema to see proper values for 
   const wallet = req.body.wallet
-  const allowedWallets = ["mtn_sme", "mtn_gifting", "airtel", "glo"]
+  const allowedWallets = ["mtn_sme", "mtn_gifting", "airtel", "glo", "9mobile"]
 
   let field;
   if(unit === "data" && wallet){
     if(allowedWallets.includes(wallet)){
       field = `mega_wallet.${wallet}`
     }else{
-      return res.status(400).json({status: 400, message: "This wallet type does not exist. Allowed types are: [\"mtn_sme\", \"mtn_gifting\", \"airtel\", \"glo\"] "})
+      return res.status(400).json({status: 400, message: "This wallet type does not exist. Allowed types are: [\"mtn_sme\", \"mtn_gifting\", \"airtel\", \"glo\", \"9mobile\"] "})
     }
   }else if(unit === "money"){
     field = "wallet_balance"
@@ -82,14 +82,14 @@ const debitBalance = async (req, res) => {
   
   let unit = req.body.unit || "money"
   const wallet = req.body.wallet
-  const allowedWallets = ["mtn_sme", "mtn_gifting", "airtel", "glo"]
+  const allowedWallets = ["mtn_sme", "mtn_gifting", "airtel", "glo", "9mobile"]
 
   let field;
   if(unit === "data" && wallet){
     if(allowedWallets.includes(wallet)){
       field = `mega_wallet.${wallet}`
     }else{
-      return res.status(400).json({status: 400, message: "This wallet type does not exist. Allowed types are: [\"mtn_sme\", \"mtn_gifting\", \"airtel\", \"glo\"] "})
+      return res.status(400).json({status: 400, message: "This wallet type does not exist. Allowed types are: [\"mtn_sme\", \"mtn_gifting\", \"airtel\", \"glo\", \"9mobile\"] "})
     }
   }else if(unit === "money"){
     field = "wallet_balance"
