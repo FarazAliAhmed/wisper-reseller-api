@@ -38,6 +38,10 @@ const dataBalanceSchema = new Schema({
       type: Number,
       default: 0
     },
+    "9mobile": {
+      type: Number,
+      default: 0
+    },
     unit: {
       type: String,
       default: "MB"

@@ -21,7 +21,8 @@ const {
     cloudsimhost_size_map,
     cloudsimhost_glo_size_map,
     eazymobile_glo_size_map,
-    zoedata_size_map
+    zoedata_size_map,
+    msorg_size_map
 } = require('./networkData')
 
 // Config variables
@@ -59,6 +60,7 @@ const integrationTypes = {
     ALMAMGT_GLO: 'ALMAMGT_GLO',
     EAZYMOBILE: "EAZYMOBILE",
     ZOEDATA: "ZOEDATA",
+    MSORG: "MSORG",
     UNKNOWN: 'UNKNOWN',
 }
 
@@ -143,7 +145,7 @@ const getFieldAndAmount = (type, planDetails) => {
             }else{
                 pType = `${network}`
             }
-        }else if(network === "airtel"){
+        }else if(network === "airtel" || network === "9mobile" || network === "glo"){
             volume = volume < 1024 ? volume : volume < 1048576 ? ~~(volume / 1024) * 1000 : ~~(volume / 1048576) * 1000000
             pType = `${network}`
         }else{
@@ -185,6 +187,7 @@ function getConfig(type){
 
 
 exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {  
+    let integResp; let integName;
     try{
         if(requestPayload.network == 4){ // FIXME - Should be 4. Temporarily 400 for now
             // Data purchase for Airtel
@@ -235,6 +238,8 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             */
 
             // SECTION - PURCHASE FOR CLOUDSIMHOST
+            integName = integrationTypes.CLOUDSIMHOST
+
             const {error, plan_id} = cloudsimhost_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
 
@@ -259,12 +264,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             )
 
             // Fire event to save gateway response to DB
-            const integResp = response.data
-            const integName = integrationTypes.CLOUDSIMHOST
-            IntegrationEvents.emit(integration_response, {
-                integration: integName,
-                response: integResp,
-            })
+            integResp = response.data
 
 
             // !SECTION - SIMSERVER RESPONSE CHECK
@@ -295,6 +295,8 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
         }
         else if(requestPayload.network == 2){
             // SECTION - PURCHASE FOR ALMAGMT GLO
+            integName = integrationTypes.ALMAMGT_GLO
+
             const {error, plan_id} = cloudsimhost_glo_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
 
@@ -320,12 +322,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
 
 
             // Fire event to save gateway response to DB
-            const integResp = response.data
-            const integName = integrationTypes.ALMAMGT_GLO
-            IntegrationEvents.emit(integration_response, {
-                integration: integName,
-                response: integResp,
-            })
+            integResp = response.data
 
             // ALMAMGT GLO RESPONSE CHECK
             if(integResp && integResp.data["status"] == "ok" && integResp.data["resultCode"] == "0001"){
@@ -337,6 +334,8 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
 
 
             // SECTION - PURCHASE FOR EAZYMOBILE GLO
+
+            // integName = integrationTypes.EAZYMOBILE
             // const {error, plan_id} = eazymobile_glo_size_map(size)
             // if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
 
@@ -365,12 +364,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
 
 
             // // Fire event to save gateway response to DB
-            // const integResp = response.data
-            // const integName = integrationTypes.EAZYMOBILE
-            // IntegrationEvents.emit(integration_response, {
-            //     integration: integName,
-            //     response: integResp,
-            // })
+            // integResp = response.data
 
             // // ALMAMGT GLO RESPONSE CHECK
             // if(integResp && integResp["status"] == true && integResp["response"]["code"] == "200"){
@@ -381,6 +375,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             // }
         }else if(requestPayload.network == 400){
             // FIXME - New Data purcahse for Airtel
+            integName = integrationTypes.ZOEDATA
 
             const {error, plan_id} = zoedata_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
@@ -398,12 +393,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             )
 
             // Fire event to save gateway response to DB
-            const integResp = response.data
-            const integName = integrationTypes.ZOEDATA
-            IntegrationEvents.emit(integration_response, {
-                integration: integName,
-                response: integResp,
-            })
+            integResp = response.data
 
             // Fire event to save fastlink gateway response to DB
             if(response.data && response.data.Status && response.data.Status === "successful"){
@@ -413,8 +403,53 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
+        }else if(requestPayload.network == 3){
+            // SECTION - PURCHASE FOR 9MOBILE
+            integName = integrationTypes.MSORG
+
+            const {error, plan_id} = msorg_size_map(size);
+            if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+            const authUrl = 'https://bulkdatabackend.9mobile.com.ng/v1/api/sercom/login';
+            const authHeaders = {'Accept': 'application/json, text/plain, */*'};
+            const authPayload = {
+                espmsisdn: process.env.MSORG_USERNAME,
+                password: process.env.MSORG_PASSWORD,
+            };
+
+            const authResponse = await axios.post(authUrl, authPayload, {headers: authHeaders, timeout: 30000});
+            
+            // Save Integration auth response to DB
+            integResp = [authResponse?.data];
+
+            if (authResponse.status === 200 || authResponse.status === 201) {
+                const msorg_token = authResponse.data?.data?.token;
+    
+                const url = 'https://bulkdatabackend.9mobile.com.ng/v1/api/sercom/vendproduct-cbs';
+                const headers = {'Accept': 'application/json, text/plain, */*', 'token': msorg_token};
+                const payload = {
+                    msisdn: requestPayload.mobile_number.substring(1),
+                    dataamount: plan_id
+                };
+                
+                const response = await axios.post(url, payload, {headers, timeout: 50000});
+                const resp = response.data;
+
+                // Save integratiion response to DB
+                integResp.push(resp);
+                
+                if (resp.status === 200) {
+                    const message = `Congrats! You have successfully gifted ${requestPayload.mobile_number} with ${size} [CG] worth of data. To check your data balance dial *228#`;
+                    return {error: false, response: resp, message}
+                } else {
+                    return {error: true, status: 400, message: "An error occured with data transfer server"}
+                }
+            } else {
+                return {error: true, status: 400, message: "An error occured with data transfer server"}
+            }
         }else{
             // Data purchase for other network
+            integName = integrationTypes.FASTLINK
             const response = await axios.post(
                 fastlink_url,
                 requestPayload,
@@ -422,14 +457,8 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             )
 
             // Fire event to save gateway response to DB
-            const integResp = response.data
-            const integName = integrationTypes.FASTLINK
-            IntegrationEvents.emit(integration_response, {
-                integration: integName,
-                response: integResp,
-            })
+            integResp = response.data
 
-            // Fire event to save fastlink gateway response to DB
             if(response.data && response.data.Status && response.data.Status === "successful"){
                 const message = "Data purchase was successful. Check Balance to confirm."
                 return {error: false, response: response.data, message}
@@ -438,15 +467,15 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }
         }
     }catch(e){
-        console.log({error: e})
         console.log("ERROOORR::", e.message)
-        
-        // Fire event to save gateway response to DB
-        IntegrationEvents.emit(integration_response, {
-            integration: integrationTypes.UNKNOWN,
-            response: e?.response?.data,
-        })
+        console.log({error: e})
+        integResp = e?.response?.data || e?.message || "Data volume transafer failed"
         return {error: true, status: 400, message: "Data volume transafer failed"}
+    }finally{
+        IntegrationEvents.emit(integration_response, {
+            integration: integName || integrationTypes.UNKNOWN,
+            response: integResp,
+        })
     }
 }
 

@@ -5,6 +5,7 @@ exports.numbers = {
    "mtn": [ "0803", "0806", "0810", "0813", "0814", "0816", "0702", "0703", "0704", "0706", "0903", "0906", "0913", "0916",],
    "glo": ["0805", "0807", "0811", "0815", "0705", "0905", "0915"],
    "airtel": [ "0802", "0808", "0812", "0701", "0708", "0901", "0902", "0904", "0907", "0912", "0911"],
+   "9mobile": ["0809", "0817", "0818", "0908", "0909"]
 }
 
 exports.units = { //what to multiply by, to convert to MB
@@ -18,7 +19,7 @@ exports.ported_numbers = ["0913", "0912"]
 exports.network_ids = {
     1: "mtn",
     2: "glo",
-   //  3: "9mobile",
+    3: "9mobile",
     4: "airtel"
 }
 
@@ -186,6 +187,45 @@ exports.cloudsimhost_size_map = (size) => {
             break;
         case "20gb":
             plan_id = 21;
+            break;
+        default:
+            error = true;
+    }
+   return {error, plan_id}
+}
+
+
+exports.msorg_size_map = (size) => {
+    const f_size = size.replace(" ", "").toLowerCase()
+    let error = false, plan_id;
+   
+    switch(f_size){
+        case "100mb":
+            plan_id = 100 * 1;
+            break;
+        case "300mb":
+            plan_id = 300 * 1;
+            break;
+        case "500mb":
+            plan_id = 500 * 1;
+            break;
+        case "1gb":
+            plan_id = 1 * 1000;
+            break;
+        case "2gb":
+            plan_id = 2 * 1000;
+            break;
+        case "5gb":
+            plan_id = 5 * 1000;
+            break;
+        case "10gb":
+            plan_id = 10 * 1000;
+            break;
+        case "15gb":
+            plan_id = 15 * 1000;
+            break;
+        case "20gb":
+            plan_id = 20 * 1000;
             break;
         default:
             error = true;
