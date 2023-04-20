@@ -198,34 +198,35 @@ exports.cloudsimhost_size_map = (size) => {
 exports.msorg_size_map = (size) => {
     const f_size = size.replace(" ", "").toLowerCase()
     let error = false, plan_id;
+    const mul = 1048576;
    
     switch(f_size){
         case "100mb":
-            plan_id = 100 * 1;
+            plan_id = 100 * mul;
             break;
         case "300mb":
-            plan_id = 300 * 1;
+            plan_id = 300 * mul;
             break;
         case "500mb":
-            plan_id = 500 * 1;
+            plan_id = 500 * mul;
             break;
         case "1gb":
-            plan_id = 1 * 1000;
+            plan_id = 1000 * mul;
             break;
         case "2gb":
-            plan_id = 2 * 1000;
+            plan_id = 2000 * mul;
             break;
         case "5gb":
-            plan_id = 5 * 1000;
+            plan_id = 5000 * mul;
             break;
         case "10gb":
-            plan_id = 10 * 1000;
+            plan_id = 10000 * mul;
             break;
         case "15gb":
-            plan_id = 15 * 1000;
+            plan_id = 15000 * mul;
             break;
         case "20gb":
-            plan_id = 20 * 1000;
+            plan_id = 20000 * mul;
             break;
         default:
             error = true;
