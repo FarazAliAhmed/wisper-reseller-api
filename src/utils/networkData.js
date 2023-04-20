@@ -216,17 +216,38 @@ exports.msorg_size_map = (size) => {
         case "2gb":
             plan_id = 2000 * mul;
             break;
+        case "3gb":
+            plan_id = 3000 * mul;
+            break;
+        case "4gb":
+            plan_id = 4000 * mul;
+            break;
         case "5gb":
             plan_id = 5000 * mul;
             break;
+        case "7gb":
+            plan_id = 7000 * mul;
+            break;
         case "10gb":
             plan_id = 10000 * mul;
+            break;
+        case "11gb":
+            plan_id = 11000 * mul;
             break;
         case "15gb":
             plan_id = 15000 * mul;
             break;
         case "20gb":
             plan_id = 20000 * mul;
+            break;
+        case "25gb":
+            plan_id = 25000 * mul;
+            break;
+        case "30gb":
+            plan_id = 30000 * mul;
+            break;
+        case "40gb":
+            plan_id = 40000 * mul;
             break;
         default:
             error = true;
