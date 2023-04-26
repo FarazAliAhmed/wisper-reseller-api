@@ -325,7 +325,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             integResp = response.data
 
             // ALMAMGT GLO RESPONSE CHECK
-            if(integResp && integResp.data["status"] == "ok" && integResp.data["resultCode"] == "0001"){
+            if(integResp && integResp.data["status"] == "ok" && integResp.data["resultCode"] == "0000"){
                 const message = integResp.data["message"]
                 return {error: false, response: integResp, message}
             }else{
