@@ -117,6 +117,46 @@ exports.ogdams_size_map = (size) => {
     }
    return {error, plan_id}
 }
+exports.ogdams_9mobile_size_map = (size) => {
+    const f_size = size.trim().toLowerCase().replace(" ", "")
+    let error = false, plan_id;
+   
+    switch(f_size){
+        case "250mb":
+            plan_id = 73;
+            break;
+        case "500mb":
+            plan_id = 85;
+            break;
+        case "1gb":
+            plan_id = 84;
+            break;
+        case "2gb":
+            plan_id = 76;
+            break;
+        case "3gb":
+            plan_id = 77;
+            break;
+        case "7gb":
+            plan_id = 83;
+            break;
+        case "11gb":
+            plan_id = 79;
+            break;
+        case "15gb":
+            plan_id = 80;
+            break;
+        case "40gb":
+            plan_id = 81;
+            break;
+        case "75gb":
+            plan_id = 82;
+            break;
+        default:
+            error = true;
+    }
+   return {error, plan_id}
+}
 
 exports.zoedata_size_map = (size) => {
     const f_size = size.trim().toLowerCase().replace(" ", "")

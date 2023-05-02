@@ -18,6 +18,7 @@ const {
     ported_numbers,
     simservers_size_map,
     ogdams_size_map,
+    ogdams_9mobile_size_map,
     cloudsimhost_size_map,
     cloudsimhost_glo_size_map,
     eazymobile_glo_size_map,
@@ -56,6 +57,7 @@ const integrationTypes = {
     FASTLINK: 'FASTLINK',
     SIMSERVER: 'SIMSERVER',
     OGDAMS: 'OGDAMS',
+    OGDAMS_9MOBILE: 'OGDAMS_9MOBILE',
     CLOUDSIMHOST: 'CLOUDSIMHOST',
     ALMAMGT_GLO: 'ALMAMGT_GLO',
     EAZYMOBILE: "EAZYMOBILE",
@@ -404,47 +406,84 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
         }else if(requestPayload.network == 3){
-            // SECTION - PURCHASE FOR 9MOBILE
-            integName = integrationTypes.MSORG
+            // SECTION - MSORG - PURCHASE FOR 9MOBILE
+            // integName = integrationTypes.MSORG
 
-            const {error, plan_id} = msorg_size_map(size);
+            // const {error, plan_id} = msorg_size_map(size);
+            // if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+            // const authUrl = 'https://bulkdatabackend.9mobile.com.ng/v1/api/sercom/login';
+            // const authHeaders = {'Accept': 'application/json, text/plain, */*'};
+            // const authPayload = {
+            //     espmsisdn: process.env.MSORG_USERNAME,
+            //     password: process.env.MSORG_PASSWORD,
+            // };
+
+            // const authResponse = await axios.post(authUrl, authPayload, {headers: authHeaders, timeout: 30000});
+            
+            // // Save Integration auth response to DB
+            // integResp = [authResponse?.data];
+
+            // SECTION - MSORG - 9MOBILE RESPONSE CHECK
+            // if (authResponse.status === 200 || authResponse.status === 201) {
+            //     const msorg_token = authResponse.data?.data?.token;
+    
+            //     const url = 'https://bulkdatabackend.9mobile.com.ng/v1/api/sercom/vendproduct-cbs';
+            //     const headers = {'Accept': 'application/json, text/plain, */*', 'token': msorg_token};
+            //     const payload = {
+            //         msisdn: requestPayload.mobile_number.substring(1),
+            //         dataamount: plan_id
+            //     };
+                
+            //     const response = await axios.post(url, payload, {headers, timeout: 50000});
+            //     const resp = response.data;
+
+            //     // Save integratiion response to DB
+            //     integResp.push(resp);
+                
+            //     if (resp.status === 200) {
+            //         const message = `Congrats! You have successfully gifted ${requestPayload.mobile_number} with ${size} [CG] worth of data. To check your data balance dial *228#`;
+            //         return {error: false, response: resp, message}
+            //     } else {
+            //         return {error: true, status: 400, message: "An error occured with data transfer server"}
+            //     }
+            // } else {
+            //     return {error: true, status: 400, message: "An error occured with data transfer server"}
+            // }
+
+            // SECTION - Purchase from OGDAMS SIMHOSTING - 9MOBILE
+            integName = integrationTypes.OGDAMS_9MOBILE
+
+            const {error, plan_id} = ogdams_9mobile_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
 
-            const authUrl = 'https://bulkdatabackend.9mobile.com.ng/v1/api/sercom/login';
-            const authHeaders = {'Accept': 'application/json, text/plain, */*'};
-            const authPayload = {
-                espmsisdn: process.env.MSORG_USERNAME,
-                password: process.env.MSORG_PASSWORD,
-            };
-
-            const authResponse = await axios.post(authUrl, authPayload, {headers: authHeaders, timeout: 30000});
-            
-            // Save Integration auth response to DB
-            integResp = [authResponse?.data];
-
-            if (authResponse.status === 200 || authResponse.status === 201) {
-                const msorg_token = authResponse.data?.data?.token;
-    
-                const url = 'https://bulkdatabackend.9mobile.com.ng/v1/api/sercom/vendproduct-cbs';
-                const headers = {'Accept': 'application/json, text/plain, */*', 'token': msorg_token};
-                const payload = {
-                    msisdn: requestPayload.mobile_number.substring(1),
-                    dataamount: plan_id
-                };
-                
-                const response = await axios.post(url, payload, {headers, timeout: 50000});
-                const resp = response.data;
-
-                // Save integratiion response to DB
-                integResp.push(resp);
-                
-                if (resp.status === 200) {
-                    const message = `Congrats! You have successfully gifted ${requestPayload.mobile_number} with ${size} [CG] worth of data. To check your data balance dial *228#`;
-                    return {error: false, response: resp, message}
-                } else {
-                    return {error: true, status: 400, message: "An error occured with data transfer server"}
+            const req_header = {
+                headers: {
+                    'Authorization': `Bearer ${ogdams_key}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
-            } else {
+            }
+
+            const req_body = {
+                "networkId" : 4,    // Do not change this: networkId = 4 is for 9Mobile
+                "planId" : plan_id,
+                "phoneNumber" : requestPayload.mobile_number
+            }
+
+            const response = await axios.post(
+                ogdams_url,
+                req_body,
+                req_header
+            )
+
+            integResp = response.data
+
+            // !SECTION - OGDAMS RESPONSE CHECK
+            if(integResp && integResp["status"] == true && [200, 201, 202].includes(integResp["code"])){
+                const message = integResp["data"]["msg"]
+                return {error: false, response: integResp, message}
+            }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
         }else{
