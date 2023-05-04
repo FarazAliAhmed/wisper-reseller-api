@@ -122,6 +122,9 @@ exports.ogdams_9mobile_size_map = (size) => {
     let error = false, plan_id;
    
     switch(f_size){
+        case "100mb":
+            plan_id = 701;
+            break;
         case "250mb":
             plan_id = 73;
             break;
@@ -137,8 +140,17 @@ exports.ogdams_9mobile_size_map = (size) => {
         case "3gb":
             plan_id = 77;
             break;
+        case "4gb":
+            plan_id = 707;
+            break;
+        case "5gb":
+            plan_id = 709;
+            break;
         case "7gb":
             plan_id = 83;
+            break;
+        case "10gb":
+            plan_id = 710;
             break;
         case "11gb":
             plan_id = 79;
@@ -146,11 +158,20 @@ exports.ogdams_9mobile_size_map = (size) => {
         case "15gb":
             plan_id = 80;
             break;
+        case "20gb":
+            plan_id = 712;
+            break;
         case "40gb":
             plan_id = 81;
             break;
+        case "50gb":
+            plan_id = 714;
+            break;
         case "75gb":
             plan_id = 82;
+            break;
+        case "100gb":
+            plan_id = 715;
             break;
         default:
             error = true;
