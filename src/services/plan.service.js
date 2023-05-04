@@ -16,7 +16,7 @@ const createOne = async (fields) => {
 
 const getAll = async () => {
     try{
-        const planResponse = await Plan.find().exec()
+        const planResponse = await Plan.find().sort({ network: 1, unit: -1, plan_type: 1, volume: 1 }).exec()
         return {plan: planResponse, message: "Data Plans fetch successfully"}
     }catch(e){
         console.log(e.message)
