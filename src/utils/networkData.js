@@ -86,31 +86,31 @@ exports.ogdams_size_map = (size) => {
    
     switch(f_size){
         case "100mb":
-            plan_id = 110;
+            plan_id = 701;
             break;
         case "300mb":
-            plan_id = 111;
+            plan_id = 716;
             break;
         case "500mb":
-            plan_id = 112;
+            plan_id = 702;
             break;
         case "1gb":
-            plan_id = 113;
+            plan_id = 703;
             break;
         case "2gb":
-            plan_id = 114;
+            plan_id = 705;
             break;
         case "5gb":
-            plan_id = 115;
+            plan_id = 709;
             break;
         case "10gb":
-            plan_id = 116;
+            plan_id = 710;
             break;
         case "15gb":
-            plan_id = 117;
+            plan_id = 717;
             break;
         case "20gb":
-            plan_id = 118;
+            plan_id = 712;
             break;
         default:
             error = true;
