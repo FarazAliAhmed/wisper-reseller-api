@@ -80,14 +80,59 @@ exports.simservers_size_map = (size) => {
    return {error, param}
 }
 
+
 exports.ogdams_size_map = (size) => {
     const f_size = size.trim().toLowerCase().replace(" ", "")
     let error = false, plan_id;
    
     switch(f_size){
         case "100mb":
+            plan_id = 110;
+            break;
+        case "300mb":
+            plan_id = 111;
+            break;
+        case "500mb":
+            plan_id = 112;
+            break;
+        case "1gb":
+            plan_id = 113;
+            break;
+        case "2gb":
+            plan_id = 114;
+            break;
+        case "5gb":
+            plan_id = 115;
+            break;
+        case "10gb":
+            plan_id = 116;
+            break;
+        case "15gb":
+            plan_id = 117;
+            break;
+        case "20gb":
+            plan_id = 118;
+            break;
+        default:
+            error = true;
+    }
+   return {error, plan_id}
+}
+
+exports.ogdams_9mobile_size_map = (size) => {
+    const f_size = size.trim().toLowerCase().replace(" ", "")
+    let error = false, plan_id;
+   
+    switch(f_size){
+        case "25mb":
+            plan_id = 700;
+            break;
+        case "100mb":
             plan_id = 701;
             break;
+        // case "250mb":
+        //     plan_id = 73;
+        //     break;
         case "300mb":
             plan_id = 716;
             break;
@@ -97,14 +142,32 @@ exports.ogdams_size_map = (size) => {
         case "1gb":
             plan_id = 703;
             break;
+        case "1.5gb":
+            plan_id = 704;
+            break;
         case "2gb":
             plan_id = 705;
+            break;
+        case "3gb":
+            plan_id = 706;
+            break;
+        case "4gb":
+            plan_id = 707;
+            break;
+        case "4.5gb":
+            plan_id = 708;
             break;
         case "5gb":
             plan_id = 709;
             break;
+        // case "7gb":
+        //     plan_id = 83;
+        //     break;
         case "10gb":
             plan_id = 710;
+            break;
+        case "11gb":
+            plan_id = 711;
             break;
         case "15gb":
             plan_id = 717;
@@ -112,63 +175,14 @@ exports.ogdams_size_map = (size) => {
         case "20gb":
             plan_id = 712;
             break;
-        default:
-            error = true;
-    }
-   return {error, plan_id}
-}
-exports.ogdams_9mobile_size_map = (size) => {
-    const f_size = size.trim().toLowerCase().replace(" ", "")
-    let error = false, plan_id;
-   
-    switch(f_size){
-        case "100mb":
-            plan_id = 701;
-            break;
-        case "250mb":
-            plan_id = 73;
-            break;
-        case "500mb":
-            plan_id = 85;
-            break;
-        case "1gb":
-            plan_id = 84;
-            break;
-        case "2gb":
-            plan_id = 76;
-            break;
-        case "3gb":
-            plan_id = 77;
-            break;
-        case "4gb":
-            plan_id = 707;
-            break;
-        case "5gb":
-            plan_id = 709;
-            break;
-        case "7gb":
-            plan_id = 83;
-            break;
-        case "10gb":
-            plan_id = 710;
-            break;
-        case "11gb":
-            plan_id = 79;
-            break;
-        case "15gb":
-            plan_id = 80;
-            break;
-        case "20gb":
-            plan_id = 712;
-            break;
         case "40gb":
-            plan_id = 81;
+            plan_id = 713;
             break;
         case "50gb":
             plan_id = 714;
             break;
         case "75gb":
-            plan_id = 82;
+            plan_id = 718;
             break;
         case "100gb":
             plan_id = 715;
