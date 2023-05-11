@@ -21,6 +21,7 @@ const {
     ogdams_9mobile_size_map,
     cloudsimhost_size_map,
     cloudsimhost_glo_size_map,
+    superjara_size_map,
     eazymobile_glo_size_map,
     zoedata_size_map,
     msorg_size_map
@@ -47,6 +48,12 @@ const almamgt_key = process.env.ALMA_API_KEY
 const eazymobile_url = process.env.EAZYMOBILE_URL
 const eazymobile_key = process.env.EAZYMOBILE_API_KEY
 const eazymobile_token = process.env.EAZYMOBILE_TOKEN
+
+
+
+const superjara_url = "https://www.superjara.com/api/data/"
+const superjara_token = process.env.SUPERJARA_AUTH_NEW_KEY
+
 
 const zoedata_url = "https://zoedatahub.com/api/data/";
 const zoedata_auth = `Token ${process.env.ZOEDATA_AUTH_KEY}`;
@@ -486,7 +493,92 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
-        }else{
+        }
+
+        // SUPER JARA // // // // // // // // // // // 
+        else if(requestPayload.network == 1){
+            // SECTION - PURCHASE FOR SUPER JARA
+            integName = integrationTypes.SUPERJARA
+
+            const {error, plan_id} = superjara_size_map(size)
+            if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+            const req_header = {
+                headers: {
+                    'x-api-key': superjara_token,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+
+            const req_body = {
+                "network": `${1}`,
+                "mobile_number": requestPayload.mobile_number,
+                "plan": plan_id
+            }
+
+            const response = await axios.post(
+                `${superjara_url}`,
+                req_body,
+                req_header
+            )
+
+
+            // Fire event to save gateway response to DB
+            integResp = response.data
+
+            // ALMAMGT GLO RESPONSE CHECK
+            if(integResp && integResp.data["status"] == "ok" && integResp.data["resultCode"] == "0000"){
+                const message = integResp.data["message"]
+                return {error: false, response: integResp, message}
+            }else{
+                return {error: true, status: 400, message: "An error occured with data transfer server"}
+            }
+
+
+            // SECTION - PURCHASE FOR EAZYMOBILE GLO
+
+            // integName = integrationTypes.EAZYMOBILE
+            // const {error, plan_id} = eazymobile_glo_size_map(size)
+            // if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+            // const req_header = {
+            //     headers: {
+            //         'Authorization': `Bearer ${eazymobile_key}`,
+            //         'Content-Type': 'application/json',
+            //         'Accept': 'application/json'
+            //     }
+            // }
+
+            // const req_body = {  
+            //     "accessToken" : eazymobile_token,
+            //     "transID" : ref.slice(0, 12),
+            //     "merchantUrl" : "wisper-reseller.herokuapp.com",
+            //     "phone" : `${requestPayload.mobile_number}`,
+            //     "network" : `${4}`,
+            //     "planID" : `${plan_id}`
+            // }
+
+            // const response = await axios.post(
+            //     `${eazymobile_url}/api/v2/seamless/purchase/data`,
+            //     req_body,
+            //     req_header
+            // )
+
+
+            // // Fire event to save gateway response to DB
+            // integResp = response.data
+
+            // // ALMAMGT GLO RESPONSE CHECK
+            // if(integResp && integResp["status"] == true && integResp["response"]["code"] == "200"){
+            //     const message = integResp["response"]["provider_response"]
+            //     return {error: false, response: integResp, message}
+            // }else{
+            //     return {error: true, status: 400, message: "An error occured with data transfer server"}
+            // }
+        }
+        
+        else{
             // Data purchase for other network
             integName = integrationTypes.FASTLINK
             const response = await axios.post(

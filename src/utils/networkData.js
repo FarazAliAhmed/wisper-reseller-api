@@ -33,6 +33,52 @@ exports.plans = (function() {
    return allPlans
 })()
 
+// mtn super jara
+exports.superjara_size_map = (size) => {
+    const f_size = size.trim().toLowerCase().replace(" ", "")
+    let error = false, param;
+   
+    switch(f_size){
+        case "500mb":
+            plan_id = 49;
+            break;
+        case "1gb":
+            plan_id = 208;
+            break;
+        case "2gb":
+            plan_id = 209;
+            break;
+        case "3gb":
+            plan_id = 210;
+            break;
+        case "5gb":
+            plan_id = 211;
+            break;
+        case "20gb":
+            plan_id = 50;
+            break;
+        case "40gb":
+            plan_id = 51;
+            break;
+        case "15gb":
+            plan_id = 52;
+            break;
+        case "10gb":
+            plan_id = 43;
+            break;
+        case "75gb":
+            plan_id = 224;
+            break;
+        case "100gb":
+            plan_id = 225;
+            break;
+        default:
+            error = true;
+    }
+    
+   return {error, param}
+}
+
 exports.simservers_size_map = (size) => {
     const f_size = size.trim().toLowerCase().replace(" ", "")
     let error = false, param;
