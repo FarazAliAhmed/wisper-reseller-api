@@ -54,8 +54,8 @@ const forgotPassword =  async (req, res) => {
       const link = `http://localhost:5000/api/reset_password/${oldUser.email}/${token}`;
 
       client.sendEmail({
-        "From": "wisper@gmail.com",
-        "To": `${email}`,
+        "From": "Admin@wisper.ng",
+        "To": "developer@wisper.ng",
         "Subject": "Reset Password Link",
         "TextBody": `${link}`
       });
