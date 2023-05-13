@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { getUser, getAdmin, parseKey, transactionOnAllocate } = require("../utils").middleware;
 
-const { handleLogin, whoami } = require("../controllers/auth.controller");
+const { handleLogin, whoami, forgotPassword, resetPassword } = require("../controllers/auth.controller");
 const {
   handleRegister,
   handleUpdate,
@@ -70,12 +70,16 @@ const {
   clearNoticeMessag,
 } = require('../controllers/maintenance.controller')
 
+router.post("/reset_password/:email/:token", resetPassword);
+router.post("/forgot_password", forgotPassword);
+
 router.get("/maintenance", getMaintenance)
 router.get("/whoami", whoami);
 router.post("/auth", handleLogin);
 router.post("/users", handleRegister);
-router.patch("/users/:username", getUser, handleUpdate);
+
 //handleUpdate route should be protected
+router.patch("/users/:username", getUser, handleUpdate);
 
 // Dashboard Routes
 // Routes Called by businesses
