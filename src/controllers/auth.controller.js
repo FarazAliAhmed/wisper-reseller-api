@@ -44,7 +44,7 @@ const forgotPassword =  async (req, res) => {
   try {
     const oldUser = await Account.findOne({ email }).exec();
     if (!oldUser) {
-      return res.json({ status: "User Does Not Exists!!" });
+      return res.json({ status: "User Does Not Exists!!!" });
     } else {
       const JWT_SECRET = "supersecretxxerex8Qkq1.21SxKj"
       const secret = JWT_SECRET + oldUser.password;
