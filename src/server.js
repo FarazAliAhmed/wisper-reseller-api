@@ -8,7 +8,7 @@ const dbSetUp = require("./models");
 const pino = require('pino-http');
 const { errors } = require('celebrate');
 
-const PORT = config.get("port");
+const PORT = config.get("port") || 5000;
 
 const getAdmin = require('./utils/middleware/getAdmin');
 const getUser = require('./utils/middleware/getUser');
