@@ -503,7 +503,10 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             const {error, plan_id} = superjara_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
 
+           
+            
             console.log("jara planid", plan_id)
+            console.log("jara planid", size)
             console.log("jara request", requestPayload)
 
             const req_header = {
@@ -519,6 +522,8 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 "mobile_number": requestPayload.mobile_number,
                 "plan": plan_id
             }
+
+            console.log("reqbody", req_body)
 
             const response = await axios.post(
                 `${superjara_url}`,

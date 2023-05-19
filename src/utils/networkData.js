@@ -36,25 +36,25 @@ exports.plans = (function() {
 // mtn super jara
 exports.superjara_size_map = (size) => {
     const f_size = size.trim().toLowerCase().replace(" ", "")
-    let error = false, param;
+    let error = false, plan_id;
    
     switch(f_size){
-        // sme plans
-        case "500mb_sme":
-            plan_id = 242;
-            break;
-        case "1gb_sme":
-            plan_id = 234;
-            break;
-        case "2gb_sme":
-            plan_id = 235;
-            break;
-        case "5gb_sme":
-            plan_id = 237;
-            break;
-        case "10gb_sme":
-            plan_id = 246;
-            break;
+        // // sme plans
+        // case "500mb_sme":
+        //     plan_id = 242;
+        //     break;
+        // case "1gb_sme":
+        //     plan_id = 234;
+        //     break;
+        // case "2gb_sme":
+        //     plan_id = 235;
+        //     break;
+        // case "5gb_sme":
+        //     plan_id = 237;
+        //     break;
+        // case "10gb_sme":
+        //     plan_id = 246;
+        //     break;
         
         // gifting plans
         case "500mb":
@@ -94,7 +94,7 @@ exports.superjara_size_map = (size) => {
             error = true;
     }
     
-   return {error, param}
+   return {error, plan_id}
 }
 
 exports.simservers_size_map = (size) => {
