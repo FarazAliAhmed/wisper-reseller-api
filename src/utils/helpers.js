@@ -505,8 +505,8 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
 
             const req_header = {
                 headers: {
-                    'x-api-key': superjara_token,
                     'Content-Type': 'application/json',
+                    'Authorization': `Token ${superjara_token}`,
                     'Accept': 'application/json'
                 }
             }
