@@ -503,6 +503,9 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             const {error, plan_id} = superjara_size_map(size)
             if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
 
+            console.log("jara planid", plan_id)
+            console.log("jara request", requestPayload)
+
             const req_header = {
                 headers: {
                     'Content-Type': 'application/json',
