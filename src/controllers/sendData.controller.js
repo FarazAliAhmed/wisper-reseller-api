@@ -62,7 +62,7 @@ const sendData = async (req, res, next) => {
 
     const requestPayload = get_request_payload(r_provider, r_number, r_planId, r_ported);
 
-    console.log("Request payloadsshsh", requestPayload)
+    // console.log("Request payloadsshsh", requestPayload)
 
     // Transaction block
     try{
