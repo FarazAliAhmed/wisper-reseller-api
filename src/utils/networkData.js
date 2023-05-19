@@ -39,6 +39,24 @@ exports.superjara_size_map = (size) => {
     let error = false, param;
    
     switch(f_size){
+        // sme plans
+        case "500mb_sme":
+            plan_id = 242;
+            break;
+        case "1gb_sme":
+            plan_id = 234;
+            break;
+        case "2gb_sme":
+            plan_id = 235;
+            break;
+        case "5gb_sme":
+            plan_id = 237;
+            break;
+        case "10gb_sme":
+            plan_id = 246;
+            break;
+        
+        // gifting plans
         case "500mb":
             plan_id = 49;
             break;
