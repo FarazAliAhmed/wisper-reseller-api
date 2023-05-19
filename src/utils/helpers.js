@@ -512,7 +512,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }
 
             const req_body = {
-                "network": `${1}`,
+                "network": 1,
                 "mobile_number": requestPayload.mobile_number,
                 "plan": plan_id
             }
