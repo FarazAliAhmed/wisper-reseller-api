@@ -68,6 +68,11 @@ const sendData = async (req, res, next) => {
     try{
         // check account balance and debit
         const debitAccount = await debit_account_balance(_id, planDetails, type)
+
+        console.log("main plan detalsjshj")
+
+        console.log("debit", debitAccount)
+
         if (debitAccount.error){
             res.status(debitAccount.status).json({status: debitAccount.status, message: debitAccount.message})
             throw new Error(debitAccount.message)

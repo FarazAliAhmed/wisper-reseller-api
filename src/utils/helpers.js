@@ -142,13 +142,30 @@ exports.get_request_payload = (network, mobile_number, plan, Ported_number) => {
 // 
 
 const getFieldAndAmount = (type, planDetails) => {
-    let { volume, price, network, plan_type, } = planDetails
+    let {  price, network, plan_type, size} = planDetails
+
+    console.log("plan deetails", planDetails)
+
+    function convertStorageSize(size) {
+        var value = parseInt(size); // Extract the numeric value
+        var unit = size.match(/[a-zA-Z]+$/)[0]; // Extract the unit (e.g., 'gbe' or 'mbe')
+        
+        if (unit.toLowerCase() === 'mbe') {
+          return value; // If the unit is 'mbe', return the value as it is
+        } else if (unit.toLowerCase() === 'gbe') {
+          return value * 1024; // If the unit is 'gbe', multiply the value by 1024
+        } else {
+          return null; // Invalid unit
+        }
+      }
 
     if(type === "mega"){
         let pType;
         if(network === "mtn"){
             if(plan_type === "sme"){
+                volume = convertStorageSize(size)
                 volume = volume < 1024 ? volume : volume < 1048576 ? ~~(volume / 1024) * 1000 : ~~(volume / 1048576) * 1000000
+                console.log("sme volume", volume)
                 pType = `${network}_sme`
             }else if(plan_type.includes("gifting")){
                 pType = `${network}_gifting`
@@ -535,6 +552,11 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }
 
 
+            // const req_body =  {
+            //     "network": 1,
+            //     "mobile_number": `${requestPayload.mobile_number}`,
+            //     "plan": plan_id
+            // }
             const req_body =  {
                 "network": 1,
                 "mobile_number": `${requestPayload.mobile_number}`,
@@ -550,20 +572,9 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 req_header
             )
             
-            // const response = await fetch('https://www.superjara.com/api/data/', {
-            //     method: 'POST',
-            //     headers: {
-            //       'Authorization': `Token ${superjara_token}`,
-            //       'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify({
-            //       network: 1,
-            //       mobile_number:  `${requestPayload.mobile_number}`,
-            //       plan: plan_id
-            //     })
-            //   })
+        
 
-              console.log(response)
+            //   console.log(response)
 
             // Fire event to save gateway response to DB
             if(response.data && response.data.Status && response.data.Status === "successful"){
