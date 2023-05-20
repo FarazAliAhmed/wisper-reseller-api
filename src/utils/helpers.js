@@ -154,7 +154,13 @@ const getFieldAndAmount = (type, planDetails) => {
           return value; // If the unit is 'mbe', return the value as it is
         } else if (unit.toLowerCase() === 'gbe') {
           return value * 1024; // If the unit is 'gbe', multiply the value by 1024
-        } else {
+        }
+        if (unit.toLowerCase() === 'mb') {
+            return value; // If the unit is 'mbe', return the value as it is
+        } else if (unit.toLowerCase() === 'gb') {
+            return value * 1024; // If the unit is 'gbe', multiply the value by 1024
+        }
+        else {
           return null; // Invalid unit
         }
       }
@@ -168,8 +174,12 @@ const getFieldAndAmount = (type, planDetails) => {
                 console.log("sme volume", volume)
                 pType = `${network}_sme`
             }else if(plan_type.includes("gifting")){
+                volume = volume < 1024 ? volume : volume < 1048576 ? ~~(volume / 1024) * 1000 : ~~(volume / 1048576) * 1000000
+                
                 pType = `${network}_gifting`
             }else{
+                volume = volume < 1024 ? volume : volume < 1048576 ? ~~(volume / 1024) * 1000 : ~~(volume / 1048576) * 1000000
+
                 pType = `${network}`
             }
         }else if(network === "airtel" || network === "9mobile" || network === "glo"){
@@ -529,19 +539,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
 
             console.log("superjara_token", superjara_token)
 
-            // const response = await axios.get('https://www.superjara.com/api/data/', {
-            //     network: 1,
-            //     mobile_number: `${requestPayload.mobile_number}`,
-            //     plan: plan_id
-            // }, {
-            //     headers: {
-            //         'Authorization': `Token ${superjara_token}`,
-            //         'Content-Type': 'application/json',
-            //         'Accept': 'application/json'
-            //     }
-            // })
-               
-            // console.log("response", response.data)
+          
 
             const req_header = {
                 headers: {
@@ -552,11 +550,6 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             }
 
 
-            // const req_body =  {
-            //     "network": 1,
-            //     "mobile_number": `${requestPayload.mobile_number}`,
-            //     "plan": plan_id
-            // }
             const req_body =  {
                 "network": 1,
                 "mobile_number": `${requestPayload.mobile_number}`,
@@ -566,25 +559,33 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
 
             // console.log("reqbody", req_body)
 
-            const response = await axios.post(
-                `${superjara_url}`,
-                req_body,
-                req_header
+            // SUPER JARA
+            // const response = await axios.post(
+            //     `${superjara_url}`,
+            //     req_body,
+            //     req_header
+            // )
+
+            const response = await axios.get(
+                `https://apisubportal.com/api/buydata.php?api_key=652cf58c55dbe87b507bc1d384fb6bf0&network=MTN&plans=${plan_id}&phonenumber=${requestPayload.mobile_number}&return_url=https://apisubportal.com`,
+
             )
+
+            console.log(response)
+
             
         
 
             //   console.log(response)
 
             // Fire event to save gateway response to DB
-            if(response.data && response.data.Status && response.data.Status === "successful"){
+            if(response.data && response.data.status && response.data.status === "success"){
                 const message = "Data purchase was successful. Check Balance to confirm."
                 return {error: false, response: response.data, message}
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
            
-
             // SECTION - PURCHASE FOR EAZYMOBILE GLO
 
             // integName = integrationTypes.EAZYMOBILE

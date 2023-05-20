@@ -58,37 +58,31 @@ exports.superjara_size_map = (size) => {
         
         // gifting plans
         case "500mb":
-            plan_id = 49;
+            plan_id = 500;
             break;
         case "1gb":
-            plan_id = 208;
+            plan_id = 10;
             break;
         case "2gb":
-            plan_id = 209;
+            plan_id = 20;
             break;
         case "3gb":
-            plan_id = 210;
+            plan_id = 30;
             break;
         case "5gb":
-            plan_id = 211;
-            break;
-        case "20gb":
             plan_id = 50;
             break;
-        case "40gb":
-            plan_id = 51;
-            break;
         case "15gb":
-            plan_id = 52;
+            plan_id = 150;
+            break;
+        case "20gb":
+            plan_id = 200;
             break;
         case "10gb":
-            plan_id = 43;
+            plan_id = 100;
             break;
-        case "75gb":
-            plan_id = 224;
-            break;
-        case "100gb":
-            plan_id = 225;
+        case "40gb":
+            plan_id = 400;
             break;
         default:
             error = true;
