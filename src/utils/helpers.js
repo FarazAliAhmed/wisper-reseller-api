@@ -25,7 +25,8 @@ const {
     eazymobile_glo_size_map,
     zoedata_size_map,
     msorg_size_map
-} = require('./networkData')
+} = require('./networkData');
+const { default: fetch } = require('node-fetch');
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -509,6 +510,22 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             console.log("jara planid", size)
             console.log("jara request", requestPayload)
 
+            console.log("superjara_token", superjara_token)
+
+            // const response = await axios.get('https://www.superjara.com/api/data/', {
+            //     network: 1,
+            //     mobile_number: `${requestPayload.mobile_number}`,
+            //     plan: plan_id
+            // }, {
+            //     headers: {
+            //         'Authorization': `Token ${superjara_token}`,
+            //         'Content-Type': 'application/json',
+            //         'Accept': 'application/json'
+            //     }
+            // })
+               
+            // console.log("response", response.data)
+
             const req_header = {
                 headers: {
                     'Content-Type': 'application/json',
@@ -517,32 +534,45 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
                 }
             }
 
-            const req_body = {
+
+            const req_body =  {
                 "network": 1,
-                "mobile_number": requestPayload.mobile_number,
-                "plan": plan_id
+                "mobile_number": `${requestPayload.mobile_number}`,
+                "plan": plan_id,
+                "Ported_number":true
             }
 
-            console.log("reqbody", req_body)
+            // console.log("reqbody", req_body)
 
             const response = await axios.post(
                 `${superjara_url}`,
                 req_body,
                 req_header
             )
+            
+            // const response = await fetch('https://www.superjara.com/api/data/', {
+            //     method: 'POST',
+            //     headers: {
+            //       'Authorization': `Token ${superjara_token}`,
+            //       'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify({
+            //       network: 1,
+            //       mobile_number:  `${requestPayload.mobile_number}`,
+            //       plan: plan_id
+            //     })
+            //   })
 
+              console.log(response)
 
             // Fire event to save gateway response to DB
-            integResp = response.data
-
-            // ALMAMGT GLO RESPONSE CHECK
-            if(integResp && integResp.data["status"] == "ok" && integResp.data["resultCode"] == "0000"){
-                const message = integResp.data["message"]
-                return {error: false, response: integResp, message}
+            if(response.data && response.data.Status && response.data.Status === "successful"){
+                const message = "Data purchase was successful. Check Balance to confirm."
+                return {error: false, response: response.data, message}
             }else{
                 return {error: true, status: 400, message: "An error occured with data transfer server"}
             }
-
+           
 
             // SECTION - PURCHASE FOR EAZYMOBILE GLO
 
