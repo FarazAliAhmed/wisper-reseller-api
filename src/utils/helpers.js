@@ -161,9 +161,9 @@ const getFieldAndAmount = (type, planDetails) => {
 
     if(type === "mega"){
         let pType;
+        let volume = convertStorageSize(size)
         if(network === "mtn"){
             if(plan_type === "sme"){
-                volume = convertStorageSize(size)
                 volume = volume < 1024 ? volume : volume < 1048576 ? ~~(volume / 1024) * 1000 : ~~(volume / 1048576) * 1000000
                 console.log("sme volume", volume)
                 pType = `${network}_sme`
