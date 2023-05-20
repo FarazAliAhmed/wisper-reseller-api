@@ -567,7 +567,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
             // )
 
             const response = await axios.get(
-                `https://apisubportal.com/api/buydata.php?api_key=652cf58c55dbe87b507bc1d384fb6bf0&network=MTN&plans=${plan_id}&phonenumber=${requestPayload.mobile_number}&return_url=https://apisubportal.com`,
+                `https://apisubportal.com/api/buydata.php?api_key=652cf58c55dbe87b507bc1d384fb6bf0&network=MTN_CGD&plans=${plan_id}&phonenumber=${requestPayload.mobile_number}`,
 
             )
 
