@@ -7,6 +7,7 @@ const {
   update,
   create
 } = require('../services/transaction.service')
+const Transaction = require("../models/transactionHistory");
 
 const postTransaction = async (req, res) => {
   const {body} = req
@@ -31,8 +32,90 @@ const getAllTransaction = async (req, res) => {
   const resp = await getAll(businessId)
   if (resp.transactions) return res.status(200).json(resp.transactions)
   return res.status(resp.status).json(resp)
-  
 }
+
+// route to get the sum of transactions for a business ID
+const totalTrxSingle = async (req, res) => {
+  const businessId = req.user._id
+
+  try {
+    // Get the sum of transactions for the business ID
+    const transactionCount = await Transaction.countDocuments({
+      business_id: businessId,
+    });
+
+    res.json({
+      transactionCount,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+// route to get the total data sold for a business ID
+const totalDataSoldSingle =  async (req, res) => {
+  const businessId = req.user._id
+
+  try {
+    // Get the total data sold for the business ID
+    const totalDataSold = await Transaction.aggregate([
+      {
+        $match: { business_id: businessId },
+      },
+      {
+        $group: {
+          _id: null,
+          totalDataSold: { $sum: '$data_volume' },
+        },
+      },
+    ]);
+
+    res.json({
+      totalDataSold: totalDataSold[0].totalDataSold,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+// route to get the total data sold across all business IDs
+const totalDataSoldAll =  async (req, res) => {
+  try {
+    // Get the total data sold
+    const totalDataSold = await Transaction.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalDataSold: { $sum: '$data_volume' },
+        },
+      },
+    ]);
+
+    res.json({
+      totalDataSold: totalDataSold[0].totalDataSold,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+// route to get the total transactions made across all business IDs
+const totalTrxAll = async (req, res) => {
+  try {
+    // Get the total number of transactions
+    const totalTransactions = await Transaction.countDocuments();
+
+    res.json({
+      totalTransactions,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+
+
+
 
 const getAllBusinessTransactions = async (req, res) => {
   // used by admin to get all transactions of businesses
@@ -85,5 +168,9 @@ module.exports = {
   postTransaction,
   getAllBusinessTransactions,
   updateTransaction,
-  deleteTransaction
+  deleteTransaction,
+  totalDataSoldAll,
+  totalDataSoldSingle,
+  totalTrxAll,
+  totalTrxSingle
 }

@@ -37,6 +37,10 @@ const {
   getAllBusinessTransactions,
   updateTransaction,
   deleteTransaction,
+  totalTrxSingle,
+  totalTrxAll,
+  totalDataSoldSingle,
+  totalDataSoldAll,
 } = require("../controllers/transaction.controller");
 const {
   getPayment,
@@ -92,6 +96,15 @@ router.get("/wallet", getUser, getWalletBalance)
 router.get("/transaction/:id", getUser, getTransaction);
 router.get("/transactions", getUser, getAllTransaction);
 
+
+// Route for get data info start
+
+router.get("/trxSingle", getUser, totalTrxSingle);
+router.get("/totalDataSingle", getUser,  totalDataSoldSingle);
+
+
+// Route for get data info end
+
 router.get("/payment/:id", getUser, getPayment);
 router.get("/payments", getUser, getAllPayments);
 
@@ -112,6 +125,12 @@ router.post("/admin/credit", getAdmin, creditBalance);
 router.post("/admin/debit", getAdmin, debitBalance);
 
 router.get("/admin/transactions", getAdmin, getAllBusinessTransactions);
+
+// route for trx info start
+router.get("/admin/trxAll", getAdmin, totalTrxAll);
+router.get("/admin/totalDataAll", getAdmin,  totalDataSoldAll);
+// route for trx info end
+
 router.post("/admin/transactions", getAdmin, postTransaction);
 router.patch("/admin/transactions/:id", getAdmin, updateTransaction);
 router.delete("/admin/transactions/:id", getAdmin, deleteTransaction);
