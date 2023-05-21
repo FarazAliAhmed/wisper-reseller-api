@@ -99,8 +99,8 @@ router.get("/transactions", getUser, getAllTransaction);
 
 // Route for get data info start
 
-router.get("/trxSingle", getUser, totalTrxSingle);
-router.get("/totalDataSingle", getUser,  totalDataSoldSingle);
+router.get("/trxSingle/:id",  totalTrxSingle);
+router.get("/totalDataSingle/:id",   totalDataSoldSingle);
 
 
 // Route for get data info end

@@ -36,12 +36,12 @@ const getAllTransaction = async (req, res) => {
 
 // route to get the sum of transactions for a business ID
 const totalTrxSingle = async (req, res) => {
-  const businessId = req.user._id
+  const userID = req.params.id;
 
   try {
     // Get the sum of transactions for the business ID
     const transactionCount = await Transaction.countDocuments({
-      business_id: businessId,
+      business_id: userID,
     });
 
     res.json({
@@ -54,13 +54,13 @@ const totalTrxSingle = async (req, res) => {
 
 // route to get the total data sold for a business ID
 const totalDataSoldSingle =  async (req, res) => {
-  const businessId = req.user._id
+  const userID = req.params.id;
 
   try {
     // Get the total data sold for the business ID
     const totalDataSold = await Transaction.aggregate([
       {
-        $match: { business_id: businessId },
+        $match: { business_id: userID },
       },
       {
         $group: {
@@ -70,10 +70,13 @@ const totalDataSoldSingle =  async (req, res) => {
       },
     ]);
 
+    console.log(totalDataSold)
+
     res.json({
-      totalDataSold: totalDataSold[0].totalDataSold,
+      totalDataSold: totalDataSold[0]?.totalDataSold || 0,
     });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: 'An error occurred' });
   }
 };
