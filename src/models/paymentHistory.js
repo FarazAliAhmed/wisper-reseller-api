@@ -14,6 +14,14 @@ const paymentHistorySchema = new Schema({
     type: Number,
     required: true,
   },
+  volume: {
+    type: String,
+    required: true,
+  },
+  wallet: {
+    type: String,
+    required: true,
+  },
   date_of_payment: {
     type: String,
     default: `${new Date()}`
