@@ -40,7 +40,7 @@ const validate = (requestBody) => {
 
 
 const forgotPassword =  async (req, res) => {
-  const { email } = req.body;
+  const { email, url } = req.body;
   try {
     const oldUser = await Account.findOne({ email }).exec();
     if (!oldUser) {
@@ -51,7 +51,7 @@ const forgotPassword =  async (req, res) => {
       const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, {
         expiresIn: "30m",
       });
-      const link = `http://localhost:5000/api/reset_password/${oldUser.email}/${token}`;
+      const link = `${url}/reset-password/${oldUser.email}/${token}`;
 
       client.sendEmail({
         "From": "admin@wisper.ng",
