@@ -1,7 +1,11 @@
+const { Account } = require('../models/account');
 const {getAll, getAllB, getOne, create, update, deleteOne} = require('../services/payment.service')
 
 
 const postPayment = async (req, res, next) => {
+  const business_id = req.body.business_id
+  const account = await Account.findOne({ _id: business_id });
+  req.body.username = account.username
   const fields = req.body
   
   const resp = await create(fields)
