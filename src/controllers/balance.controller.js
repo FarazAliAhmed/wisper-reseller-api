@@ -8,6 +8,7 @@ const {
   debit,
   upgradeAllBalance
 } = require('../services/balance.service')
+const axios = require('axios');
 
 const { superjara_balance, simserver_balance } = require('../utils');
 
@@ -110,18 +111,39 @@ const updateAllBalance = async (req, res) => {
 
 
 const getApiBalance = async (req, res) => {
-  const balanceRes = await superjara_balance()
-  if(balanceRes.error) return res.status(400).json({status: "failed", message: balanceRes.message})
+  let mob9 = 0;
+  let mtn = 0;
+  let airtel = 0;
+  let glo = 0;
+ 
+  const mobile9 = 'https://simhosting.ogdams.ng/api/v1/get/balances';
+  const mtnUrl = 'https://apisubportal.com/api/balance.php?api_key=652cf58c55dbe87b507bc1d384fb6bf0';
+  const headers1 = {
+    headers: { 
+      'Accept': 'application/json', 
+      'Authorization': 'Bearer sk_live_41c0c0b0-73e6-4c5e-a246-317e38437a9b'
+    }
+  };
 
-  let simBalance = "";
-  const integResp = await IntegrationResponse.findOne().sort({_id: -1}).exec()
-
-  if(integResp){
-    simBalance =  simserver_balance(integResp.response)
+  try {
+    const response1 = await axios.get(mobile9, headers1);
+    // console.log(response1.data);
+    const response2 = await axios.get(mtnUrl);
+    // console.log(response2.data);
+    return res.status(200).json(
+      { 
+        mob9:response1.data.data.msg.mainBalance || mob9, 
+        mtn:response2.data.balance || mtn, 
+        airtel, 
+        glo
+      
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return res.status(200).json({ error });
   }
-
-  return res.status(200).json({simserver: simBalance, ...balanceRes })
-}
+};
 
 const updateBalance = async (req, res) => {
 
