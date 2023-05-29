@@ -144,7 +144,7 @@ exports.get_request_payload = (network, mobile_number, plan, Ported_number) => {
 const getFieldAndAmount = (type, planDetails) => {
     let {  price, network, plan_type, size} = planDetails
 
-    console.log("plan deetails", planDetails)
+    // console.log("plan deetails", planDetails)
 
     function convertStorageSize(size) {
         var value = parseInt(size); // Extract the numeric value
@@ -533,11 +533,11 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
 
            
             
-            console.log("jara planid", plan_id)
-            console.log("jara planid", size)
-            console.log("jara request", requestPayload)
+            // console.log("jara planid", plan_id)
+            // console.log("jara planid", size)
+            // console.log("jara request", requestPayload)
 
-            console.log("superjara_token", superjara_token)
+            // console.log("superjara_token", superjara_token)
 
           
 
@@ -571,7 +571,7 @@ exports.initiate_data_transfer = async (requestPayload, {size, ref, type}) => {
 
             )
 
-            console.log(response)
+            // console.log(response)
 
             
         
