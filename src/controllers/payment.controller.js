@@ -49,7 +49,7 @@ const updatePaymentType = async (req, res) => {
     const payment = await Payment.findOneAndUpdate(
       { business_id: businessId },
       { pay_type: payType },
-    );
+      {new: true}).exec()
 
     if (!payment) {
       return res.status(404).json({ message: "Payment not found." });
