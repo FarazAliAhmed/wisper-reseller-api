@@ -42,6 +42,26 @@ const updatePayment = async (req, res) => {
   return res.status(resp.status).json(resp)
 }
 
+const updatePaymentType = async (req, res) => {
+  const { businessId, payType } = req.body;
+
+  try {
+    const payment = await Payment.findOneAndUpdate(
+      { business_id: businessId },
+      { pay_type: payType },
+    );
+
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found." });
+    }
+
+    return res.json({ message: "Pay Type updated successfully." });
+  } catch (error) {
+    console.error("Error updating Pay Type:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 const deletePayment = async (req, res) => {
   const payment_ref = req.params.id
   const resp = await deleteOne(payment_ref)
@@ -55,5 +75,6 @@ module.exports = {
   getAllPayments,
   getAllBusinessPayments,
   updatePayment,
-  deletePayment
+  deletePayment,
+  updatePaymentType
 }

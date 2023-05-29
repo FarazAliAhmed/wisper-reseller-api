@@ -49,6 +49,7 @@ const {
   postPayment,
   updatePayment,
   deletePayment,
+  updatePaymentType,
 } = require("../controllers/payment.controller");
 
 const {
@@ -139,6 +140,7 @@ router.delete("/admin/transactions/:id", getAdmin, deleteTransaction);
 router.get("/admin/payments", getAdmin, getAllBusinessPayments);
 router.post("/admin/payments", getAdmin, postPayment);
 router.patch("/admin/payments/:id", getAdmin, updatePayment);
+router.patch("/admin/payments/updateType", getAdmin, updatePaymentType);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
 
 router.get("/admin/plans", getAdmin, getAllPlans)

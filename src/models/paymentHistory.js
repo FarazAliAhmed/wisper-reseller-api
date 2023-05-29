@@ -34,6 +34,10 @@ const paymentHistorySchema = new Schema({
     type: String,
     required: true,
   },
+  pay_type: {
+    type: String,
+    required: true,
+  },
   date_of_payment: {
     type: String,
     default: `${new Date()}`
