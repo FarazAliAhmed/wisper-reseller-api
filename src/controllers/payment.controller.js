@@ -1,6 +1,6 @@
 const { Account } = require('../models/account');
 const {getAll, getAllB, getOne, create, update, deleteOne} = require('../services/payment.service')
-
+const Payment = require("../models/paymentHistory");
 
 const postPayment = async (req, res, next) => {
   const business_id = req.body.business_id
