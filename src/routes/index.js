@@ -137,10 +137,10 @@ router.post("/admin/transactions", getAdmin, postTransaction);
 router.patch("/admin/transactions/:id", getAdmin, updateTransaction);
 router.delete("/admin/transactions/:id", getAdmin, deleteTransaction);
 
+router.post("/admin/update_payment_type", getAdmin, updatePaymentType);
 router.get("/admin/payments", getAdmin, getAllBusinessPayments);
 router.post("/admin/payments", getAdmin, postPayment);
 router.patch("/admin/payments/:id", getAdmin, updatePayment);
-router.post("/admin/payments/updateType", getAdmin, updatePaymentType);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
 
 router.get("/admin/plans", getAdmin, getAllPlans)
