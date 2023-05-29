@@ -43,11 +43,11 @@ const updatePayment = async (req, res) => {
 }
 
 const updatePaymentType = async (req, res) => {
-  const { businessId, payType } = req.body;
+  const { ref, payType } = req.body;
 
   try {
     const payment = await Payment.findOneAndUpdate(
-      { business_id: businessId },
+      { payment_ref: ref },
       { pay_type: payType },
       {new: true}).exec()
 
