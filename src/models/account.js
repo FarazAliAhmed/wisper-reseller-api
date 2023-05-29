@@ -44,6 +44,14 @@ const accountSchema = mongoose.Schema(
       default: false,
       index: true,
     },
+    confirmed: {
+      type: Boolean,
+      default: false,
+    },
+    confirmationToken: {
+      type: String,
+      default: null,
+    },
     type: {
       type: String,
       default: "mega"

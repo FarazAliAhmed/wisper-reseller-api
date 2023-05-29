@@ -14,6 +14,14 @@ const paymentHistorySchema = new Schema({
     type: Number,
     required: true,
   },
+  old: {
+    type: Number,
+    required: true,
+  },
+  new: {
+    type: Number,
+    required: true,
+  },
   username: {
     type: String,
     required: true,
