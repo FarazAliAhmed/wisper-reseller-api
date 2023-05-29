@@ -9,14 +9,18 @@ const client = new postmark.ServerClient(process.env.POSTMARK);
 
 const handleLogin = async (req, res) => {
   const { error } = validate(req.body);
+  // console.log(error)
   if (error) return res.status(400).send(error.details[0].message);
 
-  const data = await authService.auth(req.body.email, req.body.password);
+  const { email, password } = req.body;
+
+  const data = await authService.auth(email, password);
 
   if (data.user) {
     const token = data.user.generateAuthToken();
     return res.send(token);
   }
+  
   return res.status(data.status).send(data.message);
 };
 
@@ -99,10 +103,49 @@ const resetPassword =  async (req, res) => {
   }
 };
 
+const confirmEmail = async (req, res) => {
+  try {
+    const {token} = req.params;
+
+    const user = Account.findOne({confirmationToken: token}).exec()
+
+    if(!user){
+      return res.status(404).send("Invalid confirmation token")
+    }
+
+    user.confirmed = true;
+    user.confirmationToken = undefined;
+
+    await user.save();
+
+    // Redirect the user to a success page or display a success message
+    res.send('Email confirmed successfully!');
+
+  } catch (error) {
+    // Handle any errors that occur during the confirmation process
+    console.error('Confirmation error:', error);
+    res.status(500).send('An error occurred during email confirmation');
+  }
+}
+
+
+const updateConfirmedFieldForExistingUsers = async () => {
+  try {
+    await Account.updateMany({}, { confirmed: true }).exec();
+    // console.log('Confirmed field updated for all existing users.');
+    res.send("Old users confirmed successfully")
+  } catch (error) {
+    // console.error('Error updating confirmed field:', error);
+    res.send("Error updating confirmed field")
+  }
+};
+
 
 module.exports = {
   handleLogin,
   whoami,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  confirmEmail,
+  updateConfirmedFieldForExistingUsers
 };

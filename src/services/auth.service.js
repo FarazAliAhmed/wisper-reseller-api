@@ -6,6 +6,12 @@ const auth = async (email, password) => {
   const user = await Account.findOne({ email }).exec();
   if (!user) return { status: 400, message: "Invalid email or password." };
 
+  // if (!user.confirmed) {
+  //   // If the user hasn't confirmed their email, handle the error
+  //   return { status: 400, message: "Email not confirmed." };
+  // }
+
+
   const validPassword = await bcrypt.compare(password, user.password);
   if (!validPassword) {
     return { status: 400, message: "Invalid email or password." };

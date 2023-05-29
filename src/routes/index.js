@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { getUser, getAdmin, parseKey, transactionOnAllocate } = require("../utils").middleware;
 
-const { handleLogin, whoami, forgotPassword, resetPassword } = require("../controllers/auth.controller");
+const { handleLogin, whoami, forgotPassword, resetPassword, updateConfirmedFieldForExistingUsers } = require("../controllers/auth.controller");
 const {
   handleRegister,
   handleUpdate,
@@ -81,6 +81,7 @@ router.get("/maintenance", getMaintenance)
 router.get("/whoami", whoami);
 router.post("/auth", handleLogin);
 router.post("/users", handleRegister);
+router.post("/updateConfirm", updateConfirmedFieldForExistingUsers);
 
 //handleUpdate route should be protected
 router.patch("/users/:username", getUser, handleUpdate);
