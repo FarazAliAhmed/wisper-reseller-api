@@ -55,10 +55,10 @@ const updatePaymentType = async (req, res) => {
       return res.status(404).json({ message: "Payment not found." });
     }
 
-    return res.json({ message: "Pay Type updated successfully." });
+    return res.json({ data:payment, message: "Pay Type updated successfully." });
   } catch (error) {
     console.error("Error updating Pay Type:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({error:error,  message: "Internal Server Error" });
   }
 }
 
