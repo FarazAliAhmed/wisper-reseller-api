@@ -162,16 +162,16 @@ router.delete("/admin/plans/network/:network", getAdmin, deleteNetworkPlans)
 
 
 // GET plans
-router.get('/plans_user/:userId',getAdmin, getPlansByUserId);
+router.get('/admin/plans_user/:userId',getAdmin, getPlansByUserId);
 
 // POST /users/:userId/plans
-router.post('/plans_user/:userId', getAdmin, createPlanUser);
+router.post('/admin/plans_user/:userId', getAdmin, createPlanUser);
 
 // PUT /users/:userId/plans/:planId
-router.post('/plans_user/:userId/:planId', getAdmin, updatePlanUser);
+router.post('/admin/plans_user/:userId/:planId', getAdmin, updatePlanUser);
 
 // DELETE /users/:userId/plans/:planId
-router.delete('/plans_user/:userId/:planId', getAdmin, deletePlanUser);
+router.delete('/admin/plans_user/:userId/:planId', getAdmin, deletePlanUser);
 
 
 router.post("/admin/admin/create", getAdmin, createAdmin)
