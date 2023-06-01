@@ -60,6 +60,10 @@ const {
   deleteOnePlan,
   deleteNetworkPlans,
   deleteAllPlans,
+  getPlansByUserId,
+  createPlanUser,
+  updatePlanUser,
+  deletePlanUser,
 } = require("../controllers/plans.controller");
 
 const { getNetworks } = require("../controllers/networks.controller")
@@ -114,6 +118,11 @@ router.post("/url/webhook", getUser, addWebhook);
 router.post("/url/callback", getUser, addCallback);
 
 
+// GET plans
+router.get('/plans_user/:userId',getUser, getPlansByUserId);
+
+
+
 /**Routes Called by Admin
  * remember to set auth tokens to expire
  */
@@ -150,6 +159,20 @@ router.delete("/admin/plans/delete", getAdmin, deleteAllPlans)
 router.patch("/admin/plans/:plan_id", getAdmin, updateOnePlan)
 router.delete("/admin/plans/:plan_id", getAdmin, deleteOnePlan)
 router.delete("/admin/plans/network/:network", getAdmin, deleteNetworkPlans)
+
+
+// GET plans
+router.get('/plans_user/:userId',getAdmin, getPlansByUserId);
+
+// POST /users/:userId/plans
+router.post('/plans_user/:userId', getAdmin, createPlanUser);
+
+// PUT /users/:userId/plans/:planId
+router.put('/plans_user/:userId/:planId', getAdmin, updatePlanUser);
+
+// DELETE /users/:userId/plans/:planId
+router.delete('/plans_user/:userId/:planId', getAdmin, deletePlanUser);
+
 
 router.post("/admin/admin/create", getAdmin, createAdmin)
 router.delete("/admin/admin/remove/:email", getAdmin, deleteAdmin)

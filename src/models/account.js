@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 
 const { create: createEmptyBalance } = require("../services/balance.service");
+const plan = require("./plan");
 
 const accountSchema = mongoose.Schema(
   {
@@ -58,6 +59,9 @@ const accountSchema = mongoose.Schema(
     },
     mobile_number: String,
     address: String,
+
+    plans: [plan.schema], 
+
     callback: {
       type: String,
       default: null

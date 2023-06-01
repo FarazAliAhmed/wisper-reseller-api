@@ -11,6 +11,7 @@ const {
 } = require('../services/plan.service')
 
 const { loadPlans } = require('../scripts/loader')
+const { Account } = require('../models/account')
 
 const getAllPlans = async (req, res) => {
     const {plan, message, error} = await getAll()
@@ -84,6 +85,123 @@ const deleteAllPlans = async (req, res) => {
 }
 
 
+
+// user plans new
+
+// Get plans by user ID
+const getPlansByUserId = async (req, res) => {
+    try {
+      const user = await Account.findById(req.params.userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      
+      res.json(user.plans);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
+const createPlanUser = async (req, res) => {
+    try {
+      const user = await Account.findById(req.params.userId);
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      const newPlan = {
+        plan_id: req.body.plan_id,
+        network: req.body.network,
+        plan_type: req.body.plan_type,
+        price: req.body.price,
+        volume: req.body.volume,
+        unit: req.body.unit,
+        validity: req.body.validity
+      };
+  
+      user.plans.push(newPlan);
+      await user.save();
+  
+      res.status(201).json(user.plans);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
+const updatePlanUser = async (req, res) => {
+    try {
+      const user = await Account.findById(req.params.userId);
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      const planToUpdate = user.plans.id(req.params.planId);
+  
+      if (!planToUpdate) {
+        return res.status(404).json({ error: 'Plan not found' });
+      }
+  
+      // Update the plan fields if provided in the request body
+      if (req.body.plan_id) {
+        planToUpdate.plan_id = req.body.plan_id;
+      }
+      if (req.body.network) {
+        planToUpdate.network = req.body.network;
+      }
+      if (req.body.plan_type) {
+        planToUpdate.plan_type = req.body.plan_type;
+      }
+      if (req.body.price) {
+        planToUpdate.price = req.body.price;
+      }
+      if (req.body.volume) {
+        planToUpdate.volume = req.body.volume;
+      }
+      if (req.body.unit) {
+        planToUpdate.unit = req.body.unit;
+      }
+      if (req.body.validity) {
+        planToUpdate.validity = req.body.validity;
+      }
+  
+      await user.save();
+  
+      res.json(user.plans);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
+const deletePlanUser = async (req, res) => {
+    try {
+      const user = await Account.findById(req.params.userId);
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      const planToDelete = user.plans.id(req.params.planId);
+  
+      if (!planToDelete) {
+        return res.status(404).json({ error: 'Plan not found' });
+      }
+  
+      planToDelete.remove();
+      await user.save();
+  
+      res.sendStatus(204);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
 const validateCreate = (fields) => {
     const schema = Joi.object({
         plan_id: Joi.number()
@@ -135,4 +253,9 @@ module.exports = {
     deleteOnePlan,
     deleteAllPlans,
     deleteNetworkPlans,
+    // new plans
+    createPlanUser,
+    getPlansByUserId,
+    deletePlanUser,
+    updatePlanUser
 }
