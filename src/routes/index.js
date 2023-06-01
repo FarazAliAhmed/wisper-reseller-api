@@ -168,7 +168,7 @@ router.get('/plans_user/:userId',getAdmin, getPlansByUserId);
 router.post('/plans_user/:userId', getAdmin, createPlanUser);
 
 // PUT /users/:userId/plans/:planId
-router.put('/plans_user/:userId/:planId', getAdmin, updatePlanUser);
+router.post('/plans_user/:userId/:planId', getAdmin, updatePlanUser);
 
 // DELETE /users/:userId/plans/:planId
 router.delete('/plans_user/:userId/:planId', getAdmin, deletePlanUser);

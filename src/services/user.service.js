@@ -84,3 +84,40 @@ const saveWebhook = async (username, webhook_url) => {
 }
 
 module.exports = { register, update, addAdmin, removeAdmin, saveCallback, saveWebhook };
+
+
+// const register = async (requestBody) => {
+//   let userWithEmail = await Account.findOne({
+//     email: requestBody.email,
+//   }).exec();
+//   let userWithUsername = await Account.findOne({
+//     username: requestBody.username,
+//   }).exec();
+//   if (userWithEmail || userWithUsername)
+//     return { status: 400, message: "User already registered." };
+
+//   let user = new Account(requestBody);
+
+//   user.confirmed = false;
+
+//   const salt = await bcrypt.genSalt(10);
+//   user.password = await bcrypt.hash(user.password, salt);
+
+//   const confirmationToken = uuid.v4();
+//   user.confirmationToken = confirmationToken;
+
+//   await user.save();
+
+//   const confirmationLink = `${requestBody.url}/confirm-email/${confirmationToken}`;
+
+//   client.sendEmail({
+//     "From": "admin@wisper.ng",
+//     "To": requestBody.email,
+//     "Subject": "Confirm Email",
+//     TextBody: `Dear User,\n\nPlease click the link below to confirm your email address:\n\n${confirmationLink}\n\nThank you.`,
+//    });
+
+//   return { user };
+// };
+
+
