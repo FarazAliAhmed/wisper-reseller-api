@@ -141,8 +141,8 @@ exports.get_request_payload = (network, mobile_number, plan, Ported_number) => {
 
 // 
 
-const getFieldAndAmount = (type, planDetails) => {
-    let {  price, network, plan_type, size} = planDetails
+const getFieldAndAmount = (type, planDetails, price, volume) => {
+    let {  network, plan_type, size} = planDetails
 
     // console.log("plan deetails", planDetails)
 
@@ -194,8 +194,8 @@ const getFieldAndAmount = (type, planDetails) => {
     }
 }
 
-exports.debit_account_balance = async (account_id, planDetails, type) => {
-    const {amount, field} = getFieldAndAmount(type, planDetails)
+exports.debit_account_balance = async (account_id, planDetails, type, price, volume) => {
+    const {amount, field} = getFieldAndAmount(type, planDetails, price, volume)
     const updatedBalance = await debit(account_id, amount, field)
     if(updatedBalance.error) return updatedBalance
     return {error: false, status: 201, balance: updatedBalance.balance, debited: amount}

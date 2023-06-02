@@ -28,7 +28,7 @@ const sendData = async (req, res, next) => {
     if (!type) return res.status(400).json({error: true, status: 400, message: "Unrecognised User. Try Loging in again"});
 
     // 
-    const {network, plan_id, phone_number, allocate_for_business, business_id} = req.body;
+    const {network, plan_id, phone_number, allocate_for_business, business_id, price, volume} = req.body;
     
     // Check for Callback url
     const { callback } = req.query
@@ -67,7 +67,7 @@ const sendData = async (req, res, next) => {
     // Transaction block
     try{
         // check account balance and debit
-        const debitAccount = await debit_account_balance(_id, planDetails, type)
+        const debitAccount = await debit_account_balance(_id, planDetails, type, price, volume)
 
         console.log("main plan detalsjshj")
 
