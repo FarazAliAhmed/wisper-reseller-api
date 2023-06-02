@@ -99,7 +99,7 @@ const getPlansByUserId = async (req, res) => {
       
       res.json(user.plans);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: 'Internal Server Error', msg:error });
     }
 };
 
@@ -127,7 +127,7 @@ const createPlanUser = async (req, res) => {
   
       res.status(201).json(user.plans);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: 'Internal Server Error', msg:error });
     }
 };
 

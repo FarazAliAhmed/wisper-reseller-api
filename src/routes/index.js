@@ -119,7 +119,7 @@ router.post("/url/callback", getUser, addCallback);
 
 
 // GET plans
-router.get('/plans_user/:userId',getUser, getPlansByUserId);
+router.get('/plans_user/:userId', getPlansByUserId);
 
 
 
@@ -162,7 +162,7 @@ router.delete("/admin/plans/network/:network", getAdmin, deleteNetworkPlans)
 
 
 // GET plans
-router.get('/admin/plans_user/:userId',getAdmin, getPlansByUserId);
+router.get('/admin/plans_user/:userId', getPlansByUserId);
 
 // POST /users/:userId/plans
 router.post('/admin/plans_user/:userId', getAdmin, createPlanUser);
