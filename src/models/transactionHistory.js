@@ -24,6 +24,9 @@ const transactionHistorySchema = new Schema(
     price: {
       type: Number,
     },
+    lite_volume: {
+      type: String,
+    },
     data_price: {
       type: Number,
     },

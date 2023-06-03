@@ -706,10 +706,11 @@ exports.format_transaction_response = ({
 }
 
 
-exports.save_transaction = async (business_id, details) => {
+exports.save_transaction = async (business_id, details, volume) => {
 
     const newTransaction = details
     newTransaction.business_id = business_id
+    newTransaction.lite_volume = volume
     try {
         const savedTransaction = await addTransaction(newTransaction)
         return {error: false, status: 201, transaction: savedTransaction.transaction}

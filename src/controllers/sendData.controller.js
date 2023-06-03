@@ -85,7 +85,7 @@ const sendData = async (req, res, next) => {
         })
         
         // save the transaction to database
-        const savedTransaction = await save_transaction(_id, responseObject)
+        const savedTransaction = await save_transaction(_id, responseObject, volume || "")
         if (savedTransaction.error){
             res.status(400).json({status: 400, message: "Server Error! Please try again later"});
             throw new Error("Server Error! Please try again later")
