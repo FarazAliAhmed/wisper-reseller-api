@@ -351,8 +351,6 @@ exports.initiate_data_transfer = async (
 
       const response = await axios.post(cloudsimhost_url, req_body, req_header);
 
-      console.log("CLOUDHOST", response);
-
       // Fire event to save gateway response to DB
       integResp = response.data;
 
@@ -420,8 +418,6 @@ exports.initiate_data_transfer = async (
         req_body,
         req_header
       );
-
-      console.log("GLO ALMAMGT:", response);
 
       // Fire event to save gateway response to DB
       integResp = response.data;
@@ -503,8 +499,6 @@ exports.initiate_data_transfer = async (
         },
         getConfig(type)
       );
-
-      console.log("ZOEDATA", response);
 
       // Fire event to save gateway response to DB
       integResp = response.data;
@@ -598,8 +592,6 @@ exports.initiate_data_transfer = async (
 
       const response = await axios.post(ogdams_url, req_body, req_header);
 
-      console.log("9MOBILE:", response);
-
       integResp = response.data;
 
       // !SECTION - OGDAMS RESPONSE CHECK
@@ -665,8 +657,6 @@ exports.initiate_data_transfer = async (
       const response = await axios.get(
         `https://apisubportal.com/api/buydata.php?api_key=652cf58c55dbe87b507bc1d384fb6bf0&network=MTN_CGD&plans=${plan_id}&phonenumber=${requestPayload.mobile_number}`
       );
-
-      console.log("APISUBPORTAL", response);
 
       // console.log(response)
 
@@ -736,8 +726,6 @@ exports.initiate_data_transfer = async (
         requestPayload,
         getConfig(type)
       );
-
-      console.log("FASTLINK", response);
 
       // Fire event to save gateway response to DB
       integResp = response.data;
