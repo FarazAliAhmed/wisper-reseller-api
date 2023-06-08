@@ -20,7 +20,7 @@ const handleLogin = async (req, res) => {
     const token = data.user.generateAuthToken();
     return res.send(token);
   }
-  
+
   return res.status(data.status).send(data.message);
 };
 
@@ -42,40 +42,41 @@ const validate = (requestBody) => {
   return schema.validate(requestBody);
 };
 
-
-const forgotPassword =  async (req, res) => {
+const forgotPassword = async (req, res) => {
   const { email, url } = req.body;
   try {
     const oldUser = await Account.findOne({ email }).exec();
     if (!oldUser) {
       return res.json({ status: "User Does Not Exists!!!" });
     } else {
-      const JWT_SECRET = "supersecretxxerex8Qkq1.21SxKj"
+      const JWT_SECRET = "supersecretxxerex8Qkq1.21SxKj";
       const secret = JWT_SECRET + oldUser.password;
-      const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, {
-        expiresIn: "30m",
-      });
+      const token = jwt.sign(
+        { email: oldUser.email, id: oldUser._id },
+        secret,
+        {
+          expiresIn: "30m",
+        }
+      );
       const link = `${url}/reset-password/${oldUser.email}/${token}`;
 
       client.sendEmail({
-        "From": "admin@wisper.ng",
-        "To": email,
-        "Subject": "Reset Password Link",
-        "TextBody": `Click on this link to reset your password or copy and paste on your browser if it doesn't work. This link is valid for 30mins ${link}`
+        From: "admin@wisper.ng",
+        To: email,
+        Subject: "Reset Password Link",
+        TextBody: `Click on this link to reset your password or copy and paste on your browser if it doesn't work. This link is valid for 30mins ${link}`,
       });
-    
+
       console.log(link);
-      return res.json({ status: "User Exists!!", link:link });
+      return res.json({ status: "User Exists!!", link: link });
     }
-   
-  } catch (error) { }
+  } catch (error) {}
 };
 
-
-const resetPassword =  async (req, res) => {
+const resetPassword = async (req, res) => {
   const { email, token } = req.params;
   const { password } = req.body;
-  const JWT_SECRET = "supersecretxxerex8Qkq1.21SxKj"
+  const JWT_SECRET = "supersecretxxerex8Qkq1.21SxKj";
 
   const oldUser = await Account.findOne({ email });
   if (!oldUser) {
@@ -88,13 +89,12 @@ const resetPassword =  async (req, res) => {
     const encryptedPassword = await bcrypt.hash(password, salt);
 
     user = await Account.findOneAndUpdate(
-      {email},
+      { email },
       { password: encryptedPassword },
       { new: true }
     ).exec();
 
-
-    console.log("user", user)
+    console.log("user", user);
 
     res.send("Password changed");
   } catch (error) {
@@ -105,12 +105,12 @@ const resetPassword =  async (req, res) => {
 
 const confirmEmail = async (req, res) => {
   try {
-    const {token} = req.params;
+    const { token } = req.params;
 
-    const user = Account.findOne({confirmationToken: token}).exec()
+    const user = Account.findOne({ confirmationToken: token }).exec();
 
-    if(!user){
-      return res.status(404).send("Invalid confirmation token")
+    if (!user) {
+      return res.status(404).send("Invalid confirmation token");
     }
 
     user.confirmed = true;
@@ -119,27 +119,24 @@ const confirmEmail = async (req, res) => {
     await user.save();
 
     // Redirect the user to a success page or display a success message
-    res.send('Email confirmed successfully!');
-
+    res.send("Email confirmed successfully!");
   } catch (error) {
     // Handle any errors that occur during the confirmation process
-    console.error('Confirmation error:', error);
-    res.status(500).send('An error occurred during email confirmation');
+    console.error("Confirmation error:", error);
+    res.status(500).send("An error occurred during email confirmation");
   }
-}
-
+};
 
 const updateConfirmedFieldForExistingUsers = async () => {
   try {
     await Account.updateMany({}, { confirmed: true }).exec();
     // console.log('Confirmed field updated for all existing users.');
-    res.send("Old users confirmed successfully")
+    res.send("Old users confirmed successfully");
   } catch (error) {
     // console.error('Error updating confirmed field:', error);
-    res.send("Error updating confirmed field")
+    res.send("Error updating confirmed field");
   }
 };
-
 
 module.exports = {
   handleLogin,
@@ -147,5 +144,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   confirmEmail,
-  updateConfirmedFieldForExistingUsers
+  updateConfirmedFieldForExistingUsers,
 };
