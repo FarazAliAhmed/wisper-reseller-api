@@ -32,6 +32,7 @@ const {
   msorg_size_map,
 } = require("./networkData");
 const { default: fetch } = require("node-fetch");
+const { Account } = require("../models/account");
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -428,6 +429,8 @@ exports.initiate_data_transfer = async (
         req_header
       );
 
+      console.log("ALMAMGT RESPONSE:", response?.data);
+
       // Fire event to save gateway response to DB
       integResp = response.data;
 
@@ -438,13 +441,26 @@ exports.initiate_data_transfer = async (
         integResp.data["resultCode"] == "0000"
       ) {
         const message = integResp.data["message"];
+        try {
+          // Update glo_almamgt for admin users
+          const updateResult = await Account.updateMany(
+            { isAdmin: true },
+            { glo_almamgt: integResp.data["balance"] }
+          );
+
+          // console.log(` admin users updated: ${updateResult}`);
+        } catch (error) {
+          console.error("Error updating admin users glo balance");
+          // Handle the error appropriately (e.g., send an error response)
+        }
+
         return { error: false, response: integResp, message };
       } else {
         client.sendEmail({
           From: "admin@wisper.ng",
           To: "Arinzeebuka@gmail.com",
           Subject: "Glo service is down on wisper",
-          TextBody: "Almangt server is currently down",
+          TextBody: "Almamgt server is currently down",
         });
 
         return {
@@ -615,6 +631,8 @@ exports.initiate_data_transfer = async (
 
       const response = await axios.post(ogdams_url, req_body, req_header);
 
+      console.log("OGDAM RESPONSE:", response?.data);
+
       integResp = response.data;
 
       // !SECTION - OGDAMS RESPONSE CHECK
@@ -687,6 +705,8 @@ exports.initiate_data_transfer = async (
       const response = await axios.get(
         `https://apisubportal.com/api/buydata.php?api_key=652cf58c55dbe87b507bc1d384fb6bf0&network=MTN_CGD&plans=${plan_id}&phonenumber=${requestPayload.mobile_number}`
       );
+
+      console.log("ABISUBPORTAL RESPONSE:", response?.data);
 
       // console.log(response)
 

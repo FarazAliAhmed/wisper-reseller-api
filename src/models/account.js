@@ -55,25 +55,27 @@ const accountSchema = mongoose.Schema(
     },
     type: {
       type: String,
-      default: "mega"
+      default: "mega",
     },
     mobile_number: String,
     address: String,
 
-    plans: [plan.schema], 
+    glo_almamgt: String,
+
+    plans: [plan.schema],
 
     callback: {
       type: String,
-      default: null
+      default: null,
     },
     webhook: {
       type: String,
-      default: null
+      default: null,
     },
     active: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   { timestamps: true }
 );
