@@ -818,7 +818,7 @@ exports.initiate_data_transfer = async (
     return {
       error: true,
       status: 400,
-      message: "Data volume transafer failed",
+      message: "Data volume transfer failed",
     };
   } finally {
     IntegrationEvents.emit(integration_response, {
