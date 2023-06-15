@@ -40,7 +40,7 @@ const paymentHistorySchema = new Schema({
   },
   date_of_payment: {
     type: String,
-    default: `${new Date()}`
+    default: `${new Date()}`,
   },
   payment_ref: {
     type: String,
