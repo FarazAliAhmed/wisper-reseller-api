@@ -1,8 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { getUser, getAdmin, parseKey, transactionOnAllocate } = require("../utils").middleware;
+const { getUser, getAdmin, parseKey, transactionOnAllocate } =
+  require("../utils").middleware;
 
-const { handleLogin, whoami, forgotPassword, resetPassword, updateConfirmedFieldForExistingUsers } = require("../controllers/auth.controller");
+const {
+  handleLogin,
+  whoami,
+  forgotPassword,
+  resetPassword,
+  updateConfirmedFieldForExistingUsers,
+} = require("../controllers/auth.controller");
 const {
   handleRegister,
   handleUpdate,
@@ -18,8 +25,8 @@ const {
   getSystemAdmins,
   enableBusinessAccount,
   disableBusinessAccount,
-  setBusinessAccountType
-} = require('../controllers/business.controller')
+  setBusinessAccountType,
+} = require("../controllers/business.controller");
 
 const {
   getAccountBalance,
@@ -28,7 +35,7 @@ const {
   creditBalance,
   debitBalance,
   updateAllBalance,
-  getApiBalance
+  getApiBalance,
 } = require("../controllers/balance.controller");
 const {
   postTransaction,
@@ -66,7 +73,7 @@ const {
   deletePlanUser,
 } = require("../controllers/plans.controller");
 
-const { getNetworks } = require("../controllers/networks.controller")
+const { getNetworks } = require("../controllers/networks.controller");
 
 const sendData = require("../controllers/sendData.controller");
 
@@ -77,12 +84,17 @@ const {
   exitMaintenance,
   setNoticeMessag,
   clearNoticeMessag,
-} = require('../controllers/maintenance.controller')
+} = require("../controllers/maintenance.controller");
+const { monthly_analysis } = require("../controllers/analysis.controller");
+const {
+  getBucketID,
+  updateBucketID,
+} = require("../controllers/bucketID.controller");
 
 router.post("/reset_password/:email/:token", resetPassword);
 router.post("/forgot_password", forgotPassword);
 
-router.get("/maintenance", getMaintenance)
+router.get("/maintenance", getMaintenance);
 router.get("/whoami", whoami);
 router.post("/auth", handleLogin);
 router.post("/users", handleRegister);
@@ -97,17 +109,15 @@ router.get("/plans", getUser, getAllPlans);
 router.get("/networks", getUser, getNetworks);
 
 router.get("/balance", getUser, getAccountBalance);
-router.get("/wallet", getUser, getWalletBalance)
+router.get("/wallet", getUser, getWalletBalance);
 
 router.get("/transaction/:id", getUser, getTransaction);
 router.get("/transactions", getUser, getAllTransaction);
 
-
 // Route for get data info start
 
-router.get("/trxSingle/:id",  totalTrxSingle);
-router.get("/totalDataSingle/:id",   totalDataSoldSingle);
-
+router.get("/trxSingle/:id", totalTrxSingle);
+router.get("/totalDataSingle/:id", totalDataSoldSingle);
 
 // Route for get data info end
 
@@ -117,11 +127,8 @@ router.get("/payments", getUser, getAllPayments);
 router.post("/url/webhook", getUser, addWebhook);
 router.post("/url/callback", getUser, addCallback);
 
-
 // GET plans
-router.get('/plans_user/:userId', getPlansByUserId);
-
-
+router.get("/plans_user/:userId", getPlansByUserId);
 
 /**Routes Called by Admin
  * remember to set auth tokens to expire
@@ -139,7 +146,7 @@ router.get("/admin/transactions", getAdmin, getAllBusinessTransactions);
 
 // route for trx info start
 router.get("/admin/trxAll", getAdmin, totalTrxAll);
-router.get("/admin/totalDataAll", getAdmin,  totalDataSoldAll);
+router.get("/admin/totalDataAll", getAdmin, totalDataSoldAll);
 // route for trx info end
 
 router.post("/admin/transactions", getAdmin, postTransaction);
@@ -152,42 +159,55 @@ router.post("/admin/payments", getAdmin, postPayment);
 router.patch("/admin/payments/:id", getAdmin, updatePayment);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
 
-router.get("/admin/plans", getAdmin, getAllPlans)
-router.get("/admin/plans/:plan_id", getAdmin, getOnePlan)
-router.post("/admin/plans/create", getAdmin, createOnePlan)
-router.delete("/admin/plans/delete", getAdmin, deleteAllPlans)
-router.patch("/admin/plans/:plan_id", getAdmin, updateOnePlan)
-router.delete("/admin/plans/:plan_id", getAdmin, deleteOnePlan)
-router.delete("/admin/plans/network/:network", getAdmin, deleteNetworkPlans)
+router.get("/admin/plans", getAdmin, getAllPlans);
+router.get("/admin/plans/:plan_id", getAdmin, getOnePlan);
+router.post("/admin/plans/create", getAdmin, createOnePlan);
+router.delete("/admin/plans/delete", getAdmin, deleteAllPlans);
+router.patch("/admin/plans/:plan_id", getAdmin, updateOnePlan);
+router.delete("/admin/plans/:plan_id", getAdmin, deleteOnePlan);
+router.delete("/admin/plans/network/:network", getAdmin, deleteNetworkPlans);
 
+// ANALYSIS ROUTE
+router.get("/admin/analysis/monthly", monthly_analysis);
+
+// BUCKET ID ROUTE
+router.get("/admin/getBucket", getBucketID);
+router.post("/admin/updateBucket", updateBucketID);
 
 // GET plans
-router.get('/admin/plans_user/:userId', getPlansByUserId);
+router.get("/admin/plans_user/:userId", getPlansByUserId);
 
 // POST /users/:userId/plans
-router.post('/admin/plans_user/:userId', getAdmin, createPlanUser);
+router.post("/admin/plans_user/:userId", getAdmin, createPlanUser);
 
 // PUT /users/:userId/plans/:planId
-router.post('/admin/plans_user/:userId/:planId', getAdmin, updatePlanUser);
+router.post("/admin/plans_user/:userId/:planId", getAdmin, updatePlanUser);
 
 // DELETE /users/:userId/plans/:planId
-router.delete('/admin/plans_user/:userId/:planId', getAdmin, deletePlanUser);
+router.delete("/admin/plans_user/:userId/:planId", getAdmin, deletePlanUser);
 
+router.post("/admin/admin/create", getAdmin, createAdmin);
+router.delete("/admin/admin/remove/:email", getAdmin, deleteAdmin);
 
-router.post("/admin/admin/create", getAdmin, createAdmin)
-router.delete("/admin/admin/remove/:email", getAdmin, deleteAdmin)
+router.get("/admin/api/balance", getAdmin, getApiBalance);
 
-router.get("/admin/api/balance", getAdmin, getApiBalance)
+router.post("/admin/maintenance/create", getAdmin, createMaintenance);
+router.patch("/admin/maintenance/enter/:network", getAdmin, enterMaintenance);
+router.patch("/admin/maintenance/exit/:network", getAdmin, exitMaintenance);
+router.post("/admin/maintenance/notice", getAdmin, setNoticeMessag);
+router.get("/admin/maintenance/clear", getAdmin, clearNoticeMessag);
 
-router.post("/admin/maintenance/create", getAdmin, createMaintenance)
-router.patch("/admin/maintenance/enter/:network", getAdmin, enterMaintenance)
-router.patch("/admin/maintenance/exit/:network", getAdmin, exitMaintenance)
-router.post("/admin/maintenance/notice", getAdmin, setNoticeMessag)
-router.get("/admin/maintenance/clear", getAdmin, clearNoticeMessag)
-
-router.get("/admin/account/enable/:account_id", getAdmin, enableBusinessAccount)
-router.get("/admin/account/disable/:account_id", getAdmin, disableBusinessAccount)
-router.post("/admin/account/type", getAdmin, setBusinessAccountType)
+router.get(
+  "/admin/account/enable/:account_id",
+  getAdmin,
+  enableBusinessAccount
+);
+router.get(
+  "/admin/account/disable/:account_id",
+  getAdmin,
+  disableBusinessAccount
+);
+router.post("/admin/account/type", getAdmin, setBusinessAccountType);
 
 // upgrade user from lite to mega and back to lite
 

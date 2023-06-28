@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const moment = require('moment-timezone')
+const moment = require("moment-timezone");
 const Schema = mongoose.Schema;
 
 const dataBalanceSchema = new Schema({
@@ -24,32 +24,32 @@ const dataBalanceSchema = new Schema({
   mega_wallet: {
     mtn_sme: {
       type: Number,
-      default: 0
+      default: 0,
     },
     mtn_gifting: {
       type: Number,
-      default: 0
+      default: 0,
     },
     airtel: {
       type: Number,
-      default: 0
+      default: 0,
     },
     glo: {
       type: Number,
-      default: 0
+      default: 0,
     },
     "9mobile": {
       type: Number,
-      default: 0
+      default: 0,
     },
     unit: {
       type: String,
-      default: "MB"
-    }
+      default: "MB",
+    },
   },
   last_purchase: {
     type: String,
-    default: moment().tz('Africa/Lagos').format('YYYY/MM/D hh:mm:ss A')
+    default: moment().tz("Africa/Lagos").format("YYYY/MM/D hh:mm:ss A"),
   },
 });
 

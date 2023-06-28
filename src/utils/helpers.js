@@ -429,6 +429,8 @@ exports.initiate_data_transfer = async (
         req_header
       );
 
+      // console.log(response);
+
       console.log("ALMAMGT RESPONSE:", response?.data);
 
       // Fire event to save gateway response to DB
@@ -450,7 +452,8 @@ exports.initiate_data_transfer = async (
 
           // console.log(` admin users updated: ${updateResult}`);
         } catch (error) {
-          console.error("Error updating admin users glo balance");
+          // console.log(error);
+          // console.error("Error updating admin users glo balance");
           // Handle the error appropriately (e.g., send an error response)
         }
 
@@ -811,7 +814,7 @@ exports.initiate_data_transfer = async (
       }
     }
   } catch (e) {
-    console.log("ERROOORR::", e.message);
+    console.log("ERROOORR MESSAGE::", e.message);
     console.log({ error: e });
     integResp =
       e?.response?.data || e?.message || "Data volume transafer failed";
@@ -847,7 +850,7 @@ exports.superjara_balance = async () => {
       message: "API balance successfully fetched",
     };
   } catch (e) {
-    console.log("ERROOORR::", e.stack);
+    console.log("ERROOORR STACK::", e.stack);
     return { error: true, message: "Error! Unable to fetch data balance" };
   }
 };
