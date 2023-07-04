@@ -1,32 +1,32 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const Maintenance = new Schema({
-    mtn_sme: {
-        type: Boolean,
-        default: false,
-    },
-    mtn_gifting: {
-        type: Boolean,
-        default: false,
-    },
-    airtel: {
-        type: Boolean,
-        default: false,
-    },
-    glo: {
-        type: Boolean,
-        default: false,
-    },
-    "9mobile": {
-        type: Boolean,
-        default: false,
-    },
-    notice: {
-        type: String,
-        default: null
-    }
-})
+  mtn_sme: {
+    type: Boolean,
+    default: false,
+  },
+  mtn_gifting: {
+    type: Boolean,
+    default: false,
+  },
+  airtel: {
+    type: Boolean,
+    default: false,
+  },
+  glo: {
+    type: Boolean,
+    default: false,
+  },
+  "9mobile": {
+    type: Boolean,
+    default: false,
+  },
+  notice: {
+    type: String,
+    default: null,
+  },
+});
 
 // NOTE - About Maintenance Mood
 /**
@@ -34,5 +34,4 @@ const Maintenance = new Schema({
  * When the value is FALSE, the provider is NOT under maintenance and hence available for use by customers
  */
 
-module.exports = mongoose.model("maintenance", Maintenance)
-
+module.exports = mongoose.model("maintenance", Maintenance);

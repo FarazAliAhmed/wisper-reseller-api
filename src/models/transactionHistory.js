@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const mongoosePaginate = require('mongoose-paginate-v2');
+const mongoosePaginate = require("mongoose-paginate-v2");
 const Schema = mongoose.Schema;
 
 const transactionHistorySchema = new Schema(
@@ -7,7 +7,7 @@ const transactionHistorySchema = new Schema(
     transaction_ref: {
       type: String,
       required: true,
-      unique: true,  //We want the admin allocation reference to be same with that of the business when the admin allocates for a business
+      unique: true, //We want the admin allocation reference to be same with that of the business when the admin allocates for a business
       index: true,
     },
     admin_ref: {
@@ -48,9 +48,10 @@ const transactionHistorySchema = new Schema(
     },
     created_at: {
       type: String,
-      default: `${new Date()}`
-    }
-  }
+      default: `${new Date()}`,
+    },
+  },
+  { timestamps: true }
 );
 
 transactionHistorySchema.plugin(mongoosePaginate);

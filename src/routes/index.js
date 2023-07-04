@@ -85,7 +85,13 @@ const {
   setNoticeMessag,
   clearNoticeMessag,
 } = require("../controllers/maintenance.controller");
-const { monthly_analysis } = require("../controllers/analysis.controller");
+const {
+  payment_analysis,
+  revenueAnalysis,
+  totalCurrentCredit,
+  paymentTable,
+  walletAnalysis,
+} = require("../controllers/analysis.controller");
 const {
   getBucketID,
   updateBucketID,
@@ -168,22 +174,20 @@ router.delete("/admin/plans/:plan_id", getAdmin, deleteOnePlan);
 router.delete("/admin/plans/network/:network", getAdmin, deleteNetworkPlans);
 
 // ANALYSIS ROUTE
-router.get("/admin/analysis/monthly", monthly_analysis);
+router.get("/admin/analysis/payment", payment_analysis);
+router.get("/admin/analysis/revenue", revenueAnalysis);
+router.get("/admin/analysis/totalCurrentCredit", totalCurrentCredit);
+router.get("/admin/analysis/paymentTable", paymentTable);
+router.get("/admin/analysis/walletAnalysis", walletAnalysis);
 
 // BUCKET ID ROUTE
 router.get("/admin/getBucket", getBucketID);
 router.post("/admin/updateBucket", updateBucketID);
 
-// GET plans
+// PLANS ROUTE
 router.get("/admin/plans_user/:userId", getPlansByUserId);
-
-// POST /users/:userId/plans
 router.post("/admin/plans_user/:userId", getAdmin, createPlanUser);
-
-// PUT /users/:userId/plans/:planId
 router.post("/admin/plans_user/:userId/:planId", getAdmin, updatePlanUser);
-
-// DELETE /users/:userId/plans/:planId
 router.delete("/admin/plans_user/:userId/:planId", getAdmin, deletePlanUser);
 
 router.post("/admin/admin/create", getAdmin, createAdmin);

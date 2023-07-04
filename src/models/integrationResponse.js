@@ -1,18 +1,21 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const IntegrationResponse = new Schema({
+const IntegrationResponse = new Schema(
+  {
     integration: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     response: {
-        type: Object,
+      type: Object,
     },
     created_at: {
-        type: Date,
-        default: Date.now()
-    }
-})
+      type: Date,
+      default: Date.now(),
+    },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('integrationResponse', IntegrationResponse)
+module.exports = mongoose.model("integrationResponse", IntegrationResponse);
