@@ -33,7 +33,6 @@ const {
 } = require("./networkData");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
-const { buyGloData } = require("./gloHelper");
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -424,20 +423,18 @@ exports.initiate_data_transfer = async (
         plan_id: plan_id,
       };
 
-      // const response = await axios.post(
-      //   `${almamgt_url}/api/purchase`,
-      //   req_body,
-      //   req_header
-      // );
+      const response = await axios.post(
+        `${almamgt_url}/api/purchase`,
+        req_body,
+        req_header
+      );
 
-      const response = await buyGloData(req_body);
-
-      // console.log("glo algmat", response);
+      // console.log(response);
 
       console.log("ALMAMGT RESPONSE:", response?.data);
 
       // Fire event to save gateway response to DB
-      integResp = response;
+      integResp = response.data;
 
       // ALMAMGT GLO RESPONSE CHECK
       if (
