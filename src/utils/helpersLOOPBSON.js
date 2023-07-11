@@ -418,66 +418,50 @@ exports.initiate_data_transfer = async (
         },
       };
 
-      const [url, key_algmat] = [
-        process.env.GLO_BASE_URL,
-        process.env.GLO_API_KEY,
-      ];
-
-      const config = {
-        headers: {
-          "x-api-key": key_algmat,
-          "Content-Type": "application/json",
-        },
+      const req_body = {
+        tx_ref: ref.slice(0, 12),
+        phone_number: requestPayload.mobile_number,
+        plan_id: plan_id,
       };
 
-      const randomMax = BigInt("99849294974397393924");
-      const randomMin = BigInt("10849294974397393924");
-      const unit = BigInt(10);
+      // const response = await axios.post(
+      //   `${almamgt_url}/api/purchase`,
+      //   req_body,
+      //   req_header
+      // );
 
-      const payload = {
-        msisdn: requestPayload.mobile_number,
-        planId: plan_id,
-        sponsorId: "almamgt",
-        quantity: 1,
-        bucketId: 32,
-        ignoresms: false,
-        transId: Math.floor(
-          Number(
-            (BigInt(Math.floor(Math.random() * 10)) * (randomMax - randomMin)) /
-              unit +
-              randomMin
-          )
-        ).toString(),
-      };
+      const response = await buyGloData(req_body);
 
-      try {
-        const respGlo = await axios.post(url, JSON.stringify(payload), config);
+      // console.log("glo algmat", response);
 
-        if (respGlo.data.status === "ok") {
-          console.log("success", payload.bucketId);
+      console.log("ALMAMGT RESPONSE:", response?.data);
 
-          integResp = respGlo.data;
+      // Fire event to save gateway response to DB
+      integResp = response;
 
-          // console.log("INTEGRESP", integResp);
+      // ALMAMGT GLO RESPONSE CHECK
+      if (
+        integResp &&
+        integResp.data["status"] == "ok" &&
+        integResp.data["resultCode"] == "0000"
+      ) {
+        const message = integResp.data["message"];
+        try {
+          // Update glo_almamgt for admin users
+          const updateResult = await Account.updateMany(
+            { isAdmin: true },
+            { glo_almamgt: integResp.data["balance"] }
+          );
 
-          const message = integResp["message"];
-          try {
-            // Update glo_almamgt for admin users
-            const updateResult = await Account.updateMany(
-              { isAdmin: true },
-              { glo_almamgt: integResp["balance"] }
-            );
-
-            // console.log(` admin users updated: ${updateResult}`);
-          } catch (error) {
-            // console.log(error);
-            // console.error("Error updating admin users glo balance");
-            // Handle the error appropriately (e.g., send an error response)
-          }
-          return { error: false, response: respGlo, message };
+          // console.log(` admin users updated: ${updateResult}`);
+        } catch (error) {
+          // console.log(error);
+          // console.error("Error updating admin users glo balance");
+          // Handle the error appropriately (e.g., send an error response)
         }
-      } catch (error) {
-        // console.log("error", error);
+
+        return { error: false, response: integResp, message };
+      } else {
         client.sendEmail({
           From: "admin@wisper.ng",
           To: "Arinzeebuka@gmail.com",

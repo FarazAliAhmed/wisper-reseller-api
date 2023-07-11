@@ -53,49 +53,42 @@ async function buyGloData(purchaseInfo) {
   const randomMin = BigInt("10849294974397393924");
   const unit = BigInt(10);
 
-  let resp;
-  let mainError;
+  try {
+    const response = await axios.get(
+      "https://wisper-test.herokuapp.com/api/admin/getBucket"
+    );
+    const bucketIds = response.data.map((bucket) => bucket.bucketID);
+    const data = await requestData(bucketIds);
+    return data;
+  } catch (error) {
+    console.error("Error retrieving bucket IDs:", error);
+    throw new Error(error.response?.data?.message || error.message);
+  }
 
-  return new Promise((resolve, reject) => {
-    axios
-      .get("https://wisper-test.herokuapp.com/api/admin/getBucket")
-      .then((response) => {
-        const resBucket = response.data.map((bucket) => bucket.bucketID);
-        requestData(response.data.map((bucket) => bucket.bucketID))
-          .then((data) => {
-            resolve(data);
-          })
-          .catch((error) => {
-            console.error("Error retrieving bucket IDs:", error);
-            throw new Error(error.response?.data?.message || error.message);
-          });
-      })
-      .catch((error) => {
-        console.error("Error retrieving bucket IDs:", error);
-        throw new Error(error.response?.data?.message || error.message);
-      });
+  async function requestData(bucketIds) {
+    console.log("bucket ID", bucketIds);
 
-    async function requestData(bucketIds) {
-      console.log("bucket ID", bucketIds);
+    const payload = {
+      msisdn: purchaseInfo.phone_number,
+      planId: purchaseInfo.plan_id,
+      sponsorId: "almamgt",
+      quantity: 1,
+      bucketId: 0,
+      ignoresms: false,
+      transId: Math.floor(
+        Number(
+          (BigInt(Math.floor(Math.random() * 10)) * (randomMax - randomMin)) /
+            unit +
+            randomMin
+        )
+      ).toString(),
+    };
 
-      const payload = {
-        msisdn: purchaseInfo.phone_number,
-        planId: purchaseInfo.plan_id,
-        sponsorId: "almamgt",
-        quantity: 1,
-        bucketId: 0,
-        ignoresms: false,
-        transId: Math.floor(
-          Number(
-            (BigInt(Math.floor(Math.random() * 10)) * (randomMax - randomMin)) /
-              unit +
-              randomMin
-          )
-        ).toString(),
-      };
+    let attempts = 0;
+    let resp;
+    let mainError;
 
-      let attempts = 0;
-
+    try {
       do {
         const currentBucketId =
           attempts < bucketIds.length ? bucketIds[attempts] : 73;
@@ -123,19 +116,21 @@ async function buyGloData(purchaseInfo) {
           attempts++; // Increase the attempt count
         }
       } while (attempts < bucketIds.length);
-
-      if (!resp) {
-        throw new Error(
-          mainError.response?.data?.message ||
-            mainError.message ||
-            "All attempts failed"
-        );
-      }
-
-      //   return resp.data;
-      return resp;
+    } catch (error) {
+      throw new Error("All attempts failed");
     }
-  });
+
+    if (!resp) {
+      throw new Error(
+        mainError.response?.data?.message ||
+          mainError.message ||
+          "All attempts failed"
+      );
+    }
+
+    // return resp.data;
+    return resp;
+  }
 }
 
 module.exports = {

@@ -7,11 +7,11 @@ const Plan = new Schema(
       type: Number,
       required: true,
       unique: true,
-      index: true,
+     
     },
     network: {
       type: String,
-      index: true,
+      
       required: true,
     },
     plan_type: {
