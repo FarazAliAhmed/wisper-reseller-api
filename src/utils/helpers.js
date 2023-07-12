@@ -439,7 +439,7 @@ exports.initiate_data_transfer = async (
 
       do {
         await axios
-          .post("http://localhost:5000/api/admin/getBucketOne")
+          .post("https://wisper-test.herokuapp.com/api/admin/getBucketOne")
           .then((res) => {
             bucketIDVar = res.data;
             console.log({ res: res.data });
@@ -508,7 +508,9 @@ exports.initiate_data_transfer = async (
           // console.log("error", error);
 
           await axios
-            .post("http://localhost:5000/api/admin/bucketIDSwitchOne")
+            .post(
+              "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+            )
             .then((res) => {
               bucketIDVar = undefined;
               console.log("Attempt", { res: res.data });
