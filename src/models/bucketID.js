@@ -15,6 +15,11 @@ const bucketIdSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  position: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model("BucketId", bucketIdSchema);

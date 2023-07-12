@@ -95,6 +95,8 @@ const {
 const {
   getBucketID,
   updateBucketID,
+  bucketIDOne,
+  bucketIDSwitchOne,
 } = require("../controllers/bucketID.controller");
 
 router.post("/reset_password/:email/:token", resetPassword);
@@ -183,6 +185,8 @@ router.get("/admin/analysis/walletAnalysis", walletAnalysis);
 // BUCKET ID ROUTE
 router.get("/admin/getBucket", getBucketID);
 router.post("/admin/updateBucket", updateBucketID);
+router.post("/admin/getBucketOne", bucketIDOne);
+router.post("/admin/bucketIDSwitchOne", bucketIDSwitchOne);
 
 // PLANS ROUTE
 router.get("/admin/plans_user/:userId", getPlansByUserId);
