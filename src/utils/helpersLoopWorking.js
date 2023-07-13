@@ -418,63 +418,121 @@ exports.initiate_data_transfer = async (
         },
       };
 
-      const req_body = {
-        tx_ref: ref.slice(0, 12),
-        phone_number: requestPayload.mobile_number,
-        plan_id: plan_id,
+      const [url, key_algmat] = [
+        process.env.GLO_BASE_URL,
+        process.env.GLO_API_KEY,
+      ];
+
+      const config = {
+        headers: {
+          "x-api-key": key_algmat,
+          "Content-Type": "application/json",
+        },
       };
 
-      // const response = await axios.post(
-      //   `${almamgt_url}/api/purchase`,
-      //   req_body,
-      //   req_header
-      // );
+      const randomMax = BigInt("99849294974397393924");
+      const randomMin = BigInt("10849294974397393924");
+      const unit = BigInt(10);
 
-      const response = await buyGloData(req_body);
+      let bucketIDVar;
+      let attempt = 0;
 
-      // console.log("glo algmat", response);
+      do {
+        await axios
+          .post("https://wisper-test.herokuapp.com/api/admin/getBucketOne")
+          .then((res) => {
+            bucketIDVar = res.data;
+            console.log({ res: res.data });
+          });
 
-      console.log("ALMAMGT RESPONSE:", response?.data);
-
-      // Fire event to save gateway response to DB
-      integResp = response;
-
-      // ALMAMGT GLO RESPONSE CHECK
-      if (
-        integResp &&
-        integResp.data["status"] == "ok" &&
-        integResp.data["resultCode"] == "0000"
-      ) {
-        const message = integResp.data["message"];
-        try {
-          // Update glo_almamgt for admin users
-          const updateResult = await Account.updateMany(
-            { isAdmin: true },
-            { glo_almamgt: integResp.data["balance"] }
-          );
-
-          // console.log(` admin users updated: ${updateResult}`);
-        } catch (error) {
-          // console.log(error);
-          // console.error("Error updating admin users glo balance");
-          // Handle the error appropriately (e.g., send an error response)
+        if (bucketIDVar) {
+          console.log("Bucket ID:", bucketIDVar);
+        } else {
+          console.log("Failed to retrieve bucketIDVar");
+          console.log("Bucket ID:", bucketIDVar);
+          return {
+            error: true,
+            status: 400,
+            message: "An error occured with data transfer server",
+          };
         }
 
-        return { error: false, response: integResp, message };
-      } else {
-        client.sendEmail({
-          From: "admin@wisper.ng",
-          To: "Arinzeebuka@gmail.com",
-          Subject: "Glo service is down on wisper",
-          TextBody: "Almamgt server is currently down",
-        });
-
-        return {
-          error: true,
-          status: 400,
-          message: "An error occured with data transfer server",
+        const payload = {
+          msisdn: requestPayload.mobile_number,
+          planId: plan_id,
+          sponsorId: "almamgt",
+          quantity: 1,
+          bucketId: bucketIDVar,
+          ignoresms: false,
+          transId: Math.floor(
+            Number(
+              (BigInt(Math.floor(Math.random() * 10)) *
+                (randomMax - randomMin)) /
+                unit +
+                randomMin
+            )
+          ).toString(),
         };
-      }
+
+        try {
+          const respGlo = await axios.post(
+            url,
+            JSON.stringify(payload),
+            config
+          );
+
+          if (respGlo.data.status === "ok") {
+            console.log("success", payload.bucketId);
+
+            integResp = respGlo.data;
+
+            // console.log("INTEGRESP", integResp);
+
+            const message = integResp["message"];
+            try {
+              // Update glo_almamgt for admin users
+              const updateResult = await Account.updateMany(
+                { isAdmin: true },
+                { glo_almamgt: integResp["balance"] }
+              );
+
+              // console.log(` admin users updated: ${updateResult}`);
+            } catch (error) {
+              // console.log(error);
+              // console.error("Error updating admin users glo balance");
+              // Handle the error appropriately (e.g., send an error response)
+            }
+            return { error: false, response: respGlo, message };
+          }
+        } catch (error) {
+          // console.log("error", error);
+
+          await axios
+            .post(
+              "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+            )
+            .then((res) => {
+              bucketIDVar = undefined;
+              console.log("Attempt", { res: res.data });
+            })
+            .catch((err) => {
+              attempt++;
+            });
+        }
+      } while (attempt < 3 && !bucketIDVar);
+
+      client.sendEmail({
+        From: "admin@wisper.ng",
+        To: "Arinzeebuka@gmail.com",
+        Subject: "Glo service is down on wisper",
+        TextBody: "Almamgt server is currently down",
+      });
+
+      return {
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      };
 
       // SECTION - PURCHASE FOR EAZYMOBILE GLO
 
