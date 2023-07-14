@@ -525,7 +525,7 @@ exports.initiate_data_transfer = async (
         From: "admin@wisper.ng",
         To: "Arinzeebuka@gmail.com",
         Subject: "Glo service is down on wisper",
-        TextBody: "Almamgt server is currently down",
+        TextBody: "Almamgt server is currently down.",
       });
 
       return {
