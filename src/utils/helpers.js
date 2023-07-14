@@ -507,17 +507,20 @@ exports.initiate_data_transfer = async (
         } catch (error) {
           // console.log("error", error);
 
-          await axios
-            .post(
-              "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
-            )
-            .then((res) => {
-              bucketIDVar = undefined;
-              console.log("Attempt", { res: res.data });
-            })
-            .catch((err) => {
-              attempt++;
-            });
+          bucketIDVar = undefined;
+          // await axios
+          //   .post(
+          //     "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+          //   )
+          //   .then((res) => {
+          // bucketIDVar = undefined;
+
+          //     console.log("Attempt", { res: res.data });
+          //   })
+          //   .catch((err) => {
+          //     attempt++;
+          //   });
+          attempt++;
         }
       } while (attempt < 3 && !bucketIDVar);
 
