@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-export function gatewayResponse(plan_id, phone_number) {
+function gatewayResponse(plan_id, phone_number) {
   const phone = phone_number;
   let volume,
     unit = "GB",
@@ -39,7 +39,7 @@ export function gatewayResponse(plan_id, phone_number) {
   return message;
 }
 
-export const gatewayResponseTemplate = (volume, unit, phone, validity) => {
+const gatewayResponseTemplate = (volume, unit, phone, validity) => {
   return `You have successfully purchased ${volume} ${unit} of data to ${phone}, valid for ${validity}.`;
 };
 
@@ -135,4 +135,6 @@ async function buyGloData(purchaseInfo) {
 
 module.exports = {
   buyGloData,
+  gatewayResponse,
+  gatewayResponseTemplate,
 };
