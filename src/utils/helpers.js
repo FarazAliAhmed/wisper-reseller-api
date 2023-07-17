@@ -505,19 +505,27 @@ exports.initiate_data_transfer = async (
             return { error: false, response: respGlo, message };
           }
         } catch (error) {
-          // console.log("error", error);
+          // console.log("error NOT IF", error.response.data.message);
 
-          await axios
-            .post(
-              "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
-            )
-            .then((res) => {
-              bucketIDVar = undefined;
-              console.log("Attempt", { res: res.data });
-            })
-            .catch((err) => {
-              attempt++;
-            });
+          if (
+            error.response.data.message.toLowerCase() ==
+            "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
+          ) {
+            console.log("error IFFF", error.response.data.message);
+
+            await axios
+              .post(
+                "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+              )
+              .then((res) => {
+                bucketIDVar = undefined;
+                console.log("Attempt", { res: res.data });
+              })
+              .catch((err) => {
+                console.log("error switching");
+              });
+          }
+          attempt++;
         }
       } while (attempt < 3 && !bucketIDVar);
 
