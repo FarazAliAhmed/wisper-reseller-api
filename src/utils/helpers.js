@@ -505,7 +505,7 @@ exports.initiate_data_transfer = async (
             return { error: false, response: respGlo, message };
           }
         } catch (error) {
-          // console.log("error NOT IIF", error);
+          console.log("error NOT IIF", error);
 
           // if (
           //   error.response.data.message.toLowerCase() ==
