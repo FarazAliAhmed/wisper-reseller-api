@@ -33,7 +33,7 @@ const {
 } = require("./networkData");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
-const { buyGloData } = require("./gloHelper");
+const { buyGloData, gatewayResponse } = require("./gloHelper");
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -485,10 +485,21 @@ exports.initiate_data_transfer = async (
             console.log("success", payload.bucketId);
 
             integResp = respGlo.data;
+            respGlo.data["actual_response"] = respGlo.data.message;
+
+            respGlo.data.message = gatewayResponse(
+              plan_id,
+              requestPayload.mobile_number
+            );
 
             // console.log("INTEGRESP", integResp);
 
-            const message = integResp["message"];
+            // const message = integResp["message"];
+            const message = gatewayResponse(
+              plan_id,
+              requestPayload.mobile_number
+            );
+
             try {
               // Update glo_almamgt for admin users
               const updateResult = await Account.updateMany(
@@ -499,8 +510,6 @@ exports.initiate_data_transfer = async (
               // console.log(` admin users updated: ${updateResult}`);
             } catch (error) {
               // console.log(error);
-              // console.error("Error updating admin users glo balance");
-              // Handle the error appropriately (e.g., send an error response)
             }
 
             console.log({ error: false, message });

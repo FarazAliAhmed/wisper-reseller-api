@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-function gatewayResponse(plan_id, phone_number) {
+export function gatewayResponse(plan_id, phone_number) {
   const phone = phone_number;
   let volume,
     unit = "GB",
@@ -39,7 +39,7 @@ function gatewayResponse(plan_id, phone_number) {
   return message;
 }
 
-const gatewayResponseTemplate = (volume, unit, phone, validity) => {
+export const gatewayResponseTemplate = (volume, unit, phone, validity) => {
   return `You have successfully purchased ${volume} ${unit} of data to ${phone}, valid for ${validity}.`;
 };
 
