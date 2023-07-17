@@ -503,7 +503,7 @@ exports.initiate_data_transfer = async (
               // Handle the error appropriately (e.g., send an error response)
             }
 
-            console.log({ error: false, response: respGlo, message });
+            console.log({ error: false, message });
             return { error: false, response: respGlo, message };
           }
         } catch (error) {
