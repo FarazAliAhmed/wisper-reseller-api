@@ -505,7 +505,7 @@ exports.initiate_data_transfer = async (
             return { error: false, response: respGlo, message };
           }
         } catch (error) {
-          // console.log("error NOT IF", error.response.data.message);
+          console.log("error NOT IF", error);
 
           // if (
           //   error.response.data.message.toLowerCase() ==
@@ -526,34 +526,36 @@ exports.initiate_data_transfer = async (
           //     });
           // }
 
-          if (error.response) {
-            // Check if error.response.data is defined
-            if (error.response.data) {
-              console.log("Error message:", error.response.data.message);
+          if (error) {
+            if (error.response) {
+              // Check if error.response.data is defined
+              if (error.response.data) {
+                console.log("Error message:", error.response.data.message);
 
-              if (
-                error.response.data.message.toLowerCase() ==
-                "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
-              ) {
-                console.log("error IFFF", error.response.data.message);
+                if (
+                  error.response.data.message.toLowerCase() ==
+                  "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
+                ) {
+                  console.log("error IFFF", error.response.data.message);
 
-                await axios
-                  .post(
-                    "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
-                  )
-                  .then((res) => {
-                    bucketIDVar = undefined;
-                    console.log("Attempt", { res: res.data });
-                  })
-                  .catch((err) => {
-                    console.log("error switching");
-                  });
+                  await axios
+                    .post(
+                      "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+                    )
+                    .then((res) => {
+                      bucketIDVar = undefined;
+                      console.log("Attempt", { res: res.data });
+                    })
+                    .catch((err) => {
+                      console.log("error switching");
+                    });
+                }
+              } else {
+                console.log("error.response.data is undefined");
               }
             } else {
-              console.log("error.response.data is undefined");
+              console.log("error.response is undefined");
             }
-          } else {
-            console.log("error.response is undefined");
           }
 
           attempt++;
