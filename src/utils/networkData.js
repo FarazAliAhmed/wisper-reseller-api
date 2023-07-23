@@ -427,6 +427,7 @@ exports.msorg_size_map = (size) => {
   return { error, plan_id };
 };
 
+// Glo
 exports.cloudsimhost_glo_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(" ", "");
   let error = false,

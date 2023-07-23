@@ -33,15 +33,6 @@ const whoami = async (req, res) => {
   return res.send(data?.user);
 };
 
-const validate = (requestBody) => {
-  const schema = Joi.object({
-    email: Joi.string().min(5).max(255).required().email(),
-    password: Joi.string().min(5).max(255).required(),
-  });
-
-  return schema.validate(requestBody);
-};
-
 const forgotPassword = async (req, res) => {
   const { email, url } = req.body;
   try {
@@ -136,6 +127,15 @@ const updateConfirmedFieldForExistingUsers = async () => {
     // console.error('Error updating confirmed field:', error);
     res.send("Error updating confirmed field");
   }
+};
+
+const validate = (requestBody) => {
+  const schema = Joi.object({
+    email: Joi.string().min(5).max(255).required().email(),
+    password: Joi.string().min(5).max(255).required(),
+  });
+
+  return schema.validate(requestBody);
 };
 
 module.exports = {

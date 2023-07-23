@@ -564,8 +564,6 @@ exports.initiate_data_transfer = async (
               } else {
                 console.log("error.response.data is undefined");
               }
-            } else {
-              console.log("error.response is undefined");
             }
           }
 
@@ -578,6 +576,12 @@ exports.initiate_data_transfer = async (
         To: "Arinzeebuka@gmail.com",
         Subject: "Glo service is down on wisper",
         TextBody: "Almamgt server is currently down",
+      });
+
+      console.log({
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
       });
 
       return {
