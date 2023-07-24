@@ -34,6 +34,7 @@ const {
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
 const { buyGloData, gatewayResponse } = require("./gloHelper");
+const bucketID = require("../models/bucketID");
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -474,101 +475,249 @@ exports.initiate_data_transfer = async (
           ).toString(),
         };
 
+        console.log("REQUEST PAYLOAD", size);
+        function convertToMegabytes(value) {
+          if (value.toLowerCase().includes("gb")) {
+            return (
+              parseInt(value.toLowerCase().replace("gb", "").trim()) * 1000
+            );
+          } else {
+            return parseInt(value.toLowerCase().replace("mb", "").trim());
+          }
+        }
+
+        const resultSize = convertToMegabytes(size);
+        console.log("CONVERT resultSize", resultSize);
+
         try {
-          const respGlo = await axios.post(
-            url,
-            JSON.stringify(payload),
-            config
-          );
+          const bucketIdPosition = 99;
 
-          if (respGlo.data.status === "ok") {
-            console.log("success", payload.bucketId);
+          const bucketAtPosition99 = await bucketID.findOne({
+            position: bucketIdPosition,
+          });
 
-            integResp = respGlo.data;
-            respGlo.data["actual_response"] = respGlo.data.message;
+          if (!bucketAtPosition99) {
+            console.log("Bucket ID not found at position 99");
+            return;
+          }
 
-            respGlo.data.message = gatewayResponse(
-              plan_id,
-              requestPayload.mobile_number
-            );
+          const currentValue = bucketAtPosition99.bucketID;
 
-            // console.log("INTEGRESP", integResp);
+          if (currentValue < 7348000) {
+            bucketAtPosition99.bucketID = resultSize + currentValue;
 
-            // const message = integResp["message"];
-            const message = gatewayResponse(
-              plan_id,
-              requestPayload.mobile_number
-            );
+            // Save the updated document
+            await bucketAtPosition99.save();
 
             try {
-              // Update glo_almamgt for admin users
-              const updateResult = await Account.updateMany(
-                { isAdmin: true },
-                { glo_almamgt: integResp["balance"] }
+              const respGlo = await axios.post(
+                url,
+                JSON.stringify(payload),
+                config
               );
 
-              // console.log(` admin users updated: ${updateResult}`);
-            } catch (error) {
-              // console.log(error);
-            }
+              if (respGlo.data.status === "ok") {
+                console.log("success", payload.bucketId);
 
-            console.log({ error: false, message });
-            return { error: false, response: respGlo, message };
+                integResp = respGlo.data;
+                respGlo.data["actual_response"] = respGlo.data.message;
+
+                respGlo.data.message = gatewayResponse(
+                  plan_id,
+                  requestPayload.mobile_number
+                );
+
+                // console.log("INTEGRESP", integResp);
+
+                // const message = integResp["message"];
+                const message = gatewayResponse(
+                  plan_id,
+                  requestPayload.mobile_number
+                );
+
+                try {
+                  // Update glo_almamgt for admin users
+                  const updateResult = await Account.updateMany(
+                    { isAdmin: true },
+                    { glo_almamgt: integResp["balance"] }
+                  );
+
+                  // console.log(` admin users updated: ${updateResult}`);
+                } catch (error) {
+                  // console.log(error);
+                }
+
+                console.log({ error: false, message });
+                return { error: false, response: respGlo, message };
+              }
+            } catch (error) {
+              // console.log("error NOT IIF", error);
+
+              // if (
+              //   error.response.data.message.toLowerCase() ==
+              //   "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
+              // ) {
+              //   console.log("error IFFF", error.response.data.message);
+
+              //   await axios
+              //     .post(
+              //       "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+              //     )
+              //     .then((res) => {
+              //       bucketIDVar = undefined;
+              //       console.log("Attempt", { res: res.data });
+              //     })
+              //     .catch((err) => {
+              //       console.log("error switching");
+              //     });
+              // }
+
+              if (error) {
+                if (error.response) {
+                  // Check if error.response.data is defined
+                  if (error.response.data) {
+                    console.log("Error message:", error.response.data.message);
+
+                    if (
+                      error.response.data.message.toLowerCase() ==
+                      "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
+                    ) {
+                      console.log("error IFFF", error.response.data.message);
+
+                      // await axios
+                      //   .post(
+                      //     "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+                      //   )
+                      //   .then((res) => {
+                      //     bucketIDVar = undefined;
+                      //     console.log("Attempt", { res: res.data });
+                      //   })
+                      //   .catch((err) => {
+                      //     console.log("error switching");
+                      //   });
+                    }
+                  } else {
+                    console.log("error.response.data is undefined");
+                  }
+                }
+              }
+
+              attempt++;
+            }
+          } else {
+            console.log(
+              "Bucket ID at position 99 is already 7348000 or above."
+            );
+            return {
+              error: true,
+              status: 400,
+              message: "An error occured with data transfer server",
+            };
           }
         } catch (error) {
-          console.log("error NOT IIF", error);
-
-          // if (
-          //   error.response.data.message.toLowerCase() ==
-          //   "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
-          // ) {
-          //   console.log("error IFFF", error.response.data.message);
-
-          //   await axios
-          //     .post(
-          //       "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
-          //     )
-          //     .then((res) => {
-          //       bucketIDVar = undefined;
-          //       console.log("Attempt", { res: res.data });
-          //     })
-          //     .catch((err) => {
-          //       console.log("error switching");
-          //     });
-          // }
-
-          if (error) {
-            if (error.response) {
-              // Check if error.response.data is defined
-              if (error.response.data) {
-                console.log("Error message:", error.response.data.message);
-
-                if (
-                  error.response.data.message.toLowerCase() ==
-                  "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
-                ) {
-                  console.log("error IFFF", error.response.data.message);
-
-                  await axios
-                    .post(
-                      "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
-                    )
-                    .then((res) => {
-                      bucketIDVar = undefined;
-                      console.log("Attempt", { res: res.data });
-                    })
-                    .catch((err) => {
-                      console.log("error switching");
-                    });
-                }
-              } else {
-                console.log("error.response.data is undefined");
-              }
-            }
-          }
-
-          attempt++;
+          console.error("Error occurred:", error.message);
+          return {
+            error: true,
+            status: 400,
+            message: "An error occured with data transfer server",
+          };
         }
+
+        // try {
+        //   const respGlo = await axios.post(
+        //     url,
+        //     JSON.stringify(payload),
+        //     config
+        //   );
+
+        //   if (respGlo.data.status === "ok") {
+        //     console.log("success", payload.bucketId);
+
+        //     integResp = respGlo.data;
+        //     respGlo.data["actual_response"] = respGlo.data.message;
+
+        //     respGlo.data.message = gatewayResponse(
+        //       plan_id,
+        //       requestPayload.mobile_number
+        //     );
+
+        //     // console.log("INTEGRESP", integResp);
+
+        //     // const message = integResp["message"];
+        //     const message = gatewayResponse(
+        //       plan_id,
+        //       requestPayload.mobile_number
+        //     );
+
+        //     try {
+        //       // Update glo_almamgt for admin users
+        //       const updateResult = await Account.updateMany(
+        //         { isAdmin: true },
+        //         { glo_almamgt: integResp["balance"] }
+        //       );
+
+        //       // console.log(` admin users updated: ${updateResult}`);
+        //     } catch (error) {
+        //       // console.log(error);
+        //     }
+
+        //     console.log({ error: false, message });
+        //     return { error: false, response: respGlo, message };
+        //   }
+        // } catch (error) {
+        //   // console.log("error NOT IIF", error);
+
+        //   // if (
+        //   //   error.response.data.message.toLowerCase() ==
+        //   //   "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
+        //   // ) {
+        //   //   console.log("error IFFF", error.response.data.message);
+
+        //   //   await axios
+        //   //     .post(
+        //   //       "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+        //   //     )
+        //   //     .then((res) => {
+        //   //       bucketIDVar = undefined;
+        //   //       console.log("Attempt", { res: res.data });
+        //   //     })
+        //   //     .catch((err) => {
+        //   //       console.log("error switching");
+        //   //     });
+        //   // }
+
+        //   if (error) {
+        //     if (error.response) {
+        //       // Check if error.response.data is defined
+        //       if (error.response.data) {
+        //         console.log("Error message:", error.response.data.message);
+
+        //         if (
+        //           error.response.data.message.toLowerCase() ==
+        //           "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
+        //         ) {
+        //           console.log("error IFFF", error.response.data.message);
+
+        //           // await axios
+        //           //   .post(
+        //           //     "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+        //           //   )
+        //           //   .then((res) => {
+        //           //     bucketIDVar = undefined;
+        //           //     console.log("Attempt", { res: res.data });
+        //           //   })
+        //           //   .catch((err) => {
+        //           //     console.log("error switching");
+        //           //   });
+        //         }
+        //       } else {
+        //         console.log("error.response.data is undefined");
+        //       }
+        //     }
+        //   }
+
+        //   attempt++;
+        // }
       } while (attempt < 3 && !bucketIDVar);
 
       client.sendEmail({
