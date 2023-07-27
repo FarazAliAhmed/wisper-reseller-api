@@ -27,7 +27,7 @@ const {
 const sendData = async (req, res, next) => {
   const { _id, type } = req.user;
 
-  console.log("IP ADDRESS", req.connection.remoteAddress);
+  // console.log("IP ADDRESS", req.connection.remoteAddress);
 
   // Ensure user Type is provided
   if (!type)

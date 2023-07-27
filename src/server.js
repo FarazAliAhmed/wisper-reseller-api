@@ -23,6 +23,40 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+// white listing of Ip
+// IP whitelist middleware
+function ipWhitelist(allowedIPs) {
+  return function (req, res, next) {
+    // const clientIP =
+    //   req.headers["x-forwarded-for"] || req.connection.remoteAddress || "";
+
+    // const [ipv6MappedIPv4, ipv6] = clientIP.split(":");
+    // const firstIP = ipv6MappedIPv4 || ipv6 || clientIP;
+
+    const clientIP = req.ip;
+
+    console.log("IP ADDRESS", clientIP);
+
+    if (allowedIPs.includes(clientIP)) {
+      next();
+    } else {
+      // IP is not allowed, send a 403 Forbidden response
+
+      console.log("Access denied: Your IP is not whitelisted.");
+      res
+        .status(403)
+        .json({ error: "Access denied: Your IP is not whitelisted." });
+    }
+  };
+}
+
+// Define an array of allowed IPs
+const allowedIPs = ["127.0.0.1", "192.168.1.100"];
+
+// Apply the IP whitelist middleware to specific routes or all routes
+app.use(ipWhitelist(allowedIPs));
+
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
