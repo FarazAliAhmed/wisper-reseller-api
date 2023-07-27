@@ -34,7 +34,7 @@ function ipWhitelist(allowedIPs) {
     // const [ipv6MappedIPv4, ipv6] = clientIP.split(":");
     // const firstIP = ipv6MappedIPv4 || ipv6 || clientIP;
 
-    const clientIP = req.ip;
+    const clientIP = req.ip.split(":").pop();
 
     console.log("IP ADDRESS", clientIP);
 
@@ -52,7 +52,7 @@ function ipWhitelist(allowedIPs) {
 }
 
 // Define an array of allowed IPs
-const allowedIPs = ["127.0.0.1", "192.168.1.100"];
+const allowedIPs = ["10.6", "99.5"];
 
 // Apply the IP whitelist middleware to specific routes or all routes
 app.use(ipWhitelist(allowedIPs));
