@@ -439,7 +439,7 @@ exports.initiate_data_transfer = async (
 
       do {
         await axios
-          .post("https://wisper-test.herokuapp.com/api/admin/getBucketOne")
+          .post("https://wisper-reseller.herokuapp.com/api/admin/getBucketOne")
           .then((res) => {
             bucketIDVar = res.data;
             console.log({ res: res.data });
@@ -526,7 +526,7 @@ exports.initiate_data_transfer = async (
 
           //   await axios
           //     .post(
-          //       "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+          //       "https://wisper-reseller.herokuapp.com/api/admin/bucketIDSwitchOne"
           //     )
           //     .then((res) => {
           //       bucketIDVar = undefined;
@@ -551,7 +551,7 @@ exports.initiate_data_transfer = async (
 
                   await axios
                     .post(
-                      "https://wisper-test.herokuapp.com/api/admin/bucketIDSwitchOne"
+                      "https://wisper-reseller.herokuapp.com/api/admin/bucketIDSwitchOne"
                     )
                     .then((res) => {
                       bucketIDVar = undefined;
