@@ -4,12 +4,12 @@ const checkWhitelistIP = async (req, res, next) => {
   try {
     const api_key = req.headers["x-api-key"];
     const ipAddress =
-      req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+      req.headers["x-forwarded-for"] || req.connection.remoteAddress.slice(7);
 
     console.log("IP ADRESS", ipAddress);
 
     console.log("X-FORWARDED", req.headers["x-forwarded-for"]);
-    console.log("connection adreess", req.connection.remoteAddress);
+    console.log("connection adreess", req.connection.remoteAddress.slice(7));
 
     const user = await Account.findOne({
       access_token: api_key,

@@ -184,7 +184,7 @@ router.get("/admin/analysis/paymentTable", paymentTable);
 router.get("/admin/analysis/walletAnalysis", walletAnalysis);
 
 // BUCKET ID ROUTE
-router.get("/admin/getBucket", getBucketID);
+router.get("/admin/getBucket", checkWhitelistIP, getBucketID);
 router.post("/admin/updateBucket", updateBucketID);
 router.post("/admin/getBucketOne", bucketIDOne);
 router.post("/admin/bucketIDSwitchOne", bucketIDSwitchOne);
@@ -225,6 +225,6 @@ router.post("/admin/account/type", getAdmin, setBusinessAccountType);
 
 /**END USER ROUTES
  */
-router.post("/buy", parseKey, checkWhitelistIP, sendData);
+router.post("/buy", parseKey, sendData);
 
 module.exports = router;
