@@ -62,6 +62,15 @@ const accountSchema = mongoose.Schema(
 
     glo_almamgt: String,
 
+    whitelistStatus: {
+      type: Boolean,
+      default: false,
+    },
+    whitelistIP: {
+      type: String,
+      default: "",
+    },
+
     plans: [plan.schema],
 
     callback: {

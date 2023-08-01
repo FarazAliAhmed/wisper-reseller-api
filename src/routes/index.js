@@ -98,6 +98,7 @@ const {
   bucketIDOne,
   bucketIDSwitchOne,
 } = require("../controllers/bucketID.controller");
+const checkWhitelistIP = require("../utils/middleware/checkWhitelistIP");
 
 router.post("/reset_password/:email/:token", resetPassword);
 router.post("/forgot_password", forgotPassword);
@@ -224,6 +225,6 @@ router.post("/admin/account/type", getAdmin, setBusinessAccountType);
 
 /**END USER ROUTES
  */
-router.post("/buy", parseKey, sendData);
+router.post("/buy", parseKey, checkWhitelistIP, sendData);
 
 module.exports = router;
