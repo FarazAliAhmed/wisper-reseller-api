@@ -129,6 +129,57 @@ const updateConfirmedFieldForExistingUsers = async () => {
   }
 };
 
+const updateWhitelist = async (req, res) => {
+  const { error } = addIPAddressesSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
+  try {
+    const token = req.headers["authorization"]?.split(" ")[1];
+    if (!token) return res.status(403).send("No token provided");
+    const user = jwt.decode(token);
+
+    // req body
+    const { ipAddress } = req.body;
+    const whitelist = await authService.updateWhitelist(user.email, ipAddress);
+    // console.log("white list", whitelist);
+    return res
+      .status(201)
+      .json({ message: "IP addresses added successfully", whitelist });
+  } catch (error) {
+    return res.status(500).json({ message: "Error updating whitelisting" });
+  }
+};
+
+async function deleteIPAddress(req, res) {
+  const { error } = deleteIPAddressesSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
+  const { ipAddress } = req.body;
+
+  try {
+    const token = req.headers["authorization"]?.split(" ")[1];
+    if (!token) return res.status(403).send("No token provided");
+    const user = jwt.decode(token);
+
+    const whitelist = await authService.deleteIPAddress(user.email, ipAddress);
+
+    res
+      .status(201)
+      .json({ message: "IP address deleted successfully", whitelist });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "Internal server error", msg: error.message });
+  }
+}
+
 const validate = (requestBody) => {
   const schema = Joi.object({
     email: Joi.string().min(5).max(255).required().email(),
@@ -138,6 +189,14 @@ const validate = (requestBody) => {
   return schema.validate(requestBody);
 };
 
+const addIPAddressesSchema = Joi.object({
+  ipAddress: Joi.array().items(Joi.string().required()),
+});
+
+const deleteIPAddressesSchema = Joi.object({
+  ipAddress: Joi.string().required(),
+});
+
 module.exports = {
   handleLogin,
   whoami,
@@ -145,4 +204,6 @@ module.exports = {
   resetPassword,
   confirmEmail,
   updateConfirmedFieldForExistingUsers,
+  updateWhitelist,
+  deleteIPAddress,
 };

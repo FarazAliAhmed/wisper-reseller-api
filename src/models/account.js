@@ -67,8 +67,8 @@ const accountSchema = mongoose.Schema(
       default: false,
     },
     whitelistIP: {
-      type: String,
-      default: "",
+      type: [String], // Change the type to an array of Strings
+      default: [], // Set the default value as an empty array
     },
 
     plans: [plan.schema],

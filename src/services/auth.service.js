@@ -11,7 +11,6 @@ const auth = async (email, password) => {
   //   return { status: 400, message: "Email not confirmed." };
   // }
 
-
   const validPassword = await bcrypt.compare(password, user.password);
   if (!validPassword) {
     return { status: 400, message: "Invalid email or password." };
@@ -30,7 +29,49 @@ const whoami = async (email) => {
   return { user };
 };
 
+const updateWhitelist = async (email, ipAddr) => {
+  const user = await Account.findOne({ email });
 
+  if (!user) {
+    throw new Error("User not found");
+  }
 
+  if (user.whitelistIP.includes(ipAddr)) {
+    return user.whitelistIP;
+  }
 
-module.exports = { auth, whoami };
+  user.whitelistIP.push(...ipAddr);
+
+  await user.save();
+
+  return user.whitelistIP;
+};
+
+async function deleteIPAddress(email, ipAddress) {
+  try {
+    // Find the user by email
+    const user = await Account.findOne({ email });
+
+    console.log("ipaddres", ipAddress);
+
+    if (!user) {
+      throw new Error("User not found"); // Throw an error when the user is not found
+    }
+
+    // Remove the specified IP address from the whitelistIP array
+    const newWhiteListIP = user.whitelistIP.filter((ip) => ip !== ipAddress);
+
+    // console.log(user.whitelistIP.filter((ip) => ip !== ipAddress));
+
+    // Save the updated user
+    user.whitelistIP = newWhiteListIP;
+
+    await user.save();
+
+    return user.whitelistIP;
+  } catch (error) {
+    throw new Error("Error deleting IP address: " + error.message);
+  }
+}
+
+module.exports = { auth, whoami, updateWhitelist, deleteIPAddress };

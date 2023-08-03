@@ -9,6 +9,8 @@ const {
   forgotPassword,
   resetPassword,
   updateConfirmedFieldForExistingUsers,
+  updateWhitelist,
+  deleteIPAddress,
 } = require("../controllers/auth.controller");
 const {
   handleRegister,
@@ -108,6 +110,8 @@ router.get("/whoami", whoami);
 router.post("/auth", handleLogin);
 router.post("/users", handleRegister);
 router.post("/updateConfirm", updateConfirmedFieldForExistingUsers);
+router.post("/updateWhitelist", updateWhitelist);
+router.post("/deleteIPAddress", deleteIPAddress);
 
 //handleUpdate route should be protected
 router.patch("/users/:username", getUser, handleUpdate);

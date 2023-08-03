@@ -481,6 +481,8 @@ exports.initiate_data_transfer = async (
             config
           );
 
+          console.log("resp GLO RESPONSE", respGlo.data);
+
           if (respGlo.data.status === "ok") {
             console.log("success", payload.bucketId);
 
