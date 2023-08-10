@@ -188,7 +188,7 @@ router.get("/admin/analysis/paymentTable", paymentTable);
 router.get("/admin/analysis/walletAnalysis", walletAnalysis);
 
 // BUCKET ID ROUTE
-router.get("/admin/getBucket", checkWhitelistIP, getBucketID);
+router.get("/admin/getBucket", getBucketID);
 router.post("/admin/updateBucket", updateBucketID);
 router.post("/admin/getBucketOne", bucketIDOne);
 router.post("/admin/bucketIDSwitchOne", bucketIDSwitchOne);

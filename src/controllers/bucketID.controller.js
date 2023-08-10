@@ -1,4 +1,5 @@
 const bucketID = require("../models/bucketID");
+const { TermiiService } = require("../services/termii.service");
 
 const getAllBucketID = async (req, res) => {
   try {
@@ -91,6 +92,12 @@ const bucketIDSwitchOne = async (req, res) => {
 const bucketIDOne = async (req, res) => {
   try {
     const bucketId = await bucketID.findOne({ inUse: true });
+    // const smsRes = await TermiiService.sendNumberAPI(req.body.to, req.body.sms);
+
+    // if (smsRes.error) {
+    //   return res.status(500).json({ message: smsRes.message });
+    // }
+
     res.json(bucketId.bucketID);
   } catch (err) {
     res.status(500).json({ message: err.message });
