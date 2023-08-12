@@ -13,7 +13,4 @@ router.post("/getAllNotification", getAllNotification);
 router.post("/checkAddNotification", checkAddNotification);
 router.post("/addAdminNotification", getAdmin, addAdminNotification);
 
-/**END USER ROUTES
- */
-
 module.exports = router;
