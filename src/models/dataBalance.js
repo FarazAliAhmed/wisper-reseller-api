@@ -8,6 +8,8 @@ const dataBalanceSchema = new Schema(
     business: {
       type: Schema.Types.ObjectId,
       ref: "account",
+      unique: true,
+      required: true,
     },
     data_volume: {
       type: Number,
