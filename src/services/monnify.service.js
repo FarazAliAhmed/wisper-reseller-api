@@ -21,7 +21,7 @@ class MonnifyService {
 
       const newMonnifyHistory = new monnifyHistory({
         business_name: addData.eventData.customer.name,
-        business_id: addData.eventData.reference,
+        business_id: addData.eventData.product.reference,
         amount: addData.eventData.settlementAmount,
         bankAccountNum:
           addData.eventData.destinationAccountInformation.accountNumber,
