@@ -14,7 +14,7 @@ class MonnifyService {
       }
 
       // Update wallet_balance and last_purchase fields
-      balance.wallet_balance += addData.amount;
+      balance.wallet_balance += Number(addData.eventData.settlementAmount);
       balance.last_purchase = new Date();
 
       const updatedBalance = await balance.save();
