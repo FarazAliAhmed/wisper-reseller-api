@@ -60,6 +60,19 @@ const accountSchema = mongoose.Schema(
     mobile_number: String,
     address: String,
 
+    bankAccounts: [
+      {
+        bankName: {
+          type: String,
+          default: null,
+        },
+        accountNumber: {
+          type: String,
+          default: null,
+        },
+      },
+    ],
+
     glo_almamgt: String,
 
     whitelistStatus: {
@@ -103,6 +116,7 @@ accountSchema.methods.generateAuthToken = function () {
       email: this.email,
       isAdmin: this.isAdmin,
       type: this.type,
+      bankAccounts: this.bankAccounts,
     },
     config.get("jwtSecret")
   );

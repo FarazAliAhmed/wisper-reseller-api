@@ -5,5 +5,8 @@ const monnifyController = require("../controllers/monnify.controller");
 const router = express.Router();
 
 router.post("/monnifyAddBalance", monnifyController.addBalance);
+router.get("/monnifyGetAccount", monnifyController.getAccountDetails);
+router.post("/monnifyCreateAccount", monnifyController.createAccount);
+router.post("/monnifyDeleteAccount", monnifyController.deleteAccount);
 
 module.exports = router;
