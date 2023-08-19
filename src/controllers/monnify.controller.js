@@ -11,6 +11,7 @@ class MonnifyController {
       // if (error) {
       //   return res.status(400).json({ message: error.details[0].message });
       // }
+      //
 
       const updatedBalance = await monnifyService.addBalanceByBusinessId(
         req.body
