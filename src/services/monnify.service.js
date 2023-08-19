@@ -5,7 +5,9 @@ const monnifyHistory = require("../models/monnifyHistory");
 class MonnifyService {
   async addBalanceByBusinessId(addData) {
     try {
-      const balance = await dataBalance.findOne({ business: addData.business });
+      const balance = await dataBalance.findOne({
+        business: addData.eventData.product.reference,
+      });
 
       if (!balance) {
         throw new Error("Balance record not found");
