@@ -104,6 +104,36 @@ class MonnifyController {
     }
   }
 
+  // Define a route to create Monnify accounts for all users
+  async createAllMonifyAccount(req, res) {
+    try {
+      const users = await Account.find({}); // Fetch all users from the database
+
+      for (const user of users) {
+        // You can customize the Monnify account creation payload based on your needs
+        const monnifyPayload = {
+          accountReference: user.username, // Customize as needed
+          accountName: user.name,
+          // Add other required properties for Monnify account creation
+        };
+
+        // Call the Monnify service to create the account
+        const monnifyResponse = await monnifyService.createMonnifyAccount(
+          monnifyPayload
+        );
+
+        // Handle the Monnify response if needed
+
+        console.log(`Monnify account created for user ${user.name}`);
+      }
+
+      res.json({ message: "Monnify accounts creation completed" });
+    } catch (error) {
+      console.error("Error creating Monnify accounts:", error);
+      res.status(500).json({ message: "An error occurred" });
+    }
+  }
+
   async deleteAccount(req, res) {
     try {
       const { error, value } = getAccountSchema.validate(req.body);

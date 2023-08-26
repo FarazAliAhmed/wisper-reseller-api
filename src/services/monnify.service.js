@@ -63,6 +63,42 @@ class MonnifyService {
       throw error;
     }
   }
+
+  async createAccount(
+    accountReference,
+    accountName,
+    customerEmail,
+    customerName
+  ) {
+    try {
+      const accessToken = await this.generateAccessToken();
+
+      const response = await axios.post(
+        `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts`,
+        {
+          accountReference,
+          accountName,
+          currencyCode: "NGN",
+          contractCode: process.env.MONNIFY_CONTRACT_CODE,
+          customerEmail,
+          bvn: "21212121212",
+          customerName,
+          getAllAvailableBanks: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("An error occurred");
+    }
+  }
 }
 
 module.exports = new MonnifyService();
