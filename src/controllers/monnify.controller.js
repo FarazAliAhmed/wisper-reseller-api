@@ -66,38 +66,16 @@ class MonnifyController {
         return res.status(400).json({ message: error.details[0].message });
       }
 
-      const accessToken = await monnifyService.generateAccessToken();
-
       // console.log({ accessToken });
 
-      await axios
-        .post(
-          `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts`,
-          {
-            accountReference: value.accountReference,
-            accountName: value.accountName,
-            currencyCode: "NGN",
-            contractCode: process.env.MONNIFY_CONTRACT_CODE,
-            customerEmail: value.customerEmail,
-            bvn: "21212121212",
-            customerName: value.customerName,
-            getAllAvailableBanks: true,
-          },
-          {
-            headers: {
-              Authorization: `Bearer  ${accessToken}`,
-              "Content-Type": "application/json", // Add this line
-            },
-          }
-        )
-        .then((response) => {
-          res.json(response.data);
-          return;
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(500).json({ message: err.response.data.responseMessage });
-        });
+      const createdMonnify = await monnifyService.createAccount(
+        value.accountReference,
+        value.accountName,
+        value.customerEmail,
+        value.customerName
+      );
+
+      res.json(createdMonnify);
     } catch (error) {
       // console.log(error);
       res.status(500).json({ message: "An error occured" });
@@ -110,16 +88,12 @@ class MonnifyController {
       const users = await Account.find({}); // Fetch all users from the database
 
       for (const user of users) {
-        // You can customize the Monnify account creation payload based on your needs
-        const monnifyPayload = {
-          accountReference: user.username, // Customize as needed
-          accountName: user.name,
-          // Add other required properties for Monnify account creation
-        };
-
         // Call the Monnify service to create the account
-        const monnifyResponse = await monnifyService.createMonnifyAccount(
-          monnifyPayload
+        await monnifyService.createAccount(
+          user._id,
+          user.name,
+          user.email,
+          user.name
         );
 
         // Handle the Monnify response if needed

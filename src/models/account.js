@@ -70,6 +70,10 @@ const accountSchema = mongoose.Schema(
           type: String,
           default: null,
         },
+        accountName: {
+          type: String,
+          default: null,
+        },
       },
     ],
 
@@ -107,6 +111,11 @@ accountSchema.post("save", async function () {
   const businessId = this._id;
   await createEmptyBalance(businessId);
 });
+
+accountSchema.methods.addBankAccount = async function (bankInfo) {
+  this.bankAccounts.push(bankInfo);
+  await this.save();
+};
 
 accountSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(

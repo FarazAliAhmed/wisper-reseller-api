@@ -1,6 +1,7 @@
 const axios = require("axios");
 const dataBalance = require("../models/dataBalance");
 const monnifyHistory = require("../models/monnifyHistory");
+const { Account } = require("../models/account");
 
 class MonnifyService {
   async addBalanceByBusinessId(addData) {
@@ -92,6 +93,26 @@ class MonnifyService {
           },
         }
       );
+
+      // After receiving the API response
+      const { accounts } = response.data.responseBody;
+
+      // Assuming 'user' is the Mongoose account model instance
+      // You need to fetch the user instance based on the context of your application
+      const user = await Account.findOne({ email: customerEmail });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      for (const account of accounts) {
+        const bankInfo = {
+          bankName: account.bankName,
+          accountNumber: account.accountNumber,
+          accountName: account.accountName,
+        };
+        await user.addBankAccount(bankInfo);
+      }
 
       return response.data;
     } catch (error) {
