@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const axios = require("axios");
 const monnifyService = require("../services/monnify.service");
+const { Account } = require("../models/account");
 
 class MonnifyController {
   async addBalance(req, res) {
@@ -88,17 +89,23 @@ class MonnifyController {
       const users = await Account.find({}); // Fetch all users from the database
 
       for (const user of users) {
-        // Call the Monnify service to create the account
-        await monnifyService.createAccount(
-          user._id,
-          user.name,
-          user.email,
-          user.name
-        );
+        try {
+          // Call the Monnify service to create the account
+          await monnifyService.createAccount(
+            user._id,
+            user.name,
+            user.email,
+            user.name
+          );
 
-        // Handle the Monnify response if needed
-
-        console.log(`Monnify account created for user ${user.name}`);
+          console.log(`Monnify account created for user ${user.name}`);
+        } catch (error) {
+          console.error(
+            `Error creating Monnify account for user ${user.name}:`,
+            error.message
+          );
+          // You can add additional error handling here if needed
+        }
       }
 
       res.json({ message: "Monnify accounts creation completed" });
@@ -137,6 +144,38 @@ class MonnifyController {
           console.log(err);
           res.status(500).json({ message: err.response.data.responseMessage });
         });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "An error occured" });
+    }
+  }
+
+  async deleteAllAccount(req, res) {
+    try {
+      const accessToken = await monnifyService.generateAccessToken();
+
+      // console.log({ accessToken });
+
+      const users = await Account.find({}); // Fetch all users from the database
+
+      for (const user of users) {
+        await axios
+          .delete(
+            `${process.env.MONNIFY_BASE_URL}/v1/bank-transfer/reserved-accounts/reference/${user._id}`,
+            {
+              headers: {
+                Authorization: `Bearer  ${accessToken}`,
+                "Content-Type": "application/json", // Add this line
+              },
+            }
+          )
+          .then((response) => {
+            console.log(`deleted monnify account for ${user.name}`);
+          })
+          .catch((err) => {
+            console.log(`failed to delete monnify account for ${user.name}`);
+          });
+      }
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "An error occured" });

@@ -9,5 +9,6 @@ router.get("/monnifyGetAccount", monnifyController.getAccountDetails);
 router.post("/monnifyCreateAccount", monnifyController.createAccount);
 router.post("/monnifyAllAccount", monnifyController.createAllMonifyAccount);
 router.post("/monnifyDeleteAccount", monnifyController.deleteAccount);
+router.post("/monnifyDeleteAllAccount", monnifyController.deleteAllAccount);
 
 module.exports = router;
