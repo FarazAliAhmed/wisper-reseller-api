@@ -113,7 +113,7 @@ accountSchema.post("save", async function () {
 });
 
 accountSchema.methods.addBankAccount = async function (bankInfo) {
-  this.bankAccounts = bankInfo;
+  this.bankAccounts.push(bankInfo);
   await this.save();
 };
 

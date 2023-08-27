@@ -169,10 +169,19 @@ class MonnifyController {
               },
             }
           )
-          .then((response) => {
+          .then(async (response) => {
+            user.bankAccounts = [];
+
+            // Save the user document
+            await user.save();
+
             console.log(`deleted monnify account for ${user.name}`);
           })
-          .catch((err) => {
+          .catch(async (err) => {
+            user.bankAccounts = [];
+
+            // Save the user document
+            await user.save();
             console.log(`failed to delete monnify account for ${user.name}`);
           });
       }
