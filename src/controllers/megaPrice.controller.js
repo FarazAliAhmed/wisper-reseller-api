@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const megaPriceService = require("../services/megaPriceService");
+const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 
 class MegaPriceController {
   async updateMegaPrice(req, res) {
@@ -49,7 +50,7 @@ class MegaPriceController {
   async getPurchaseHistory(req, res) {
     try {
       const business_id = req.params.id;
-      const purchases = await MegaPurchase.find({
+      const purchases = await megaPurchaseHistory.find({
         business_id: business_id,
       });
       res.json(purchases);
