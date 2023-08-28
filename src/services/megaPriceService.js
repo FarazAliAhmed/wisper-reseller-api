@@ -1,6 +1,7 @@
 const { Account } = require("../models/account");
 const dataBalance = require("../models/dataBalance");
 const megaPrice = require("../models/megaPrice");
+const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 
 class MegaPriceService {
   async updateOrCreateMegaPrice(updateData) {
@@ -41,7 +42,7 @@ class MegaPriceService {
     return userMegaPrice;
   }
 
-  async purchaseMegaData(business_id, network, amount) {
+  async purchaseMegaData(business_id, network, amountInGB) {
     try {
       // console.log("user id", business_id);
       const megaPrices = await this.getMegaPrices(business_id);
@@ -55,20 +56,21 @@ class MegaPriceService {
       }
 
       const selectedPrice = megaPrices[network];
+
+      const amountToPay = selectedPrice * amountInGB;
+      console.log({ selectedPrice });
+
       if (selectedPrice === undefined) {
         throw new Error("Invalid data plan selected");
       }
 
-      if (userBalance.wallet_balance < amount) {
+      if (userBalance.wallet_balance < amountToPay) {
         throw new Error("Insufficient wallet balance");
       }
 
-      if (userBalance.wallet_balance < selectedPrice) {
-        throw new Error("Insufficient wallet balance");
-      }
-      const newWalletBalance = userBalance.wallet_balance - amount;
+      const newWalletBalance = userBalance.wallet_balance - amountToPay;
       const newMegaWallet = { ...userBalance.mega_wallet };
-      newMegaWallet[network] += (amount / selectedPrice).toFixed(1);
+      newMegaWallet[network] += amountInGB;
 
       const updatedUserBalance = await dataBalance.findOneAndUpdate(
         { business: business_id },
@@ -79,6 +81,15 @@ class MegaPriceService {
         },
         { new: true }
       );
+
+      const purchase = new megaPurchaseHistory({
+        business_id: business_id,
+        amount: amountToPay,
+        volume: amountInGB,
+        wallet: network,
+      });
+
+      await purchase.save();
 
       return updatedUserBalance;
     } catch (error) {

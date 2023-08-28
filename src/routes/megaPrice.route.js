@@ -6,6 +6,7 @@ const getUser = require("../utils/middleware/getUser");
 const router = express.Router();
 
 router.post("/editMegaPrice", getAdmin, megaPriceController.updateMegaPrice);
-router.post("/purchaseMegaData", getUser, megaPriceController.purchaseMegaData);
+router.post("/purchaseMegaData", megaPriceController.purchaseMegaData);
+router.post("/getMegaHistory/:id", megaPriceController.getPurchaseHistory);
 
 module.exports = router;

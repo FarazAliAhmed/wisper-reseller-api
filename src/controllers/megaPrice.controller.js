@@ -33,16 +33,28 @@ class MegaPriceController {
         return res.status(400).json({ message: error.details[0].message });
       }
 
-      const { business_id, network, amount } = req.body;
+      const { business_id, network, amountInGB } = req.body;
       const updatedBalance = await megaPriceService.purchaseMegaData(
         business_id,
         network,
-        amount
+        amountInGB
       );
       res.json(updatedBalance);
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ message: "An error occurred" });
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getPurchaseHistory(req, res) {
+    try {
+      const business_id = req.params.id;
+      const purchases = await MegaPurchase.find({
+        business_id: business_id,
+      });
+      res.json(purchases);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
   }
 }
@@ -51,8 +63,8 @@ module.exports = new MegaPriceController();
 
 const purchaseMegaDataSchema = Joi.object({
   business_id: Joi.string().required(),
-  network: Joi.string().min(0).optional(),
-  amount: Joi.number().min(0).optional(),
+  network: Joi.string().min(0).required(),
+  amountInGB: Joi.number().min(0).required(),
 });
 
 const updateMegaPriceSchema = Joi.object({
