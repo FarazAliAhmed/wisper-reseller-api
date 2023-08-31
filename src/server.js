@@ -21,6 +21,8 @@ const monnifyRoutes = require("./routes/monnify.route");
 const apiV2Routes = require("./routes/v2");
 const apiV2AdminRoutes = require("./routes/v2/admin");
 const hookRoute = require("./routes/hooks");
+const transactionHistory = require("./models/transactionHistory");
+const integrationResponse = require("./models/integrationResponse");
 const corsOptions = {
   origin: "*",
 };
@@ -45,6 +47,25 @@ app.use("/api", monnifyRoutes);
 app.use("/api/v2", getUser, apiV2Routes);
 app.use("/api/v2/admin", getAdmin, apiV2AdminRoutes);
 app.use("/hook", hookRoute);
+
+// app.delete("/deletetrx", async (req, res) => {
+//   try {
+//     const transactionsToDelete = await transactionHistory.find().limit(70000);
+
+//     const transactionIdsToDelete = transactionsToDelete.map(
+//       (transaction) => transaction._id
+//     );
+
+//     await transactionHistory.deleteMany({
+//       _id: { $in: transactionIdsToDelete },
+//     });
+
+//     res.status(200).json({ message: "First 70000 transactions deleted" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "An error occurred" });
+//   }
+// });
 
 app.use(errors());
 

@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const megaPriceService = require("../services/megaPriceService");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
+const megaPrice = require("../models/megaPrice");
 
 class MegaPriceController {
   async updateMegaPrice(req, res) {
@@ -56,6 +57,24 @@ class MegaPriceController {
       res.json(purchases);
     } catch (error) {
       res.status(500).json({ message: error.message });
+    }
+  }
+
+  async getMegaPriceUser(req, res) {
+    try {
+      const businessId = req.params.id;
+      const megaPriceData = await megaPrice.findOne({
+        business_id: businessId,
+      });
+
+      if (!megaPriceData) {
+        return res.status(404).json({ message: "MegaPrice not found" });
+      }
+
+      res.json(megaPriceData);
+    } catch (error) {
+      console.error("Error fetching MegaPrice:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 }
