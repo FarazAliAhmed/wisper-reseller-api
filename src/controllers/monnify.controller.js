@@ -7,12 +7,6 @@ class MonnifyController {
   async addBalance(req, res) {
     try {
       console.log("Add balance", req.body);
-      // Validate the request body
-      // const { error, value: addData } = addBalanceSchema.validate(req.body);
-      // if (error) {
-      //   return res.status(400).json({ message: error.details[0].message });
-      // }
-      //
 
       const updatedBalance = await monnifyService.addBalanceByBusinessId(
         req.body
@@ -90,7 +84,6 @@ class MonnifyController {
     }
   }
 
-  // Define a route to create Monnify accounts for all users
   async createAllMonifyAccount(req, res) {
     try {
       const users = await Account.find({}); // Fetch all users from the database
