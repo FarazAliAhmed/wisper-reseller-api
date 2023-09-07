@@ -10,5 +10,7 @@ router.post("/monnifyCreateAccount", monnifyController.createAccount);
 router.post("/monnifyAllAccount", monnifyController.createAllMonifyAccount);
 router.post("/monnifyDeleteAccount", monnifyController.deleteAccount);
 router.post("/monnifyDeleteAllAccount", monnifyController.deleteAllAccount);
+router.post("/monnifyGetAll", monnifyController.getAllTransaction);
+router.get("/getMonnifyTrx/:id", monnifyController.getAllTransaction);
 
 module.exports = router;

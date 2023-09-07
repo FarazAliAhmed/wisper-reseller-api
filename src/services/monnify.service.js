@@ -78,6 +78,22 @@ class MonnifyService {
     }
   }
 
+  async getAll(id) {
+    const businessId = id;
+    const transactions = await monnifyHistory
+      .find({
+        business_id: businessId,
+      })
+      .sort({ _id: -1 })
+      .limit(100)
+      .exec();
+    if (transactions) return { transactions };
+    return {
+      status: 400,
+      messsage: "Unable to retrieve all your Transactions",
+    };
+  }
+
   async createAccount(
     accountReference,
     accountName,

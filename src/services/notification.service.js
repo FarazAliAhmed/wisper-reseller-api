@@ -49,7 +49,7 @@ const checkAdd = async (business_id) => {
   console.log(userAccount.mega_wallet);
 
   try {
-    if (userAccount.wallet_balance > 0) {
+    if (userAccount.wallet_balance < 100) {
       const lowWalletNotification = new Notification({
         business: business_id,
         content: "Your wallet balance is low. Please fund your wallet.",
@@ -62,7 +62,7 @@ const checkAdd = async (business_id) => {
     }
 
     for (network in userAccount.mega_wallet) {
-      if (userAccount.mega_wallet[network] > 0 && network != "unit") {
+      if (userAccount.mega_wallet[network] < 1 && network != "unit") {
         const notificationData = {
           business: business_id,
           content: `Mega wallet for ${network} is low. Please recharge your ${network} mega wallet.`,
