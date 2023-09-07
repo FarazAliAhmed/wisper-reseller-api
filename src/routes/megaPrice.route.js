@@ -14,7 +14,7 @@ router.get(
 );
 router.get(
   "/getMegaHistory/:id",
-  getUser,
+
   megaPriceController.getPurchaseHistory
 );
 

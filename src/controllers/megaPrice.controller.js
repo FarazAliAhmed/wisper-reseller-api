@@ -51,9 +51,15 @@ class MegaPriceController {
   async getPurchaseHistory(req, res) {
     try {
       const business_id = req.params.id;
-      const purchases = await megaPurchaseHistory.find({
-        business_id: business_id,
-      });
+      const { limit } = req.query;
+
+      const limitValue = Number(limit) || 1;
+
+      const purchases = await megaPurchaseHistory
+        .find({
+          business_id: business_id,
+        })
+        .limit(limitValue);
       res.json(purchases);
     } catch (error) {
       res.status(500).json({ message: error.message });

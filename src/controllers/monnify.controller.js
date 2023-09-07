@@ -56,7 +56,11 @@ class MonnifyController {
 
   async getAllTransaction(req, res) {
     const business_id = req.params.id;
-    const resp = await monnifyService.getAll(business_id);
+    const { limit } = req.query;
+
+    const limitValue = parseInt(limit) || 1;
+
+    const resp = await monnifyService.getAll(business_id, limitValue);
     if (resp.transactions) return res.status(200).json(resp.transactions);
     return res.status(resp.status).json(resp);
   }

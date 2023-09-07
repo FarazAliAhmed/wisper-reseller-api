@@ -78,14 +78,14 @@ class MonnifyService {
     }
   }
 
-  async getAll(id) {
+  async getAll(id, limVal) {
     const businessId = id;
     const transactions = await monnifyHistory
       .find({
         business_id: businessId,
       })
       .sort({ _id: -1 })
-      .limit(100)
+      .limit(limVal)
       .exec();
     if (transactions) return { transactions };
     return {
