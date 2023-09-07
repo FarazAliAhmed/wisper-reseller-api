@@ -70,6 +70,9 @@ class MegaPriceService {
 
       const newWalletBalance = userBalance.wallet_balance - amountToPay;
       const newMegaWallet = { ...userBalance.mega_wallet };
+
+      const oldUser_bal = newMegaWallet[network];
+
       newMegaWallet[network] += amountInGB;
 
       const updatedUserBalance = await dataBalance.findOneAndUpdate(
@@ -86,7 +89,10 @@ class MegaPriceService {
         business_id: business_id,
         amount: amountToPay,
         volume: amountInGB,
-        wallet: network,
+        old_bal: oldUser_bal,
+        new_bal: newMegaWallet[network],
+        network: network,
+        status: "success",
       });
 
       await purchase.save();

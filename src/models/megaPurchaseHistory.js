@@ -16,9 +16,21 @@ const megaPurchaseHistorySchema = new Schema(
       type: String,
       required: true,
     },
-    wallet: {
+    old_bal: {
       type: String,
       required: true,
+    },
+    new_bal: {
+      type: String,
+      required: true,
+    },
+    network: {
+      type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      default: "pending",
     },
     date_of_payment: {
       type: String,
