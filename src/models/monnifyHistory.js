@@ -15,6 +15,10 @@ const monnifyHistorySchema = new Schema(
       type: Number,
       required: true,
     },
+    resolvedBal: {
+      type: Number,
+      required: true,
+    },
     bank: {
       type: String,
       required: true,

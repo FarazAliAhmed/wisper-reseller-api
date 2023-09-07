@@ -15,8 +15,16 @@ class MonnifyService {
       }
 
       // Update wallet_balance and last_purchase fields
-      balance.wallet_balance += Number(addData.eventData.settlementAmount);
-      balance.last_purchase = new Date();
+
+      const resolvedBalance = Number(addData.eventData.settlementAmount) - 53;
+
+      if (Number(addData.eventData.settlementAmount) > 53) {
+        balance.wallet_balance += resolvedBalance;
+        balance.last_purchase = new Date();
+      } else {
+        balance.wallet_balance += 0;
+        balance.last_purchase = new Date();
+      }
 
       const updatedBalance = await balance.save();
 
@@ -24,6 +32,7 @@ class MonnifyService {
         business_name: addData.eventData.customer.name,
         business_id: addData.eventData.product.reference,
         amount: addData.eventData.settlementAmount,
+        resolvedBal: resolvedBalance,
         bankAccountNum:
           addData.eventData.destinationAccountInformation.accountNumber,
         bank: addData.eventData.destinationAccountInformation.bankName,
