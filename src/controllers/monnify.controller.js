@@ -60,6 +60,41 @@ class MonnifyController {
     }
   }
 
+  async getMonnifyHistory(req, res) {
+    try {
+      const { error, value } = getAccountSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
+
+      const accessToken = await monnifyService.generateAccessToken();
+
+      // console.log({ accessToken });
+
+      await axios
+        .get(
+          `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts/${value.accountReference}`,
+          {
+            headers: {
+              Authorization: `Bearer  ${accessToken}`,
+              "Content-Type": "application/json", // Add this line
+            },
+          }
+        )
+        .then((response) => {
+          res.json(response.data);
+          return;
+        })
+        .catch((err) => {
+          // console.log(err);
+          res.status(500).json({ message: err.response.data.responseMessage });
+        });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async createAccount(req, res) {
     try {
       const { error, value } = createSchema.validate(req.body);

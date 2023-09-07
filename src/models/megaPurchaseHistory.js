@@ -30,7 +30,7 @@ const megaPurchaseHistorySchema = new Schema(
     },
     status: {
       type: String,
-      default: "pending",
+      default: "failed",
     },
     date_of_payment: {
       type: String,

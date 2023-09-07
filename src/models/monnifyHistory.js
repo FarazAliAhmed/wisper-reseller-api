@@ -15,7 +15,15 @@ const monnifyHistorySchema = new Schema(
       type: Number,
       required: true,
     },
-    resolvedBal: {
+    resolvedAmount: {
+      type: Number,
+      required: true,
+    },
+    old_bal: {
+      type: Number,
+      required: true,
+    },
+    new_bal: {
       type: Number,
       required: true,
     },

@@ -18,6 +18,8 @@ class MonnifyService {
 
       const resolvedBalance = Number(addData.eventData.settlementAmount) - 53;
 
+      const old_bal = balance.wallet_balance;
+
       if (Number(addData.eventData.settlementAmount) > 53) {
         balance.wallet_balance += resolvedBalance;
         balance.last_purchase = new Date();
@@ -32,7 +34,9 @@ class MonnifyService {
         business_name: addData.eventData.customer.name,
         business_id: addData.eventData.product.reference,
         amount: addData.eventData.settlementAmount,
-        resolvedBal: resolvedBalance,
+        resolvedAmount: resolvedBalance,
+        new_bal: balance.wallet_balance,
+        old_bal: old_bal,
         bankAccountNum:
           addData.eventData.destinationAccountInformation.accountNumber,
         bank: addData.eventData.destinationAccountInformation.bankName,
