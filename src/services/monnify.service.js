@@ -37,10 +37,12 @@ class MonnifyService {
         resolvedAmount: resolvedBalance,
         new_bal: balance.wallet_balance,
         old_bal: old_bal,
+        purpose: "funding",
+        desc: `Deposit of ${amountToPay} NGN made by ${addData.eventData.customer.name}.`,
         bankAccountNum:
           addData.eventData.destinationAccountInformation.accountNumber,
         bank: addData.eventData.destinationAccountInformation.bankName,
-        pay_type: addData.eventData.paymentMethod,
+        pay_type: "credit",
         date_of_payment: addData.eventData.paidOn,
         payment_ref: addData.eventData.transactionReference,
       });

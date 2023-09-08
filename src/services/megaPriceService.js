@@ -2,6 +2,7 @@ const { Account } = require("../models/account");
 const dataBalance = require("../models/dataBalance");
 const megaPrice = require("../models/megaPrice");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
+const monnifyHistory = require("../models/monnifyHistory");
 
 class MegaPriceService {
   async updateOrCreateMegaPrice(updateData) {
@@ -68,6 +69,7 @@ class MegaPriceService {
         throw new Error("Insufficient wallet balance");
       }
 
+      const oldwalletBalance = userBalance.wallet_balance;
       const newWalletBalance = userBalance.wallet_balance - amountToPay;
       const newMegaWallet = { ...userBalance.mega_wallet };
 
@@ -96,6 +98,20 @@ class MegaPriceService {
       });
 
       await purchase.save();
+
+      const newMonnifyHistory = new monnifyHistory({
+        business_name: business_id,
+        business_id: business_id,
+        amount: amountToPay,
+        new_bal: newWalletBalance,
+        old_bal: oldwalletBalance,
+        purpose: "data purchase",
+        desc: `Payment of ${amountToPay} NGN made for data purchase ${amountInGB}GB of ${network}.`,
+        pay_type: "debit",
+        date_of_payment: new Date(),
+      });
+
+      await newMonnifyHistory.save();
 
       return updatedUserBalance;
     } catch (error) {

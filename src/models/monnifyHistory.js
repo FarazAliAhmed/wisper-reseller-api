@@ -17,7 +17,7 @@ const monnifyHistorySchema = new Schema(
     },
     resolvedAmount: {
       type: Number,
-      required: true,
+      default: null,
     },
     old_bal: {
       type: Number,
@@ -29,26 +29,31 @@ const monnifyHistorySchema = new Schema(
     },
     bank: {
       type: String,
-      required: true,
+      default: null,
     },
     bankAccountNum: {
+      type: String,
+      default: null,
+    },
+    purpose: {
+      type: String,
+      required: true,
+    },
+    desc: {
       type: String,
       required: true,
     },
     pay_type: {
       type: String,
-      default: "Transfer",
+      default: null,
     },
     date_of_payment: {
       type: String,
       default: `${new Date()}`,
     },
-
     payment_ref: {
       type: String,
-      required: true,
-      unique: true,
-      index: true,
+      default: null,
     },
   },
   { timestamps: true }
