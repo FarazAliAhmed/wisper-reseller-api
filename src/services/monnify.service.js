@@ -16,11 +16,11 @@ class MonnifyService {
 
       // Update wallet_balance and last_purchase fields
 
-      const resolvedBalance = Number(addData.eventData.settlementAmount) - 53;
+      const resolvedBalance = Number(addData.eventData.settlementAmount) - 50;
 
       const old_bal = balance.wallet_balance;
 
-      if (Number(addData.eventData.settlementAmount) > 53) {
+      if (Number(addData.eventData.settlementAmount) > 50) {
         balance.wallet_balance += resolvedBalance;
         balance.last_purchase = new Date();
       } else {

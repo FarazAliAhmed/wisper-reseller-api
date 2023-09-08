@@ -99,6 +99,10 @@ class MegaPriceService {
 
       await purchase.save();
 
+      var currentDate = new Date();
+      var epochTime = currentDate.getTime();
+      console.log({ epochTime });
+
       const newMonnifyHistory = new monnifyHistory({
         business_name: business_id,
         business_id: business_id,
@@ -109,6 +113,7 @@ class MegaPriceService {
         desc: `Payment of ${amountToPay} NGN made for data purchase ${amountInGB}GB of ${network}.`,
         pay_type: "debit",
         date_of_payment: new Date(),
+        payment_ref: epochTime,
       });
 
       await newMonnifyHistory.save();
