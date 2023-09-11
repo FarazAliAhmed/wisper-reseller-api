@@ -190,7 +190,6 @@ const validate = (requestBody) => {
 };
 
 async function changeUserPassword(req, res) {
-  const { userId } = req.params;
   const { oldPassword, newPassword } = req.body;
 
   try {
