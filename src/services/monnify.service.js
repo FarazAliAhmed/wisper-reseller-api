@@ -26,19 +26,17 @@ class MonnifyService {
       // Update wallet_balance and last_purchase fields
 
       // const resolvedBalance = Number(addData.eventData.settlementAmount) - 50;
-      const resolvedBalance = Number(addData.eventData.settlementAmount) - 5;
+      const resolvedBalance = Number(addData.eventData.amountPaid) - 5;
 
       const old_bal = balance.wallet_balance;
 
-      if (Number(addData.eventData.settlementAmount) > 50) {
+      if (Number(addData.eventData.settlementAmount) > 5) {
         balance.wallet_balance += resolvedBalance;
         balance.last_purchase = new Date();
       } else {
         balance.wallet_balance += 0;
         balance.last_purchase = new Date();
       }
-
-      const updatedBalance = await balance.save();
 
       const newMonnifyHistory = new monnifyHistory({
         business_name: addData.eventData.customer.name,
@@ -48,7 +46,7 @@ class MonnifyService {
         new_bal: balance.wallet_balance,
         old_bal: old_bal,
         purpose: "funding",
-        desc: `Deposit of ${amountToPay} NGN made by ${addData.eventData.customer.name}.`,
+        desc: `Deposit of ${addData.eventData.amountPaid} NGN made by ${addData.eventData.customer.name}.`,
         bankAccountNum:
           addData.eventData.destinationAccountInformation.accountNumber,
         bank: addData.eventData.destinationAccountInformation.bankName,
@@ -56,9 +54,11 @@ class MonnifyService {
         date_of_payment: addData.eventData.paidOn,
         payment_ref: addData.eventData.transactionReference,
       });
+
+      await balance.save();
       await newMonnifyHistory.save();
 
-      return updatedBalance;
+      return newMonnifyHistory;
     } catch (error) {
       throw error;
     }
