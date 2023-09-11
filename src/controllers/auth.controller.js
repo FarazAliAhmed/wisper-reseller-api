@@ -189,6 +189,18 @@ const validate = (requestBody) => {
   return schema.validate(requestBody);
 };
 
+async function changeUserPassword(req, res) {
+  const { userId } = req.params;
+  const { oldPassword, newPassword } = req.body;
+
+  try {
+    await authService.changePassword(req.user._id, oldPassword, newPassword);
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
 const addIPAddressesSchema = Joi.object({
   ipAddress: Joi.array().items(Joi.string().required()),
 });
@@ -206,4 +218,5 @@ module.exports = {
   updateConfirmedFieldForExistingUsers,
   updateWhitelist,
   deleteIPAddress,
+  changeUserPassword,
 };

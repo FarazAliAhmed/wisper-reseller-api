@@ -74,4 +74,28 @@ async function deleteIPAddress(email, ipAddress) {
   }
 }
 
-module.exports = { auth, whoami, updateWhitelist, deleteIPAddress };
+async function changePassword(userId, oldPassword, newPassword) {
+  // Find the user by ID
+  const user = await Account.findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Verify the old password
+  const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+  if (!isPasswordValid) {
+    throw new Error("Old password is incorrect");
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(user.password, salt);
+  await user.save();
+}
+
+module.exports = {
+  auth,
+  whoami,
+  updateWhitelist,
+  deleteIPAddress,
+  changePassword,
+};

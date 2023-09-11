@@ -53,7 +53,8 @@ const monnifyHistorySchema = new Schema(
     },
     payment_ref: {
       type: String,
-      default: null,
+      unique: true,
+      required: true,
     },
   },
   { timestamps: true }

@@ -6,6 +6,15 @@ const { Account } = require("../models/account");
 class MonnifyService {
   async addBalanceByBusinessId(addData) {
     try {
+      // Check if the reference exists in monnifyHistory
+      const existingReference = await monnifyHistory.findOne({
+        payment_ref: addData.eventData.transactionReference,
+      });
+
+      if (existingReference) {
+        return { message: "Reference already exists in monnifyHistory" };
+      }
+
       const balance = await dataBalance.findOne({
         business: addData.eventData.product.reference,
       });
