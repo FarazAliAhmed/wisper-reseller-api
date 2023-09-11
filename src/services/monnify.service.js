@@ -25,7 +25,8 @@ class MonnifyService {
 
       // Update wallet_balance and last_purchase fields
 
-      const resolvedBalance = Number(addData.eventData.settlementAmount) - 50;
+      // const resolvedBalance = Number(addData.eventData.settlementAmount) - 50;
+      const resolvedBalance = Number(addData.eventData.settlementAmount) - 5;
 
       const old_bal = balance.wallet_balance;
 
