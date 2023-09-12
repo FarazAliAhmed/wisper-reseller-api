@@ -96,8 +96,8 @@ class MonnifyService {
       .find({
         business_id: businessId,
       })
-      .sort({ _id: -1 })
       .limit(limVal)
+      .sort({ createdAt: -1 })
       .exec();
     if (transactions) return { transactions };
     return {

@@ -59,6 +59,7 @@ class MegaPriceController {
         .find({
           business_id: business_id,
         })
+        .sort({ createdAt: -1 })
         .limit(limitValue);
       res.json(purchases);
     } catch (error) {
