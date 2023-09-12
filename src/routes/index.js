@@ -105,7 +105,7 @@ const checkWhitelistIP = require("../utils/middleware/checkWhitelistIP");
 
 router.post("/reset_password/:email/:token", resetPassword);
 router.post("/forgot_password", forgotPassword);
-router.post("/change_password", changeUserPassword);
+router.post("/change_password", getUser, changeUserPassword);
 
 router.get("/maintenance", getMaintenance);
 router.get("/whoami", whoami);
