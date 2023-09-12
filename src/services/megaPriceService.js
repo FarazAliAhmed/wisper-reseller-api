@@ -69,8 +69,9 @@ class MegaPriceService {
         throw new Error("Insufficient wallet balance");
       }
 
-      const oldwalletBalance = userBalance.wallet_balance;
-      const newWalletBalance = userBalance.wallet_balance - amountToPay;
+      const oldwalletBalance = Number(userBalance.wallet_balance);
+      const newWalletBalance =
+        Number(userBalance.wallet_balance) - Number(amountToPay);
       const newMegaWallet = { ...userBalance.mega_wallet };
 
       const oldUser_bal = newMegaWallet[network];
