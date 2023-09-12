@@ -75,7 +75,7 @@ class MegaPriceService {
 
       const oldUser_bal = newMegaWallet[network];
 
-      newMegaWallet[network] += amountInGB;
+      newMegaWallet[network] += Number(amountInGB) * 1000;
 
       const updatedUserBalance = await dataBalance.findOneAndUpdate(
         { business: business_id },
