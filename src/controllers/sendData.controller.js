@@ -143,12 +143,12 @@ const sendData = async (req, res, next) => {
       type: planDetails.plan_type,
     });
     if (send_response?.error) {
-      client.sendEmail({
-        From: "admin@wisper.ng",
-        To: "Arinzeebuka@gmail.com",
-        Subject: `${planDetails.network} service is down on wisper`,
-        TextBody: `${planDetails.network} server is currently down`,
-      });
+      // client.sendEmail({
+      //   From: "admin@wisper.ng",
+      //   To: "Arinzeebuka@gmail.com",
+      //   Subject: `${planDetails.network} service is down on wisper`,
+      //   TextBody: `${planDetails.network} server is currently down`,
+      // });
 
       responseObject.status = "failed";
       delete responseObject.new_balance;
