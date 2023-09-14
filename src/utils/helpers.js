@@ -565,6 +565,11 @@ exports.initiate_data_transfer = async (
                 }
               } else {
                 console.log("error.response.data is undefined");
+                return {
+                  error: true,
+                  status: 400,
+                  message: "An error occured with data transfer server",
+                };
               }
             }
           }
