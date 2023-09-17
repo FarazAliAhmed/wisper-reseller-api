@@ -64,6 +64,44 @@ class MonnifyService {
     }
   }
 
+  async addBalanceByBusinessIdAdmin(addData) {
+    try {
+      const balance = await dataBalance.findOne({
+        business: addData.business_id,
+      });
+
+      if (!balance) {
+        throw new Error("Balance record not found");
+      }
+
+      const old_bal = balance.wallet_balance;
+
+      balance.wallet_balance += Number(addData.amount);
+      balance.last_purchase = new Date();
+
+      const newMonnifyHistory = new monnifyHistory({
+        business_name: addData.business_id,
+        business_id: addData.business_id,
+        amount: addData.amount,
+        resolvedAmount: balance.wallet_balance,
+        new_bal: balance.wallet_balance,
+        old_bal: old_bal,
+        purpose: "funding",
+        desc: `Deposit of ${balance.wallet_balance} NGN made by ${addData.name}.`,
+        pay_type: "credit",
+        date_of_payment: new Date(),
+        payment_ref: "AD-trx-" + Math.floor(Math.random() * 10000000000000000),
+      });
+
+      await balance.save();
+      await newMonnifyHistory.save();
+
+      return newMonnifyHistory;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async generateAccessToken() {
     console.log("Generating access token for Monnify");
 
