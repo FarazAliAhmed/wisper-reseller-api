@@ -19,7 +19,7 @@ class SubDealerService {
       email,
       username,
       dealer: business,
-      phoneNumber,
+      mobile_number: phoneNumber,
       password,
       type: "subdealer",
     });
