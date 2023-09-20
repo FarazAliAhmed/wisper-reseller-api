@@ -182,26 +182,31 @@ const revenueAnalysis = async (req, res) => {
       todayEnd,
       "success"
     );
+
     const successYesterdayStats = await getTransactionCountByDateRange(
       yesterdayStart,
       yesterdayEnd,
       "success"
     );
+
     const successThisMonthStats = await getTransactionCountByDateRange(
       thisMonthStart,
       thisMonthEnd,
       "success"
     );
+
     const successPrevMonthStats = await getTransactionCountByDateRange(
       prevMonthStart,
       prevMonthEnd,
       "success"
     );
+
     const successThisYearStats = await getTransactionCountByDateRange(
       thisYearStart,
       thisYearEnd,
       "success"
     );
+
     const successAllTimeStats = successStats;
 
     const failedTodayStats = await getTransactionCountByDateRange(
@@ -209,26 +214,31 @@ const revenueAnalysis = async (req, res) => {
       todayEnd,
       "failed"
     );
+
     const failedYesterdayStats = await getTransactionCountByDateRange(
       yesterdayStart,
       yesterdayEnd,
       "failed"
     );
+
     const failedThisMonthStats = await getTransactionCountByDateRange(
       thisMonthStart,
       thisMonthEnd,
       "failed"
     );
+
     const failedPrevMonthStats = await getTransactionCountByDateRange(
       prevMonthStart,
       prevMonthEnd,
       "failed"
     );
+
     const failedThisYearStats = await getTransactionCountByDateRange(
       thisYearStart,
       thisYearEnd,
       "failed"
     );
+
     const failedAllTimeStats = failedStats;
 
     const calculateTotalCount = (stats) => {

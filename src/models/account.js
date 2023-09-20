@@ -53,6 +53,10 @@ const accountSchema = mongoose.Schema(
       type: String,
       default: null,
     },
+    dealer: {
+      type: String,
+      default: null,
+    },
     type: {
       type: String,
       default: "mega",
