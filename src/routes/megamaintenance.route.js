@@ -12,7 +12,7 @@ const {
 const router = express.Router();
 
 router.post("/admin/getMegaMaintenance", getMegaMaintenance);
-router.post("/admin/megaMaintenance/create", createMegaMaintenance);
+router.post("/admin/megaMaintenance/create", getAdmin, createMegaMaintenance);
 router.patch(
   "/admin/megaMaintenance/enter/:network",
   getAdmin,
