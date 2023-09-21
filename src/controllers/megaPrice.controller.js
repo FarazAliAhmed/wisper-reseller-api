@@ -2,6 +2,7 @@ const Joi = require("joi");
 const megaPriceService = require("../services/megaPriceService");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const megaPrice = require("../models/megaPrice");
+const megaMaintenance = require("../models/megaMaintenance");
 
 class MegaPriceController {
   async updateMegaPrice(req, res) {
@@ -36,6 +37,16 @@ class MegaPriceController {
       }
 
       const { business_id, network, amountInGB } = req.body;
+
+      // Check if the network is under maintenance
+      const maintenance = await megaMaintenance.findOne({ [network]: true });
+
+      if (maintenance) {
+        return res
+          .status(403)
+          .json({ error: `The ${network} network is under maintenance` });
+      }
+
       const updatedBalance = await megaPriceService.purchaseMegaData(
         business_id,
         network,

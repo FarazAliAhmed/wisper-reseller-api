@@ -130,7 +130,7 @@ class MonnifyController {
       res.json({ message: "Monnify accounts creation completed" });
     } catch (error) {
       console.error("Error creating Monnify accounts:", error);
-      res.status(500).json({ message: "An error occurred" });
+      res.status(500).json({ message: error.message });
     }
   }
 

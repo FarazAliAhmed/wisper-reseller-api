@@ -18,6 +18,7 @@ const notiRoutes = require("./routes/notification.route");
 const subdealerRoutes = require("./routes/subdealer.route");
 const megaPriceRoutes = require("./routes/megaPrice.route");
 const monnifyRoutes = require("./routes/monnify.route");
+const megamaintenanceRoutes = require("./routes/megamaintenance.route");
 
 const apiV2Routes = require("./routes/v2");
 const apiV2AdminRoutes = require("./routes/v2/admin");
@@ -45,6 +46,7 @@ app.use("/api", notiRoutes);
 app.use("/api/subdealer", subdealerRoutes);
 app.use("/api", megaPriceRoutes);
 app.use("/api", monnifyRoutes);
+app.use("/api", megamaintenanceRoutes);
 
 app.use("/api/v2", getUser, apiV2Routes);
 app.use("/api/v2/admin", getAdmin, apiV2AdminRoutes);

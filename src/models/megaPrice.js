@@ -22,7 +22,7 @@ const MegaPrice = new Schema(
     },
     glo: {
       type: Number,
-      default: 0,
+      default: 210,
     },
     "9mobile": {
       type: Number,
