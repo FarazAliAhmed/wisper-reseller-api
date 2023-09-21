@@ -16,7 +16,7 @@ const createMegaMaintenance = async (req, res) => {
       .status(200)
       .json({ messsage: "Maintenance object already created" });
   }
-  const newMain = new Maintenance({});
+  const newMain = new megaMaintenance({});
   const maintenanceRes = await newMain.save();
   return res.status(201).json(maintenanceRes);
 };
