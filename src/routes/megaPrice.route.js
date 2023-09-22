@@ -22,5 +22,10 @@ router.get(
   getAdmin,
   megaPriceController.getPurchaseHistoryAdmin
 );
+router.post(
+  "/defaultPrice",
+  getAdmin,
+  megaPriceController.createDefaultMegaPrice
+);
 
 module.exports = router;
