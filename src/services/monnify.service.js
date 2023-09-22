@@ -69,9 +69,15 @@ class MonnifyService {
       const balance = await dataBalance.findOne({
         business: addData.business_id,
       });
+      const user = await Account.findOne({
+        _id: addData.business_id,
+      });
 
       if (!balance) {
         throw new Error("Balance record not found");
+      }
+      if (!user) {
+        throw new Error("User record not found");
       }
 
       const old_bal = balance.wallet_balance;
@@ -87,7 +93,7 @@ class MonnifyService {
         new_bal: balance.wallet_balance,
         old_bal: old_bal,
         purpose: "funding",
-        desc: `Deposit of ${balance.wallet_balance} NGN made by ${addData.name}.`,
+        desc: `Deposit of ${balance.wallet_balance} NGN made by ${user.name}.`,
         pay_type: "credit",
         date_of_payment: new Date(),
         payment_ref: "AD-trx-" + Math.floor(Math.random() * 10000000000000000),
