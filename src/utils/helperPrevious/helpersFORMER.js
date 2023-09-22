@@ -459,12 +459,12 @@ exports.initiate_data_transfer = async (
 
         return { error: false, response: integResp, message };
       } else {
-        client.sendEmail({
-          From: "admin@wisper.ng",
-          To: "Arinzeebuka@gmail.com",
-          Subject: "Glo service is down on wisper",
-          TextBody: "Almamgt server is currently down",
-        });
+        // client.sendEmail({
+        //   From: "admin@wisper.ng",
+        //   To: "Arinzeebuka@gmail.com",
+        //   Subject: "Glo service is down on wisper",
+        //   TextBody: "Almamgt server is currently down",
+        // });
 
         return {
           error: true,
@@ -548,12 +548,12 @@ exports.initiate_data_transfer = async (
         const message = "You have successfully purchased" + full_message;
         return { error: false, response: response.data, message };
       } else {
-        client.sendEmail({
-          From: "admin@wisper.ng",
-          To: "Arinzeebuka@gmail.com",
-          Subject: "Zoedata service is down on wisper",
-          TextBody: "Zoedata server is currently down",
-        });
+        // client.sendEmail({
+        //   From: "admin@wisper.ng",
+        //   To: "Arinzeebuka@gmail.com",
+        //   Subject: "Zoedata service is down on wisper",
+        //   TextBody: "Zoedata server is currently down",
+        // });
 
         return {
           error: true,
@@ -647,12 +647,12 @@ exports.initiate_data_transfer = async (
         const message = integResp["data"]["msg"];
         return { error: false, response: integResp, message };
       } else {
-        client.sendEmail({
-          From: "admin@wisper.ng",
-          To: "Arinzeebuka@gmail.com",
-          Subject: "9mobile service is down on wisper",
-          TextBody: "OGDAMS server is currently down",
-        });
+        // client.sendEmail({
+        //   From: "admin@wisper.ng",
+        //   To: "Arinzeebuka@gmail.com",
+        //   Subject: "9mobile service is down on wisper",
+        //   TextBody: "OGDAMS server is currently down",
+        // });
 
         return {
           error: true,
@@ -725,12 +725,12 @@ exports.initiate_data_transfer = async (
           "Data purchase was successful. Check Balance to confirm.";
         return { error: false, response: response.data, message };
       } else {
-        client.sendEmail({
-          From: "admin@wisper.ng",
-          To: "Arinzeebuka@gmail.com",
-          Subject: "MTN service is down on wisper",
-          TextBody: "ABISUBPORTAL server is currently down",
-        });
+        // client.sendEmail({
+        //   From: "admin@wisper.ng",
+        //   To: "Arinzeebuka@gmail.com",
+        //   Subject: "MTN service is down on wisper",
+        //   TextBody: "ABISUBPORTAL server is currently down",
+        // });
 
         return {
           error: true,
