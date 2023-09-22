@@ -14,8 +14,13 @@ router.get(
 );
 router.get(
   "/getMegaHistory/:id",
-
+  getUser,
   megaPriceController.getPurchaseHistory
+);
+router.get(
+  "/getAllMegaHistory",
+  getAdmin,
+  megaPriceController.getPurchaseHistoryAdmin
 );
 
 module.exports = router;

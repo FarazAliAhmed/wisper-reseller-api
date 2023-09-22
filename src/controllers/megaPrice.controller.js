@@ -59,19 +59,40 @@ class MegaPriceController {
     }
   }
 
+  async getPurchaseHistoryAdmin(req, res) {
+    try {
+      const { limit, page } = req.query;
+
+      const limitValue = Number(limit) || 1;
+      const toSkip = limitValue * Number(page);
+
+      const purchases = await megaPurchaseHistory
+        .find({})
+        .sort({ createdAt: -1 })
+        .limit(limitValue)
+        .skip(toSkip);
+
+      res.json(purchases);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async getPurchaseHistory(req, res) {
     try {
       const business_id = req.params.id;
-      const { limit } = req.query;
+      const { limit, page } = req.query;
 
       const limitValue = Number(limit) || 1;
+      const toSkip = limitValue * Number(page);
 
       const purchases = await megaPurchaseHistory
         .find({
           business_id: business_id,
         })
         .sort({ createdAt: -1 })
-        .limit(limitValue);
+        .limit(limitValue)
+        .skip(toSkip);
       res.json(purchases);
     } catch (error) {
       res.status(500).json({ message: error.message });
