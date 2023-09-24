@@ -94,6 +94,7 @@ const {
   totalCurrentCredit,
   paymentTable,
   walletAnalysis,
+  calWalBal_analysis,
 } = require("../controllers/analysis.controller");
 const {
   getBucketID,
@@ -183,6 +184,7 @@ router.delete("/admin/plans/network/:network", getAdmin, deleteNetworkPlans);
 
 // ANALYSIS ROUTE
 router.get("/admin/analysis/payment", payment_analysis);
+router.get("/admin/analysis/calwalbal", calWalBal_analysis);
 router.get("/admin/analysis/revenue", revenueAnalysis);
 router.get("/admin/analysis/totalCurrentCredit", totalCurrentCredit);
 router.get("/admin/analysis/paymentTable", paymentTable);

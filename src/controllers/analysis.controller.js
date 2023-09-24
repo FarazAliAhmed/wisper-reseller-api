@@ -510,10 +510,34 @@ const walletAnalysis = async (req, res) => {
   }
 };
 
+const calWalBal_analysis =  async (req, res) => {
+  try {
+    const result = await dataBalance.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalWalletBalance: { $sum: "$wallet_balance" },
+        },
+      },
+    ]);
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "No data found" });
+    }
+
+    const totalBalance = result[0].totalWalletBalance;
+    return res.json({ totalWalletBalance: totalBalance });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   payment_analysis,
   revenueAnalysis,
   totalCurrentCredit,
   paymentTable,
   walletAnalysis,
+  calWalBal_analysis
 };
