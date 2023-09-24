@@ -67,7 +67,17 @@ class SubDealerService {
   async getSubdealersByBusiness(businessId) {
     try {
       // Implement logic to fetch subdealers related to the provided businessId from the database
-      const subdealers = await Account.find({ dealer: businessId });
+      const subdealers = await Account.find({ dealer: businessId }).sort({ createdAt: -1 });
+      return subdealers;
+    } catch (error) {
+      throw new Error("Failed to fetch subdealers");
+    }
+  }
+ 
+ 
+  async getSubdealersAdmin() {
+    try {
+      const subdealers = await Account.find({ type: "subdealer" }).sort({ createdAt: -1 });
       return subdealers;
     } catch (error) {
       throw new Error("Failed to fetch subdealers");

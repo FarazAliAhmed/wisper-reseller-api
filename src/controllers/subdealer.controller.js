@@ -37,6 +37,20 @@ const getAllSubdealers = async (req, res) => {
   }
 };
 
+const getAllSubdealerAdmin = async (req, res) => {
+  try {
+    const { id: businessId } = req.params;
+
+    const subdealers = await subdealerService.getSubdealersAdmin(
+      businessId
+    );
+    res.json({ subdealers });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const getSubdealerInfo = async (req, res) => {
   try {
     const { id: businessId } = req.params;
@@ -69,6 +83,22 @@ const SubdealerGetPurchaseHistory = async (req, res) => {
   }
 };
 
+const SubdealerGetPurchaseHistoryAdmin = async (req, res) => {
+  try {
+    const { limit } = req.query;
+
+    const limitValue = Number(limit) || 1;
+
+    const purchases = await subdealerHistory
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(limitValue);
+    res.json(purchases);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const SubdealerPurchaseMegaData = async (req, res) => {
   try {
     const { dealer, business_id, network, amountInGB } = req.body;
@@ -91,4 +121,6 @@ module.exports = {
   SubdealerGetPurchaseHistory,
   SubdealerPurchaseMegaData,
   getSubdealerInfo,
+  getAllSubdealerAdmin,
+  SubdealerGetPurchaseHistoryAdmin
 };
