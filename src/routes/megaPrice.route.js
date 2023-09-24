@@ -7,6 +7,8 @@ const router = express.Router();
 
 router.post("/editMegaPrice", getAdmin, megaPriceController.updateMegaPrice);
 router.post("/purchaseMegaData", getUser, megaPriceController.purchaseMegaData);
+router.post("/purchaseAdminMegaData", getAdmin, megaPriceController.purchaseAdminMegaData);
+router.post("/debitAdminMegaData", getAdmin, megaPriceController.debitAdminMegaData);
 router.get(
   "/getMegaPriceUser/:id",
   getUser,

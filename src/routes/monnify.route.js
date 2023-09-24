@@ -11,6 +11,11 @@ router.post(
   getAdmin,
   monnifyController.addBalanceAdmin
 );
+router.post(
+  "/monnifyAdminDebitBalance",
+  getAdmin,
+  monnifyController.debitBalanceAdmin
+);
 router.get("/monnifyGetAccount", getUser, monnifyController.getAccountDetails);
 router.post("/monnifyCreateAccount", getAdmin, monnifyController.createAccount);
 router.post(

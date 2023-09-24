@@ -35,6 +35,21 @@ class MonnifyController {
     }
   }
 
+  async debitBalanceAdmin(req, res) {
+    try {
+      console.log("Add balance", req.body);
+
+      const updatedBalance = await monnifyService.debitBalanceByBusinessIdAdmin(
+        req.body
+      );
+
+      return res.json(updatedBalance);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "An error occurred" });
+    }
+  }
+
   async getAccountDetails(req, res) {
     try {
       const { error, value } = getAccountSchema.validate(req.body);

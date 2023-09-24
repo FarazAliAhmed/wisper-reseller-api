@@ -45,7 +45,7 @@ class MonnifyService {
         resolvedAmount: resolvedBalance,
         new_bal: balance.wallet_balance,
         old_bal: old_bal,
-        purpose: "funding",
+        purpose: "Funding - Monnify",
         desc: `Deposit of ${resolvedBalance} NGN made by ${addData.eventData.customer.name}.`,
         bankAccountNum:
           addData.eventData.destinationAccountInformation.accountNumber,
@@ -92,7 +92,51 @@ class MonnifyService {
         resolvedAmount: balance.wallet_balance,
         new_bal: balance.wallet_balance,
         old_bal: old_bal,
-        purpose: "funding",
+        purpose: "Funding - Admin",
+        desc: `Deposit of ${balance.wallet_balance} NGN made by ${user.name}.`,
+        pay_type: "credit",
+        date_of_payment: new Date(),
+        payment_ref: "AD-trx-" + Math.floor(Math.random() * 10000000000000000),
+      });
+
+      await balance.save();
+      await newMonnifyHistory.save();
+
+      return newMonnifyHistory;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  async debitBalanceByBusinessIdAdmin(addData) {
+    try {
+      const balance = await dataBalance.findOne({
+        business: addData.business_id,
+      });
+      const user = await Account.findOne({
+        _id: addData.business_id,
+      });
+
+      if (!balance) {
+        throw new Error("Balance record not found");
+      }
+      if (!user) {
+        throw new Error("User record not found");
+      }
+
+      const old_bal = balance.wallet_balance;
+
+      balance.wallet_balance -= Number(addData.amount);
+      balance.last_purchase = new Date();
+
+      const newMonnifyHistory = new monnifyHistory({
+        business_name: addData.business_id,
+        business_id: addData.business_id,
+        amount: addData.amount,
+        resolvedAmount: balance.wallet_balance,
+        new_bal: balance.wallet_balance,
+        old_bal: old_bal,
+        purpose: "Debit - Admin",
         desc: `Deposit of ${balance.wallet_balance} NGN made by ${user.name}.`,
         pay_type: "credit",
         date_of_payment: new Date(),

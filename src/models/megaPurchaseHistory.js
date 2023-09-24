@@ -24,6 +24,10 @@ const megaPurchaseHistorySchema = new Schema(
       type: String,
       required: true,
     },
+    channel: {
+      type: String,
+      required: true,
+    },
     network: {
       type: String,
       required: true,

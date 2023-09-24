@@ -96,6 +96,7 @@ class MegaPriceService {
         business_id: business_id,
         amount: amountToPay,
         volume: amountInGB,
+        channel:"Wallet",
         old_bal: oldUser_bal,
         new_bal: newMegaWallet[network],
         network: network,
@@ -122,6 +123,136 @@ class MegaPriceService {
       });
 
       await newMonnifyHistory.save();
+
+      return updatedUserBalance;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async purchaseAdminMegaData(business_id, network, amountInGB) {
+    try {
+      // console.log("user id", business_id);
+      const megaPrices = await this.getMegaPrices(business_id);
+      if (!megaPrices) {
+        throw new Error("Mega prices not found");
+      }
+
+      const userBalance = await dataBalance.findOne({ business: business_id });
+      if (!userBalance) {
+        throw new Error("User data balance not found");
+      }
+
+      const selectedPrice = megaPrices[network];
+
+      if (selectedPrice == 0) {
+        throw new Error("Price Not yet set");
+      }
+
+      const amountToPay = selectedPrice * amountInGB;
+      console.log({ selectedPrice });
+
+      if (selectedPrice === undefined) {
+        throw new Error("Invalid data plan selected");
+      }
+
+      if (userBalance.wallet_balance < amountToPay) {
+        throw new Error("Insufficient wallet balance");
+      }
+
+      const oldwalletBalance = Number(userBalance.wallet_balance);
+      const newWalletBalance =
+        Number(userBalance.wallet_balance) - Number(amountToPay);
+      const newMegaWallet = { ...userBalance.mega_wallet };
+
+      const oldUser_bal = newMegaWallet[network];
+
+      newMegaWallet[network] += Number(amountInGB) * 1000;
+
+      const updatedUserBalance = await dataBalance.findOneAndUpdate(
+        { business: business_id },
+        {
+          wallet_balance: newWalletBalance,
+          mega_wallet: newMegaWallet,
+          last_purchase: new Date(),
+        },
+        { new: true }
+      );
+
+      const purchase = new megaPurchaseHistory({
+        business_id: business_id,
+        amount: amountToPay,
+        volume: amountInGB,
+        channel:"Funding - Admin",
+        old_bal: oldUser_bal,
+        new_bal: newMegaWallet[network],
+        network: network,
+        status: "success",
+      });
+
+      await purchase.save();
+
+      var currentDate = new Date();
+      var epochTime = currentDate.getTime();
+      console.log({ epochTime });
+
+      const newMonnifyHistory = new monnifyHistory({
+        business_name: business_id,
+        business_id: business_id,
+        amount: amountToPay,
+        new_bal: newWalletBalance,
+        old_bal: oldwalletBalance,
+        purpose: "data purchase",
+        desc: `Payment of ${amountToPay} NGN made for data purchase ${amountInGB}GB of ${network}.`,
+        pay_type: "debit",
+        date_of_payment: new Date(),
+        payment_ref: epochTime,
+      });
+
+      await newMonnifyHistory.save();
+
+      return updatedUserBalance;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async debitAdminMegaData(business_id, network, amountInGB) {
+    try {
+   
+      const userBalance = await dataBalance.findOne({ business: business_id });
+      if (!userBalance) {
+        throw new Error("User data balance not found");
+      }
+
+
+      const oldwalletBalance = Number(userBalance.wallet_balance);
+     
+      const newMegaWallet = { ...userBalance.mega_wallet };
+
+      const oldUser_bal = newMegaWallet[network];
+
+      newMegaWallet[network] -= Number(amountInGB) * 1000;
+
+      const updatedUserBalance = await dataBalance.findOneAndUpdate(
+        { business: business_id },
+        {
+          mega_wallet: newMegaWallet,
+          last_purchase: new Date(),
+        },
+        { new: true }
+      );
+
+      const purchase = new megaPurchaseHistory({
+        business_id: business_id,
+        amount: amountToPay,
+        volume: amountInGB,
+        channel:"Debit - Admin",
+        old_bal: oldUser_bal,
+        new_bal: newMegaWallet[network],
+        network: network,
+        status: "success",
+      });
+
+      await purchase.save();
 
       return updatedUserBalance;
     } catch (error) {
