@@ -7,21 +7,23 @@ const {
   setMegaNoticeMessag,
   exitMegaMaintenance,
   clearMegaNoticeMessag,
+  getMegaMaintenance,
 } = require("../controllers/megaMaintenance.controller");
 const router = express.Router();
 
+router.get("/admin/getMegaMaintenance", getMegaMaintenance);
 router.post("/admin/megaMaintenance/create", getAdmin, createMegaMaintenance);
-router.patch(
+router.post(
   "/admin/megaMaintenance/enter/:network",
   getAdmin,
   enterMegaMaintenance
 );
-router.patch(
+router.post(
   "/admin/megaMaintenance/exit/:network",
   getAdmin,
   exitMegaMaintenance
 );
 router.post("/admin/megaMaintenance/notice", getAdmin, setMegaNoticeMessag);
-router.get("/admin/megaMaintenance/clear", getAdmin, clearMegaNoticeMessag);
+router.post("/admin/megaMaintenance/clear", getAdmin, clearMegaNoticeMessag);
 
 module.exports = router;

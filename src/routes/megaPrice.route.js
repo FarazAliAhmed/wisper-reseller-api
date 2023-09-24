@@ -14,8 +14,18 @@ router.get(
 );
 router.get(
   "/getMegaHistory/:id",
-
+  getUser,
   megaPriceController.getPurchaseHistory
+);
+router.get(
+  "/getAllMegaHistory",
+  getAdmin,
+  megaPriceController.getPurchaseHistoryAdmin
+);
+router.post(
+  "/defaultPrice",
+  getAdmin,
+  megaPriceController.createDefaultMegaPrice
 );
 
 module.exports = router;

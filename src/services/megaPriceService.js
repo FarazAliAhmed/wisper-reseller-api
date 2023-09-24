@@ -12,7 +12,7 @@ class MegaPriceService {
         throw new Error("No user of this ID");
       }
 
-      console.log({ user });
+      // console.log({ user });
 
       if (user.type != "mega") {
         throw new Error("Not a mega user");
@@ -57,6 +57,10 @@ class MegaPriceService {
       }
 
       const selectedPrice = megaPrices[network];
+
+      if (selectedPrice == 0) {
+        throw new Error("Price Not yet set");
+      }
 
       const amountToPay = selectedPrice * amountInGB;
       console.log({ selectedPrice });

@@ -2,6 +2,7 @@ const Joi = require("joi");
 const axios = require("axios");
 const monnifyService = require("../services/monnify.service");
 const { Account } = require("../models/account");
+const monnifyHistory = require("../models/monnifyHistory");
 
 class MonnifyController {
   async addBalance(req, res) {
@@ -78,6 +79,25 @@ class MonnifyController {
     const resp = await monnifyService.getAll(business_id, limitValue);
     if (resp.transactions) return res.status(200).json(resp.transactions);
     return res.status(resp.status).json(resp);
+  }
+
+  async getAllMonnify(req, res) {
+    try {
+      const { limit, page } = req.query;
+
+      const limitValue = parseInt(limit) || 1;
+      const toSkip = limitValue * Number(page);
+
+      const resp = await monnifyHistory
+        .find()
+        .limit(limitValue)
+        .skip(toSkip)
+        .sort({ createdAt: -1 });
+
+      return res.status(200).json(resp);
+    } catch (error) {
+      return res.status(500).json({ message: "No monnify History" });
+    }
   }
 
   async createAccount(req, res) {
@@ -204,6 +224,7 @@ class MonnifyController {
             console.log(`failed to delete monnify account for ${user.name}`);
           });
       }
+      res.json({ message: "All monnify Account deleted" });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "An error occured" });

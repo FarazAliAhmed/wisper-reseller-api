@@ -3,8 +3,44 @@ const megaPriceService = require("../services/megaPriceService");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const megaPrice = require("../models/megaPrice");
 const megaMaintenance = require("../models/megaMaintenance");
+const { Account } = require("../models/account");
 
 class MegaPriceController {
+  async createDefaultMegaPrice(req, res) {
+    try {
+      // Validate the request body
+      const { error, value: updateData } = updateMegaPriceSchema.validate(
+        req.body
+      );
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
+
+      const users = await Account.find({}); // Fetch all users from the database
+
+      for (const user of users) {
+        try {
+          // Call the Mega Price service to create the account
+          updateData.business_id = user._id;
+
+          await megaPriceService.updateOrCreateMegaPrice(updateData);
+
+          console.log(`Monnify account created for user ${user.name}`);
+        } catch (error) {
+          console.error(
+            `Error creating Monnify account for user ${user.name}:`,
+            error.message
+          );
+          // You can add additional error handling here if needed
+        }
+      }
+
+      res.json({ message: "Mega Prices Created For All Users" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "An error occurred" });
+    }
+  }
   async updateMegaPrice(req, res) {
     try {
       // Validate the request body
@@ -59,19 +95,40 @@ class MegaPriceController {
     }
   }
 
+  async getPurchaseHistoryAdmin(req, res) {
+    try {
+      const { limit, page } = req.query;
+
+      const limitValue = Number(limit) || 1;
+      const toSkip = limitValue * Number(page);
+
+      const purchases = await megaPurchaseHistory
+        .find({})
+        .sort({ createdAt: -1 })
+        .limit(limitValue)
+        .skip(toSkip);
+
+      res.json(purchases);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async getPurchaseHistory(req, res) {
     try {
       const business_id = req.params.id;
-      const { limit } = req.query;
+      const { limit, page } = req.query;
 
       const limitValue = Number(limit) || 1;
+      const toSkip = limitValue * Number(page);
 
       const purchases = await megaPurchaseHistory
         .find({
           business_id: business_id,
         })
         .sort({ createdAt: -1 })
-        .limit(limitValue);
+        .limit(limitValue)
+        .skip(toSkip);
       res.json(purchases);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -106,7 +163,7 @@ const purchaseMegaDataSchema = Joi.object({
 });
 
 const updateMegaPriceSchema = Joi.object({
-  business_id: Joi.string().required(),
+  business_id: Joi.string().optional(),
   mtn_sme: Joi.number().min(0).optional(),
   mtn_gifting: Joi.number().min(0).optional(),
   airtel: Joi.number().min(0).optional(),
