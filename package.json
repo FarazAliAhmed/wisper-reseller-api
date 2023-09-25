@@ -27,6 +27,7 @@
     "mongoose": "^6.1.8",
     "mongoose-paginate-v2": "^1.7.1",
     "node-fetch": "^2.6.11",
+    "nodemailer": "^6.9.5",
     "pino-http": "^8.2.1",
     "postmark": "^3.0.18",
     "uuid": "^8.3.2"

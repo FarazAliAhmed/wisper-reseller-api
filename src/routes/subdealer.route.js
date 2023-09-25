@@ -14,7 +14,7 @@ const getAdmin = require("../utils/middleware/getAdmin");
 const router = express.Router();
 
 router.get("/getSubdealersInfo/:id", getUser, getSubdealerInfo);
-router.post("/createSubdealer", getUser, createSubdealer);
+router.post("/createSubdealer", createSubdealer);
 router.get("/getAllSubdealersId/:id", getAdmin, getAllSubdealers);
 router.get("/getSubdealerHistory/:id", getUser, SubdealerGetPurchaseHistory);
 router.post("/allocateData", getUser, SubdealerPurchaseMegaData);

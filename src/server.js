@@ -71,6 +71,25 @@ app.use("/hook", hookRoute);
 //   }
 // });
 
+// app.delete("/deletetrx", async (req, res) => {
+//   try {
+//     const transactionsToDelete = await transactionHistory.find().limit(70000);
+
+//     const transactionIdsToDelete = transactionsToDelete.map(
+//       (transaction) => transaction._id
+//     );
+
+//     await transactionHistory.deleteMany({
+//       _id: { $in: transactionIdsToDelete },
+//     });
+
+//     res.status(200).json({ message: "First 70000 transactions deleted" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "An error occurred" });
+//   }
+// });
+
 app.use(errors());
 
 dbSetUp();

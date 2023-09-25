@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const dataBalance = require("../models/dataBalance");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const subdealerHistory = require("../models/subdealerHistory");
+const { sendEmail } = require("../utils/email/transporter");
 
 const client = new postmark.ServerClient(process.env.POSTMARK);
 
@@ -26,7 +27,17 @@ class SubDealerService {
 
     await subdealer.save();
 
-    await this.sendWelcomeEmail(subdealer);
+    const Subject = "Welcome to the Wisper Dealer Network!";
+    const TextBody =
+      `Dear ${subdealer.fullName},\n\n` +
+      `Welcome to the Wisper Dealer Network! We're thrilled to have you on board as a sub-dealer with [Your Company Name]. Your account is now ready, and you can start accessing our platform right away.\n\n` +
+      `Here are your login details:\n\n` +
+      `Username: ${subdealer.username}\n` +
+      `Email: ${subdealer.email}\n` +
+      `Password: ${tempPassword}\n\n` +
+      `Please Note: We recommend changing your password after your first login for security reasons.`;
+
+    await sendEmail(subdealer.email, Subject, TextBody);
 
     return subdealer;
   }
@@ -67,17 +78,20 @@ class SubDealerService {
   async getSubdealersByBusiness(businessId) {
     try {
       // Implement logic to fetch subdealers related to the provided businessId from the database
-      const subdealers = await Account.find({ dealer: businessId }).sort({ createdAt: -1 });
+      const subdealers = await Account.find({ dealer: businessId }).sort({
+        createdAt: -1,
+      });
       return subdealers;
     } catch (error) {
       throw new Error("Failed to fetch subdealers");
     }
   }
- 
- 
+
   async getSubdealersAdmin() {
     try {
-      const subdealers = await Account.find({ type: "subdealer" }).sort({ createdAt: -1 });
+      const subdealers = await Account.find({ type: "subdealer" }).sort({
+        createdAt: -1,
+      });
       return subdealers;
     } catch (error) {
       throw new Error("Failed to fetch subdealers");
