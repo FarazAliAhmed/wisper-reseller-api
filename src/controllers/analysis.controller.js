@@ -510,13 +510,18 @@ const walletAnalysis = async (req, res) => {
   }
 };
 
-const calWalBal_analysis =  async (req, res) => {
+const calWalBal_analysis = async (req, res) => {
   try {
     const result = await dataBalance.aggregate([
       {
         $group: {
           _id: null,
           totalWalletBalance: { $sum: "$wallet_balance" },
+          gloBal: { $sum: "$mega_wallet.glo" },
+          mtn_smeBal: { $sum: "$mega_wallet.mtn_sme" },
+          mtn_giftingBal: { $sum: "$mega_wallet.mtn_gifting" },
+          airtelBal: { $sum: "$mega_wallet.airtel" },
+          "9mobileBal": { $sum: "$mega_wallet.9mobile" },
         },
       },
     ]);
@@ -525,7 +530,7 @@ const calWalBal_analysis =  async (req, res) => {
       return res.status(404).json({ message: "No data found" });
     }
 
-    const totalBalance = result[0].totalWalletBalance;
+    const totalBalance = result[0];
     return res.json({ totalWalletBalance: totalBalance });
   } catch (error) {
     console.error(error);
@@ -539,5 +544,5 @@ module.exports = {
   totalCurrentCredit,
   paymentTable,
   walletAnalysis,
-  calWalBal_analysis
+  calWalBal_analysis,
 };
