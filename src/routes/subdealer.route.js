@@ -6,7 +6,7 @@ const {
   SubdealerPurchaseMegaData,
   getSubdealerInfo,
   SubdealerGetPurchaseHistoryAdmin,
-  getAllSubdealerAdmin
+  getAllSubdealerAdmin,
 } = require("../controllers/subdealer.controller");
 const getUser = require("../utils/middleware/getUser");
 const getAdmin = require("../utils/middleware/getAdmin");
@@ -15,14 +15,16 @@ const router = express.Router();
 
 router.get("/getSubdealersInfo/:id", getUser, getSubdealerInfo);
 router.post("/createSubdealer", createSubdealer);
-router.get("/getAllSubdealersId/:id", getAdmin, getAllSubdealers);
+router.get("/getAllSubdealersId/:id", getUser, getAllSubdealers);
 router.get("/getSubdealerHistory/:id", getUser, SubdealerGetPurchaseHistory);
 router.post("/allocateData", getUser, SubdealerPurchaseMegaData);
 
 // admin
-router.get("/getSubdealersAdmin",getAdmin, getAllSubdealerAdmin);
-router.get("/getSubdealerHistoryAdmin", getAdmin,SubdealerGetPurchaseHistoryAdmin);
-
-
+router.get("/getSubdealersAdmin", getAdmin, getAllSubdealerAdmin);
+router.get(
+  "/getSubdealerHistoryAdmin",
+  getAdmin,
+  SubdealerGetPurchaseHistoryAdmin
+);
 
 module.exports = router;
