@@ -86,7 +86,7 @@ class MonnifyService {
       balance.last_purchase = new Date();
 
       const newMonnifyHistory = new monnifyHistory({
-        business_name: user.username,
+        business_name: user.name,
         business_id: addData.business_id,
         amount: addData.amount,
         resolvedAmount: balance.wallet_balance,
@@ -130,7 +130,7 @@ class MonnifyService {
       balance.last_purchase = new Date();
 
       const newMonnifyHistory = new monnifyHistory({
-        business_name: user.username,
+        business_name: user.name,
         business_id: addData.business_id,
         amount: addData.amount,
         resolvedAmount: balance.wallet_balance,
