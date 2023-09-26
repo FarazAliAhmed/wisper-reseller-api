@@ -25,6 +25,8 @@ const apiV2AdminRoutes = require("./routes/v2/admin");
 const hookRoute = require("./routes/hooks");
 const transactionHistory = require("./models/transactionHistory");
 const integrationResponse = require("./models/integrationResponse");
+const dataBalance = require("./models/dataBalance");
+const { Account } = require("./models/account");
 const corsOptions = {
   origin: "*",
 };
@@ -73,17 +75,32 @@ app.use("/hook", hookRoute);
 
 // app.delete("/deletetrx", async (req, res) => {
 //   try {
-//     const transactionsToDelete = await transactionHistory.find().limit(70000);
+//     // Find all Account documents
+//     const accounts = await Account.find();
 
-//     const transactionIdsToDelete = transactionsToDelete.map(
-//       (transaction) => transaction._id
-//     );
+//     // Loop through each Account and create a corresponding dataBalance if it doesn't exist
+//     for (const account of accounts) {
+//       const businessId = account._id;
 
-//     await transactionHistory.deleteMany({
-//       _id: { $in: transactionIdsToDelete },
-//     });
+//       // Check if a dataBalance document already exists for this businessId
+//       const existingDataBalance = await dataBalance.findOne({
+//         business: businessId,
+//       });
 
-//     res.status(200).json({ message: "First 70000 transactions deleted" });
+//       if (!existingDataBalance) {
+//         // Create a new dataBalance document with the same business as the account _id
+//         const newDataBalance = new dataBalance({
+//           business: businessId,
+//         });
+
+//         // Save the new dataBalance document
+//         await newDataBalance.save();
+//       }
+//     }
+
+//     res
+//       .status(200)
+//       .json({ message: "Deleted all duplicates field", aggregationResult });
 //   } catch (error) {
 //     console.error(error);
 //     res.status(500).json({ message: "An error occurred" });

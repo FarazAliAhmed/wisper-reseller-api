@@ -92,11 +92,16 @@ class MegaPriceService {
         { new: true }
       );
 
+      const user = await Account.findOne({
+        _id: addData.business_id,
+      });
+
       const purchase = new megaPurchaseHistory({
         business_id: business_id,
+        username: user.username,
         amount: amountToPay,
         volume: amountInGB,
-        channel:"Wallet",
+        channel: "Wallet",
         old_bal: oldUser_bal,
         new_bal: newMegaWallet[network],
         network: network,
@@ -110,7 +115,7 @@ class MegaPriceService {
       console.log({ epochTime });
 
       const newMonnifyHistory = new monnifyHistory({
-        business_name: business_id,
+        business_name: user.username,
         business_id: business_id,
         amount: amountToPay,
         new_bal: newWalletBalance,
@@ -178,11 +183,16 @@ class MegaPriceService {
         { new: true }
       );
 
+      const user = await Account.findOne({
+        _id: addData.business_id,
+      });
+
       const purchase = new megaPurchaseHistory({
         business_id: business_id,
+        username: user.username,
         amount: amountToPay,
         volume: amountInGB,
-        channel:"Funding - Admin",
+        channel: "Funding - Admin",
         old_bal: oldUser_bal,
         new_bal: newMegaWallet[network],
         network: network,
@@ -196,7 +206,7 @@ class MegaPriceService {
       console.log({ epochTime });
 
       const newMonnifyHistory = new monnifyHistory({
-        business_name: business_id,
+        business_name: user.username,
         business_id: business_id,
         amount: amountToPay,
         new_bal: newWalletBalance,
@@ -217,15 +227,13 @@ class MegaPriceService {
   }
   async debitAdminMegaData(business_id, network, amountInGB) {
     try {
-   
       const userBalance = await dataBalance.findOne({ business: business_id });
       if (!userBalance) {
         throw new Error("User data balance not found");
       }
 
-
       const oldwalletBalance = Number(userBalance.wallet_balance);
-     
+
       const newMegaWallet = { ...userBalance.mega_wallet };
 
       const oldUser_bal = newMegaWallet[network];
@@ -241,11 +249,16 @@ class MegaPriceService {
         { new: true }
       );
 
+      const user = await Account.findOne({
+        _id: addData.business_id,
+      });
+
       const purchase = new megaPurchaseHistory({
         business_id: business_id,
+        username: user.username,
         amount: amountToPay,
         volume: amountInGB,
-        channel:"Debit - Admin",
+        channel: "Debit - Admin",
         old_bal: oldUser_bal,
         new_bal: newMegaWallet[network],
         network: network,

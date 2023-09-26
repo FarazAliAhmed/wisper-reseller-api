@@ -86,7 +86,7 @@ class MonnifyService {
       balance.last_purchase = new Date();
 
       const newMonnifyHistory = new monnifyHistory({
-        business_name: addData.business_id,
+        business_name: user.username,
         business_id: addData.business_id,
         amount: addData.amount,
         resolvedAmount: balance.wallet_balance,
@@ -107,7 +107,7 @@ class MonnifyService {
       throw error;
     }
   }
-  
+
   async debitBalanceByBusinessIdAdmin(addData) {
     try {
       const balance = await dataBalance.findOne({
@@ -130,7 +130,7 @@ class MonnifyService {
       balance.last_purchase = new Date();
 
       const newMonnifyHistory = new monnifyHistory({
-        business_name: addData.business_id,
+        business_name: user.username,
         business_id: addData.business_id,
         amount: addData.amount,
         resolvedAmount: balance.wallet_balance,
