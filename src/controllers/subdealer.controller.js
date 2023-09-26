@@ -1,4 +1,5 @@
 const { Account } = require("../models/account");
+const dataBalance = require("../models/dataBalance");
 const subdealerHistory = require("../models/subdealerHistory");
 const subdealerService = require("../services/subdealer.service");
 
@@ -41,9 +42,7 @@ const getAllSubdealerAdmin = async (req, res) => {
   try {
     const { id: businessId } = req.params;
 
-    const subdealers = await subdealerService.getSubdealersAdmin(
-      businessId
-    );
+    const subdealers = await subdealerService.getSubdealersAdmin(businessId);
     res.json({ subdealers });
   } catch (error) {
     console.log(error);
@@ -57,7 +56,9 @@ const getSubdealerInfo = async (req, res) => {
 
     const subdealers = await Account.findOne({ _id: businessId });
 
-    res.json({ subdealers });
+    const databal = await dataBalance.findOne({ business: businessId });
+
+    res.json({ subdealers, dataBalance: databal });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -122,5 +123,5 @@ module.exports = {
   SubdealerPurchaseMegaData,
   getSubdealerInfo,
   getAllSubdealerAdmin,
-  SubdealerGetPurchaseHistoryAdmin
+  SubdealerGetPurchaseHistoryAdmin,
 };
