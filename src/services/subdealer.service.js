@@ -148,6 +148,7 @@ class SubDealerService {
       const ownerPurchase = new megaPurchaseHistory({
         business_id: business_id,
         amount: 0,
+        channel: "Wallet",
         volume: amountInGB * -1,
         old_bal: owner_old,
         new_bal: ownerMegaWallet[network],
@@ -159,6 +160,7 @@ class SubDealerService {
         business_id: business_id,
         amount: 0,
         volume: amountInGB,
+        channel: "Dealer",
         old_bal: subdealer_old,
         new_bal: subdealerMegaWallet[network],
         network: network,

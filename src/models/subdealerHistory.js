@@ -16,6 +16,10 @@ const subdealerHistorySchema = new Schema(
       type: String,
       required: true,
     },
+    channel: {
+      type: String,
+      required: true,
+    },
     old_bal: {
       type: String,
       required: true,
