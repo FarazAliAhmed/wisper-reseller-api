@@ -245,7 +245,7 @@ class MonnifyService {
 
       return response.data;
     } catch (error) {
-      console.error(error.message);
+      console.error(error);
       throw new Error("An error occurred");
     }
   }

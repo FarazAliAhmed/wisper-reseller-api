@@ -208,41 +208,35 @@ class MonnifyController {
     try {
       const accessToken = await monnifyService.generateAccessToken();
 
-      // console.log({ accessToken });
-
       const users = await Account.find({}); // Fetch all users from the database
 
       for (const user of users) {
-        await axios
-          .delete(
+        try {
+          await axios.delete(
             `${process.env.MONNIFY_BASE_URL}/v1/bank-transfer/reserved-accounts/reference/${user._id}`,
             {
               headers: {
-                Authorization: `Bearer  ${accessToken}`,
-                "Content-Type": "application/json", // Add this line
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
               },
             }
-          )
-          .then(async (response) => {
-            user.bankAccounts = [];
+          );
 
-            // Save the user document
-            await user.save();
-
-            console.log(`deleted monnify account for ${user.name}`);
-          })
-          .catch(async (err) => {
-            user.bankAccounts = [];
-
-            // Save the user document
-            await user.save();
-            console.log(`failed to delete monnify account for ${user.name}`);
-          });
+          // Only if the deletion is successful, remove the bankAccounts and save the user
+          user.bankAccounts = [];
+          await user.save();
+          console.log(`Deleted Monnify account for ${user.name}`);
+        } catch (err) {
+          // console.log(err);
+          console.error(
+            `Failed to delete Monnify account for ${user.name}: ${err.message}`
+          );
+        }
       }
-      res.json({ message: "All monnify Account deleted" });
+      res.json({ message: "All Monnify Accounts deleted" });
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "An error occured" });
+      console.error(error);
+      res.status(500).json({ message: "An error occurred" });
     }
   }
 }
