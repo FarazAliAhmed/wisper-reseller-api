@@ -163,6 +163,7 @@ class SubDealerService {
       const subdealerPurchase = new subdealerHistory({
         business_id: business_id,
         username: subAcct.username,
+        dealer: dealer,
         amount: 0,
         volume: amountInGB,
         channel: "Dealer",
