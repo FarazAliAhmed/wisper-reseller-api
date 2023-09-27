@@ -7,6 +7,7 @@ const {
   getSubdealerInfo,
   SubdealerGetPurchaseHistoryAdmin,
   getAllSubdealerAdmin,
+  getAllSubdealersTrx,
 } = require("../controllers/subdealer.controller");
 const getUser = require("../utils/middleware/getUser");
 const getAdmin = require("../utils/middleware/getAdmin");
@@ -18,6 +19,7 @@ router.post("/createSubdealer", createSubdealer);
 router.get("/getAllSubdealersId/:id", getUser, getAllSubdealers);
 router.get("/getSubdealerHistory/:id", getUser, SubdealerGetPurchaseHistory);
 router.post("/allocateData", getUser, SubdealerPurchaseMegaData);
+router.post("/allTrx", getUser, getAllSubdealersTrx);
 
 // admin
 router.get("/getSubdealersAdmin", getAdmin, getAllSubdealerAdmin);

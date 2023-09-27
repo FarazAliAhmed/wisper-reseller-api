@@ -38,6 +38,18 @@ const getAllSubdealers = async (req, res) => {
   }
 };
 
+const getAllSubdealersTrx = async (req, res) => {
+  try {
+    const { id: businessId } = req.params;
+
+    const subdealers = await subdealerService.getSubdealersByTrx(businessId);
+    res.json({ subdealers });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const getAllSubdealerAdmin = async (req, res) => {
   try {
     const { id: businessId } = req.params;
@@ -124,4 +136,5 @@ module.exports = {
   getSubdealerInfo,
   getAllSubdealerAdmin,
   SubdealerGetPurchaseHistoryAdmin,
+  getAllSubdealersTrx,
 };

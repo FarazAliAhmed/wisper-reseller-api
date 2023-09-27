@@ -87,6 +87,36 @@ class SubDealerService {
     }
   }
 
+  async getSubdealersByTrx(businessId) {
+    try {
+      // Implement logic to fetch subdealers related to the provided businessId from the database
+      const subdealers = await Account.find({ dealer: businessId }).sort({
+        createdAt: -1,
+      });
+
+      // Create an array to store the transactions
+      const transactions = [];
+
+      // Loop through each subdealer and find transactions that match the business_id
+      for (const subdealer of subdealers) {
+        const subdealerId = subdealer._id;
+
+        // Find transactions that match the business_id and subdealer's _id
+        const subdealerTransactions = await Transaction.find({
+          business_id: businessId,
+          admin_ref: subdealerId, // Assuming admin_ref corresponds to subdealer._id
+        });
+
+        // Add the found transactions to the transactions array
+        transactions.push(...subdealerTransactions);
+      }
+
+      return transactions;
+    } catch (error) {
+      throw new Error("Failed to fetch subdealers");
+    }
+  }
+
   async getSubdealersAdmin() {
     try {
       const subdealers = await Account.find({ type: "subdealer" }).sort({
