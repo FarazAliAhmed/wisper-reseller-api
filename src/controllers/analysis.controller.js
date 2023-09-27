@@ -1,5 +1,8 @@
+const BucketUsage = require("../models/BucketUsage");
+const bucketID = require("../models/bucketID");
 const dataBalance = require("../models/dataBalance");
 const paymentHistory = require("../models/paymentHistory");
+const transactionHistory = require("../models/transactionHistory");
 const Transaction = require("../models/transactionHistory");
 
 const payment_analysis = async (req, res) => {
@@ -538,6 +541,76 @@ const calWalBal_analysis = async (req, res) => {
   }
 };
 
+// POST route to populate BucketUsage for a specific day
+const populateBucketUsage = async (req, res) => {
+  try {
+    const currentDate = new Date();
+
+    // Check if the date is valid
+    if (isNaN(currentDate.getTime())) {
+      return res.status(400).json({ error: "Invalid date format" });
+    }
+
+    // Find the transactions for the specified day
+    const transactions = await transactionHistory.find({
+      created_at: {
+        $gte: currentDate,
+        $lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000), // Next day
+      },
+    });
+
+    // Calculate the required values based on transactions
+    const startOfDayBalance =
+      transactions.length > 0 ? transactions[0].new_balance : 0;
+    const endOfDayBalance =
+      transactions.length > 0
+        ? transactions[transactions.length - 1].new_balance
+        : 0;
+    const dataSoldOnGlo = transactions
+      .filter((transaction) => transaction.network_provider === "glo")
+      .reduce((total, transaction) => total + transaction.data_volume, 0);
+    const totalDataSold = transactions.reduce(
+      (total, transaction) => total + transaction.data_volume,
+      0
+    ); // Calculate the total data sold on all providers
+    const dataSoldOnWisper = totalDataSold - dataSoldOnGlo; // Calculate data sold on Wisper
+
+    const numberOfTransactions = transactions.length;
+    const balance = dataSoldOnGlo - dataSoldOnWisper;
+    const status = Math.abs(balance) < 10 ? "Green" : "Red";
+
+    // Get the bucketID for the day (You can customize this logic)
+    const bucketID = await getBucketIDForDate(currentDate);
+
+    // Create a new BucketUsage document
+    const bucketUsage = new BucketUsage({
+      date: currentDate,
+      bucketID,
+      startOfDayBalance,
+      endOfDayBalance,
+      dataSoldOnGlo,
+      dataSoldOnWisper,
+      numberOfTransactions,
+      balance,
+      status,
+    });
+
+    // Save the BucketUsage document
+    await bucketUsage.save();
+
+    res.status(201).json(bucketUsage);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Function to get the bucketID for a specific date (customize this logic)
+async function getBucketIDForDate() {
+  const defaultBucket = await bucketID.findOne({ inUse: true });
+  return defaultBucket ? defaultBucket._id : null;
+}
+
 module.exports = {
   payment_analysis,
   revenueAnalysis,
@@ -545,4 +618,5 @@ module.exports = {
   paymentTable,
   walletAnalysis,
   calWalBal_analysis,
+  populateBucketUsage,
 };

@@ -30,7 +30,7 @@ class MonnifyService {
 
       const old_bal = balance.wallet_balance;
 
-      if (Number(addData.eventData.settlementAmount) > 50) {
+      if (Number(addData.eventData.amountPaid) > 50) {
         balance.wallet_balance += resolvedBalance;
         balance.last_purchase = new Date();
       } else {
