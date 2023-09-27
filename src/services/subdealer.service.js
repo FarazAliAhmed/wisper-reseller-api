@@ -6,7 +6,7 @@ const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const subdealerHistory = require("../models/subdealerHistory");
 const { sendEmail } = require("../utils/email/transporter");
 const transactionHistory = require("../models/transactionHistory");
-
+const uuid = require("uuid");
 const client = new postmark.ServerClient(process.env.POSTMARK);
 
 class SubDealerService {
