@@ -16,6 +16,21 @@ class SubDealerService {
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(tempPassword, salt);
 
+    let access_token;
+    let isUnique = false;
+
+    // Generate a unique access_token
+    while (!isUnique) {
+      access_token = uuid.v4();
+
+      // Check if the generated access_token is unique in the database
+      const existingAccount = await Account.findOne({ access_token });
+
+      if (!existingAccount) {
+        isUnique = true;
+      }
+    }
+
     const subdealer = new Account({
       name: fullName,
       email,
@@ -24,8 +39,8 @@ class SubDealerService {
       mobile_number: phoneNumber,
       password,
       type: "subdealer",
+      access_token, // Set the access_token here
     });
-
     await subdealer.save();
 
     const Subject = "Welcome to the Wisper Dealer Network!";

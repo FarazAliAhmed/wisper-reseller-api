@@ -22,7 +22,7 @@ router.post("/allocateData", getUser, SubdealerPurchaseMegaData);
 router.get("/allTrx/:id", getUser, getAllSubdealersTrx);
 
 // admin
-router.get("/getSubdealersAdmin", getAdmin, getAllSubdealerAdmin);
+router.get("/getSubdealersAdmin", getAllSubdealerAdmin);
 router.get(
   "/getSubdealerHistoryAdmin",
   getAdmin,
