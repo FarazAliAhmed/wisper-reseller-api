@@ -5,6 +5,7 @@ const dataBalance = require("../models/dataBalance");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const subdealerHistory = require("../models/subdealerHistory");
 const { sendEmail } = require("../utils/email/transporter");
+const transactionHistory = require("../models/transactionHistory");
 
 const client = new postmark.ServerClient(process.env.POSTMARK);
 
@@ -102,7 +103,7 @@ class SubDealerService {
         const subdealerId = subdealer._id;
 
         // Find transactions that match the business_id and subdealer's _id
-        const subdealerTransactions = await Transaction.find({
+        const subdealerTransactions = await transactionHistory.find({
           business_id: businessId,
           admin_ref: subdealerId, // Assuming admin_ref corresponds to subdealer._id
         });

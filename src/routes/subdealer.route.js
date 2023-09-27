@@ -19,7 +19,7 @@ router.post("/createSubdealer", createSubdealer);
 router.get("/getAllSubdealersId/:id", getUser, getAllSubdealers);
 router.get("/getSubdealerHistory/:id", getUser, SubdealerGetPurchaseHistory);
 router.post("/allocateData", getUser, SubdealerPurchaseMegaData);
-router.post("/allTrx/:id", getUser, getAllSubdealersTrx);
+router.get("/allTrx/:id", getUser, getAllSubdealersTrx);
 
 // admin
 router.get("/getSubdealersAdmin", getAdmin, getAllSubdealerAdmin);
