@@ -93,7 +93,7 @@ class MegaPriceService {
       );
 
       const user = await Account.findOne({
-        _id: addData.business_id,
+        _id: business_id,
       });
 
       const purchase = new megaPurchaseHistory({
