@@ -145,8 +145,12 @@ class SubDealerService {
         { new: true }
       );
 
+      const deaAcct = await Account.findOne({ _id: dealer });
+      const subAcct = await Account.findOne({ _id: business_id });
+
       const ownerPurchase = new megaPurchaseHistory({
-        business_id: business_id,
+        business_id: dealer,
+        username: deaAcct.username,
         amount: 0,
         channel: "Wallet",
         volume: amountInGB * -1,
@@ -158,6 +162,7 @@ class SubDealerService {
 
       const subdealerPurchase = new subdealerHistory({
         business_id: business_id,
+        username: subAcct.username,
         amount: 0,
         volume: amountInGB,
         channel: "Dealer",
