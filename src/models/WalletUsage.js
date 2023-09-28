@@ -1,16 +1,13 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const bucketUsageSchema = new Schema(
+const WalletUsageSchema = new Schema(
   {
     date: {
       type: String,
       default: new Date(),
     },
-    bucketID: {
-      type: String,
-      required: true,
-    },
+
     startOfDayBalance: {
       type: Object,
       required: true,
@@ -19,19 +16,27 @@ const bucketUsageSchema = new Schema(
       type: Object,
       required: true,
     },
-    dataSoldOnGlo: {
+    totalFunding: {
       type: Number,
       required: true,
     },
-    dataSoldOnWisper: {
+    totalDataPurchase: {
       type: Number,
       required: true,
     },
-    numberOfTransactions: {
+    totalDataBought: {
       type: Number,
       required: true,
     },
-    balance: {
+    litAccTrx: {
+      type: Number,
+      required: true,
+    },
+    proWalBal: {
+      type: Number,
+      required: true,
+    },
+    actWalBal: {
       type: Number,
       required: true,
     },
@@ -44,4 +49,4 @@ const bucketUsageSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("BucketUsage", bucketUsageSchema);
+module.exports = mongoose.model("WalletUsage", WalletUsageSchema);

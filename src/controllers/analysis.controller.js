@@ -1,6 +1,7 @@
 const BucketUsage = require("../models/BucketUsage");
 const bucketID = require("../models/bucketID");
 const dataBalance = require("../models/dataBalance");
+const monnifyHistory = require("../models/monnifyHistory");
 const paymentHistory = require("../models/paymentHistory");
 const transactionHistory = require("../models/transactionHistory");
 const Transaction = require("../models/transactionHistory");
@@ -546,18 +547,22 @@ const populateBucketUsage = async (req, res) => {
   try {
     const currentDate = new Date();
 
-    // Check if the date is valid
-    if (isNaN(currentDate.getTime())) {
-      return res.status(400).json({ error: "Invalid date format" });
-    }
+    // Format the current date as "YYYY-MM-DDT00:00:00.000Z" for comparison
+    const formattedCurrentDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    ).toISOString();
 
     // Find the transactions for the specified day
     const transactions = await transactionHistory.find({
-      created_at: {
-        $gte: currentDate,
-        $lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000), // Next day
+      createdAt: {
+        $gte: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
+        $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
       },
     });
+
+    // console.log(transactions);
 
     // Calculate the required values based on transactions
     const startOfDayBalance =
@@ -566,9 +571,73 @@ const populateBucketUsage = async (req, res) => {
       transactions.length > 0
         ? transactions[transactions.length - 1].new_balance
         : 0;
-    const dataSoldOnGlo = transactions
-      .filter((transaction) => transaction.network_provider === "glo")
-      .reduce((total, transaction) => total + transaction.data_volume, 0);
+    const dataSoldOnGlo = endOfDayBalance.glo - startOfDayBalance.glo;
+    const totalDataSold = transactions.reduce(
+      (total, transaction) => total + transaction.data_volume,
+      0
+    ); // Calculate the total data sold on all providers
+    const dataSoldOnWisper = totalDataSold - dataSoldOnGlo; // Calculate data sold on Wisper
+
+    const numberOfTransactions = transactions.length;
+    const balance = dataSoldOnGlo - dataSoldOnWisper;
+    const status = Math.abs(balance) < 10000 ? "Green" : "Red";
+
+    // Get the bucketID for the day (You can customize this logic)
+    const bucketID = await getBucketIDForDate(formattedCurrentDate);
+
+    // Create a new BucketUsage document
+    const bucketUsage = new BucketUsage({
+      date: formattedCurrentDate,
+      bucketID,
+      startOfDayBalance,
+      endOfDayBalance,
+      dataSoldOnGlo,
+      dataSoldOnWisper,
+      numberOfTransactions,
+      balance,
+      status,
+    });
+
+    // Save the BucketUsage document
+    await bucketUsage.save();
+
+    res.status(201).json(bucketUsage);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// POST route to populate BucketUsage for a specific day
+const populateWalletUsage = async (req, res) => {
+  try {
+    const currentDate = new Date();
+
+    // Format the current date as "YYYY-MM-DDT00:00:00.000Z" for comparison
+    const formattedCurrentDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    ).toISOString();
+
+    // Find the transactions for the specified day
+    const transactions = await monnifyHistory.find({
+      createdAt: {
+        $gte: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
+        $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
+      },
+    });
+
+    // console.log(transactions);
+
+    // Calculate the required values based on transactions
+    const startOfDayBalance =
+      transactions.length > 0 ? transactions[0].new_balance : 0;
+    const endOfDayBalance =
+      transactions.length > 0
+        ? transactions[transactions.length - 1].new_balance
+        : 0;
+    const dataSoldOnGlo = endOfDayBalance.glo - startOfDayBalance.glo;
     const totalDataSold = transactions.reduce(
       (total, transaction) => total + transaction.data_volume,
       0
@@ -580,11 +649,11 @@ const populateBucketUsage = async (req, res) => {
     const status = Math.abs(balance) < 10 ? "Green" : "Red";
 
     // Get the bucketID for the day (You can customize this logic)
-    const bucketID = await getBucketIDForDate(currentDate);
+    const bucketID = await getBucketIDForDate(formattedCurrentDate);
 
     // Create a new BucketUsage document
     const bucketUsage = new BucketUsage({
-      date: currentDate,
+      date: formattedCurrentDate,
       bucketID,
       startOfDayBalance,
       endOfDayBalance,
@@ -608,7 +677,7 @@ const populateBucketUsage = async (req, res) => {
 // Function to get the bucketID for a specific date (customize this logic)
 async function getBucketIDForDate() {
   const defaultBucket = await bucketID.findOne({ inUse: true });
-  return defaultBucket ? defaultBucket._id : null;
+  return defaultBucket ? defaultBucket.bucketID : null;
 }
 
 module.exports = {
