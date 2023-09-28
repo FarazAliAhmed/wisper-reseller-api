@@ -543,7 +543,7 @@ const calWalBal_analysis = async (req, res) => {
 };
 
 // POST route to populate BucketUsage for a specific day
-const populateBucketUsage = async (req, res) => {
+const populateBucketUsage = async () => {
   try {
     const currentDate = new Date();
 
@@ -571,15 +571,15 @@ const populateBucketUsage = async (req, res) => {
       transactions.length > 0
         ? transactions[transactions.length - 1].new_balance
         : 0;
-    const dataSoldOnGlo = endOfDayBalance.glo - startOfDayBalance.glo;
+    const dataSoldOnGlo = Math.abs(endOfDayBalance.glo - startOfDayBalance.glo);
     const totalDataSold = transactions.reduce(
       (total, transaction) => total + transaction.data_volume,
       0
     ); // Calculate the total data sold on all providers
-    const dataSoldOnWisper = totalDataSold - dataSoldOnGlo; // Calculate data sold on Wisper
+    const dataSoldOnWisper = Math.abs(totalDataSold - dataSoldOnGlo); // Calculate data sold on Wisper
 
     const numberOfTransactions = transactions.length;
-    const balance = dataSoldOnGlo - dataSoldOnWisper;
+    const balance = Math.abs(dataSoldOnGlo - dataSoldOnWisper);
     const status = Math.abs(balance) < 10000 ? "Green" : "Red";
 
     // Get the bucketID for the day (You can customize this logic)
@@ -600,11 +600,14 @@ const populateBucketUsage = async (req, res) => {
 
     // Save the BucketUsage document
     await bucketUsage.save();
+    console.log("bucketusage added");
 
-    res.status(201).json(bucketUsage);
+    // res.status(201).json(bucketUsage);
   } catch (error) {
+    console.log("error in adding bucketusage");
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+
+    // res.status(500).json({ error: "Internal Server Error" });
   }
 };
 

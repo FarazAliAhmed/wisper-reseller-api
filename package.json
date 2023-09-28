@@ -26,6 +26,7 @@
     "moment-timezone": "^0.5.43",
     "mongoose": "^6.1.8",
     "mongoose-paginate-v2": "^1.7.1",
+    "node-cron": "^3.0.2",
     "node-fetch": "^2.6.11",
     "nodemailer": "^6.9.5",
     "pino-http": "^8.2.1",

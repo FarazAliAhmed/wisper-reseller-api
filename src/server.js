@@ -7,6 +7,7 @@ const config = require("config");
 const dbSetUp = require("./models");
 const pino = require("pino-http");
 const { errors } = require("celebrate");
+const cron = require("node-cron");
 
 const PORT = config.get("port") || 5000;
 
@@ -27,6 +28,7 @@ const transactionHistory = require("./models/transactionHistory");
 const integrationResponse = require("./models/integrationResponse");
 const dataBalance = require("./models/dataBalance");
 const { Account } = require("./models/account");
+const { populateBucketUsage } = require("./controllers/analysis.controller");
 const corsOptions = {
   origin: "*",
 };
@@ -53,6 +55,15 @@ app.use("/api", megamaintenanceRoutes);
 app.use("/api/v2", getUser, apiV2Routes);
 app.use("/api/v2/admin", getAdmin, apiV2AdminRoutes);
 app.use("/hook", hookRoute);
+
+cron.schedule("0 0 * * *", async () => {
+  try {
+    await populateBucketUsage();
+    console.log("populateBucketUsage executed every 5 seconds.");
+  } catch (error) {
+    console.error("Error executing populateBucketUsage:", error);
+  }
+});
 
 // app.delete("/deletetrx", async (req, res) => {
 //   try {
