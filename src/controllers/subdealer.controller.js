@@ -77,6 +77,24 @@ const getSubdealerInfo = async (req, res) => {
   }
 };
 
+const DealerGetHistory = async (req, res) => {
+  try {
+    const business_id = req.params.id;
+    const { limit } = req.query;
+
+    const limitValue = Number(limit) || 1;
+
+    const purchases = await subdealerHistory
+      .find({
+        dealer: business_id,
+      })
+      .sort({ createdAt: -1 })
+      .limit(limitValue);
+    res.json(purchases);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 const SubdealerGetPurchaseHistory = async (req, res) => {
   try {
     const business_id = req.params.id;
@@ -137,4 +155,5 @@ module.exports = {
   getAllSubdealerAdmin,
   SubdealerGetPurchaseHistoryAdmin,
   getAllSubdealersTrx,
+  DealerGetHistory,
 };

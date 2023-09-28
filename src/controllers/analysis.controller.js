@@ -1,4 +1,5 @@
 const BucketUsage = require("../models/BucketUsage");
+const WalletUsage = require("../models/WalletUsage");
 const bucketID = require("../models/bucketID");
 const dataBalance = require("../models/dataBalance");
 const monnifyHistory = require("../models/monnifyHistory");
@@ -626,45 +627,50 @@ const populateWalletUsage = async (req, res) => {
     // Find the transactions for the specified day
     const transactions = await monnifyHistory.find({
       createdAt: {
-        $gte: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
+        $gt: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
+        $lt: `${formattedCurrentDate.slice(0, 10)}T00:59:59.999Z`,
+      },
+    });
+
+    const transactions1 = await monnifyHistory.find({
+      createdAt: {
+        $gt: `${formattedCurrentDate.slice(0, 10)}T23:00:00.000Z`,
         $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
       },
     });
 
-    // console.log(transactions);
+    console.log(transactions);
 
     // Calculate the required values based on transactions
-    const startOfDayBalance =
-      transactions.length > 0 ? transactions[0].new_balance : 0;
-    const endOfDayBalance =
-      transactions.length > 0
-        ? transactions[transactions.length - 1].new_balance
-        : 0;
-    const dataSoldOnGlo = endOfDayBalance.glo - startOfDayBalance.glo;
-    const totalDataSold = transactions.reduce(
-      (total, transaction) => total + transaction.data_volume,
+    const startOfDayBalance = transactions.reduce(
+      (total, transaction) => total + transaction.new_bal,
       0
-    ); // Calculate the total data sold on all providers
-    const dataSoldOnWisper = totalDataSold - dataSoldOnGlo; // Calculate data sold on Wisper
+    );
+
+    const endOfDayBalance = transactions1.reduce(
+      (total, transaction) => total + transaction.new_bal,
+      0
+    );
+
+    // Calculate the total amount on wisper
+    // const dataSoldOnWisper = totalDataSold - dataSoldOnGlo;
 
     const numberOfTransactions = transactions.length;
-    const balance = dataSoldOnGlo - dataSoldOnWisper;
-    const status = Math.abs(balance) < 10 ? "Green" : "Red";
+    // const balance = dataSoldOnGlo - dataSoldOnWisper;
+    // const status = Math.abs(balance) < 10 ? "Green" : "Red";
 
     // Get the bucketID for the day (You can customize this logic)
     const bucketID = await getBucketIDForDate(formattedCurrentDate);
 
     // Create a new BucketUsage document
-    const bucketUsage = new BucketUsage({
+    const bucketUsage = new WalletUsage({
       date: formattedCurrentDate,
-      bucketID,
       startOfDayBalance,
       endOfDayBalance,
-      dataSoldOnGlo,
-      dataSoldOnWisper,
-      numberOfTransactions,
-      balance,
-      status,
+      // dataSoldOnWisper,
+      // numberOfTransactions,
+      // balance,
+      // status,
     });
 
     // Save the BucketUsage document
@@ -691,4 +697,5 @@ module.exports = {
   walletAnalysis,
   calWalBal_analysis,
   populateBucketUsage,
+  populateWalletUsage,
 };
