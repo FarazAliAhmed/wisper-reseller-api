@@ -645,12 +645,12 @@ const populateBucketUsage = async (req, res) => {
     await bucketUsage.save();
     console.log("bucketusage added");
 
-    res.status(201).json(bucketUsage);
+    // res.status(201).json(bucketUsage);
   } catch (error) {
     console.log("error in adding bucketusage");
     console.error(error);
 
-    res.status(500).json({ error: "Internal Server Error" });
+    // res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
