@@ -618,8 +618,9 @@ const populateBucketUsage = async (req, res) => {
 
     const numberOfTransactions = transactions.length;
 
-    const dataSoldOnGlo =
-      Number(firstTransaction.gloB) - Number(lastTransaction.gloB);
+    const dataSoldOnGlo = Math.abs(
+      Number(firstTransaction.gloB) - Number(lastTransaction.gloB)
+    );
 
     const balance = Math.abs(Number(dataSoldOnGlo) - Number(dataSoldOnWisper));
     const status = Math.abs(balance) < 10000 ? "Green" : "Red";
