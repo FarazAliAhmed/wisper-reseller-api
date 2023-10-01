@@ -47,7 +47,14 @@ exports.getStoreFrontByBusinessId = async (req, res) => {
 // Get all store fronts
 exports.getAllStoreFronts = async (req, res) => {
   try {
-    const storeFronts = await StoreFront.find();
+    const { limit = 10, page = 1 } = req.query;
+    const skip = (page - 1) * limit;
+
+    const storeFronts = await StoreFront.find()
+      .skip(skip)
+      .limit(parseInt(limit))
+      .sort({ createdAt: -1 });
+
     res.status(200).json(storeFronts);
   } catch (error) {
     console.error("Error getting all store fronts:", error);
