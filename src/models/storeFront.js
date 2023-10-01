@@ -5,6 +5,7 @@ const storeFrontSchema = new Schema({
   business_id: {
     type: String,
     required: true,
+    unique: true,
   },
   wallet: {
     type: Number,
