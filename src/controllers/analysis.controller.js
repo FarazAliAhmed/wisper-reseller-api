@@ -556,43 +556,60 @@ const populateBucketUsage = async (req, res) => {
     ).toISOString();
 
     // Find the transactions for the specified day
+    const firstTransaction = await transactionHistory
+      .findOne({
+        status: "success",
+        createdAt: {
+          $gte: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
+          $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
+        },
+      })
+      .sort({ createdAt: -1 });
+
+    async function getLastTransaction() {
+      return await transactionHistory.findOne().sort({ timestamp: -1 });
+    }
+
+    const lastTransaction = await getLastTransaction();
+
+    // Calculate the date for the previous day
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate() - 1);
+
+    const formattedPreviousDate = new Date(
+      previousDate.getFullYear(),
+      previousDate.getMonth(),
+      previousDate.getDate()
+    ).toISOString();
+
     const transactions = await transactionHistory.find({
       status: "success",
+      network_provider: "glo",
       createdAt: {
-        $gte: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
-        $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
+        $gte: `${formattedPreviousDate.slice(0, 10)}T00:00:00.000Z`,
+        $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
       },
     });
 
-    // console.log(transactions);
-
-    // Calculate the required values based on transactions
-    const startOfDayBalance =
-      transactions.length > 0 ? transactions[0].new_balance : 0;
-    const endOfDayBalance =
-      transactions.length > 0
-        ? transactions[transactions.length - 1].new_balance
-        : 0;
-    const dataSoldOnGlo = Math.abs(endOfDayBalance.glo - startOfDayBalance.glo);
-    const totalDataSold = transactions.reduce(
+    const dataSoldOnWisper = transactions.reduce(
       (total, transaction) => total + transaction.data_volume,
       0
     ); // Calculate the total data sold on all providers
-    const dataSoldOnWisper = Math.abs(totalDataSold - dataSoldOnGlo); // Calculate data sold on Wisper
 
     const numberOfTransactions = transactions.length;
-    const balance = Math.abs(dataSoldOnGlo - dataSoldOnWisper);
-    const status = Math.abs(balance) < 10000 ? "Green" : "Red";
 
-    // Get the bucketID for the day (You can customize this logic)
-    const bucketID = await getBucketIDForDate(formattedCurrentDate);
+    const dataSoldOnGlo =
+      Number(firstTransaction.gloB) - Number(lastTransaction.gloB);
+
+    const balance = Math.abs(Number(dataSoldOnGlo) - Number(dataSoldOnWisper));
+    const status = Math.abs(balance) < 10000 ? "Green" : "Red";
 
     // Create a new BucketUsage document
     const bucketUsage = new BucketUsage({
       date: formattedCurrentDate,
       bucketID,
-      startOfDayBalance,
-      endOfDayBalance,
+      startOfDayBalance: firstTransaction.gloB,
+      endOfDayBalance: lastTransaction.gloB,
       dataSoldOnGlo,
       dataSoldOnWisper,
       numberOfTransactions,
@@ -612,6 +629,75 @@ const populateBucketUsage = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// const populateBucketUsage = async (req, res) => {
+//   try {
+//     const currentDate = new Date();
+
+//     // Format the current date as "YYYY-MM-DDT00:00:00.000Z" for comparison
+//     const formattedCurrentDate = new Date(
+//       currentDate.getFullYear(),
+//       currentDate.getMonth(),
+//       currentDate.getDate()
+//     ).toISOString();
+
+//     // Find the transactions for the specified day
+//     const transactions = await transactionHistory.find({
+//       status: "success",
+//       createdAt: {
+//         $gte: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
+//         $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
+//       },
+//     });
+
+//     // console.log(transactions);
+
+//     // Calculate the required values based on transactions
+//     const startOfDayBalance =
+//       transactions.length > 0 ? transactions[0].new_balance : 0;
+//     const endOfDayBalance =
+//       transactions.length > 0
+//         ? transactions[transactions.length - 1].new_balance
+//         : 0;
+//     const dataSoldOnGlo = Math.abs(endOfDayBalance.glo - startOfDayBalance.glo);
+//     const totalDataSold = transactions.reduce(
+//       (total, transaction) => total + transaction.data_volume,
+//       0
+//     ); // Calculate the total data sold on all providers
+//     const dataSoldOnWisper = Math.abs(totalDataSold - dataSoldOnGlo); // Calculate data sold on Wisper
+
+//     const numberOfTransactions = transactions.length;
+//     const balance = Math.abs(dataSoldOnGlo - dataSoldOnWisper);
+//     const status = Math.abs(balance) < 10000 ? "Green" : "Red";
+
+//     // Get the bucketID for the day (You can customize this logic)
+//     const bucketID = await getBucketIDForDate(formattedCurrentDate);
+
+//     // Create a new BucketUsage document
+//     const bucketUsage = new BucketUsage({
+//       date: formattedCurrentDate,
+//       bucketID,
+//       startOfDayBalance,
+//       endOfDayBalance,
+//       dataSoldOnGlo,
+//       dataSoldOnWisper,
+//       numberOfTransactions,
+//       balance,
+//       status,
+//     });
+
+//     // Save the BucketUsage document
+//     await bucketUsage.save();
+//     console.log("bucketusage added");
+
+//     res.status(201).json(bucketUsage);
+//   } catch (error) {
+//     console.log("error in adding bucketusage");
+//     console.error(error);
+
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
 
 // POST route to populate BucketUsage for a specific day
 const populateWalletUsage = async (req, res) => {
