@@ -20,14 +20,11 @@ const subdealerRoutes = require("./routes/subdealer.route");
 const megaPriceRoutes = require("./routes/megaPrice.route");
 const monnifyRoutes = require("./routes/monnify.route");
 const megamaintenanceRoutes = require("./routes/megamaintenance.route");
+const storeFrontRoutes = require("./routes/storeFront.route.js");
 
 const apiV2Routes = require("./routes/v2");
 const apiV2AdminRoutes = require("./routes/v2/admin");
 const hookRoute = require("./routes/hooks");
-const transactionHistory = require("./models/transactionHistory");
-const integrationResponse = require("./models/integrationResponse");
-const dataBalance = require("./models/dataBalance");
-const { Account } = require("./models/account");
 const { populateBucketUsage } = require("./controllers/analysis.controller");
 const corsOptions = {
   origin: "*",
@@ -51,6 +48,7 @@ app.use("/api/subdealer", subdealerRoutes);
 app.use("/api", megaPriceRoutes);
 app.use("/api", monnifyRoutes);
 app.use("/api", megamaintenanceRoutes);
+app.use("/api", storeFrontRoutes);
 
 app.use("/api/v2", getUser, apiV2Routes);
 app.use("/api/v2/admin", getAdmin, apiV2AdminRoutes);

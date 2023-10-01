@@ -544,7 +544,7 @@ const calWalBal_analysis = async (req, res) => {
 };
 
 // POST route to populate BucketUsage for a specific day
-const populateBucketUsage = async () => {
+const populateBucketUsage = async (req, res) => {
   try {
     const currentDate = new Date();
 
@@ -557,6 +557,7 @@ const populateBucketUsage = async () => {
 
     // Find the transactions for the specified day
     const transactions = await transactionHistory.find({
+      status: "success",
       createdAt: {
         $gte: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
         $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,

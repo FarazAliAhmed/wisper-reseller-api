@@ -41,6 +41,10 @@ const transactionHistorySchema = new Schema(
       type: String,
       maxlength: 10,
     },
+    gloB: {
+      type: String,
+      default: null,
+    },
     status: {
       type: String,
       maxlength: 20,

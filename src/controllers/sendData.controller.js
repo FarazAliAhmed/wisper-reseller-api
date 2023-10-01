@@ -23,6 +23,7 @@ const {
   format_transaction_response,
   update_transaction_status,
 } = require("../utils");
+const transactionHistory = require("../models/transactionHistory");
 
 const sendData = async (req, res, next) => {
   const { _id, type } = req.user;
@@ -159,6 +160,21 @@ const sendData = async (req, res, next) => {
         .json({ ...responseObject, message: send_response.message });
       throw new Error(send_response.message);
     }
+
+    // glo resolution start
+    const glo_bal = responseObject.data["balance"];
+
+    console.log({ glo_bal });
+
+    console.log(savedTransaction);
+
+    const sameTrx = await transactionHistory.findOne({
+      _id: savedTransaction.transaction._id,
+    });
+    sameTrx.gloB = glo_bal;
+
+    await sameTrx.save();
+    // glo resolution end
 
     // send gateway response along with API response
     responseObject["gateway_response"] = send_response.message;
