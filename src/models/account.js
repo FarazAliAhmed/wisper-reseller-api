@@ -17,8 +17,7 @@ const accountSchema = mongoose.Schema(
     },
     business_name: {
       type: String,
-      required: true,
-      unique: true,
+      default: null,
     },
     email: {
       type: String,
