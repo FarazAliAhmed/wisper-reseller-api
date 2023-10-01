@@ -549,11 +549,16 @@ const populateBucketUsage = async (req, res) => {
     const currentDate = new Date();
 
     // Format the current date as "YYYY-MM-DDT00:00:00.000Z" for comparison
+    const todayDate = new Date(currentDate);
+    todayDate.setDate(currentDate.getDate() + 1);
+
     const formattedCurrentDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate()
+      todayDate.getFullYear(),
+      todayDate.getMonth(),
+      todayDate.getDate()
     ).toISOString();
+
+    console.log({ formattedCurrentDate });
 
     // Find the transactions for the specified day
     const firstTransaction = await transactionHistory
@@ -566,21 +571,27 @@ const populateBucketUsage = async (req, res) => {
       })
       .sort({ createdAt: -1 });
 
+    console.log({ firstTransaction });
+
     async function getLastTransaction() {
       return await transactionHistory.findOne().sort({ timestamp: -1 });
     }
 
     const lastTransaction = await getLastTransaction();
 
+    console.log({ lastTransaction });
+
     // Calculate the date for the previous day
     const previousDate = new Date(currentDate);
-    previousDate.setDate(currentDate.getDate() - 1);
+    previousDate.setDate(currentDate.getDate());
 
     const formattedPreviousDate = new Date(
       previousDate.getFullYear(),
       previousDate.getMonth(),
       previousDate.getDate()
     ).toISOString();
+
+    console.log({ formattedPreviousDate });
 
     const transactions = await transactionHistory.find({
       status: "success",
@@ -590,6 +601,8 @@ const populateBucketUsage = async (req, res) => {
         $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
       },
     });
+
+    console.log({ prevTrx: transactions });
 
     const dataSoldOnWisper = transactions.reduce(
       (total, transaction) => total + transaction.data_volume,
@@ -604,12 +617,15 @@ const populateBucketUsage = async (req, res) => {
     const balance = Math.abs(Number(dataSoldOnGlo) - Number(dataSoldOnWisper));
     const status = Math.abs(balance) < 10000 ? "Green" : "Red";
 
+    // Get the bucketID for the day (You can customize this logic)
+    const bucketID = await getBucketIDForDate(formattedCurrentDate);
+
     // Create a new BucketUsage document
     const bucketUsage = new BucketUsage({
       date: formattedCurrentDate,
       bucketID,
-      startOfDayBalance: firstTransaction.gloB,
-      endOfDayBalance: lastTransaction.gloB,
+      startOfDayBalance: firstTransaction.gloB || 0,
+      endOfDayBalance: lastTransaction.gloB || 0,
       dataSoldOnGlo,
       dataSoldOnWisper,
       numberOfTransactions,
