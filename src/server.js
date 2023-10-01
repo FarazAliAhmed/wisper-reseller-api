@@ -54,10 +54,10 @@ app.use("/api/v2", getUser, apiV2Routes);
 app.use("/api/v2/admin", getAdmin, apiV2AdminRoutes);
 app.use("/hook", hookRoute);
 
-cron.schedule("*/5 * * * *", async () => {
+cron.schedule("*/1 * * * *", async () => {
   try {
     await populateBucketUsage();
-    console.log("populateBucketUsage executed every 5 seconds.");
+    console.log("populateBucketUsage executed every 1 minutes.");
   } catch (error) {
     console.error("Error executing populateBucketUsage:", error);
   }

@@ -558,7 +558,7 @@ const populateBucketUsage = async (req, res) => {
       todayDate.getDate()
     ).toISOString();
 
-    console.log({ formattedCurrentDate });
+    // console.log({ formattedCurrentDate });
 
     // Find the transactions for the specified day
     const firstTransaction = await transactionHistory
@@ -572,7 +572,7 @@ const populateBucketUsage = async (req, res) => {
       })
       .sort({ createdAt: -1 });
 
-    console.log({ firstTransaction });
+    // console.log({ firstTransaction });
 
     const previousDate = new Date(currentDate);
     previousDate.setDate(currentDate.getDate());
@@ -583,7 +583,7 @@ const populateBucketUsage = async (req, res) => {
       previousDate.getDate()
     ).toISOString();
 
-    console.log({ formattedPreviousDate });
+    // console.log({ formattedPreviousDate });
 
     const lastTransaction = await transactionHistory
       .findOne({
@@ -596,7 +596,7 @@ const populateBucketUsage = async (req, res) => {
       })
       .sort({ createdAt: -1 });
 
-    console.log({ lastTransaction });
+    // console.log({ lastTransaction });
 
     // Calculate the date for the previous day
 
@@ -609,7 +609,7 @@ const populateBucketUsage = async (req, res) => {
       },
     });
 
-    console.log({ prevTrx: transactions });
+    // console.log({ prevTrx: transactions });
 
     const dataSoldOnWisper = transactions.reduce(
       (total, transaction) => total + transaction.data_volume,
@@ -618,9 +618,13 @@ const populateBucketUsage = async (req, res) => {
 
     const numberOfTransactions = transactions.length;
 
-    const dataSoldOnGlo = Math.abs(
-      Number(firstTransaction.gloB) - Number(lastTransaction.gloB)
-    );
+    let dataSoldOnGlo = Math.abs(Number(firstTransaction.gloB));
+
+    if (lastTransaction) {
+      dataSoldOnGlo = Math.abs(
+        Number(firstTransaction.gloB) - Number(lastTransaction.gloB)
+      );
+    }
 
     const balance = Math.abs(Number(dataSoldOnGlo) - Number(dataSoldOnWisper));
     const status = Math.abs(balance) < 10000 ? "Green" : "Red";
@@ -632,8 +636,8 @@ const populateBucketUsage = async (req, res) => {
     const bucketUsage = new BucketUsage({
       date: formattedCurrentDate,
       bucketID,
-      startOfDayBalance: firstTransaction.gloB || 0,
-      endOfDayBalance: lastTransaction.gloB || 0,
+      startOfDayBalance: firstTransaction ? Number(firstTransaction.gloB) : 0,
+      endOfDayBalance: lastTransaction ? Number(lastTransaction.gloB) : 0,
       dataSoldOnGlo,
       dataSoldOnWisper,
       numberOfTransactions,
