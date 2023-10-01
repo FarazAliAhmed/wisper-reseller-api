@@ -561,16 +561,14 @@ const populateBucketUsage = async (req, res) => {
     // console.log({ formattedCurrentDate });
 
     // Find the transactions for the specified day
-    const firstTransaction = await transactionHistory
-      .findOne({
-        status: "success",
-        network_provider: "glo",
-        createdAt: {
-          $gte: `${formattedCurrentDate.slice(0, 10)}T20:00:00.000Z`,
-          $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
-        },
-      })
-      .sort({ createdAt: -1 });
+    const firstTransaction = await transactionHistory.findOne({
+      status: "success",
+      network_provider: "glo",
+      createdAt: {
+        $gte: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
+        $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
+      },
+    });
 
     // console.log({ firstTransaction });
 
@@ -585,27 +583,24 @@ const populateBucketUsage = async (req, res) => {
 
     // console.log({ formattedPreviousDate });
 
-    // this is the last day first transaction
-    // which will be substracted from the next day first transaction
     const lastTransaction = await transactionHistory.findOne({
       status: "success",
       network_provider: "glo",
       createdAt: {
-        $gte: `${formattedCurrentDate.slice(0, 10)}T16:00:00.000Z`,
-        $lt: `${formattedCurrentDate.slice(0, 10)}T19:59:59.999Z`,
+        $gte: `${formattedPreviousDate.slice(0, 10)}T00:00:00.000Z`,
+        $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
       },
     });
 
     // console.log({ lastTransaction });
 
     // Calculate the date for the previous day
-
     const transactions = await transactionHistory.find({
       status: "success",
       network_provider: "glo",
       createdAt: {
-        $gte: `${formattedCurrentDate.slice(0, 10)}T16:00:00.000Z`,
-        $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
+        $gte: `${formattedPreviousDate.slice(0, 10)}T00:00:00.000Z`,
+        $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
       },
     });
 
@@ -655,6 +650,27 @@ const populateBucketUsage = async (req, res) => {
     console.error(error);
 
     // res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getBucketUsage = async (req, res) => {
+  try {
+    const { limit = 10, page = 1 } = req.query;
+    const skip = (page - 1) * limit;
+
+    // Query the database for paginated bucket usage records
+    const bucketUsage = await BucketUsage.find()
+      .skip(skip)
+      .limit(parseInt(limit))
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(bucketUsage);
+  } catch (error) {
+    console.error("Error fetching paginated bucket usage records:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -813,4 +829,5 @@ module.exports = {
   calWalBal_analysis,
   populateBucketUsage,
   populateWalletUsage,
+  getBucketUsage,
 };

@@ -18,6 +18,10 @@ const storeFrontSchema = new Schema({
     type: String,
     default: null,
   },
+  storeMaintenance: {
+    type: Boolean,
+    default: true,
+  },
   storeColor: {
     type: String,
     default: null,

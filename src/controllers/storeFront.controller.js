@@ -1,11 +1,28 @@
+const { Account } = require("../models/account");
 const StoreFront = require("../models/storeFront");
 
 // Create a new store front
 exports.createStoreFront = async (req, res) => {
   try {
-    const newStoreFront = new StoreFront(req.body);
-    const savedStoreFront = await newStoreFront.save();
-    res.status(201).json(savedStoreFront);
+    const accounts = await Account.find({
+      _id: { $exists: true },
+      username: { $exists: true },
+    });
+
+    for (const account of accounts) {
+      const { _id, username } = account;
+
+      const storeFront = new StoreFront({
+        business_id: _id.toString(),
+        storeName: username,
+      });
+
+      // Save the store front to the database
+      await storeFront.save();
+      console.log(`Store front created for ${username}`);
+    }
+
+    res.status(201).json("Store fronts created for all accounts.");
   } catch (error) {
     console.error("Error creating store front:", error);
     res.status(500).json({ error: "Error creating store front" });
