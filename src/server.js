@@ -57,7 +57,7 @@ app.use("/hook", hookRoute);
 cron.schedule("0 1 * * *", async () => {
   try {
     await populateBucketUsage();
-    console.log("populateBucketUsage executed every 1 minutes.");
+    console.log("populateBucketUsage executed every 1 am.");
   } catch (error) {
     console.error("Error executing populateBucketUsage:", error);
   }

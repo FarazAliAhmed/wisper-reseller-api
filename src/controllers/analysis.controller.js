@@ -585,16 +585,14 @@ const populateBucketUsage = async (req, res) => {
 
     // console.log({ formattedPreviousDate });
 
-    const lastTransaction = await transactionHistory
-      .findOne({
-        status: "success",
-        network_provider: "glo",
-        createdAt: {
-          $gte: `${formattedPreviousDate.slice(0, 10)}T00:00:00.000Z`,
-          $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
-        },
-      })
-      .sort({ createdAt: -1 });
+    const lastTransaction = await transactionHistory.findOne({
+      status: "success",
+      network_provider: "glo",
+      createdAt: {
+        $gte: `${formattedPreviousDate.slice(0, 10)}T00:00:00.000Z`,
+        $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
+      },
+    });
 
     // console.log({ lastTransaction });
 
