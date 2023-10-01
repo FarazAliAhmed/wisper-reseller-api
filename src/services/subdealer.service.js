@@ -45,8 +45,8 @@ class SubDealerService {
 
     const Subject = "Welcome to the Wisper Dealer Network!";
     const TextBody =
-      `Dear ${subdealer.fullName},\n\n` +
-      `Welcome to the Wisper Dealer Network! We're thrilled to have you on board as a sub-dealer with [Your Company Name]. Your account is now ready, and you can start accessing our platform right away.\n\n` +
+      `Dear ${subdealer.name},\n\n` +
+      `Welcome to the Wisper Dealer Network! We're thrilled to have you on board as an agent with Wisper NG. Your account is now ready, and you can start accessing our platform right away.\n\n` +
       `Here are your login details:\n\n` +
       `Username: ${subdealer.username}\n` +
       `Email: ${subdealer.email}\n` +
