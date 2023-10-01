@@ -564,6 +564,7 @@ const populateBucketUsage = async (req, res) => {
     const firstTransaction = await transactionHistory
       .findOne({
         status: "success",
+        network_provider: "glo",
         createdAt: {
           $gte: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
           $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
@@ -573,15 +574,6 @@ const populateBucketUsage = async (req, res) => {
 
     console.log({ firstTransaction });
 
-    async function getLastTransaction() {
-      return await transactionHistory.findOne().sort({ timestamp: -1 });
-    }
-
-    const lastTransaction = await getLastTransaction();
-
-    console.log({ lastTransaction });
-
-    // Calculate the date for the previous day
     const previousDate = new Date(currentDate);
     previousDate.setDate(currentDate.getDate());
 
@@ -592,6 +584,21 @@ const populateBucketUsage = async (req, res) => {
     ).toISOString();
 
     console.log({ formattedPreviousDate });
+
+    const lastTransaction = await transactionHistory
+      .findOne({
+        status: "success",
+        network_provider: "glo",
+        createdAt: {
+          $gte: `${formattedPreviousDate.slice(0, 10)}T00:00:00.000Z`,
+          $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
+        },
+      })
+      .sort({ createdAt: -1 });
+
+    console.log({ lastTransaction });
+
+    // Calculate the date for the previous day
 
     const transactions = await transactionHistory.find({
       status: "success",
