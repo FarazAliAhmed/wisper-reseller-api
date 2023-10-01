@@ -566,7 +566,7 @@ const populateBucketUsage = async (req, res) => {
         status: "success",
         network_provider: "glo",
         createdAt: {
-          $gte: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
+          $gte: `${formattedCurrentDate.slice(0, 10)}T20:00:00.000Z`,
           $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
         },
       })
@@ -585,12 +585,14 @@ const populateBucketUsage = async (req, res) => {
 
     // console.log({ formattedPreviousDate });
 
+    // this is the last day first transaction
+    // which will be substracted from the next day first transaction
     const lastTransaction = await transactionHistory.findOne({
       status: "success",
       network_provider: "glo",
       createdAt: {
-        $gte: `${formattedPreviousDate.slice(0, 10)}T00:00:00.000Z`,
-        $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
+        $gte: `${formattedCurrentDate.slice(0, 10)}T16:00:00.000Z`,
+        $lt: `${formattedCurrentDate.slice(0, 10)}T19:59:59.999Z`,
       },
     });
 
@@ -602,8 +604,8 @@ const populateBucketUsage = async (req, res) => {
       status: "success",
       network_provider: "glo",
       createdAt: {
-        $gte: `${formattedPreviousDate.slice(0, 10)}T00:00:00.000Z`,
-        $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
+        $gte: `${formattedCurrentDate.slice(0, 10)}T16:00:00.000Z`,
+        $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
       },
     });
 
