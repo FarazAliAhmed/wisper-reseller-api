@@ -17,15 +17,21 @@ const storeFrontHistorySchema = new Schema(
       type: String,
       required: true,
     },
+    desc: {
+      type: String,
+      default: null,
+    },
     wallet: {
       type: Number,
       default: 0,
     },
     data_volume: {
       type: Number,
+      default: null,
     },
     price: {
       type: Number,
+      default: null,
     },
     network: {
       type: String,
