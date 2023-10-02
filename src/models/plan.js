@@ -21,7 +21,7 @@ const Plan = new Schema(
     },
     selling_price: {
       type: Number,
-      required: true,
+      default: null,
     },
     volume: {
       type: Number,

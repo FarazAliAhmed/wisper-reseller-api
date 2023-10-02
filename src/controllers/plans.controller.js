@@ -195,10 +195,11 @@ const updatePlanUser = async (req, res) => {
 
     planToUpdate.selling_price = req.body.price;
 
-    await user.save();
+    // await user.save();
 
     res.json(user.plans);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -222,7 +223,7 @@ const updateSellingPlan = async (req, res) => {
       planToUpdate.selling_price = req.body.selling_price;
     }
 
-    await user.save();
+    // await user.save();
 
     res.json(user.plans);
   } catch (error) {
