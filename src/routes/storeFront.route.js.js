@@ -13,8 +13,12 @@ const router = express.Router();
 
 router.post("/create-all-store-fronts", getAdmin, createStoreFront);
 router.get("/store-fronts/:business_id", getUser, getStoreFrontByBusinessId);
-router.get("/store-fronts/:username", getUser, getStoreFrontByUserName);
+router.get(
+  "/store-fronts-username/:username",
+  getUser,
+  getStoreFrontByUserName
+);
 router.get("/store-fronts", getAdmin, getAllStoreFronts);
-router.put("/store-fronts-username/:business_id", getUser, updateStoreFront);
+router.put("/store-fronts/:business_id", getUser, updateStoreFront);
 
 module.exports = router;
