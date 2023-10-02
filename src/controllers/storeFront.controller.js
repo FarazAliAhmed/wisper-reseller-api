@@ -44,6 +44,21 @@ exports.getStoreFrontByBusinessId = async (req, res) => {
   }
 };
 
+// Get a store front by business_id
+exports.getStoreFrontByUserName = async (req, res) => {
+  const userName = req.params.username;
+  try {
+    const storeFront = await StoreFront.findOne({ storeName: userName });
+    if (!storeFront) {
+      return res.status(404).json({ error: "Store front not found" });
+    }
+    res.status(200).json(storeFront);
+  } catch (error) {
+    console.error("Error getting store front by business_id:", error);
+    res.status(500).json({ error: "Error getting store front" });
+  }
+};
+
 // Get all store fronts
 exports.getAllStoreFronts = async (req, res) => {
   try {

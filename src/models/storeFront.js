@@ -13,6 +13,7 @@ const storeFrontSchema = new Schema({
   },
   storeName: {
     type: String,
+    unique: true,
     default: null,
   },
   storeImg: {
