@@ -31,7 +31,7 @@ exports.createStoreFront = async (req, res) => {
 
 exports.checkStoreFrontUserName = async (req, res) => {
   try {
-    const { username } = req.body;
+    const { username } = req.params;
 
     const account = await Account.findOne({
       username: username,
