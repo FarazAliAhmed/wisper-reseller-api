@@ -6,12 +6,9 @@ const Plan = new Schema(
     plan_id: {
       type: Number,
       required: true,
-      unique: true,
-     
     },
     network: {
       type: String,
-      
       required: true,
     },
     plan_type: {
@@ -19,6 +16,10 @@ const Plan = new Schema(
       required: true,
     },
     price: {
+      type: Number,
+      required: true,
+    },
+    selling_price: {
       type: Number,
       required: true,
     },

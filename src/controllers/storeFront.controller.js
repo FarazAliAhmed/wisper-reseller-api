@@ -29,6 +29,25 @@ exports.createStoreFront = async (req, res) => {
   }
 };
 
+exports.checkStoreFrontUserName = async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    const account = await Account.findOne({
+      username: username,
+    });
+
+    if (account) {
+      return res.status(201).json(true);
+    } else {
+      return res.status(201).json(false);
+    }
+  } catch (error) {
+    console.error("Error creating store front:", error);
+    res.status(500).json({ error: "Error creating store front" });
+  }
+};
+
 // Get a store front by business_id
 exports.getStoreFrontByBusinessId = async (req, res) => {
   const businessId = req.params.business_id;

@@ -193,6 +193,35 @@ const updatePlanUser = async (req, res) => {
       planToUpdate.validity = req.body.validity;
     }
 
+    planToUpdate.selling_price = req.body.price;
+
+    await user.save();
+
+    res.json(user.plans);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const updateSellingPlan = async (req, res) => {
+  try {
+    const user = await Account.findById(req.params.userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const planToUpdate = user.plans.id(req.body.planId);
+
+    if (!planToUpdate) {
+      return res.status(404).json({ error: "Plan not found" });
+    }
+
+    // Update the plan fields if provided in the request body
+    if (req.body.selling_price) {
+      planToUpdate.selling_price = req.body.selling_price;
+    }
+
     await user.save();
 
     res.json(user.plans);
@@ -265,4 +294,5 @@ module.exports = {
   getPlansByUserId,
   deletePlanUser,
   updatePlanUser,
+  updateSellingPlan,
 };
