@@ -113,7 +113,13 @@ const sFAllocate = async (req, res, next) => {
     console.log({ _id, network, volume });
 
     // check account balance and debit
-    const debitAccount = await debitStoreFrontMegaWallet(_id, network, volume);
+    const debitAccount = await debitStoreFrontMegaWallet(
+      business_id,
+      network,
+      phone_number,
+      price,
+      volume
+    );
 
     if (debitAccount.error) {
       res

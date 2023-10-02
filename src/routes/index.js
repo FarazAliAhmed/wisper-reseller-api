@@ -205,7 +205,7 @@ router.post("/admin/bucketIDSwitchOne", bucketIDSwitchOne);
 
 // PLANS ROUTE
 router.get("/admin/plans_user/:userId", getPlansByUserId);
-router.post("/admin/plans_user/:userId", getAdmin, createPlanUser);
+router.post("/admin/plans_user/:userId", createPlanUser);
 router.post("/admin/plans_user/:userId/:planId", updatePlanUser);
 router.post("/admin/update_selling/:userId", updateSellingPlan);
 router.delete("/admin/plans_user/:userId/:planId", getAdmin, deletePlanUser);

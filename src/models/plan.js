@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 const Plan = new Schema(
   {
+    business: {
+      type: String,
+      required: true,
+    },
     plan_id: {
       type: Number,
       required: true,
@@ -11,6 +15,7 @@ const Plan = new Schema(
       type: String,
       required: true,
     },
+
     plan_type: {
       type: String,
       required: true,
@@ -37,7 +42,7 @@ const Plan = new Schema(
       required: true,
     },
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 );
 
 Plan.virtual("size")

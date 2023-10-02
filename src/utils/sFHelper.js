@@ -1,4 +1,5 @@
 import dataBalance from "../models/dataBalance";
+import megaPurchaseHistory from "../models/megaPurchaseHistory";
 
 const Flutterwave = require("flutterwave-node-v3");
 
@@ -42,7 +43,9 @@ export function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
 export async function debitStoreFrontMegaWallet(
   businessId,
   network,
-  dataVolume
+  dataVolume,
+  phone_number,
+  price
 ) {
   try {
     // Find the balance document for the specified business
@@ -55,6 +58,8 @@ export async function debitStoreFrontMegaWallet(
         message: "Balance not found for the business",
       };
     }
+
+    const oldUser_bal = balance.mega_wallet[network];
 
     // Check if the mega wallet for the specified network has enough balance
     const networkBalance = balance.mega_wallet[network];
@@ -70,6 +75,20 @@ export async function debitStoreFrontMegaWallet(
     balance.mega_wallet[network] -= Number(dataVolume);
 
     await balance.save();
+
+    const purchase = new megaPurchaseHistory({
+      business_id: businessId,
+      username: phone_number,
+      amount: price,
+      volume: dataVolume,
+      channel: "Store Front",
+      old_bal: oldUser_bal,
+      new_bal: balance.mega_wallet[network],
+      network: network,
+      status: "success",
+    });
+
+    await purchase.save();
 
     // Return the updated balance in the specified format
     return {

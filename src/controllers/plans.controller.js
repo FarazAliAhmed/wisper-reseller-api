@@ -12,6 +12,7 @@ const {
 
 const { loadPlans } = require("../scripts/loader");
 const { Account } = require("../models/account");
+const plan = require("../models/plan");
 
 const getAllPlans = async (req, res) => {
   const { plan, message, error } = await getAll();
@@ -116,13 +117,15 @@ const deleteAllPlans = async (req, res) => {
 // Get plans by user ID
 const getPlansByUserId = async (req, res) => {
   try {
-    const user = await Account.findById(req.params.userId);
+    const userPlan = await plan
+      .find({ business: req.params.userId })
+      .sort({ createdAt: -1 });
 
-    if (!user) {
+    if (!userPlan) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json(user.plans);
+    res.json(userPlan);
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error", msg: error });
   }
@@ -136,20 +139,20 @@ const createPlanUser = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const newPlan = {
+    const newPlan = new plan({
       plan_id: req.body.plan_id,
+      business: req.params.userId,
       network: req.body.network,
       plan_type: req.body.plan_type,
       price: req.body.price,
       volume: req.body.volume,
       unit: req.body.unit,
       validity: req.body.validity,
-    };
+    });
 
-    user.plans.push(newPlan);
-    await user.save();
+    await newPlan.save();
 
-    res.status(201).json(user.plans);
+    res.status(201).json(newPlan);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error", msg: error });
@@ -158,13 +161,10 @@ const createPlanUser = async (req, res) => {
 
 const updatePlanUser = async (req, res) => {
   try {
-    const user = await Account.findById(req.params.userId);
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const planToUpdate = user.plans.id(req.params.planId);
+    const planToUpdate = await plan.findOne({
+      business: req.params.userId,
+      plan_id: req.params.planId,
+    });
 
     if (!planToUpdate) {
       return res.status(404).json({ error: "Plan not found" });
@@ -195,9 +195,9 @@ const updatePlanUser = async (req, res) => {
 
     planToUpdate.selling_price = req.body.price;
 
-    // await user.save();
+    await planToUpdate.save();
 
-    res.json(user.plans);
+    res.json(planToUpdate);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -206,26 +206,22 @@ const updatePlanUser = async (req, res) => {
 
 const updateSellingPlan = async (req, res) => {
   try {
-    const user = await Account.findById(req.params.userId);
+    const planData = await plan.findOne({
+      business: req.params.userId,
+      plan_id: req.body.planId,
+    });
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
+    if (!planData) {
+      return res.status(404).json({ error: "Plan not found for User" });
     }
 
-    const planToUpdate = user.plans.id(req.body.planId);
+    // Update the plan fields as needed
+    planData.selling_price = req.body.selling_price;
 
-    if (!planToUpdate) {
-      return res.status(404).json({ error: "Plan not found" });
-    }
+    // Save the user to persist the changes
+    await planData.save();
 
-    // Update the plan fields if provided in the request body
-    if (req.body.selling_price) {
-      planToUpdate.selling_price = req.body.selling_price;
-    }
-
-    // await user.save();
-
-    res.json(user.plans);
+    res.json(planData);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -234,23 +230,23 @@ const updateSellingPlan = async (req, res) => {
 
 const deletePlanUser = async (req, res) => {
   try {
-    const user = await Account.findById(req.params.userId);
+    const planData = await plan.findOne({
+      business: req.params.userId,
+      plan_id: req.body.planId,
+    });
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const planToDelete = user.plans.id(req.params.planId);
-
-    if (!planToDelete) {
+    if (!planData) {
       return res.status(404).json({ error: "Plan not found" });
     }
 
-    planToDelete.remove();
-    await user.save();
+    await plan.deleteOne({
+      business: req.params.userId,
+      plan_id: req.body.planId,
+    });
 
     res.sendStatus(204);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
