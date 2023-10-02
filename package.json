@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
+    "flutterwave-node-v3": "^1.1.6",
     "glob": "^8.0.3",
     "isodate": "^0.1.4",
     "joi": "^17.6.0",

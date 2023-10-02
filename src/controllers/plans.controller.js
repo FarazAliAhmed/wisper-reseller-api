@@ -212,7 +212,7 @@ const updateSellingPlan = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const planToUpdate = user.plans.id(req.body.planId);
+    const planToUpdate = user.plans.plan_id(req.body.planId);
 
     if (!planToUpdate) {
       return res.status(404).json({ error: "Plan not found" });
@@ -227,6 +227,7 @@ const updateSellingPlan = async (req, res) => {
 
     res.json(user.plans);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

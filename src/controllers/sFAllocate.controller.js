@@ -24,6 +24,10 @@ const {
   update_transaction_status,
 } = require("../utils");
 const transactionHistory = require("../models/transactionHistory");
+const {
+  verifyFlutterWaveTransaction,
+  debitStoreFrontMegaWallet,
+} = require("../utils/sFHelper");
 
 const sFAllocate = async (req, res, next) => {
   const { _id, type } = req.user;
@@ -46,6 +50,7 @@ const sFAllocate = async (req, res, next) => {
     allocate_for_business,
     business_id,
     price,
+    business,
     volume,
   } = req.body;
 
@@ -93,18 +98,22 @@ const sFAllocate = async (req, res, next) => {
 
   // Transaction block
   try {
-    // check account balance and debit
-    const debitAccount = await debit_account_balance(
-      _id,
-      planDetails,
-      type,
-      price,
-      volume
+    // verify flutter wave
+    const flwVerify = verifyFlutterWaveTransaction(
+      transactionId,
+      expectedAmount,
+      expectedCurrency
     );
 
-    // console.log("main plan detalsjshj")
+    if (flwVerify.error) {
+      res.status(500).json({ message: flwVerify.message });
+      throw new Error(flwVerify.message);
+    }
 
-    // console.log("debit", debitAccount)
+    console.log({ _id, network, volume });
+
+    // check account balance and debit
+    const debitAccount = await debitStoreFrontMegaWallet(_id, network, volume);
 
     if (debitAccount.error) {
       res
@@ -130,6 +139,7 @@ const sFAllocate = async (req, res, next) => {
       responseObject,
       volume || ""
     );
+
     if (savedTransaction.error) {
       res
         .status(400)
@@ -144,13 +154,6 @@ const sFAllocate = async (req, res, next) => {
       type: planDetails.plan_type,
     });
     if (send_response?.error) {
-      // client.sendEmail({
-      //   From: "admin@wisper.ng",
-      //   To: "Arinzeebuka@gmail.com",
-      //   Subject: `${planDetails.network} service is down on wisper`,
-      //   TextBody: `${planDetails.network} server is currently down`,
-      // });
-
       responseObject.status = "failed";
       delete responseObject.new_balance;
       await update_transaction_status(responseObject.transaction_ref, "failed");

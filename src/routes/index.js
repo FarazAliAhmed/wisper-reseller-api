@@ -74,6 +74,7 @@ const {
   createPlanUser,
   updatePlanUser,
   deletePlanUser,
+  updateSellingPlan,
 } = require("../controllers/plans.controller");
 
 const { getNetworks } = require("../controllers/networks.controller");
@@ -206,7 +207,7 @@ router.post("/admin/bucketIDSwitchOne", bucketIDSwitchOne);
 router.get("/admin/plans_user/:userId", getPlansByUserId);
 router.post("/admin/plans_user/:userId", getAdmin, createPlanUser);
 router.post("/admin/plans_user/:userId/:planId", updatePlanUser);
-router.post("/admin/update_selling/:userId", getUser, updatePlanUser);
+router.post("/admin/update_selling/:userId", updateSellingPlan);
 router.delete("/admin/plans_user/:userId/:planId", getAdmin, deletePlanUser);
 
 router.post("/admin/admin/create", getAdmin, createAdmin);

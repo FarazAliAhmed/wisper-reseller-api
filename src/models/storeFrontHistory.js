@@ -3,52 +3,42 @@ const Schema = mongoose.Schema;
 
 const storeFrontHistorySchema = new Schema(
   {
-    storeId: {
+    name: {
       type: String,
       required: true,
     },
-    transaction_ref: {
-      type: String,
-      required: true,
-      unique: true,
-      index: true,
-    },
-    business_id: {
+    storeBusiness: {
       type: String,
       required: true,
     },
-    desc: {
+    phone: {
       type: String,
-      default: null,
-    },
-    wallet: {
-      type: Number,
-      default: 0,
-    },
-    data_volume: {
-      type: Number,
-      default: null,
+      required: true,
     },
     price: {
-      type: Number,
+      type: String,
+      default: null,
+    },
+    volume: {
+      type: String,
+      default: null,
+    },
+    status: {
+      type: String,
       default: null,
     },
     network: {
       type: String,
       default: null,
     },
-    old_bal: {
-      type: Number,
-      default: null,
-    },
-    new_bal: {
-      type: Number,
-      default: null,
-    },
-    status: {
+    date: {
       type: String,
-      maxlength: 20,
+      default: `${new Date()}`,
+    },
+    transaction_ref: {
+      type: String,
       required: true,
+      unique: true,
     },
   },
   { timestamps }
