@@ -623,7 +623,11 @@ const populateBucketUsage = async (req, res) => {
       );
     }
 
-    const balance = Math.abs(Number(dataSoldOnGlo) - Number(dataSoldOnWisper));
+    const dataWisperGB = (Number(dataSoldOnWisper) / 1000) * 1024;
+
+    const balance = Math.abs(
+      Number(dataSoldOnGlo) - Number(dataWisperGB)
+    ).toFixed(2);
     const status = Math.abs(balance) < 10000 ? "Green" : "Red";
 
     // Get the bucketID for the day (You can customize this logic)
@@ -636,7 +640,7 @@ const populateBucketUsage = async (req, res) => {
       startOfDayBalance: firstTransaction ? Number(firstTransaction.gloB) : 0,
       endOfDayBalance: lastTransaction ? Number(lastTransaction.gloB) : 0,
       dataSoldOnGlo,
-      dataSoldOnWisper,
+      dataSoldOnWisper: dataWisperGB.toFixed(2),
       numberOfTransactions,
       balance,
       status,
