@@ -56,6 +56,7 @@ app.use("/hook", hookRoute);
 
 // */1 * * * *"
 // ("0 1 * * *");
+// "0 3 * * *"
 cron.schedule("0 3 * * *", async () => {
   try {
     await populateBucketUsage();

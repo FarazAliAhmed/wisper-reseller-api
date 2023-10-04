@@ -608,10 +608,19 @@ const populateBucketUsage = async (req, res) => {
 
     // console.log({ prevTrx: transactions });
 
-    const dataSoldOnWisper = transactions.reduce(
-      (total, transaction) => total + transaction.data_volume,
-      0
-    ); // Calculate the total data sold on all providers
+    const dataSoldOnWisper = transactions.reduce((total, transaction) => {
+      let subtractAmount = 0;
+
+      if (transaction.data_volume === 200) {
+        subtractAmount = 5;
+      } else if (transaction.data_volume === 500) {
+        subtractAmount = 12;
+      }
+      // console.log(transaction.data_volume - subtractAmount, "mb");
+
+      return total + (transaction.data_volume - subtractAmount);
+    }, 0);
+    // Calculate the total data sold on all providers
 
     const numberOfTransactions = transactions.length;
 
