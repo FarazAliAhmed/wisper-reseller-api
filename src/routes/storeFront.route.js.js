@@ -12,7 +12,7 @@ const {
 const getUser = require("../utils/middleware/getUser");
 const router = express.Router();
 
-router.post("/create-all-store-fronts", getAdmin, createStoreFront);
+router.post("/create-all-store-fronts", createStoreFront);
 router.get("/check-store-username/:username", getUser, checkStoreFrontUserName);
 router.get("/store-fronts/:business_id", getUser, getStoreFrontByBusinessId);
 router.get(

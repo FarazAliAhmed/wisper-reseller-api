@@ -13,6 +13,10 @@ const storeFrontSchema = new Schema({
   },
   storeName: {
     type: String,
+    default: null,
+  },
+  storeUserName: {
+    type: String,
     unique: true,
     default: null,
   },

@@ -1,4 +1,5 @@
 const { Account } = require("../models/account");
+const storeFront = require("../models/storeFront");
 const StoreFront = require("../models/storeFront");
 
 // Create a new store front
@@ -10,11 +11,12 @@ exports.createStoreFront = async (req, res) => {
     });
 
     for (const account of accounts) {
-      const { _id, username } = account;
+      const { _id, username, name } = account;
 
       const storeFront = new StoreFront({
         business_id: _id.toString(),
-        storeName: username,
+        storeName: name,
+        storeUserName: username,
       });
 
       // Save the store front to the database
@@ -33,8 +35,8 @@ exports.checkStoreFrontUserName = async (req, res) => {
   try {
     const { username } = req.params;
 
-    const account = await Account.findOne({
-      username: username,
+    const account = await storeFront.findOne({
+      storeUserName: username,
     });
 
     if (account) {
@@ -43,8 +45,8 @@ exports.checkStoreFrontUserName = async (req, res) => {
       return res.status(201).json(false);
     }
   } catch (error) {
-    console.error("Error creating store front:", error);
-    res.status(500).json({ error: "Error creating store front" });
+    console.error("Error checking store front:", error);
+    res.status(500).json({ error: "Error checking store front" });
   }
 };
 
@@ -67,7 +69,7 @@ exports.getStoreFrontByBusinessId = async (req, res) => {
 exports.getStoreFrontByUserName = async (req, res) => {
   const userName = req.params.username;
   try {
-    const storeFront = await StoreFront.findOne({ storeName: userName });
+    const storeFront = await StoreFront.findOne({ storeUserName: userName });
     if (!storeFront) {
       return res.status(404).json({ error: "Store front not found" });
     }
