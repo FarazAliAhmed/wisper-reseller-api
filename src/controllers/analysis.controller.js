@@ -608,6 +608,11 @@ const populateBucketUsage = async (req, res) => {
 
     // console.log({ prevTrx: transactions });
 
+    const dataSoldOnWisper2 = transactions.reduce((total, transaction) => {
+      return total + transaction.data_volume;
+    }, 0);
+    // Calculate the total data sold on all providers
+
     const dataSoldOnWisper = transactions.reduce((total, transaction) => {
       let subtractAmount = 0;
 
@@ -633,9 +638,13 @@ const populateBucketUsage = async (req, res) => {
     }
 
     const dataWisperGB = (Number(dataSoldOnWisper) / 1000) * 1024;
+    const dataWisperGB2 = (Number(dataSoldOnWisper2) / 1000) * 1024;
 
     const balance = Math.abs(
       Number(dataSoldOnGlo) - Number(dataWisperGB)
+    ).toFixed(2);
+    const balance2 = Math.abs(
+      Number(dataSoldOnGlo) - Number(dataWisperGB2)
     ).toFixed(2);
     const status = Math.abs(balance) < 10000 ? "Green" : "Red";
 
@@ -652,6 +661,7 @@ const populateBucketUsage = async (req, res) => {
       dataSoldOnWisper: dataWisperGB.toFixed(2),
       numberOfTransactions,
       balance,
+      balance2,
       status,
     });
 

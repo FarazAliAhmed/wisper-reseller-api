@@ -35,6 +35,10 @@ const bucketUsageSchema = new Schema(
       type: Number,
       required: true,
     },
+    balance2: {
+      type: Number,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["Green", "Red"],
