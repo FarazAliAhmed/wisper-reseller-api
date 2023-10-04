@@ -653,7 +653,7 @@ const populateBucketUsage = async (req, res) => {
 
     // Create a new BucketUsage document
     const bucketUsage = new BucketUsage({
-      date: formattedCurrentDate,
+      date: formattedPreviousDate,
       bucketID,
       startOfDayBalance: firstTransaction ? Number(firstTransaction.gloB) : 0,
       endOfDayBalance: lastTransaction ? Number(lastTransaction.gloB) : 0,
