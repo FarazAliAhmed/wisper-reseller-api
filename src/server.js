@@ -70,21 +70,21 @@ cron.schedule("0 3 * * *", async () => {
   }
 });
 
+// Schedule for 12:01 AM (midnight)
 cron.schedule("1 0 * * *", async () => {
   try {
     await populateStartWalletUsage();
-
-    console.log("populateStartWalletUsage executed every 12:01 AM.");
+    console.log("populateStartWalletUsage executed at 12:01 AM.");
   } catch (error) {
     console.error("Error executing populateStartWalletUsage:", error);
   }
 });
 
-cron.schedule("59 23 * * ", async () => {
+// Schedule for 11:59 PM
+cron.schedule("59 23 * * *", async () => {
   try {
     await populateWalletUsage();
-
-    console.log("populateWalletUsage executed every  11:59 PM.");
+    console.log("populateWalletUsage executed at 11:59 PM.");
   } catch (error) {
     console.error("Error executing populateWalletUsage:", error);
   }
