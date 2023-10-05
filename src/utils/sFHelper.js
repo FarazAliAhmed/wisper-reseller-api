@@ -105,3 +105,69 @@ export async function debitStoreFrontMegaWallet(
     };
   }
 }
+
+export async function revertStoreFrontMegaWallet(
+  businessId,
+  network,
+  dataVolume,
+  phone_number,
+  price
+) {
+  try {
+    // Find the balance document for the specified business
+    const balance = await dataBalance.findOne({ business: businessId });
+
+    if (!balance) {
+      return {
+        error: true,
+        status: 404,
+        message: "Balance not found for the business",
+      };
+    }
+
+    const oldUser_bal = balance.mega_wallet[network];
+
+    // Check if the mega wallet for the specified network has enough balance
+    const networkBalance = balance.mega_wallet[network];
+    if (Number(networkBalance) < Number(dataVolume)) {
+      return {
+        error: true,
+        status: 400,
+        message: "Insufficient balance in the mega wallet for the network",
+      };
+    }
+
+    // Deduct the data volume from the mega wallet
+    balance.mega_wallet[network] += Number(dataVolume);
+
+    await balance.save();
+
+    const purchase = new megaPurchaseHistory({
+      business_id: businessId,
+      username: phone_number,
+      amount: price,
+      volume: dataVolume,
+      channel: "Store Front",
+      old_bal: oldUser_bal,
+      new_bal: balance.mega_wallet[network],
+      network: network,
+      status: "success",
+    });
+
+    await purchase.save();
+
+    // Return the updated balance in the specified format
+    return {
+      error: false,
+      status: 201,
+      balance: balance.balance,
+      debited: Number(dataVolume),
+    };
+  } catch (error) {
+    return {
+      error: true,
+      status: 500,
+      message: error.message,
+    };
+  }
+}

@@ -10,6 +10,8 @@ const {
   checkStoreFrontUserName,
 } = require("../controllers/storeFront.controller");
 const getUser = require("../utils/middleware/getUser");
+const SFSendData = require("../controllers/SFSendData.controller");
+const parseKey = require("../utils/middleware/parseKey");
 const router = express.Router();
 
 router.post("/create-all-store-fronts", createStoreFront);
@@ -22,5 +24,7 @@ router.get(
 );
 router.get("/store-fronts", getAdmin, getAllStoreFronts);
 router.put("/store-fronts/:business_id", getUser, updateStoreFront);
+
+router.post("/allocateData", parseKey, SFSendData);
 
 module.exports = router;
