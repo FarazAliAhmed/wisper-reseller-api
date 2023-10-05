@@ -74,19 +74,21 @@ cron.schedule("1 0 * * *", async () => {
   try {
     await populateStartWalletUsage();
 
-    console.log("populateStartWalletUsage executed every 12:01 AM.");
+    console.log("populateBucketUsage executed every 1 minutes.");
   } catch (error) {
-    console.error("Error executing populateStartWalletUsage:", error);
+    console.error("Error executing populateBucketUsage:", error);
   }
 });
 
-cron.schedule("59 23 * * ", async () => {
+cron.schedule("1 0 * * *", async () => {
   try {
+    await populateStartWalletUsage();
+
     await populateWalletUsage();
 
-    console.log("populateWalletUsage executed every  11:59 PM.");
+    console.log("populateBucketUsage executed every 1 minutes.");
   } catch (error) {
-    console.error("Error executing populateWalletUsage:", error);
+    console.error("Error executing populateBucketUsage:", error);
   }
 });
 
@@ -107,6 +109,59 @@ cron.schedule("59 23 * * ", async () => {
 // });
 
 // task2.start();
+
+// app.delete("/deletetrx", async (req, res) => {
+//   try {
+//     const transactionsToDelete = await transactionHistory.find().limit(70000);
+
+//     const transactionIdsToDelete = transactionsToDelete.map(
+//       (transaction) => transaction._id
+//     );
+
+//     await transactionHistory.deleteMany({
+//       _id: { $in: transactionIdsToDelete },
+//     });
+
+//     res.status(200).json({ message: "First 70000 transactions deleted" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "An error occurred" });
+//   }
+// });
+
+// app.delete("/deletetrx", async (req, res) => {
+//   try {
+//     // Find all Account documents
+//     const accounts = await Account.find();
+
+//     // Loop through each Account and create a corresponding dataBalance if it doesn't exist
+//     for (const account of accounts) {
+//       const businessId = account._id;
+
+//       // Check if a dataBalance document already exists for this businessId
+//       const existingDataBalance = await dataBalance.findOne({
+//         business: businessId,
+//       });
+
+//       if (!existingDataBalance) {
+//         // Create a new dataBalance document with the same business as the account _id
+//         const newDataBalance = new dataBalance({
+//           business: businessId,
+//         });
+
+//         // Save the new dataBalance document
+//         await newDataBalance.save();
+//       }
+//     }
+
+//     res
+//       .status(200)
+//       .json({ message: "Deleted all duplicates field", aggregationResult });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "An error occurred" });
+//   }
+// });
 
 app.use(errors());
 
