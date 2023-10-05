@@ -563,7 +563,7 @@ const populateBucketUsage = async (req, res) => {
     // console.log({ formattedCurrentDate });
 
     const previousDate = new Date(currentDate);
-    previousDate.setDate(currentDate.getDate());
+    previousDate.setDate(currentDate.getDate() - 1);
 
     const formattedPreviousDate = new Date(
       previousDate.getFullYear(),
@@ -574,7 +574,7 @@ const populateBucketUsage = async (req, res) => {
     // console.log({ formattedPreviousDate });
 
     // Find the transactions for the specified day
-    const firstTransaction = await transactionHistory
+    const lastTransaction = await transactionHistory
       .findOne({
         status: "success",
         network_provider: "glo",
@@ -587,7 +587,7 @@ const populateBucketUsage = async (req, res) => {
 
     // console.log({ firstTransaction });
 
-    const lastTransaction = await transactionHistory.findOne({
+    const firstTransaction = await transactionHistory.findOne({
       status: "success",
       network_provider: "glo",
       createdAt: {
