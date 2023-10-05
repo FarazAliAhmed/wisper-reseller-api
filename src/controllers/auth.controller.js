@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 var postmark = require("postmark");
 
 const authService = require("../services/auth.service");
+const { sendEmail } = require("../utils/email/transporter");
 const client = new postmark.ServerClient(process.env.POSTMARK);
 
 const handleLogin = async (req, res) => {
@@ -51,12 +52,18 @@ const forgotPassword = async (req, res) => {
       );
       const link = `${url}/reset-password/${oldUser.email}/${token}`;
 
-      client.sendEmail({
-        From: "admin@wisper.ng",
-        To: email,
-        Subject: "Reset Password Link",
-        TextBody: `Click on this link to reset your password or copy and paste on your browser if it doesn't work. This link is valid for 30mins ${link}`,
-      });
+      // client.sendEmail({
+      //   From: "admin@wisper.ng",
+      //   To: email,
+      //   Subject: "Reset Password Link",
+      //   TextBody: `Click on this link to reset your password or copy and paste on your browser if it doesn't work. This link is valid for 30mins ${link}`,
+      // });
+
+      await sendEmail(
+        email,
+        "Reset Password Link",
+        `Click on this link to reset your password or copy and paste on your browser if it doesn't work. This link is valid for 30mins ${link}`
+      );
 
       console.log(link);
       return res.json({ status: "User Exists!!", link: link });
