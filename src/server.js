@@ -70,22 +70,43 @@ cron.schedule("0 3 * * *", async () => {
   }
 });
 
-cron.schedule("*/1 * * * *", async () => {
-  try {
-    await populateStartWalletUsage();
-    console.log("populateStartWalletUsage executed every 1 minutes.");
-  } catch (error) {
-    console.error("Error executing populateStartWalletUsage:", error);
-  }
+// cron.schedule("*/30 * * * * *", async () => {
+//   try {
+//     await populateStartWalletUsage();
+//     console.log("populateStartWalletUsage executed every 1 minutes.");
+//   } catch (error) {
+//     console.error("Error executing populateStartWalletUsage:", error);
+//   }
+// });
+
+// cron.schedule("*/1 * * * *", async () => {
+//   try {
+//     await populateWalletUsage();
+//     console.log("populateWalletUsage executed every 2 minutes.");
+//   } catch (error) {
+//     console.error("Error executing populateWalletUsage:", error);
+//   }
+// });
+
+// Define the first cron job (task1) to run every minute
+const task1 = cron.schedule("* * * * *", async () => {
+  console.log("Task 1 executed");
+  await populateStartWalletUsage();
+  task1.stop();
 });
-cron.schedule("*/2 * * * *", async () => {
-  try {
-    await populateWalletUsage();
-    console.log("populateWalletUsage executed every 2 minutes.");
-  } catch (error) {
-    console.error("Error executing populateWalletUsage:", error);
-  }
+
+// Start task1
+task1.start();
+
+// Define the second cron job (task2) to run immediately after task1
+const task2 = cron.schedule("* * * * *", async () => {
+  console.log("Task 2 executed");
+  await populateWalletUsage();
+  task2.stop();
 });
+
+// Start task2 immediately after defining it
+task2.start();
 
 // app.delete("/deletetrx", async (req, res) => {
 //   try {

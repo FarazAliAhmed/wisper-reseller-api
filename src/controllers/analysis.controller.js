@@ -838,15 +838,23 @@ const populateWalletUsage = async (req, res) => {
       return total + Number(transaction.wallet_balance);
     }, 0);
 
-    // Create a new BucketUsage document
-    const lastWalletUsage = await WalletUsage.findOne().sort({ createdAt: -1 });
+    // Find the last WalletUsage document for the current date
+    const lastWalletUsage = await WalletUsage.findOne({})
+      .sort({ createdAt: -1 })
+      .exec();
 
+    if (!lastWalletUsage) {
+      // If there is no existing WalletUsage document for today, you can choose to handle this case
+      console.log("No WalletUsage document found for today.");
+      return;
+    }
     const calProWal =
       Number(lastWalletUsage.startOfDayBalance) +
       Number(allFundMH) -
       Number(tDPurchase);
 
     const updatedWalletUsage = {
+      startOfDayBalance: lastWalletUsage.startOfDayBalance,
       totalFunding: allFundMH.toFixed(2),
       totalDataPurchase: tDPurchase.toFixed(2),
       totalDataBought: tDBought.toFixed(2),
@@ -856,10 +864,18 @@ const populateWalletUsage = async (req, res) => {
     };
 
     // Use .update() to update the last WalletUsage document
-    await WalletUsage.updateOne(
-      { _id: lastWalletUsage._id },
-      { $set: updatedWalletUsage }
-    );
+
+    await WalletUsage.deleteOne().sort({ createdAt: -1 });
+
+    // await WalletUsage.updateOne(
+    //   { _id: lastWalletUsage._id },
+    //   { $set: updatedWalletUsage }
+    // );
+
+    const walletUsage = new WalletUsage(updatedWalletUsage);
+
+    // Save the WalletUsage document
+    await walletUsage.save();
 
     console.log("WalletUsage updated");
 

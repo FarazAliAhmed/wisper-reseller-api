@@ -120,3 +120,20 @@ exports.updateStoreFront = async (req, res) => {
     res.status(500).json({ error: "Error updating store front" });
   }
 };
+
+// Get all store fronts data
+exports.checkPhoneStoreFronts = async (req, res) => {
+  try {
+    const { phone } = req.params;
+
+    const sFData = await storeFrontHistory.findOne({ phone });
+
+    res.status(200).json(sFData.name);
+  } catch (error) {
+    console.error("Error getting all store fronts:", error);
+    res.status(500).json({
+      error: "Error getting store fronts data",
+      message: error.message,
+    });
+  }
+};
