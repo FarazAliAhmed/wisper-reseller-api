@@ -23,9 +23,9 @@ router.get(
   getUser,
   getStoreFrontByUserName
 );
+router.get("/store-fronts-phone/:phone", checkPhoneStoreFronts);
 router.get("/store-fronts", getAdmin, getAllStoreFronts);
 router.put("/store-fronts/:business_id", getUser, updateStoreFront);
-router.put("/store-fronts-phone/:phone", checkPhoneStoreFronts);
 
 router.post("/allocateData", parseKey, SFSendData);
 
