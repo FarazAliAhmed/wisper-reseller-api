@@ -128,6 +128,11 @@ exports.checkPhoneStoreFronts = async (req, res) => {
 
     const sFData = await storeFrontHistory.findOne({ phone });
 
+    if (!sFData) {
+      res.status(200).json(null);
+      return;
+    }
+
     res.status(200).json(sFData.name);
   } catch (error) {
     console.error("Error getting all store fronts:", error);
