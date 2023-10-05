@@ -1,7 +1,9 @@
 const BucketUsage = require("../models/BucketUsage");
 const WalletUsage = require("../models/WalletUsage");
+const { Account } = require("../models/account");
 const bucketID = require("../models/bucketID");
 const dataBalance = require("../models/dataBalance");
+const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const monnifyHistory = require("../models/monnifyHistory");
 const paymentHistory = require("../models/paymentHistory");
 const transactionHistory = require("../models/transactionHistory");
@@ -769,73 +771,153 @@ const getBucketUsage = async (req, res) => {
 // };
 
 // POST route to populate BucketUsage for a specific day
+
 const populateWalletUsage = async (req, res) => {
   try {
     const currentDate = new Date();
 
     // Format the current date as "YYYY-MM-DDT00:00:00.000Z" for comparison
-    const formattedCurrentDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate()
+    const dayB4Date = new Date(currentDate);
+    dayB4Date.setDate(currentDate.getDate() - 1);
+
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate());
+
+    const formattedPreviousDate = new Date(
+      previousDate.getFullYear(),
+      previousDate.getMonth(),
+      previousDate.getDate()
     ).toISOString();
 
-    // Find the transactions for the specified day
-    const transactions = await monnifyHistory.find({
+    // Calculate the date for the previous day
+    const monHis = await monnifyHistory.find({
       createdAt: {
-        $gt: `${formattedCurrentDate.slice(0, 10)}T00:00:00.000Z`,
-        $lt: `${formattedCurrentDate.slice(0, 10)}T00:59:59.999Z`,
+        $gte: `${formattedPreviousDate.slice(0, 10)}T00:00:00.000Z`,
+        $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
       },
     });
 
-    const transactions1 = await monnifyHistory.find({
+    const megHis = await megaPurchaseHistory.find({
       createdAt: {
-        $gt: `${formattedCurrentDate.slice(0, 10)}T23:00:00.000Z`,
-        $lt: `${formattedCurrentDate.slice(0, 10)}T23:59:59.999Z`,
+        $gte: `${formattedPreviousDate.slice(0, 10)}T00:00:00.000Z`,
+        $lt: `${formattedPreviousDate.slice(0, 10)}T23:59:59.999Z`,
       },
     });
 
-    console.log(transactions);
+    // Find all accounts with type "mega"
+    const megaAccounts = await Account.find({ type: "mega" });
 
-    // Calculate the required values based on transactions
-    const startOfDayBalance = transactions.reduce(
-      (total, transaction) => total + transaction.new_bal,
-      0
-    );
+    // Extract the _id of the mega accounts
+    const megaAccountIds = megaAccounts.map((account) => account._id);
 
-    const endOfDayBalance = transactions1.reduce(
-      (total, transaction) => total + transaction.new_bal,
-      0
-    );
+    // Find balances associated with mega accounts
+    const megaBalances = await dataBalance.find({
+      business: { $in: megaAccountIds },
+    });
 
-    // Calculate the total amount on wisper
-    // const dataSoldOnWisper = totalDataSold - dataSoldOnGlo;
+    // console.log({ prevTrx: transactions });
 
-    const numberOfTransactions = transactions.length;
-    // const balance = dataSoldOnGlo - dataSoldOnWisper;
-    // const status = Math.abs(balance) < 10 ? "Green" : "Red";
+    const allFundMH = monHis.reduce((total, transaction) => {
+      return total + transaction.amount;
+    }, 0);
+    // Calculate the total data sold on all providers
 
-    // Get the bucketID for the day (You can customize this logic)
-    const bucketID = await getBucketIDForDate(formattedCurrentDate);
+    const tDPurchase = monHis.reduce((total, transaction) => {
+      let toAdd = 0;
+      if (transaction.purpose == "data purchase") {
+        toAdd += transaction.amount;
+      }
+      return total + toAdd;
+    }, 0);
+
+    const tDBought = megHis.reduce((total, transaction) => {
+      return total + Number(transaction.volume);
+    }, 0);
+
+    const actBal = megaBalances.reduce((total, transaction) => {
+      return total + Number(transaction.wallet_balance);
+    }, 0);
 
     // Create a new BucketUsage document
-    const bucketUsage = new WalletUsage({
-      date: formattedCurrentDate,
-      startOfDayBalance,
-      endOfDayBalance,
-      // dataSoldOnWisper,
-      // numberOfTransactions,
-      // balance,
-      // status,
+    const lastWalletUsage = await WalletUsage.findOne().sort({ createdAt: -1 });
+
+    const calProWal =
+      Number(lastWalletUsage.startOfDayBalance) +
+      Number(allFundMH) -
+      Number(tDPurchase);
+
+    const updatedWalletUsage = {
+      totalFunding: allFundMH.toFixed(2),
+      totalDataPurchase: tDPurchase.toFixed(2),
+      totalDataBought: tDBought.toFixed(2),
+      proWalBal: calProWal.toFixed(2),
+      actWalBal: actBal.toFixed(2),
+      balance: Math.abs(Number(actBal) - Number(calProWal)).toFixed(2),
+    };
+
+    // Use .update() to update the last WalletUsage document
+    await WalletUsage.updateOne(
+      { _id: lastWalletUsage._id },
+      { $set: updatedWalletUsage }
+    );
+
+    console.log("WalletUsage updated");
+
+    // res.status(201).json(bucketUsage);
+  } catch (error) {
+    console.log("error in adding bucketusage");
+    console.error(error);
+
+    // res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const populateStartWalletUsage = async (req, res) => {
+  try {
+    const currentDate = new Date();
+
+    // Format the current date as "YYYY-MM-DDT00:00:00.000Z" for comparison
+    const dayB4Date = new Date(currentDate);
+    dayB4Date.setDate(currentDate.getDate() - 1);
+
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate());
+
+    const formattedPreviousDate = new Date(
+      previousDate.getFullYear(),
+      previousDate.getMonth(),
+      previousDate.getDate()
+    ).toISOString();
+
+    // Find all accounts with type "mega"
+    const megaAccounts = await Account.find({ type: "mega" });
+
+    // Extract the _id of the mega accounts
+    const megaAccountIds = megaAccounts.map((account) => account._id);
+
+    // Find balances associated with mega accounts
+    const megaBalances = await dataBalance.find({
+      business: { $in: megaAccountIds },
     });
 
-    // Save the BucketUsage document
-    await bucketUsage.save();
+    const startBal = megaBalances.reduce((total, transaction) => {
+      return total + Number(transaction.wallet_balance);
+    }, 0);
 
-    res.status(201).json(bucketUsage);
+    const walletUsage = new WalletUsage({
+      date: formattedPreviousDate,
+      startOfDayBalance: startBal.toFixed(2),
+    });
+
+    // Save the WalletUsage document
+    await walletUsage.save();
+
+    // res.status(201).json(bucketUsage);
   } catch (error) {
+    console.log("error in adding bucketusage");
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+
+    // res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -854,5 +936,6 @@ module.exports = {
   calWalBal_analysis,
   populateBucketUsage,
   populateWalletUsage,
+  populateStartWalletUsage,
   getBucketUsage,
 };

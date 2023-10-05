@@ -1,9 +1,9 @@
-import dataBalance from "../models/dataBalance";
-import megaPurchaseHistory from "../models/megaPurchaseHistory";
+const dataBalance = require("../models/dataBalance");
+const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 
 const Flutterwave = require("flutterwave-node-v3");
 
-export function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
+async function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
   const flw = new Flutterwave(
     process.env.FLW_PUBLIC_KEY,
     process.env.FLW_SECRET_KEY
@@ -40,7 +40,7 @@ export function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
     });
 }
 
-export async function debitStoreFrontMegaWallet(
+async function debitStoreFrontMegaWallet(
   businessId,
   network,
   dataVolume,
@@ -106,7 +106,7 @@ export async function debitStoreFrontMegaWallet(
   }
 }
 
-export async function revertStoreFrontMegaWallet(
+async function revertStoreFrontMegaWallet(
   businessId,
   network,
   dataVolume,
@@ -171,3 +171,9 @@ export async function revertStoreFrontMegaWallet(
     };
   }
 }
+
+module.exports = {
+  debitStoreFrontMegaWallet,
+  revertStoreFrontMegaWallet,
+  verifyFlutterWaveTransaction,
+};

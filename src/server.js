@@ -25,7 +25,11 @@ const storeFrontRoutes = require("./routes/storeFront.route.js");
 const apiV2Routes = require("./routes/v2");
 const apiV2AdminRoutes = require("./routes/v2/admin");
 const hookRoute = require("./routes/hooks");
-const { populateBucketUsage } = require("./controllers/analysis.controller");
+const {
+  populateBucketUsage,
+  populateStartWalletUsage,
+  populateWalletUsage,
+} = require("./controllers/analysis.controller");
 const corsOptions = {
   origin: "*",
 };
@@ -63,6 +67,23 @@ cron.schedule("0 3 * * *", async () => {
     console.log("populateBucketUsage executed every 1 minutes.");
   } catch (error) {
     console.error("Error executing populateBucketUsage:", error);
+  }
+});
+
+cron.schedule("*/1 * * * *", async () => {
+  try {
+    await populateStartWalletUsage();
+    console.log("populateStartWalletUsage executed every 1 minutes.");
+  } catch (error) {
+    console.error("Error executing populateStartWalletUsage:", error);
+  }
+});
+cron.schedule("*/2 * * * *", async () => {
+  try {
+    await populateWalletUsage();
+    console.log("populateWalletUsage executed every 2 minutes.");
+  } catch (error) {
+    console.error("Error executing populateWalletUsage:", error);
   }
 });
 

@@ -35,6 +35,9 @@ const WalletUsageSchema = new Schema(
       type: String,
       enum: ["Green", "Red"],
     },
+    balance: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );
