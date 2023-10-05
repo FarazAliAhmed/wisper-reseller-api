@@ -41,7 +41,7 @@ const storeFrontHistorySchema = new Schema(
       unique: true,
     },
   },
-  { timestamps }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("storeFrontHistory", storeFrontHistorySchema);
