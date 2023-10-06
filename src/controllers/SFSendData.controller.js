@@ -122,6 +122,9 @@ const SFSendData = async (req, res) => {
       ref: transaction_ref,
       type: planDetails.plan_type,
     });
+
+    console.log({ send_response });
+
     if (send_response?.error) {
       throw new Error(send_response.message);
     }
