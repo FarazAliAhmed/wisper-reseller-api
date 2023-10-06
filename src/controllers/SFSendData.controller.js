@@ -152,6 +152,7 @@ const SFSendData = async (req, res) => {
 
     // Fire callback event to send callback
 
+    console.log({ message: send_response.message, status: "success" });
     return res
       .status(201)
       .json({ message: send_response.message, status: "success" });
@@ -173,7 +174,7 @@ const SFSendData = async (req, res) => {
       trx_ref
     );
   }
-
+  console.log({ message: "Data allocation failed", status: "failed" });
   return res
     .status(500)
     .json({ message: "Data allocation failed", status: "failed" });
