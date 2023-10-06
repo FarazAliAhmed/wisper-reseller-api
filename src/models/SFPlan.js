@@ -1,19 +1,21 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const Plan = new Schema(
+const StoreFrontPlan = new Schema(
   {
+    business: {
+      type: String,
+      required: true,
+    },
     plan_id: {
       type: Number,
       required: true,
-      unique: true,
-      index: true,
     },
     network: {
       type: String,
-      index: true,
       required: true,
     },
+
     plan_type: {
       type: String,
       required: true,
@@ -21,6 +23,10 @@ const Plan = new Schema(
     price: {
       type: Number,
       required: true,
+    },
+    selling_price: {
+      type: Number,
+      default: null,
     },
     volume: {
       type: Number,
@@ -36,10 +42,10 @@ const Plan = new Schema(
       required: true,
     },
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 );
 
-Plan.virtual("size")
+StoreFrontPlan.virtual("size")
   .get(function () {
     return this.volume + " " + this.unit;
   })
@@ -49,4 +55,4 @@ Plan.virtual("size")
     this.set({ unit, volume });
   });
 
-module.exports = mongoose.model("plan", Plan);
+module.exports = mongoose.model("storeFrontPlan", StoreFrontPlan);

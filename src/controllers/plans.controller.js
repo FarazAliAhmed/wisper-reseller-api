@@ -13,38 +13,39 @@ const {
 const { loadPlans } = require("../scripts/loader");
 const { Account } = require("../models/account");
 const plan = require("../models/plan");
+const storeFrontPlan = require("../models/SFPlan");
 
-const defaultPlans = require("../utils/plansBUcopy.json");
-
-// const getAllPlans = async (req, res) => {
-//   const { plan, message, error } = await getAll();
-//   if (error) return res.status(400).json({ message, status: "failed" });
-//   return res.status(200).json({
-//     plan: _.map(
-//       plan,
-//       _.partialRight(_.pick, [
-//         "plan_id",
-//         "network",
-//         "plan_type",
-//         "volume",
-//         "unit",
-//         "validity",
-//         "size",
-//         "id",
-//       ])
-//     ),
-//     message,
-//     status: "success",
-//   });
-//   // "price",
-// };
+const defaultPlans = require("../utils/plans.json");
 
 const getAllPlans = async (req, res) => {
   const { plan, message, error } = await getAll();
   if (error) return res.status(400).json({ message, status: "failed" });
-  return res.status(200).json(defaultPlans);
+  return res.status(200).json({
+    plan: _.map(
+      plan,
+      _.partialRight(_.pick, [
+        "plan_id",
+        "network",
+        "plan_type",
+        "volume",
+        "unit",
+        "validity",
+        "size",
+        "id",
+      ])
+    ),
+    message,
+    status: "success",
+  });
   // "price",
 };
+
+// const getAllPlans = async (req, res) => {
+//   const { plan, message, error } = await getAll();
+//   if (error) return res.status(400).json({ message, status: "failed" });
+//   return res.status(200).json(defaultPlans);
+//   // "price",
+// };
 
 const getOnePlan = async (req, res) => {
   const { plan_id } = req.params;
@@ -126,7 +127,7 @@ const deleteAllPlans = async (req, res) => {
 // Get plans by user ID
 const getPlansByUserId = async (req, res) => {
   try {
-    const userPlan = await plan
+    const userPlan = await storeFrontPlan
       .find({ business: req.params.userId })
       .sort({ createdAt: -1 });
 
@@ -148,7 +149,7 @@ const createPlanUser = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const newPlan = new plan({
+    const newPlan = new storeFrontPlan({
       plan_id: req.body.plan_id,
       business: req.params.userId,
       network: req.body.network,
@@ -170,7 +171,7 @@ const createPlanUser = async (req, res) => {
 
 const updatePlanUser = async (req, res) => {
   try {
-    const planToUpdate = await plan.findOne({
+    const planToUpdate = await storeFrontPlan.findOne({
       business: req.params.userId,
       plan_id: req.params.planId,
     });
@@ -215,7 +216,7 @@ const updatePlanUser = async (req, res) => {
 
 const updateSellingPlan = async (req, res) => {
   try {
-    const planData = await plan.findOne({
+    const planData = await storeFrontPlan.findOne({
       business: req.params.userId,
       plan_id: req.body.planId,
     });
@@ -239,7 +240,7 @@ const updateSellingPlan = async (req, res) => {
 
 const deletePlanUser = async (req, res) => {
   try {
-    const planData = await plan.findOne({
+    const planData = await storeFrontPlan.findOne({
       business: req.params.userId,
       plan_id: req.body.planId,
     });
