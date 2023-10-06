@@ -1,5 +1,5 @@
 const { Account } = require("../models/account");
-const storeFront = require("../models/storeFront");
+const StoreFront = require("../models/storeFront");
 const storeFrontHistory = require("../models/storeFrontHistory");
 
 // Create a new store front
@@ -35,7 +35,7 @@ exports.checkStoreFrontUserName = async (req, res) => {
   try {
     const { username } = req.params;
 
-    const account = await storeFront.findOne({
+    const account = await StoreFront.findOne({
       storeUserName: username,
     });
 
