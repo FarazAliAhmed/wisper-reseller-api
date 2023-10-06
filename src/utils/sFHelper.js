@@ -3,6 +3,8 @@ const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 
 const Flutterwave = require("flutterwave-node-v3");
 const storeFrontHistory = require("../models/storeFrontHistory");
+const storeFront = require("../models/storeFront");
+const SFPlan = require("../models/SFPlan");
 
 async function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
   const flw = new Flutterwave(
@@ -49,50 +51,73 @@ async function debitStoreFrontMegaWallet(
   price,
   custName,
   custEmail,
-  trx_ref
+  trx_ref,
+  store_type,
+  plan_id
 ) {
   try {
-    // Find the balance document for the specified business
     const balance = await dataBalance.findOne({ business: businessId });
 
-    if (!balance) {
-      return {
-        error: true,
-        status: 404,
-        message: "Balance not found for the business",
-      };
+    if (store_type == "mega") {
+      // Find the balance document for the specified business
+      if (!balance) {
+        return {
+          error: true,
+          status: 404,
+          message: "Balance not found for the business",
+        };
+      }
+
+      const oldUser_bal = balance.mega_wallet[network];
+
+      // Check if the mega wallet for the specified network has enough balance
+      const networkBalance = balance.mega_wallet[network];
+      if (Number(networkBalance) < Number(dataVolume)) {
+        return {
+          error: true,
+          status: 400,
+          message: "Insufficient balance in the mega wallet for the network",
+        };
+      }
+
+      // Deduct the data volume from the mega wallet
+      balance.mega_wallet[network] -= Number(dataVolume);
+
+      await balance.save();
+
+      const purchase = new megaPurchaseHistory({
+        business_id: businessId,
+        username: phone_number,
+        amount: price,
+        volume: dataVolume,
+        channel: "Store Front",
+        old_bal: oldUser_bal,
+        new_bal: balance.mega_wallet[network],
+        network: network,
+        status: "success",
+      });
+
+      await purchase.save();
+
+      const storeOwner = await storeFront.findOne({ business_id: businessId });
+
+      storeOwner.wallet += Number(price);
+
+      await storeOwner.save();
+    } else {
+      const storeOwner = await storeFront.findOne({ business_id: businessId });
+      const storePlan = await SFPlan.findOne({
+        business: businessId,
+        plan_id: plan_id,
+      });
+
+      const resolvedBal =
+        Number(storePlan.selling_price) - Number(storePlan.price);
+
+      storeOwner.wallet += resolvedBal.toFixed(2);
+
+      await storeOwner.save();
     }
-
-    const oldUser_bal = balance.mega_wallet[network];
-
-    // Check if the mega wallet for the specified network has enough balance
-    const networkBalance = balance.mega_wallet[network];
-    if (Number(networkBalance) < Number(dataVolume)) {
-      return {
-        error: true,
-        status: 400,
-        message: "Insufficient balance in the mega wallet for the network",
-      };
-    }
-
-    // Deduct the data volume from the mega wallet
-    balance.mega_wallet[network] -= Number(dataVolume);
-
-    await balance.save();
-
-    const purchase = new megaPurchaseHistory({
-      business_id: businessId,
-      username: phone_number,
-      amount: price,
-      volume: dataVolume,
-      channel: "Store Front",
-      old_bal: oldUser_bal,
-      new_bal: balance.mega_wallet[network],
-      network: network,
-      status: "success",
-    });
-
-    await purchase.save();
 
     const sFHist = new storeFrontHistory({
       name: custName,
@@ -129,58 +154,61 @@ async function revertStoreFrontMegaWallet(
   network,
   dataVolume,
   phone_number,
-  price
+  price,
+  store_type
 ) {
   try {
-    // Find the balance document for the specified business
-    const balance = await dataBalance.findOne({ business: businessId });
+    if (store_type == "mega") {
+      // Find the balance document for the specified business
+      const balance = await dataBalance.findOne({ business: businessId });
 
-    if (!balance) {
+      if (!balance) {
+        return {
+          error: true,
+          status: 404,
+          message: "Balance not found for the business",
+        };
+      }
+
+      const oldUser_bal = balance.mega_wallet[network];
+
+      // Check if the mega wallet for the specified network has enough balance
+      const networkBalance = balance.mega_wallet[network];
+      if (Number(networkBalance) < Number(dataVolume)) {
+        return {
+          error: true,
+          status: 400,
+          message: "Insufficient balance in the mega wallet for the network",
+        };
+      }
+
+      // Deduct the data volume from the mega wallet
+      balance.mega_wallet[network] += Number(dataVolume);
+
+      await balance.save();
+
+      const purchase = new megaPurchaseHistory({
+        business_id: businessId,
+        username: phone_number,
+        amount: price,
+        volume: dataVolume,
+        channel: "Store Front",
+        old_bal: oldUser_bal,
+        new_bal: balance.mega_wallet[network],
+        network: network,
+        status: "success",
+      });
+
+      await purchase.save();
+
+      // Return the updated balance in the specified format
       return {
-        error: true,
-        status: 404,
-        message: "Balance not found for the business",
+        error: false,
+        status: 201,
+        balance: balance.balance,
+        debited: Number(dataVolume),
       };
     }
-
-    const oldUser_bal = balance.mega_wallet[network];
-
-    // Check if the mega wallet for the specified network has enough balance
-    const networkBalance = balance.mega_wallet[network];
-    if (Number(networkBalance) < Number(dataVolume)) {
-      return {
-        error: true,
-        status: 400,
-        message: "Insufficient balance in the mega wallet for the network",
-      };
-    }
-
-    // Deduct the data volume from the mega wallet
-    balance.mega_wallet[network] += Number(dataVolume);
-
-    await balance.save();
-
-    const purchase = new megaPurchaseHistory({
-      business_id: businessId,
-      username: phone_number,
-      amount: price,
-      volume: dataVolume,
-      channel: "Store Front",
-      old_bal: oldUser_bal,
-      new_bal: balance.mega_wallet[network],
-      network: network,
-      status: "success",
-    });
-
-    await purchase.save();
-
-    // Return the updated balance in the specified format
-    return {
-      error: false,
-      status: 201,
-      balance: balance.balance,
-      debited: Number(dataVolume),
-    };
   } catch (error) {
     return {
       error: true,

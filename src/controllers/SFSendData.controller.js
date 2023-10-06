@@ -29,6 +29,7 @@ const {
   verifyFlutterWaveTransaction,
   revertStoreFrontMegaWallet,
 } = require("../utils/sFHelper");
+const { Account } = require("../models/account");
 
 const SFSendData = async (req, res, next) => {
   const {
@@ -97,6 +98,8 @@ const SFSendData = async (req, res, next) => {
       throw new Error(verfiyFlw.message);
     }
 
+    const storeOwner = await Account.findOne({ _id: business_id });
+
     // check account balance and debit
     const debitAccount = await debitStoreFrontMegaWallet(
       business_id,
@@ -106,7 +109,9 @@ const SFSendData = async (req, res, next) => {
       price,
       custName,
       custEmail,
-      trx_ref
+      trx_ref,
+      storeOwner.type,
+      plan_id
     );
 
     console.log("debit", debitAccount);
@@ -196,12 +201,16 @@ const SFSendData = async (req, res, next) => {
   } catch (error) {
     // console.log(error);
     console.log("In catch: " + error.message);
+
+    const storeOwner = await Account.findOne({ _id: business_id });
+
     await revertStoreFrontMegaWallet(
       business_id,
       network,
       volume,
       phone_number,
-      price
+      price,
+      storeOwner.type
     );
   }
 };
