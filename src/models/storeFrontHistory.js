@@ -7,6 +7,10 @@ const storeFrontHistorySchema = new Schema(
       type: String,
       required: true,
     },
+    email: {
+      type: String,
+      required: true,
+    },
     storeBusiness: {
       type: String,
       required: true,
