@@ -6,7 +6,9 @@
   "repository": "https://github.com/wisperng/wisper-reseller-api.git",
   "author": "Wisper <wisperng@gmail.com>",
   "license": "MIT",
-  "engines": { "node": "18.x" },
+  "engines": {
+    "node": "18.x"
+  },  
   "private": true,
   "dependencies": {
     "axios": "^0.26.0",
