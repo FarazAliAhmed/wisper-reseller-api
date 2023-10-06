@@ -109,12 +109,12 @@ const SFSendData = async (req, res) => {
 
     console.log("debit", debitAccount);
 
-    if (debitAccount.error) {
-      res
-        .status(debitAccount.status)
-        .json({ status: debitAccount.status, message: debitAccount.message });
-      throw new Error(debitAccount.message);
-    }
+    // if (debitAccount.error) {
+    //   res
+    //     .status(debitAccount.status)
+    //     .json({ status: debitAccount.status, message: debitAccount.message });
+    //   throw new Error(debitAccount.message);
+    // }
 
     // transfer data to phone number
     const send_response = await initiate_data_transfer(requestPayload, {
