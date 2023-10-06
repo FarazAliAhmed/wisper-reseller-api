@@ -125,7 +125,7 @@ router.patch("/users/:username", getUser, handleUpdate);
 
 // Dashboard Routes
 // Routes Called by businesses
-router.get("/plans", getUser, getAllPlans);
+router.get("/plans", getAllPlans);
 router.get("/networks", getUser, getNetworks);
 
 router.get("/balance", getUser, getAccountBalance);
@@ -146,7 +146,7 @@ router.get("/payments", getUser, getAllPayments);
 router.post("/url/webhook", getUser, addWebhook);
 router.post("/url/callback", getUser, addCallback);
 
-// GET plans
+// GET plans  NEWWW
 router.get("/plans_user/:userId", getPlansByUserId);
 
 /**Routes Called by Admin
@@ -178,6 +178,7 @@ router.post("/admin/payments", getAdmin, postPayment);
 router.patch("/admin/payments/:id", getAdmin, updatePayment);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
 
+// previous
 router.get("/admin/plans", getAdmin, getAllPlans);
 router.get("/admin/plans/:plan_id", getAdmin, getOnePlan);
 router.post("/admin/plans/create", getAdmin, createOnePlan);

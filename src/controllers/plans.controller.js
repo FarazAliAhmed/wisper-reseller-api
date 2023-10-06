@@ -14,26 +14,35 @@ const { loadPlans } = require("../scripts/loader");
 const { Account } = require("../models/account");
 const plan = require("../models/plan");
 
+const defaultPlans = require("../utils/plansBUcopy.json");
+
+// const getAllPlans = async (req, res) => {
+//   const { plan, message, error } = await getAll();
+//   if (error) return res.status(400).json({ message, status: "failed" });
+//   return res.status(200).json({
+//     plan: _.map(
+//       plan,
+//       _.partialRight(_.pick, [
+//         "plan_id",
+//         "network",
+//         "plan_type",
+//         "volume",
+//         "unit",
+//         "validity",
+//         "size",
+//         "id",
+//       ])
+//     ),
+//     message,
+//     status: "success",
+//   });
+//   // "price",
+// };
+
 const getAllPlans = async (req, res) => {
   const { plan, message, error } = await getAll();
   if (error) return res.status(400).json({ message, status: "failed" });
-  return res.status(200).json({
-    plan: _.map(
-      plan,
-      _.partialRight(_.pick, [
-        "plan_id",
-        "network",
-        "plan_type",
-        "volume",
-        "unit",
-        "validity",
-        "size",
-        "id",
-      ])
-    ),
-    message,
-    status: "success",
-  });
+  return res.status(200).json(defaultPlans);
   // "price",
 };
 
