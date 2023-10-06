@@ -27,6 +27,6 @@ router.get("/store-fronts-phone/:phone", checkPhoneStoreFronts);
 router.get("/store-fronts", getAdmin, getAllStoreFronts);
 router.put("/store-fronts/:business_id", getUser, updateStoreFront);
 
-router.post("/allocateData", parseKey, SFSendData);
+router.post("/store-fronts/allocateData", parseKey, SFSendData);
 
 module.exports = router;
