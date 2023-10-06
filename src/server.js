@@ -50,7 +50,7 @@ app.use(
     extended: false,
   })
 );
-app.use("/public", express.static("public"));
+app.use("/uploads", express.static("uploads"));
 
 app.get("/", (req, res) => {
   res.status(200).send({ status: "healthy" });
