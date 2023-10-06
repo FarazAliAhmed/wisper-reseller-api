@@ -45,18 +45,18 @@ const SFSendData = async (req, res) => {
     custEmail,
   } = req.body;
 
-  console.log({
-    network,
-    plan_id,
-    phone_number,
-    allocate_for_business,
-    business_id,
-    price,
-    volume,
-    trx_ref,
-    custName,
-    custEmail,
-  });
+  // console.log({
+  //   network,
+  //   plan_id,
+  //   phone_number,
+  //   allocate_for_business,
+  //   business_id,
+  //   price,
+  //   volume,
+  //   trx_ref,
+  //   custName,
+  //   custEmail,
+  // });
 
   // check that network is valid
   const providerId = get_network_provider(network);
@@ -127,30 +127,6 @@ const SFSendData = async (req, res) => {
         .status(debitAccount.status)
         .json({ status: debitAccount.status, message: debitAccount.message });
       throw new Error(debitAccount.message);
-    }
-
-    // **********************
-    const responseObject = format_transaction_response({
-      type,
-      debitAccount,
-      validNumber,
-      providerId,
-      planDetails,
-      uuid,
-      getCurrentTime,
-    });
-
-    // save the transaction to database
-    const savedTransaction = await save_transaction(
-      business_id,
-      responseObject,
-      volume || ""
-    );
-    if (savedTransaction.error) {
-      res
-        .status(400)
-        .json({ status: 400, message: "Server Error! Please try again later" });
-      throw new Error("Server Error! Please try again later");
     }
 
     // transfer data to phone number
