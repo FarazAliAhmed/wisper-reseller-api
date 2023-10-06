@@ -42,7 +42,6 @@ const storeFrontHistorySchema = new Schema(
     transaction_ref: {
       type: String,
       required: true,
-      unique: true,
     },
   },
   { timestamps: true }

@@ -52,6 +52,8 @@ const SFSendData = async (req, res) => {
   // TODO - Optimize process by merging "fetching plan details" and "fetching Maintenance Info from DB"
   // validate and get data plan details
   const planDetails = await get_plan_details(plan_id);
+
+  // console.log({ planDetails });
   if (planDetails.error)
     return res.status(planDetails.status).json(planDetails);
 
@@ -78,16 +80,16 @@ const SFSendData = async (req, res) => {
     r_ported
   );
 
-  // console.log("Request payloadsshsh", requestPayload)
+  // console.log("Request payloadsshsh", requestPayload);
 
   // Transaction block
   try {
     const verfiyFlw = await verifyFlutterWaveTransaction(trx_ref, price);
 
     if (verfiyFlw.error) {
-      res
-        .status(verfiyFlw.status)
-        .json({ status: verfiyFlw.status, message: verfiyFlw.message });
+      // res
+      //   .status(verfiyFlw.status)
+      //   .json({ status: verfiyFlw.status, message: verfiyFlw.message });
       throw new Error(verfiyFlw.message);
     }
 
@@ -107,60 +109,34 @@ const SFSendData = async (req, res) => {
       plan_id
     );
 
-    console.log("debit", debitAccount);
+    // console.log("debit", debitAccount);
 
-    // if (debitAccount.error) {
-    //   res
-    //     .status(debitAccount.status)
-    //     .json({ status: debitAccount.status, message: debitAccount.message });
-    //   throw new Error(debitAccount.message);
-    // }
+    if (debitAccount.error) {
+      // res
+      //   .status(debitAccount.status)
+      //   .json({ status: debitAccount.status, message: debitAccount.message });
+      throw new Error(debitAccount.message);
+    }
 
     // transfer data to phone number
     const send_response = await initiate_data_transfer(requestPayload, {
       size: planDetails.size,
-      ref: transaction_ref,
+      ref: trx_ref,
       type: planDetails.plan_type,
     });
 
-    console.log({ send_response });
+    // console.log({ send_response });
 
     if (send_response?.error) {
       throw new Error(send_response.message);
     }
-
-    // glo resolution start
-    // const glo_bal = send_response.response.data["balance"];
-
-    // console.log({ glo_bal });
-
-    // console.log(savedTransaction);
-
-    // const sameTrx = await transactionHistory.findOne({
-    //   _id: savedTransaction.transaction._id,
-    // });
-    // sameTrx.gloB = glo_bal;
-
-    // await sameTrx.save();
-    // glo resolution end
-
-    // send gateway response along with API response
-
-    // If endpoint is called by Admin
-    // if (allocate_for_business && allocate_for_business == true && business_id) {
-    //   responseObject.admin_ref = responseObject.transaction_ref;
-    //   responseObject.transaction_ref = uuid.v4();
-    //   await save_transaction(business_id, responseObject);
-    // }
-
-    // Fire callback event to send callback
 
     console.log({ message: send_response.message, status: "success" });
     return res
       .status(201)
       .json({ message: send_response.message, status: "success" });
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     // console.log("In catch: " + error.message);
 
     const storeOwner = await Account.findOne({ _id: business_id });
@@ -176,11 +152,12 @@ const SFSendData = async (req, res) => {
       custEmail,
       trx_ref
     );
+
+    console.log({ message: "Data allocation failed", status: "failed" });
+    return res
+      .status(500)
+      .json({ message: "Data allocation failed", status: "failed" });
   }
-  console.log({ message: "Data allocation failed", status: "failed" });
-  return res
-    .status(500)
-    .json({ message: "Data allocation failed", status: "failed" });
 };
 
 module.exports = SFSendData;

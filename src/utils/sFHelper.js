@@ -14,14 +14,14 @@ async function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
 
   return flw.Transaction.verify({ id: transactionId })
     .then((response) => {
-      console.log("flw response", response);
+      // console.log("flw response", response);
       if (
         response.data.status === "successful" &&
         response.data.amount === expectedAmount &&
         response.data.currency === "NGN"
       ) {
         // Success! Confirm the customer's payment
-        console.log("flutterwave", response.data);
+        // console.log("flutterwave", response.data);
         return {
           error: false,
           data: response.data,
@@ -60,6 +60,8 @@ async function debitStoreFrontMegaWallet(
     const balance = await dataBalance.findOne({ business: businessId });
 
     if (store_type == "mega") {
+      console.log("MEGAAAA");
+
       // Find the balance document for the specified business
       if (!balance) {
         return {
@@ -102,20 +104,22 @@ async function debitStoreFrontMegaWallet(
 
       const storeOwner = await storeFront.findOne({ business_id: businessId });
 
-      storeOwner.wallet += Number(price);
+      storeOwner.wallet += parseInt(price).toFixed(2);
 
       await storeOwner.save();
     } else {
+      console.log("LITEEEEEE");
       const storeOwner = await storeFront.findOne({ business_id: businessId });
       const storePlan = await SFPlan.findOne({
         business: businessId,
         plan_id: plan_id,
       });
 
-      const resolvedBal =
-        Number(storePlan.selling_price) - Number(storePlan.price);
+      const resolvedBal = storePlan.selling_price - storePlan.price;
 
-      storeOwner.wallet += resolvedBal.toFixed(2);
+      console.log({ resolvedBal });
+
+      storeOwner.wallet += resolvedBal;
 
       await storeOwner.save();
     }
@@ -142,6 +146,7 @@ async function debitStoreFrontMegaWallet(
       debited: Number(dataVolume),
     };
   } catch (error) {
+    console.log(error.message);
     return {
       error: true,
       status: 500,
@@ -211,10 +216,9 @@ async function revertStoreFrontMegaWallet(
         plan_id: plan_id,
       });
 
-      const resolvedBal =
-        Number(storePlan.selling_price) - Number(storePlan.price);
+      const resolvedBal = storePlan.selling_price - storePlan.price;
 
-      storeOwner.wallet -= resolvedBal.toFixed(2);
+      storeOwner.wallet -= resolvedBal;
 
       await storeOwner.save();
     }
