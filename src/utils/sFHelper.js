@@ -18,7 +18,7 @@ async function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
       if (
         response.data.status === "successful" &&
         response.data.amount === expectedAmount &&
-        response.data.currency === expectedCurrency
+        response.data.currency === "NGN"
       ) {
         // Success! Confirm the customer's payment
         console.log("flutterwave", response.data);
