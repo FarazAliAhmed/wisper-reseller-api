@@ -31,7 +31,7 @@ const {
 } = require("../utils/sFHelper");
 const { Account } = require("../models/account");
 
-const SFSendData = async (req, res, next) => {
+const SFSendData = async (req, res) => {
   const {
     network,
     plan_id,
@@ -44,13 +44,6 @@ const SFSendData = async (req, res, next) => {
     custName,
     custEmail,
   } = req.body;
-
-  // Check for Callback url
-  const { callback } = req.query;
-
-  // validate request body
-  // const {error} = validateSendData(req.body)
-  // if (error) return res.status(401).json({error: true, status: 401, message: _.map(error.details, 'message')})
 
   // check that network is valid
   const providerId = get_network_provider(network);
@@ -190,11 +183,7 @@ const SFSendData = async (req, res, next) => {
     }
 
     // Fire callback event to send callback
-    if (callback)
-      CallbackEvent.emit(handle_callback, {
-        callback,
-        payload: { ...responseObject, message: "Transaction Successful!" },
-      });
+
     return res
       .status(201)
       .json({ ...responseObject, message: "Transaction Successful!" });
