@@ -22,7 +22,7 @@ const uuidv4 = require("uuid/v4");
 
 // const upload = multer({ dest: "uploads/" });
 
-const DIR = "uploads/";
+const DIR = "public/";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

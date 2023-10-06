@@ -204,7 +204,7 @@ exports.uploadImageStoreFronts = async (req, res, next) => {
     console.log();
 
     const url = req.protocol + "://" + req.get("host");
-    const profileImg = url + "/uploads/" + req.file.filename;
+    const profileImg = url + "/public/" + req.file.filename;
 
     return res.json(profileImg);
   } catch (error) {
