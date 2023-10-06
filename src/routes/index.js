@@ -179,7 +179,7 @@ router.patch("/admin/payments/:id", getAdmin, updatePayment);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
 
 // previous
-router.get("/admin/plans", getAllPlans);
+router.get("/admin/plans", getAdmin, getAllPlans);
 router.get("/admin/plans/:plan_id", getAdmin, getOnePlan);
 router.post("/admin/plans/create", getAdmin, createOnePlan);
 router.delete("/admin/plans/delete", getAdmin, deleteAllPlans);
