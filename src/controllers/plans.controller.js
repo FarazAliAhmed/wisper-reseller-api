@@ -150,12 +150,12 @@ const createPlanUser = async (req, res) => {
     }
 
     const newPlan = new storeFrontPlan({
-      plan_id: req.body.plan_id,
+      plan_id: Number(req.body.plan_id),
       business: req.params.userId,
       network: req.body.network,
       plan_type: req.body.plan_type,
-      price: req.body.price,
-      volume: req.body.volume,
+      price: Number(req.body.price),
+      volume: Number(req.body.volume),
       unit: req.body.unit,
       validity: req.body.validity,
     });
@@ -182,7 +182,7 @@ const updatePlanUser = async (req, res) => {
 
     // Update the plan fields if provided in the request body
     if (req.body.plan_id) {
-      planToUpdate.plan_id = req.body.plan_id;
+      planToUpdate.plan_id = Number(req.body.plan_id);
     }
     if (req.body.network) {
       planToUpdate.network = req.body.network;
@@ -191,10 +191,10 @@ const updatePlanUser = async (req, res) => {
       planToUpdate.plan_type = req.body.plan_type;
     }
     if (req.body.price) {
-      planToUpdate.price = req.body.price;
+      planToUpdate.price = Number(req.body.price);
     }
     if (req.body.volume) {
-      planToUpdate.volume = req.body.volume;
+      planToUpdate.volume = Number(req.body.volume);
     }
     if (req.body.unit) {
       planToUpdate.unit = req.body.unit;
@@ -203,7 +203,7 @@ const updatePlanUser = async (req, res) => {
       planToUpdate.validity = req.body.validity;
     }
 
-    planToUpdate.selling_price = req.body.price;
+    planToUpdate.selling_price = Number(req.body.price);
 
     await planToUpdate.save();
 
@@ -226,7 +226,7 @@ const updateSellingPlan = async (req, res) => {
     }
 
     // Update the plan fields as needed
-    planData.selling_price = req.body.selling_price;
+    planData.selling_price = Number(req.body.selling_price);
 
     // Save the user to persist the changes
     await planData.save();
