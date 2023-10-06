@@ -14,6 +14,7 @@ async function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
 
   return flw.Transaction.verify({ id: transactionId })
     .then((response) => {
+      console.log("flw response", response);
       if (
         response.data.status === "successful" &&
         response.data.amount === expectedAmount &&
