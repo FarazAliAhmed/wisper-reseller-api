@@ -144,11 +144,11 @@ const SFSendData = async (req, res) => {
     // send gateway response along with API response
 
     // If endpoint is called by Admin
-    if (allocate_for_business && allocate_for_business == true && business_id) {
-      responseObject.admin_ref = responseObject.transaction_ref;
-      responseObject.transaction_ref = uuid.v4();
-      await save_transaction(business_id, responseObject);
-    }
+    // if (allocate_for_business && allocate_for_business == true && business_id) {
+    //   responseObject.admin_ref = responseObject.transaction_ref;
+    //   responseObject.transaction_ref = uuid.v4();
+    //   await save_transaction(business_id, responseObject);
+    // }
 
     // Fire callback event to send callback
 
@@ -174,7 +174,9 @@ const SFSendData = async (req, res) => {
     );
   }
 
-  return res.status(500).json({ message: error.message, status: "failed" });
+  return res
+    .status(500)
+    .json({ message: "Data allocation failed", status: "failed" });
 };
 
 module.exports = SFSendData;
