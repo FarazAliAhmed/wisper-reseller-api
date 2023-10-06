@@ -98,6 +98,47 @@ exports.getAllStoreFronts = async (req, res) => {
   }
 };
 
+// Get all store fronts
+exports.getAllStoreFrontHistoryBusiness = async (req, res) => {
+  try {
+    const { limit = 10, page = 1 } = req.query;
+    const { business_id } = req.params;
+    const skip = (page - 1) * limit;
+
+    const storeFronts = await storeFrontHistory
+      .find({
+        storeBusiness: business_id,
+      })
+      .skip(skip)
+      .limit(parseInt(limit))
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(storeFronts);
+  } catch (error) {
+    console.error("Error getting all store fronts:", error);
+    res.status(500).json({ error: "Error getting all store fronts" });
+  }
+};
+
+// Get all store fronts
+exports.getAllStoreFrontHistory = async (req, res) => {
+  try {
+    const { limit = 10, page = 1 } = req.query;
+    const skip = (page - 1) * limit;
+
+    const storeFronts = await storeFrontHistory
+      .find()
+      .skip(skip)
+      .limit(parseInt(limit))
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(storeFronts);
+  } catch (error) {
+    console.error("Error getting all store fronts:", error);
+    res.status(500).json({ error: "Error getting all store fronts" });
+  }
+};
+
 // Update a store front by business_id
 exports.updateStoreFront = async (req, res) => {
   const businessId = req.params.business_id;
