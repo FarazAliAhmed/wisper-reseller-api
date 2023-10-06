@@ -1,6 +1,17 @@
 const { Account } = require("../models/account");
+const storeFront = require("../models/storeFront");
 const StoreFront = require("../models/storeFront");
 const storeFrontHistory = require("../models/storeFrontHistory");
+
+const uuidv4 = require("uuid/v4");
+
+// Install with: npm i flutterwave-node-v3
+
+const Flutterwave = require("flutterwave-node-v3");
+const flw = new Flutterwave(
+  process.env.FLW_PUBLIC_KEY,
+  process.env.FLW_SECRET_KEY
+);
 
 // Create a new store front
 exports.createStoreFront = async (req, res) => {
@@ -183,3 +194,61 @@ exports.checkPhoneStoreFronts = async (req, res) => {
     });
   }
 };
+
+exports.uploadImageStoreFronts = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No image file provided" });
+    }
+
+    console.log();
+
+    const url = req.protocol + "://" + req.get("host");
+    const profileImg = url + "/public/" + req.file.filename;
+
+    return res.json({ imageUrl: profileImg });
+  } catch (error) {
+    console.error(error); // Use console.error instead of console.log for errors
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
+exports.withdrawStoreFronts = async (req, res, next) => {
+  const business = req.params.business;
+  const { amount } = req.body;
+  const store = await storeFront.findOne({ business_id: business });
+
+  if (!store) {
+    return res.status(404).json({ error: "Store front not found" });
+  }
+
+  const reference = generateTransactionReference();
+
+  const details = {
+    account_bank: store.bankCode,
+    account_number: store.withdrawAccount,
+    amount: Number(amount),
+    currency: "NGN",
+    narration: "withdraw of ${amount} from store front balance",
+    reference: reference,
+  };
+
+  flw.Transfer.initiate(details)
+    .then((res) => {
+      console.log(res);
+      return res.json({ imageUrl: profileImg });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).json({
+        error: err.message,
+      });
+    });
+};
+
+// Function to generate a UUID as a transaction reference
+function generateTransactionReference() {
+  return uuidv4();
+}

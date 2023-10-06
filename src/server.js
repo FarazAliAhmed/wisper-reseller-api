@@ -8,6 +8,7 @@ const dbSetUp = require("./models");
 const pino = require("pino-http");
 const { errors } = require("celebrate");
 const cron = require("node-cron");
+const bodyParser = require("body-parser");
 
 const PORT = config.get("port") || 5000;
 
@@ -42,6 +43,14 @@ app.use(express.urlencoded({ extended: false }));
 if (process.env.NODE_ENV !== "production") {
   app.use(pino());
 }
+
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: false,
+  })
+);
+app.use("/public", express.static("public"));
 
 app.get("/", (req, res) => {
   res.status(200).send({ status: "healthy" });

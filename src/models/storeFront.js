@@ -44,6 +44,14 @@ const storeFrontSchema = new Schema({
     type: String,
     default: null,
   },
+  bankName: {
+    type: String,
+    default: null,
+  },
+  bankCode: {
+    type: String,
+    default: null,
+  },
   phoneNumber: {
     type: String,
     default: null,
