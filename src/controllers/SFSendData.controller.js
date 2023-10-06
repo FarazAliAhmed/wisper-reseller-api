@@ -31,19 +31,6 @@ const {
 } = require("../utils/sFHelper");
 
 const SFSendData = async (req, res, next) => {
-  const { _id, type } = req.user;
-
-  // console.log("IP ADDRESS", req.connection.remoteAddress);
-
-  // Ensure user Type is provided
-  if (!type)
-    return res.status(400).json({
-      error: true,
-      status: 400,
-      message: "Unrecognised User. Try Loging in again",
-    });
-
-  //
   const {
     network,
     plan_id,
@@ -144,7 +131,7 @@ const SFSendData = async (req, res, next) => {
 
     // save the transaction to database
     const savedTransaction = await save_transaction(
-      _id,
+      business_id,
       responseObject,
       volume || ""
     );
