@@ -158,7 +158,7 @@ const SFSendData = async (req, res) => {
       .json({ message: send_response.message, status: "success" });
   } catch (error) {
     // console.log(error);
-    console.log("In catch: " + error.message);
+    // console.log("In catch: " + error.message);
 
     const storeOwner = await Account.findOne({ _id: business_id });
 
