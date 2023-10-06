@@ -2,6 +2,7 @@ const dataBalance = require("../models/dataBalance");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 
 const Flutterwave = require("flutterwave-node-v3");
+const storeFrontHistory = require("../models/storeFrontHistory");
 
 async function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
   const flw = new Flutterwave(
@@ -45,7 +46,10 @@ async function debitStoreFrontMegaWallet(
   network,
   dataVolume,
   phone_number,
-  price
+  price,
+  custName,
+  custEmail,
+  trx_ref
 ) {
   try {
     // Find the balance document for the specified business
@@ -89,6 +93,20 @@ async function debitStoreFrontMegaWallet(
     });
 
     await purchase.save();
+
+    const sFHist = new storeFrontHistory({
+      name: custName,
+      email: custEmail,
+      storeBusiness: businessId,
+      phone: phone_number,
+      price: price,
+      volume: dataVolume,
+      status: "success",
+      network: network,
+      transaction_ref: trx_ref,
+    });
+
+    await sFHist.save();
 
     // Return the updated balance in the specified format
     return {

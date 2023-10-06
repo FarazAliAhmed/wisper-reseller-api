@@ -53,6 +53,8 @@ const SFSendData = async (req, res, next) => {
     price,
     volume,
     trx_ref,
+    custName,
+    custEmail,
   } = req.body;
 
   // Check for Callback url
@@ -114,7 +116,10 @@ const SFSendData = async (req, res, next) => {
       network,
       volume,
       phone_number,
-      price
+      price,
+      custName,
+      custEmail,
+      trx_ref
     );
 
     console.log("debit", debitAccount);
