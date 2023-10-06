@@ -8,7 +8,7 @@ const dbSetUp = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    await loadPlans();
+    // await loadPlans();
     console.log(`Connected to DB:: `, config.get("db"));
   } catch (error) {
     console.error(error);

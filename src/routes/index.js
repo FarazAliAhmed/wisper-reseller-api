@@ -179,7 +179,7 @@ router.patch("/admin/payments/:id", getAdmin, updatePayment);
 router.delete("/admin/payments/:id", getAdmin, deletePayment);
 
 // previous
-router.get("/admin/plans", getAdmin, getAllPlans);
+router.get("/admin/plans", getAllPlans);
 router.get("/admin/plans/:plan_id", getAdmin, getOnePlan);
 router.post("/admin/plans/create", getAdmin, createOnePlan);
 router.delete("/admin/plans/delete", getAdmin, deleteAllPlans);
@@ -207,7 +207,7 @@ router.post("/admin/bucketIDSwitchOne", bucketIDSwitchOne);
 // PLANS ROUTE
 router.get("/admin/plans_user/:userId", getUser, getPlansByUserId);
 router.post("/admin/plans_user/:userId", getAdmin, createPlanUser);
-router.post("/admin/plans_user/:userId/:planId", getAdmin, updatePlanUser);
+router.put("/admin/plans_user/:userId/:planId", getAdmin, updatePlanUser);
 router.post("/admin/update_selling/:userId", getUser, updateSellingPlan);
 router.delete("/admin/plans_user/:userId/:planId", getAdmin, deletePlanUser);
 
