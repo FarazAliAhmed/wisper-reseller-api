@@ -132,37 +132,29 @@ const SFSendData = async (req, res) => {
     // transfer data to phone number
     const send_response = await initiate_data_transfer(requestPayload, {
       size: planDetails.size,
-      ref: responseObject.transaction_ref,
+      ref: transaction_ref,
       type: planDetails.plan_type,
     });
     if (send_response?.error) {
-      responseObject.status = "failed";
-      delete responseObject.new_balance;
-      await update_transaction_status(responseObject.transaction_ref, "failed");
-
-      res
-        .status(400)
-        .json({ ...responseObject, message: send_response.message });
       throw new Error(send_response.message);
     }
 
     // glo resolution start
-    const glo_bal = send_response.response.data["balance"];
+    // const glo_bal = send_response.response.data["balance"];
 
-    console.log({ glo_bal });
+    // console.log({ glo_bal });
 
-    console.log(savedTransaction);
+    // console.log(savedTransaction);
 
-    const sameTrx = await transactionHistory.findOne({
-      _id: savedTransaction.transaction._id,
-    });
-    sameTrx.gloB = glo_bal;
+    // const sameTrx = await transactionHistory.findOne({
+    //   _id: savedTransaction.transaction._id,
+    // });
+    // sameTrx.gloB = glo_bal;
 
-    await sameTrx.save();
+    // await sameTrx.save();
     // glo resolution end
 
     // send gateway response along with API response
-    responseObject["gateway_response"] = send_response.message;
 
     // If endpoint is called by Admin
     if (allocate_for_business && allocate_for_business == true && business_id) {
@@ -175,7 +167,7 @@ const SFSendData = async (req, res) => {
 
     return res
       .status(201)
-      .json({ ...responseObject, message: "Transaction Successful!" });
+      .json({ message: send_response.message, status: "success" });
   } catch (error) {
     // console.log(error);
     console.log("In catch: " + error.message);
@@ -188,9 +180,14 @@ const SFSendData = async (req, res) => {
       volume,
       phone_number,
       price,
-      storeOwner.type
+      storeOwner.type,
+      custName,
+      custEmail,
+      trx_ref
     );
   }
+
+  return res.status(500).json({ message: error.message, status: "failed" });
 };
 
 module.exports = SFSendData;

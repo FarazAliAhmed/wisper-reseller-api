@@ -156,7 +156,10 @@ async function revertStoreFrontMegaWallet(
   dataVolume,
   phone_number,
   price,
-  store_type
+  store_type,
+  custName,
+  custEmail,
+  trx_ref
 ) {
   try {
     if (store_type == "mega") {
@@ -184,7 +187,7 @@ async function revertStoreFrontMegaWallet(
       }
 
       // Deduct the data volume from the mega wallet
-      balance.mega_wallet[network] += Number(dataVolume);
+      balance.mega_wallet[network] -= Number(dataVolume);
 
       await balance.save();
 
@@ -197,19 +200,46 @@ async function revertStoreFrontMegaWallet(
         old_bal: oldUser_bal,
         new_bal: balance.mega_wallet[network],
         network: network,
-        status: "success",
+        status: "failed",
       });
 
       await purchase.save();
+    } else {
+      const storeOwner = await storeFront.findOne({ business_id: businessId });
+      const storePlan = await SFPlan.findOne({
+        business: businessId,
+        plan_id: plan_id,
+      });
 
-      // Return the updated balance in the specified format
-      return {
-        error: false,
-        status: 201,
-        balance: balance.balance,
-        debited: Number(dataVolume),
-      };
+      const resolvedBal =
+        Number(storePlan.selling_price) - Number(storePlan.price);
+
+      storeOwner.wallet -= resolvedBal.toFixed(2);
+
+      await storeOwner.save();
     }
+
+    const sFHist = new storeFrontHistory({
+      name: custName,
+      email: custEmail,
+      storeBusiness: businessId,
+      phone: phone_number,
+      price: price,
+      volume: dataVolume,
+      status: "failed",
+      network: network,
+      transaction_ref: trx_ref,
+    });
+
+    await sFHist.save();
+
+    // Return the updated balance in the specified format
+    return {
+      error: false,
+      status: 201,
+      balance: balance.balance,
+      debited: Number(dataVolume),
+    };
   } catch (error) {
     return {
       error: true,
