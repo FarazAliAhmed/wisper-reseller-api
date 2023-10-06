@@ -61,11 +61,11 @@ app.use("/api/subdealer", subdealerRoutes);
 app.use("/api", megaPriceRoutes);
 app.use("/api", monnifyRoutes);
 app.use("/api", megamaintenanceRoutes);
-app.use("/api", storeFrontRoutes);
 
 app.use("/api/v2", getUser, apiV2Routes);
 app.use("/api/v2/admin", getAdmin, apiV2AdminRoutes);
 app.use("/hook", hookRoute);
+app.use("/api", storeFrontRoutes);
 
 // */1 * * * *"
 // ("0 1 * * *");

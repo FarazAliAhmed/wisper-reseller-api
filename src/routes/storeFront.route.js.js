@@ -59,20 +59,18 @@ router.get("/store-fronts-username/:username", getStoreFrontByUserName);
 router.get("/store-fronts-phone/:phone", checkPhoneStoreFronts);
 router.get("/store-fronts", getAdmin, getAllStoreFronts);
 router.put("/store-fronts/:business_id", getUser, updateStoreFront);
+router.post("/store-fronts/allocateData", SFSendData);
+router.get("/store-fronts-all-history", getAdmin, getAllStoreFrontHistory);
+
+router.get(
+  "/store-fronts-history/:business_id",
+  getAllStoreFrontHistoryBusiness
+);
 
 router.post(
   "/store-fronts-upload",
   upload.single("profileImg"),
   uploadImageStoreFronts
 );
-
-router.post("/store-fronts/allocateData", SFSendData);
-
-// store front history
-router.get(
-  "/store-fronts-history/:business_id",
-  getAllStoreFrontHistoryBusiness
-);
-router.get("/store-fronts-all-history", getAdmin, getAllStoreFrontHistory);
 
 module.exports = router;
