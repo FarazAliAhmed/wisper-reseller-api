@@ -45,19 +45,6 @@ const SFSendData = async (req, res) => {
     custEmail,
   } = req.body;
 
-  // console.log({
-  //   network,
-  //   plan_id,
-  //   phone_number,
-  //   allocate_for_business,
-  //   business_id,
-  //   price,
-  //   volume,
-  //   trx_ref,
-  //   custName,
-  //   custEmail,
-  // });
-
   // check that network is valid
   const providerId = get_network_provider(network);
   if (providerId.error) return res.status(providerId.status).json(providerId);
