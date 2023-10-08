@@ -217,35 +217,7 @@ exports.uploadImageStoreFronts = async (req, res, next) => {
 
 exports.withdrawStoreFronts = async (req, res, next) => {
   const business = req.params.business;
-  const { amount } = req.body;
-  const store = await storeFront.findOne({ business_id: business });
-
-  if (!store) {
-    return res.status(404).json({ error: "Store front not found" });
-  }
-
-  const reference = generateTransactionReference();
-
-  const details = {
-    account_bank: store.bankCode,
-    account_number: store.withdrawAccount,
-    amount: Number(amount),
-    currency: "NGN",
-    narration: "withdraw of ${amount} from store front balance",
-    reference: reference,
-  };
-
-  flw.Transfer.initiate(details)
-    .then((res) => {
-      console.log(res);
-      return res.json({ imageUrl: profileImg });
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(500).json({
-        error: err.message,
-      });
-    });
+  const { amount, withType } = req.body;
 };
 
 // Function to generate a UUID as a transaction reference

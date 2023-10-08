@@ -1,4 +1,9 @@
+const { Account } = require("../models/account");
+const dataBalance = require("../models/dataBalance");
+const monnifyHistory = require("../models/monnifyHistory");
+const storeFront = require("../models/storeFront");
 const StoreFront = require("../models/storeFront");
+const withdrawalHistory = require("../models/withdrawHistory.model");
 
 // Get a store front by business_id
 exports.getStoreFrontByBusinessId = async (businessId) => {
@@ -56,5 +61,101 @@ exports.updateStoreFront = async (businessId, updates) => {
     return updatedStoreFront;
   } catch (error) {
     throw error;
+  }
+};
+
+// withdraw from a store front by business_id
+exports.withdrawStoreFront = async (businessId, withType, amount) => {
+  const store = await storeFront.findOne({ business_id: businessId });
+
+  if (!store) {
+    throw new Error("Store front not found");
+  }
+
+  const userBal = await dataBalance.findOne({ business: businessId });
+
+  if (!userBal) {
+    throw new Error("user balance not found");
+  }
+
+  const user = await Account.findOne({
+    _id: addData.business_id,
+  });
+
+  if (withType.toLowerCase() === "bank") {
+    const reference = generateTransactionReference();
+
+    const details = {
+      account_bank: store.bankCode,
+      account_number: store.withdrawAccount,
+      amount: Number(amount),
+      currency: "NGN",
+      narration: "withdraw of ${amount} from store front balance",
+      reference: reference,
+    };
+
+    flw.Transfer.initiate(details)
+      .then(async (res) => {
+        console.log(res);
+
+        store.wallet -= amount;
+
+        const newWithdrawal = new withdrawalHistory({
+          businessId: businessId,
+          amount: amount,
+          withdrawalType: withType,
+          description: `withdrawal from store front ₦${amount} to bank account code ${store.bankCode} account number ${store.withdrawAccount}`,
+          status: "success",
+        });
+
+        await newWithdrawal.save();
+        await store.save();
+
+        return store;
+      })
+      .catch((err) => {
+        console.log(err);
+
+        throw err;
+      });
+  } else if (withType.toLowerCase() === "wallet") {
+    try {
+      const oldBal = store.wallet;
+
+      store.wallet -= amount;
+      userBal.wallet_balance += amount;
+
+      const newWithdrawal = new withdrawalHistory({
+        businessId: businessId,
+        amount: amount,
+        withdrawalType: withType,
+        description: `withdrawal from store front to wallet balance ₦${amount}`,
+        status: "success",
+      });
+
+      const newMonnifyHistory = new monnifyHistory({
+        business_name: user.name,
+        business_id: businessId,
+        amount: amount,
+        resolvedAmount: userBal.wallet_balance,
+        new_bal: userBal.wallet_balance,
+        old_bal: oldBal,
+        purpose: "Funding - StoreFront",
+        desc: `Deposit of ${balance.wallet_balance} NGN made by ${user.name}.`,
+        pay_type: "credit",
+        date_of_payment: new Date(),
+        payment_ref: "AD-trx-" + Math.floor(Math.random() * 10000000000000000),
+      });
+
+      await newWithdrawal.save();
+      await newMonnifyHistory.save();
+      await store.save();
+      await userBal.save();
+
+      return store;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 };

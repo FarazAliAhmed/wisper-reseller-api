@@ -93,7 +93,7 @@ class MonnifyService {
         new_bal: balance.wallet_balance,
         old_bal: old_bal,
         purpose: "Funding - Admin",
-        desc: `Deposit of ${balance.wallet_balance} NGN made by ${user.name}.`,
+        desc: `Deposit of ${addData.amount} NGN made by ${user.name}.`,
         pay_type: "credit",
         date_of_payment: new Date(),
         payment_ref: "AD-trx-" + Math.floor(Math.random() * 10000000000000000),

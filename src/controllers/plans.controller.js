@@ -13,7 +13,7 @@ const {
 const { loadPlans } = require("../scripts/loader");
 const { Account } = require("../models/account");
 const plan = require("../models/plan");
-const storeFrontPlan = require("../models/SFPlan");
+const userPlan = require("../models/userPlan");
 
 const defaultPlans = require("../utils/plans.json");
 
@@ -127,7 +127,7 @@ const deleteAllPlans = async (req, res) => {
 // Get plans by user ID
 const getPlansByUserId = async (req, res) => {
   try {
-    const userPlan = await storeFrontPlan
+    const userPlan = await userPlan
       .find({ business: req.params.userId })
       .sort({ createdAt: -1 });
 
@@ -149,7 +149,7 @@ const createPlanUser = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const newPlan = new storeFrontPlan({
+    const newPlan = new userPlan({
       plan_id: Number(req.body.plan_id),
       business: req.params.userId,
       network: req.body.network,
@@ -171,7 +171,7 @@ const createPlanUser = async (req, res) => {
 
 const updatePlanUser = async (req, res) => {
   try {
-    const planToUpdate = await storeFrontPlan.findOne({
+    const planToUpdate = await userPlan.findOne({
       business: req.params.userId,
       plan_id: req.params.planId,
     });
@@ -216,7 +216,7 @@ const updatePlanUser = async (req, res) => {
 
 const updateSellingPlan = async (req, res) => {
   try {
-    const planData = await storeFrontPlan.findOne({
+    const planData = await userPlan.findOne({
       business: req.params.userId,
       plan_id: req.body.planId,
     });
@@ -240,7 +240,7 @@ const updateSellingPlan = async (req, res) => {
 
 const deletePlanUser = async (req, res) => {
   try {
-    const planData = await storeFrontPlan.findOne({
+    const planData = await userPlan.findOne({
       business: req.params.userId,
       plan_id: req.body.planId,
     });

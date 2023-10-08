@@ -4,7 +4,7 @@ const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const Flutterwave = require("flutterwave-node-v3");
 const storeFrontHistory = require("../models/storeFrontHistory");
 const storeFront = require("../models/storeFront");
-const SFPlan = require("../models/SFPlan");
+const userPlan = require("../models/userPlan");
 
 async function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
   const flw = new Flutterwave(
@@ -110,7 +110,7 @@ async function debitStoreFrontMegaWallet(
     } else {
       console.log("LITEEEEEE");
       const storeOwner = await storeFront.findOne({ business_id: businessId });
-      const storePlan = await SFPlan.findOne({
+      const storePlan = await userPlan.findOne({
         business: businessId,
         plan_id: plan_id,
       });
@@ -211,7 +211,7 @@ async function revertStoreFrontMegaWallet(
       await purchase.save();
     } else {
       const storeOwner = await storeFront.findOne({ business_id: businessId });
-      const storePlan = await SFPlan.findOne({
+      const storePlan = await userPlan.findOne({
         business: businessId,
         plan_id: plan_id,
       });

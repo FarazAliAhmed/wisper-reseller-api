@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const StoreFrontPlan = new Schema(
+const UserPlan = new Schema(
   {
     business: {
       type: String,
@@ -45,7 +45,7 @@ const StoreFrontPlan = new Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 );
 
-StoreFrontPlan.virtual("size")
+UserPlan.virtual("size")
   .get(function () {
     return this.volume + " " + this.unit;
   })
@@ -55,4 +55,4 @@ StoreFrontPlan.virtual("size")
     this.set({ unit, volume });
   });
 
-module.exports = mongoose.model("storeFrontPlan", StoreFrontPlan);
+module.exports = mongoose.model("userPlan", UserPlan);
