@@ -8,6 +8,10 @@ const uuidv4 = require("uuid/v4");
 // Install with: npm i flutterwave-node-v3
 
 const Flutterwave = require("flutterwave-node-v3");
+const {
+  withdrawStoreFrontService,
+  storeFrontAnalysisService,
+} = require("../services/storeFront.service");
 const flw = new Flutterwave(
   process.env.FLW_PUBLIC_KEY,
   process.env.FLW_SECRET_KEY
@@ -218,6 +222,36 @@ exports.uploadImageStoreFronts = async (req, res, next) => {
 exports.withdrawStoreFronts = async (req, res, next) => {
   const business = req.params.business;
   const { amount, withType } = req.body;
+
+  try {
+    const withdrawStore = await withdrawStoreFrontService(
+      business,
+      withType,
+      amount
+    );
+
+    return res.json(withdrawStore);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
+exports.storeAnalysis = async (req, res, next) => {
+  const business = req.params.business;
+
+  try {
+    const analytics = await storeFrontAnalysisService(business);
+
+    return res.json(analytics);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
 };
 
 // Function to generate a UUID as a transaction reference

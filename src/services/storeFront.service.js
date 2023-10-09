@@ -3,69 +3,76 @@ const dataBalance = require("../models/dataBalance");
 const monnifyHistory = require("../models/monnifyHistory");
 const storeFront = require("../models/storeFront");
 const StoreFront = require("../models/storeFront");
+const storeFrontHistory = require("../models/storeFrontHistory");
 const withdrawalHistory = require("../models/withdrawHistory.model");
 
-// Get a store front by business_id
-exports.getStoreFrontByBusinessId = async (businessId) => {
-  try {
-    const storeFront = await StoreFront.findOne({ business_id: businessId });
-    return storeFront;
-  } catch (error) {
-    throw error;
-  }
-};
+const Flutterwave = require("flutterwave-node-v3");
+const flw = new Flutterwave(
+  process.env.FLW_PUBLIC_KEY,
+  process.env.FLW_SECRET_KEY
+);
 
-// Get all store fronts
-exports.getAllStoreFronts = async () => {
-  try {
-    const storeFronts = await StoreFront.find();
-    return storeFronts;
-  } catch (error) {
-    throw error;
-  }
-};
+// // Get a store front by business_id
+// exports.getStoreFrontByBusinessId = async (businessId) => {
+//   try {
+//     const storeFront = await StoreFront.findOne({ business_id: businessId });
+//     return storeFront;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-// Create a new store front
-exports.createStoreFront = async (data) => {
-  // Check if the data contains the 'wallet' field
-  if ("wallet" in data) {
-    throw new Error(
-      'Cannot include the "wallet" field when creating a store front.'
-    );
-  }
+// // Get all store fronts
+// exports.getAllStoreFronts = async () => {
+//   try {
+//     const storeFronts = await StoreFront.find();
+//     return storeFronts;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-  try {
-    const newStoreFront = new StoreFront(data);
-    const savedStoreFront = await newStoreFront.save();
-    return savedStoreFront;
-  } catch (error) {
-    throw error;
-  }
-};
+// // Create a new store front
+// exports.createStoreFront = async (data) => {
+//   // Check if the data contains the 'wallet' field
+//   if ("wallet" in data) {
+//     throw new Error(
+//       'Cannot include the "wallet" field when creating a store front.'
+//     );
+//   }
 
-// Update a store front by business_id
-exports.updateStoreFront = async (businessId, updates) => {
-  // Check if the updates contain the 'wallet' field
-  if ("wallet" in updates) {
-    throw new Error(
-      'Cannot include the "wallet" field when updating a store front.'
-    );
-  }
+//   try {
+//     const newStoreFront = new StoreFront(data);
+//     const savedStoreFront = await newStoreFront.save();
+//     return savedStoreFront;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-  try {
-    const updatedStoreFront = await StoreFront.findOneAndUpdate(
-      { business_id: businessId },
-      updates,
-      { new: true }
-    );
-    return updatedStoreFront;
-  } catch (error) {
-    throw error;
-  }
-};
+// // Update a store front by business_id
+// exports.updateStoreFront = async (businessId, updates) => {
+//   // Check if the updates contain the 'wallet' field
+//   if ("wallet" in updates) {
+//     throw new Error(
+//       'Cannot include the "wallet" field when updating a store front.'
+//     );
+//   }
+
+//   try {
+//     const updatedStoreFront = await StoreFront.findOneAndUpdate(
+//       { business_id: businessId },
+//       updates,
+//       { new: true }
+//     );
+//     return updatedStoreFront;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 // withdraw from a store front by business_id
-exports.withdrawStoreFront = async (businessId, withType, amount) => {
+exports.withdrawStoreFrontService = async (businessId, withType, amount) => {
   const store = await storeFront.findOne({ business_id: businessId });
 
   if (!store) {
@@ -158,4 +165,120 @@ exports.withdrawStoreFront = async (businessId, withType, amount) => {
       throw error;
     }
   }
+};
+
+// ANALYSIS
+
+exports.storeFrontAnalysisService = async (businessId) => {
+  const currentDate = new Date();
+
+  // Format the current date as "YYYY-MM-DDT00:00:00.000Z" for comparison
+  const todayDate = new Date(currentDate);
+  todayDate.setDate(currentDate.getDate() + 1);
+
+  const formattedCurrentDate = new Date(
+    todayDate.getFullYear(),
+    todayDate.getMonth(),
+    todayDate.getDate()
+  ).toISOString();
+
+  // Calculate the date filters
+  const dateFilters = [
+    {
+      label: "Today",
+      start: formattedCurrentDate.slice(0, 10) + "T00:00:00.000Z",
+      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+    },
+    {
+      label: "Yesterday",
+      start: formattedCurrentDate.slice(0, 10) + "T00:00:00.000Z",
+      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+    },
+    {
+      label: "This Week",
+      start: formattedCurrentDate.slice(0, 10) + "T00:00:00.000Z",
+      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+    },
+    {
+      label: "This Month",
+      start: formattedCurrentDate.slice(0, 7) + "-01T00:00:00.000Z",
+      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+    },
+    {
+      label: "Last 30 Days",
+      start: formattedCurrentDate.slice(0, 10) + "T00:00:00.000Z",
+      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+    },
+    {
+      label: "Last Month",
+      start: formattedCurrentDate.slice(0, 7) + "-01T00:00:00.000Z",
+      end: formattedCurrentDate.slice(0, 7) + "-31T23:59:59.999Z",
+    },
+    {
+      label: "This Year",
+      start: formattedCurrentDate.slice(0, 4) + "-01-01T00:00:00.000Z",
+      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+    },
+    {
+      label: "All Time",
+      start: "1970-01-01T00:00:00.000Z",
+      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+    },
+  ];
+
+  const analytics = {};
+
+  // Calculate analytics for each date filter
+  for (const filter of dateFilters) {
+    const { label, start, end } = filter;
+
+    const totalStoreVisit = await storeFrontHistory.countDocuments({
+      date: {
+        $gte: start,
+        $lt: end,
+      },
+    });
+
+    const totalAmountSold = await storeFrontHistory
+      .aggregate([
+        {
+          $match: {
+            date: {
+              $gte: start,
+              $lt: end,
+            },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalAmountSold: {
+              $sum: {
+                $toDouble: "$price",
+              },
+            },
+          },
+        },
+      ])
+      .exec();
+
+    const totalRevenue =
+      totalAmountSold.length > 0 ? totalAmountSold[0].totalAmountSold : 0;
+
+    const totalTransaction = await storeFrontHistory.countDocuments({
+      date: {
+        $gte: start,
+        $lt: end,
+      },
+    });
+
+    analytics[label] = {
+      TotalStoreVisits: totalStoreVisit,
+      TotalAmountSold: totalAmountSold,
+      TotalRevenue: totalRevenue,
+      TotalTransactions: totalTransaction,
+    };
+  }
+
+  return analytics;
 };

@@ -20,6 +20,7 @@ const {
   deleteAdmin,
   addWebhook,
   addCallback,
+  changeAccessToken,
 } = require("../controllers/user.controller");
 
 const {
@@ -119,6 +120,7 @@ router.post("/users", handleRegister);
 router.post("/updateConfirm", updateConfirmedFieldForExistingUsers);
 router.post("/updateWhitelist", updateWhitelist);
 router.post("/deleteIPAddress", deleteIPAddress);
+router.get("/changeAccessToken/:id", changeAccessToken);
 
 //handleUpdate route should be protected
 router.patch("/users/:username", getUser, handleUpdate);

@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const { validateUser } = require("../models/account");
+const { validateUser, Account } = require("../models/account");
 
 const userService = require("../services/user.service");
 const { upgradeBalance } = require("../services/balance.service");
@@ -126,6 +126,37 @@ const validateAddUrl = (fields) => {
   return schema.validate(fields);
 };
 
+const uuid = require("uuid");
+
+async function changeAccessToken(req, res) {
+  const accountId = req.params.id; // Assuming you're passing the account ID in the route params
+  const newAccessToken = uuid.v4(); // Generate a new unique access token
+
+  try {
+    // Check if the new access token is already in use
+    const tokenInUse = await Account.findOne({ access_token: newAccessToken });
+
+    if (tokenInUse) {
+      return res
+        .status(400)
+        .json({ message: "New access token is not unique." });
+    }
+
+    // Update the account's access_token using updateOne
+    await Account.updateOne(
+      { _id: accountId },
+      { $set: { access_token: newAccessToken } }
+    );
+
+    return res
+      .status(200)
+      .json({ message: "Access token updated successfully.", newAccessToken });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+}
+
 module.exports = {
   handleRegister,
   handleUpdate,
@@ -133,4 +164,5 @@ module.exports = {
   deleteAdmin,
   addCallback,
   addWebhook,
+  changeAccessToken,
 };

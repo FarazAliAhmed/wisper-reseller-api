@@ -12,6 +12,7 @@ const {
   getAllStoreFrontHistory,
   getAllStoreFrontHistoryBusiness,
   uploadImageStoreFronts,
+  storeAnalysis,
 } = require("../controllers/storeFront.controller");
 const getUser = require("../utils/middleware/getUser");
 const SFSendData = require("../controllers/SFSendData.controller");
@@ -61,6 +62,12 @@ router.get("/store-fronts", getAdmin, getAllStoreFronts);
 router.put("/store-fronts/:business_id", getUser, updateStoreFront);
 router.post("/store-fronts/allocateData", SFSendData);
 router.get("/store-fronts-all-history", getAdmin, getAllStoreFrontHistory);
+// analysis
+router.get(
+  "/store-fronts/analysis/:business",
+
+  storeAnalysis
+);
 
 router.get(
   "/store-fronts-history/:business_id",
