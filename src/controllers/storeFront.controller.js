@@ -73,14 +73,42 @@ exports.getStoreFrontByBusinessId = async (req, res) => {
     if (!storeFront) {
       return res.status(404).json({ error: "Store front not found" });
     }
-    res.status(200).json(storeFront);
+
+    const uniquePhoneCount = await storeFrontHistory.aggregate([
+      {
+        $match: { storeBusiness: businessId },
+      },
+      {
+        $group: {
+          _id: "$phone",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          count: {
+            $sum: 1,
+          },
+        },
+      },
+    ]);
+
+    const totalUniquePhoneCount =
+      uniquePhoneCount.length > 0 ? uniquePhoneCount[0].count : 0;
+
+    // Add the count to the storeFront object before sending the response
+    const responseObj = {
+      ...storeFront.toObject(),
+      customer: totalUniquePhoneCount,
+    };
+    res.status(200).json(responseObj);
   } catch (error) {
     console.error("Error getting store front by business_id:", error);
     res.status(500).json({ error: "Error getting store front" });
   }
 };
 
-// Get a store front by business_id
+// Get a store front by username
 exports.getStoreFrontByUserName = async (req, res) => {
   const userName = req.params.username;
   try {
@@ -88,9 +116,37 @@ exports.getStoreFrontByUserName = async (req, res) => {
     if (!storeFront) {
       return res.status(404).json({ error: "Store front not found" });
     }
-    res.status(200).json(storeFront);
+
+    const uniquePhoneCount = await storeFrontHistory.aggregate([
+      {
+        $match: { storeBusiness: storeFront._id },
+      },
+      {
+        $group: {
+          _id: "$phone",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          count: {
+            $sum: 1,
+          },
+        },
+      },
+    ]);
+
+    const totalUniquePhoneCount =
+      uniquePhoneCount.length > 0 ? uniquePhoneCount[0].count : 0;
+
+    // Add the count to the storeFront object before sending the response
+    const responseObj = {
+      ...storeFront.toObject(),
+      customer: totalUniquePhoneCount,
+    };
+    res.status(200).json(responseObj);
   } catch (error) {
-    console.error("Error getting store front by business_id:", error);
+    console.error("Error getting store front by username:", error);
     res.status(500).json({ error: "Error getting store front" });
   }
 };
