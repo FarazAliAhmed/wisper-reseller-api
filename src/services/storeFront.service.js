@@ -4,6 +4,7 @@ const monnifyHistory = require("../models/monnifyHistory");
 const storeFront = require("../models/storeFront");
 const StoreFront = require("../models/storeFront");
 const storeFrontHistory = require("../models/storeFrontHistory");
+const userPlan = require("../models/userPlan");
 const withdrawalHistory = require("../models/withdrawHistory.model");
 
 const Flutterwave = require("flutterwave-node-v3");
@@ -11,65 +12,6 @@ const flw = new Flutterwave(
   process.env.FLW_PUBLIC_KEY,
   process.env.FLW_SECRET_KEY
 );
-
-// // Get a store front by business_id
-// exports.getStoreFrontByBusinessId = async (businessId) => {
-//   try {
-//     const storeFront = await StoreFront.findOne({ business_id: businessId });
-//     return storeFront;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// // Get all store fronts
-// exports.getAllStoreFronts = async () => {
-//   try {
-//     const storeFronts = await StoreFront.find();
-//     return storeFronts;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// // Create a new store front
-// exports.createStoreFront = async (data) => {
-//   // Check if the data contains the 'wallet' field
-//   if ("wallet" in data) {
-//     throw new Error(
-//       'Cannot include the "wallet" field when creating a store front.'
-//     );
-//   }
-
-//   try {
-//     const newStoreFront = new StoreFront(data);
-//     const savedStoreFront = await newStoreFront.save();
-//     return savedStoreFront;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// // Update a store front by business_id
-// exports.updateStoreFront = async (businessId, updates) => {
-//   // Check if the updates contain the 'wallet' field
-//   if ("wallet" in updates) {
-//     throw new Error(
-//       'Cannot include the "wallet" field when updating a store front.'
-//     );
-//   }
-
-//   try {
-//     const updatedStoreFront = await StoreFront.findOneAndUpdate(
-//       { business_id: businessId },
-//       updates,
-//       { new: true }
-//     );
-//     return updatedStoreFront;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
 // withdraw from a store front by business_id
 exports.withdrawStoreFrontService = async (businessId, withType, amount) => {
@@ -284,4 +226,61 @@ exports.storeFrontAnalysisService = async (businessId) => {
   }
 
   return analytics;
+};
+
+exports.storeFrontUserPlanService = async () => {
+  const notAllowedTypes = ["admin"];
+
+  try {
+    const allUsers = await Account.find({
+      type: { $nin: notAllowedTypes },
+    });
+
+    const body = {
+      plan_id: 431,
+      network: "glo",
+      plan_type: "gifting",
+      price: 0,
+      volume: 25,
+      unit: "mb",
+      validity: "30 days",
+    };
+
+    const toMap = [
+      { plan_id: 701, price: 50, volume: 200, unit: "mb" },
+      { plan_id: 702, price: 125, volume: 500, unit: "mb" },
+      { plan_id: 703, price: 250, volume: 1, unit: "gb" },
+      { plan_id: 704, price: 500, volume: 2, unit: "gb" },
+      { plan_id: 705, price: 750, volume: 3, unit: "gb" },
+      { plan_id: 706, price: 1250, volume: 5, unit: "gb" },
+      { plan_id: 707, price: 2500, volume: 10, unit: "gb" },
+    ];
+
+    for (let i = 0; i < allUsers.length; i++) {
+      const currUser = allUsers[i]._id;
+      for (let j = 0; j < toMap.length; j++) {
+        try {
+          const newPlan = new userPlan({
+            business: currUser._id,
+            plan_id: toMap[j].plan_id,
+            network: body.network,
+            plan_type: body.plan_type,
+            price: toMap[j].price,
+            volume: toMap[j].volume,
+            unit: toMap[j].unit,
+            validity: body.validity,
+          });
+
+          newPlan.save();
+        } catch (error) {
+          console.log("failed to create plan for", currUser.name);
+        }
+      }
+    }
+
+    return allUsers;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };

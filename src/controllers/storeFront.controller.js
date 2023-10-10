@@ -11,6 +11,7 @@ const Flutterwave = require("flutterwave-node-v3");
 const {
   withdrawStoreFrontService,
   storeFrontAnalysisService,
+  storeFrontUserPlanService,
 } = require("../services/storeFront.service");
 const flw = new Flutterwave(
   process.env.FLW_PUBLIC_KEY,
@@ -302,6 +303,21 @@ exports.storeAnalysis = async (req, res, next) => {
     const analytics = await storeFrontAnalysisService(business);
 
     return res.json(analytics);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
+exports.createAllUserPlans = async (req, res) => {
+  try {
+    const response = await storeFrontUserPlanService();
+
+    return res
+      .status(200)
+      .json({ message: "user plan created successfully", data: response });
   } catch (error) {
     console.log(error);
     return res.status(500).json({

@@ -15,14 +15,13 @@ const UserPlan = new Schema(
       type: String,
       required: true,
     },
-
     plan_type: {
       type: String,
-      required: true,
+      default: null,
     },
     price: {
       type: Number,
-      required: true,
+      default: null,
     },
     selling_price: {
       type: Number,

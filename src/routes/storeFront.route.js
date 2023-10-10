@@ -13,6 +13,7 @@ const {
   getAllStoreFrontHistoryBusiness,
   uploadImageStoreFronts,
   storeAnalysis,
+  createAllUserPlans,
 } = require("../controllers/storeFront.controller");
 const getUser = require("../utils/middleware/getUser");
 const SFSendData = require("../controllers/SFSendData.controller");
@@ -54,6 +55,7 @@ const upload = multer({
 });
 
 router.post("/create-all-store-fronts", getAdmin, createStoreFront);
+router.post("/create-all-user-plans", getAdmin, createAllUserPlans);
 router.get("/check-store-username/:username", checkStoreFrontUserName);
 router.get("/store-fronts/:business_id", getStoreFrontByBusinessId);
 router.get("/store-fronts-username/:username", getStoreFrontByUserName);
