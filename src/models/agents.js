@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const SubdealerSchema = new Schema(
+const AgentsSchema = new Schema(
   {
     business: {
       type: Schema.Types.ObjectId,
@@ -34,4 +34,4 @@ const SubdealerSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Subdealer", SubdealerSchema);
+module.exports = mongoose.model("Agents", AgentsSchema);

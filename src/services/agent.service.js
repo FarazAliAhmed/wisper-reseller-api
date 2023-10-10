@@ -3,14 +3,14 @@ var postmark = require("postmark");
 const bcrypt = require("bcrypt");
 const dataBalance = require("../models/dataBalance");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
-const subdealerHistory = require("../models/subdealerHistory");
+const agentHistory = require("../models/agentHistory");
 const { sendEmail } = require("../utils/email/transporter");
 const transactionHistory = require("../models/transactionHistory");
 const uuid = require("uuid");
 const client = new postmark.ServerClient(process.env.POSTMARK);
 
-class SubDealerService {
-  async createSubdealer({ business, fullName, email, username, phoneNumber }) {
+class AgentService {
+  async createAgent({ business, fullName, email, username, phoneNumber }) {
     const tempPassword = await this.generateTemporaryPassword();
 
     const salt = await bcrypt.genSalt(10);
@@ -31,31 +31,31 @@ class SubDealerService {
       }
     }
 
-    const subdealer = new Account({
+    const agent = new Account({
       name: fullName,
       email,
       username,
       dealer: business,
       mobile_number: phoneNumber,
       password,
-      type: "subdealer",
+      type: "agent",
       access_token, // Set the access_token here
     });
-    await subdealer.save();
+    await agent.save();
 
     const Subject = "Welcome to the Wisper Dealer Network!";
     const TextBody =
-      `Dear ${subdealer.name},\n\n` +
+      `Dear ${agent.name},\n\n` +
       `Welcome to the Wisper Dealer Network! We're thrilled to have you on board as an agent with Wisper NG. Your account is now ready, and you can start accessing our platform right away.\n\n` +
       `Here are your login details:\n\n` +
-      `Username: ${subdealer.username}\n` +
-      `Email: ${subdealer.email}\n` +
+      `Username: ${agent.username}\n` +
+      `Email: ${agent.email}\n` +
       `Password: ${tempPassword}\n\n` +
       `Please Note: We recommend changing your password after your first login for security reasons.`;
 
-    await sendEmail(subdealer.email, Subject, TextBody);
+    await sendEmail(agent.email, Subject, TextBody);
 
-    return subdealer;
+    return agent;
   }
 
   async generateTemporaryPassword() {
@@ -72,79 +72,79 @@ class SubDealerService {
   }
 
   // Helper function to send a welcome email
-  async sendWelcomeEmail(subdealer) {
-    console.log(subdealer.email);
+  async sendWelcomeEmail(agent) {
+    console.log(agent.email);
     await client.sendEmail({
       From: "admin@wisper.ng",
-      To: subdealer.email,
+      To: agent.email,
       Subject: "Welcome to the Wisper Dealer Network!",
       TextBody:
-        `Dear ${subdealer.fullName},\n\n` +
+        `Dear ${agent.fullName},\n\n` +
         `Welcome to the Wisper Dealer Network! We're thrilled to have you on board as a sub-dealer with [Your Company Name]. Your account is now ready, and you can start accessing our platform right away.\n\n` +
         `Here are your login details:\n\n` +
-        `Username: ${subdealer.username}\n` +
-        `Email: ${subdealer.email}\n` +
-        `Password: ${subdealer.password}\n\n` +
+        `Username: ${agent.username}\n` +
+        `Email: ${agent.email}\n` +
+        `Password: ${agent.password}\n\n` +
         `Please Note: We recommend changing your password after your first login for security reasons.`,
     });
 
     console.log("Email Sent");
   }
 
-  async getSubdealersByBusiness(businessId) {
+  async getAgentsByBusiness(businessId) {
     try {
-      // Implement logic to fetch subdealers related to the provided businessId from the database
-      const subdealers = await Account.find({ dealer: businessId }).sort({
+      // Implement logic to fetch agents related to the provided businessId from the database
+      const agents = await Account.find({ dealer: businessId }).sort({
         createdAt: -1,
       });
-      return subdealers;
+      return agents;
     } catch (error) {
-      throw new Error("Failed to fetch subdealers");
+      throw new Error("Failed to fetch agents");
     }
   }
 
-  async getSubdealersByTrx(businessId) {
+  async getAgentsByTrx(businessId) {
     try {
-      // Implement logic to fetch subdealers related to the provided businessId from the database
-      const subdealers = await Account.find({ dealer: businessId }).sort({
+      // Implement logic to fetch agents related to the provided businessId from the database
+      const agents = await Account.find({ dealer: businessId }).sort({
         createdAt: -1,
       });
 
       // Create an array to store the transactions
       const transactions = [];
 
-      // Loop through each subdealer and find transactions that match the business_id
-      for (const subdealer of subdealers) {
-        const subdealerId = subdealer._id;
+      // Loop through each agent and find transactions that match the business_id
+      for (const agent of agents) {
+        const agentId = agent._id;
 
-        // Find transactions that match the business_id and subdealer's _id
-        const subdealerTransactions = await transactionHistory.find({
+        // Find transactions that match the business_id and agent's _id
+        const agentTransactions = await transactionHistory.find({
           business_id: businessId,
-          admin_ref: subdealerId, // Assuming admin_ref corresponds to subdealer._id
+          admin_ref: agentId, // Assuming admin_ref corresponds to agent._id
         });
 
         // Add the found transactions to the transactions array
-        transactions.push(...subdealerTransactions);
+        transactions.push(...agentTransactions);
       }
 
       return transactions;
     } catch (error) {
-      throw new Error("Failed to fetch subdealers");
+      throw new Error("Failed to fetch agents");
     }
   }
 
-  async getSubdealersAdmin() {
+  async getAgentsAdmin() {
     try {
-      const subdealers = await Account.find({ type: "subdealer" }).sort({
+      const agents = await Account.find({ type: "agent" }).sort({
         createdAt: -1,
       });
-      return subdealers;
+      return agents;
     } catch (error) {
-      throw new Error("Failed to fetch subdealers");
+      throw new Error("Failed to fetch agents");
     }
   }
 
-  async purchaseSubdealerMegaData(dealer, business_id, network, amountInGB) {
+  async purchaseAgentMegaData(dealer, business_id, network, amountInGB) {
     try {
       const userBalance = await dataBalance.findOne({ business: dealer });
       if (!userBalance) {
@@ -167,11 +167,11 @@ class SubDealerService {
         throw new Error("Not enough balance");
       }
 
-      const subdealerMegaWallet = { ...dealerBalance.mega_wallet };
-      const subdealer_old = subdealerMegaWallet[network];
+      const agentMegaWallet = { ...dealerBalance.mega_wallet };
+      const agent_old = agentMegaWallet[network];
 
       ownerMegaWallet[network] -= Number(amountInGB) * 1000;
-      subdealerMegaWallet[network] += Number(amountInGB) * 1000;
+      agentMegaWallet[network] += Number(amountInGB) * 1000;
 
       const updatedOwnerBalance = await dataBalance.findOneAndUpdate(
         { business: dealer },
@@ -182,10 +182,10 @@ class SubDealerService {
         { new: true }
       );
 
-      const updatedSubDealerBalance = await dataBalance.findOneAndUpdate(
+      const updatedAgentBalance = await dataBalance.findOneAndUpdate(
         { business: business_id },
         {
-          mega_wallet: subdealerMegaWallet,
+          mega_wallet: agentMegaWallet,
           last_purchase: new Date(),
         },
         { new: true }
@@ -206,27 +206,27 @@ class SubDealerService {
         status: "success",
       });
 
-      const subdealerPurchase = new subdealerHistory({
+      const agentPurchase = new agentHistory({
         business_id: business_id,
         username: subAcct.username,
         dealer: dealer,
         amount: 0,
         volume: amountInGB,
         channel: "Dealer",
-        old_bal: subdealer_old,
-        new_bal: subdealerMegaWallet[network],
+        old_bal: agent_old,
+        new_bal: agentMegaWallet[network],
         network: network,
         status: "success",
       });
 
       await ownerPurchase.save();
-      await subdealerPurchase.save();
+      await agentPurchase.save();
 
-      return updatedSubDealerBalance;
+      return updatedAgentBalance;
     } catch (error) {
       throw error;
     }
   }
 }
 
-module.exports = new SubDealerService();
+module.exports = new AgentService();

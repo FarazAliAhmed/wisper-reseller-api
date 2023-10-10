@@ -17,7 +17,7 @@ const getUser = require("./utils/middleware/getUser");
 
 const apiRoutes = require("./routes");
 const notiRoutes = require("./routes/notification.route");
-const subdealerRoutes = require("./routes/subdealer.route");
+const agentsRoutes = require("./routes/agent.route");
 const megaPriceRoutes = require("./routes/megaPrice.route");
 const monnifyRoutes = require("./routes/monnify.route");
 const megamaintenanceRoutes = require("./routes/megamaintenance.route");
@@ -58,7 +58,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api", apiRoutes);
 app.use("/api", notiRoutes);
-app.use("/api/subdealer", subdealerRoutes);
+app.use("/api/subdealer", agentsRoutes);
 app.use("/api", megaPriceRoutes);
 app.use("/api", monnifyRoutes);
 app.use("/api", megamaintenanceRoutes);

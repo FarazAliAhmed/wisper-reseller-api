@@ -1,13 +1,13 @@
 const { Account } = require("../models/account");
 const dataBalance = require("../models/dataBalance");
 const subdealerHistory = require("../models/subdealerHistory");
-const subdealerService = require("../services/subdealer.service");
+const agentService = require("../services/agent.service");
 
-const createSubdealer = async (req, res) => {
+const createAgent = async (req, res) => {
   try {
     const { fullName, email, username, phoneNumber, business } = req.body; // Destructure the request body
 
-    const subdealer = await subdealerService.createSubdealer({
+    const subdealer = await agentService.createAgent({
       business,
       fullName,
       email,
@@ -24,13 +24,11 @@ const createSubdealer = async (req, res) => {
   }
 };
 
-const getAllSubdealers = async (req, res) => {
+const getAllAgents = async (req, res) => {
   try {
     const { id: businessId } = req.params;
 
-    const subdealers = await subdealerService.getSubdealersByBusiness(
-      businessId
-    );
+    const subdealers = await agentService.getAgentsByBusiness(businessId);
     res.json({ subdealers });
   } catch (error) {
     console.log(error);
@@ -38,11 +36,11 @@ const getAllSubdealers = async (req, res) => {
   }
 };
 
-const getAllSubdealersTrx = async (req, res) => {
+const getAllAgentsTrx = async (req, res) => {
   try {
     const { id: businessId } = req.params;
 
-    const subdealers = await subdealerService.getSubdealersByTrx(businessId);
+    const subdealers = await agentService.getAgentsByTrx(businessId);
     res.json({ subdealers });
   } catch (error) {
     console.log(error);
@@ -50,11 +48,11 @@ const getAllSubdealersTrx = async (req, res) => {
   }
 };
 
-const getAllSubdealerAdmin = async (req, res) => {
+const getAllAgentAdmin = async (req, res) => {
   try {
     const { id: businessId } = req.params;
 
-    const subdealers = await subdealerService.getSubdealersAdmin(businessId);
+    const subdealers = await agentService.getAgentsAdmin(businessId);
     res.json({ subdealers });
   } catch (error) {
     console.log(error);
@@ -62,7 +60,7 @@ const getAllSubdealerAdmin = async (req, res) => {
   }
 };
 
-const getSubdealerInfo = async (req, res) => {
+const getAgentInfo = async (req, res) => {
   try {
     const { id: businessId } = req.params;
 
@@ -95,7 +93,7 @@ const DealerGetHistory = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-const SubdealerGetPurchaseHistory = async (req, res) => {
+const AgentGetPurchaseHistory = async (req, res) => {
   try {
     const business_id = req.params.id;
     const { limit } = req.query;
@@ -114,7 +112,7 @@ const SubdealerGetPurchaseHistory = async (req, res) => {
   }
 };
 
-const SubdealerGetPurchaseHistoryAdmin = async (req, res) => {
+const AgentGetPurchaseHistoryAdmin = async (req, res) => {
   try {
     const { limit } = req.query;
 
@@ -130,10 +128,10 @@ const SubdealerGetPurchaseHistoryAdmin = async (req, res) => {
   }
 };
 
-const SubdealerPurchaseMegaData = async (req, res) => {
+const AgentPurchaseMegaData = async (req, res) => {
   try {
     const { dealer, business_id, network, amountInGB } = req.body;
-    const updatedBalance = await subdealerService.purchaseSubdealerMegaData(
+    const updatedBalance = await agentService.purchaseAgentMegaData(
       dealer,
       business_id,
       network,
@@ -147,13 +145,13 @@ const SubdealerPurchaseMegaData = async (req, res) => {
 };
 
 module.exports = {
-  createSubdealer,
-  getAllSubdealers,
-  SubdealerGetPurchaseHistory,
-  SubdealerPurchaseMegaData,
-  getSubdealerInfo,
-  getAllSubdealerAdmin,
-  SubdealerGetPurchaseHistoryAdmin,
-  getAllSubdealersTrx,
+  createAgent,
+  getAllAgents,
+  AgentGetPurchaseHistory,
+  AgentPurchaseMegaData,
+  getAgentInfo,
+  getAllAgentAdmin,
+  AgentGetPurchaseHistoryAdmin,
+  getAllAgentsTrx,
   DealerGetHistory,
 };
