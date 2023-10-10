@@ -189,7 +189,7 @@ exports.checkPhoneStoreFronts = async (req, res) => {
       return;
     }
 
-    res.status(200).json(sFData.name);
+    res.status(200).json({ name: sFData.name, email: sFData.email });
   } catch (error) {
     console.error("Error getting all store fronts:", error);
     res.status(500).json({
