@@ -189,16 +189,16 @@ router.patch("/admin/plans/:plan_id", getAdmin, updateOnePlan);
 router.delete("/admin/plans/:plan_id", getAdmin, deleteOnePlan);
 router.delete("/admin/plans/network/:network", getAdmin, deleteNetworkPlans);
 
-// ANALYSIS ROUTE
-router.get("/admin/analysis/payment", payment_analysis);
-router.get("/admin/analysis/calwalbal", calWalBal_analysis);
-router.get("/admin/analysis/revenue", revenueAnalysis);
-router.get("/admin/analysis/totalCurrentCredit", totalCurrentCredit);
-router.get("/admin/analysis/paymentTable", paymentTable);
-router.get("/admin/analysis/walletAnalysis", walletAnalysis);
-router.get("/admin/analysis/populateBucketUsage", populateBucketUsage);
-router.get("/admin/analysis/getBucketUsage", getAdmin, getBucketUsage);
-// router.get("/admin/analysis/populateWalletUsage", populateWalletUsage);
+// // ANALYSIS ROUTE
+// router.get("/admin/analysis/payment", payment_analysis);
+// router.get("/admin/analysis/calwalbal", calWalBal_analysis);
+// router.get("/admin/analysis/revenue", revenueAnalysis);
+// router.get("/admin/analysis/totalCurrentCredit", totalCurrentCredit);
+// router.get("/admin/analysis/paymentTable", paymentTable);
+// router.get("/admin/analysis/walletAnalysis", walletAnalysis);
+// router.get("/admin/analysis/populateBucketUsage", populateBucketUsage);
+// router.get("/admin/analysis/getBucketUsage", getAdmin, getBucketUsage);
+// // router.get("/admin/analysis/populateWalletUsage", populateWalletUsage);
 
 // BUCKET ID ROUTE
 router.get("/admin/getBucket", getBucketID);

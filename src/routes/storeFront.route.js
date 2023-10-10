@@ -63,14 +63,11 @@ router.put("/store-fronts/:business_id", getUser, updateStoreFront);
 router.post("/store-fronts/allocateData", SFSendData);
 router.get("/store-fronts-all-history", getAdmin, getAllStoreFrontHistory);
 // analysis
-router.get(
-  "/store-fronts/analysis/:business",
-
-  storeAnalysis
-);
+router.get("/store-fronts/analysis/:business", getUser, storeAnalysis);
 
 router.get(
   "/store-fronts-history/:business_id",
+  getUser,
   getAllStoreFrontHistoryBusiness
 );
 

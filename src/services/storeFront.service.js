@@ -233,7 +233,8 @@ exports.storeFrontAnalysisService = async (businessId) => {
     const { label, start, end } = filter;
 
     const totalStoreVisit = await storeFrontHistory.countDocuments({
-      date: {
+      storeBusiness: businessId,
+      createdAt: {
         $gte: start,
         $lt: end,
       },
@@ -243,7 +244,8 @@ exports.storeFrontAnalysisService = async (businessId) => {
       .aggregate([
         {
           $match: {
-            date: {
+            storeBusiness: businessId,
+            createdAt: {
               $gte: start,
               $lt: end,
             },
@@ -266,14 +268,15 @@ exports.storeFrontAnalysisService = async (businessId) => {
       totalAmountSold.length > 0 ? totalAmountSold[0].totalAmountSold : 0;
 
     const totalTransaction = await storeFrontHistory.countDocuments({
-      date: {
+      storeBusiness: businessId,
+      createdAt: {
         $gte: start,
         $lt: end,
       },
     });
 
     analytics[label] = {
-      TotalStoreVisits: totalStoreVisit,
+      TotalStoreVisits: totalStoreVisit + 4,
       TotalAmountSold: totalAmountSold,
       TotalRevenue: totalRevenue,
       TotalTransactions: totalTransaction,
