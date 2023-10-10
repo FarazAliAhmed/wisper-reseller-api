@@ -51,11 +51,16 @@ app.use(
     extended: false,
   })
 );
+
+// app.use(bodyParser.json({ limit: "10mb" }));
+// app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
+
 app.use("/uploads", express.static("uploads"));
 
 app.get("/", (req, res) => {
   res.status(200).send({ status: "healthy" });
 });
+
 app.use("/api", apiRoutes);
 app.use("/api", notiRoutes);
 app.use("/api/subdealer", agentsRoutes);
