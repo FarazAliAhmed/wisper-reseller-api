@@ -1,6 +1,6 @@
 const { Account } = require("../models/account");
 const dataBalance = require("../models/dataBalance");
-const subdealerHistory = require("../models/subdealerHistory");
+const agentHistory = require("../models/agentHistory");
 const agentService = require("../services/agent.service");
 
 const createAgent = async (req, res) => {
@@ -82,7 +82,7 @@ const DealerGetHistory = async (req, res) => {
 
     const limitValue = Number(limit) || 1;
 
-    const purchases = await subdealerHistory
+    const purchases = await agentHistory
       .find({
         dealer: business_id,
       })
@@ -100,7 +100,7 @@ const AgentGetPurchaseHistory = async (req, res) => {
 
     const limitValue = Number(limit) || 1;
 
-    const purchases = await subdealerHistory
+    const purchases = await agentHistory
       .find({
         business_id: business_id,
       })
@@ -118,7 +118,7 @@ const AgentGetPurchaseHistoryAdmin = async (req, res) => {
 
     const limitValue = Number(limit) || 1;
 
-    const purchases = await subdealerHistory
+    const purchases = await agentHistory
       .find()
       .sort({ createdAt: -1 })
       .limit(limitValue);

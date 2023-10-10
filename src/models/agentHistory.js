@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const joi = require("joi");
 const Schema = mongoose.Schema;
 
-const subdealerHistorySchema = new Schema(
+const agentHistorySchema = new Schema(
   {
     business_id: {
       type: String,
@@ -52,4 +52,4 @@ const subdealerHistorySchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("subdealerPurchase", subdealerHistorySchema);
+module.exports = mongoose.model("agentPurchase", agentHistorySchema);
