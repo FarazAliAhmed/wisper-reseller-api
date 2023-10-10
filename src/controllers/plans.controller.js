@@ -127,16 +127,17 @@ const deleteAllPlans = async (req, res) => {
 // Get plans by user ID
 const getPlansByUserId = async (req, res) => {
   try {
-    const userPlan = await userPlan
+    const user = await userPlan
       .find({ business: req.params.userId })
       .sort({ createdAt: -1 });
 
-    if (!userPlan) {
+    if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json(userPlan);
+    res.json(user);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error", msg: error });
   }
 };
