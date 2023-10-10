@@ -172,41 +172,19 @@ const createPlanUser = async (req, res) => {
 
 const updatePlanUser = async (req, res) => {
   try {
-    const planToUpdate = await userPlan.findOne({
-      business: req.params.userId,
-      plan_id: req.params.planId,
-    });
+    const bodyObj = req.body;
 
-    if (!planToUpdate) {
-      return res.status(404).json({ error: "Plan not found" });
-    }
+    console.log({ business: req.params.userId, plan_id: req.params.planId });
 
-    // Update the plan fields if provided in the request body
-    if (req.body.plan_id) {
-      planToUpdate.plan_id = Number(req.body.plan_id);
-    }
-    if (req.body.network) {
-      planToUpdate.network = req.body.network;
-    }
-    if (req.body.plan_type) {
-      planToUpdate.plan_type = req.body.plan_type;
-    }
-    if (req.body.price) {
-      planToUpdate.price = Number(req.body.price);
-    }
-    if (req.body.volume) {
-      planToUpdate.volume = Number(req.body.volume);
-    }
-    if (req.body.unit) {
-      planToUpdate.unit = req.body.unit;
-    }
-    if (req.body.validity) {
-      planToUpdate.validity = req.body.validity;
-    }
-
-    planToUpdate.selling_price = Number(req.body.price);
-
-    await planToUpdate.save();
+    console.log(bodyObj);
+    const planToUpdate = await userPlan.findOneAndUpdate(
+      {
+        business: req.params.userId,
+        plan_id: Number(req.params.planId),
+      },
+      bodyObj,
+      { new: true }
+    );
 
     res.json(planToUpdate);
   } catch (error) {
