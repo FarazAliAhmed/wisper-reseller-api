@@ -326,6 +326,45 @@ exports.createAllUserPlans = async (req, res) => {
   }
 };
 
+exports.customerStoreFronts = async (req, res) => {
+  const targetStoreBusiness = req.params.id; // Get the storeBusiness from the URL parameter
+
+  const pipeline = [
+    {
+      $match: {
+        storeBusiness: targetStoreBusiness, // Match the desired storeBusiness
+      },
+    },
+    {
+      $group: {
+        _id: "$phone", // Group by unique phone numbers
+        name: { $first: "$name" }, // Get the name of the first occurrence
+        email: { $first: "$email" }, // Get the email of the first occurrence
+        dateJoined: { $first: "$date" }, // Get the date of the first occurrence
+        numberOfPurchases: { $sum: 1 }, // Count the number of purchases
+      },
+    },
+    {
+      $project: {
+        _id: 0, // Exclude the _id field
+        phone: "$_id", // Rename _id to phone
+        name: 1,
+        email: 1,
+        dateJoined: 1,
+        numberOfPurchases: 1,
+      },
+    },
+  ];
+
+  storeFrontHistory.aggregate(pipeline, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "An error occurred" });
+    }
+    res.json(result);
+  });
+};
+
 // Function to generate a UUID as a transaction reference
 function generateTransactionReference() {
   return uuidv4();
