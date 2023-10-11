@@ -11,6 +11,7 @@ const {
   walletAnalysis,
   populateBucketUsage,
   getBucketUsage,
+  getWalletUsage,
 } = require("../controllers/analysis.controller");
 const router = express.Router();
 
@@ -23,6 +24,8 @@ router.get("/admin/analysis/paymentTable", paymentTable);
 router.get("/admin/analysis/walletAnalysis", walletAnalysis);
 router.get("/admin/analysis/populateBucketUsage", populateBucketUsage);
 router.get("/admin/analysis/getBucketUsage", getAdmin, getBucketUsage);
+router.get("/admin/analysis/getBucketUsage", getAdmin, getBucketUsage);
+router.get("/admin/analysis/getWalletUsage", getAdmin, getWalletUsage);
 // router.get("/admin/analysis/populateWalletUsage", populateWalletUsage);
 
 module.exports = router;

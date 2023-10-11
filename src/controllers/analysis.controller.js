@@ -701,6 +701,29 @@ const getBucketUsage = async (req, res) => {
   }
 };
 
+const getWalletUsage = async (req, res) => {
+  try {
+    const { limit = 10, page = 1 } = req.query;
+    const skip = (page - 1) * limit;
+
+    // Query the database for paginated bucket usage records
+    const dataR = await WalletUsage.find({
+      balance: { $gte: 0 },
+    })
+      .skip(skip)
+      .limit(parseInt(limit))
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(dataR);
+  } catch (error) {
+    console.error("Error fetching paginated wallet usage records:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 // const populateBucketUsage = async (req, res) => {
 //   try {
 //     const currentDate = new Date();
@@ -954,4 +977,5 @@ module.exports = {
   populateWalletUsage,
   populateStartWalletUsage,
   getBucketUsage,
+  getWalletUsage,
 };
