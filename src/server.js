@@ -64,7 +64,7 @@ app.get("/", (req, res) => {
 
 app.use("/api", apiRoutes);
 app.use("/api", notiRoutes);
-app.use("/api/subdealer", agentsRoutes);
+app.use("/api/agent", agentsRoutes);
 app.use("/api", megaPriceRoutes);
 app.use("/api", monnifyRoutes);
 app.use("/api", megamaintenanceRoutes);
