@@ -17,13 +17,13 @@ const getAllBusiness = async (req, res, next) => {
   let business = {
     mega: [],
     lite: [],
-    subdealer: [],
+    agent: [],
   };
   resp.business.forEach((buss) => {
     if (buss.type === "mega") {
       business.mega.push(buss);
     } else if (buss.type === "agent") {
-      business.subdealer.push(buss);
+      business.agent.push(buss);
     } else {
       business.lite.push(buss);
     }
