@@ -22,7 +22,7 @@ const getAllBusiness = async (req, res, next) => {
   resp.business.forEach((buss) => {
     if (buss.type === "mega") {
       business.mega.push(buss);
-    } else if (buss.type === "subdealer") {
+    } else if (buss.type === "agent") {
       business.subdealer.push(buss);
     } else {
       business.lite.push(buss);
