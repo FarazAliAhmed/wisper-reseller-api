@@ -13,6 +13,7 @@ const {
   storeFrontAnalysisService,
   storeFrontUserPlanService,
 } = require("../services/storeFront.service");
+const userPlan = require("../models/userPlan");
 const flw = new Flutterwave(
   process.env.FLW_PUBLIC_KEY,
   process.env.FLW_SECRET_KEY
@@ -374,15 +375,14 @@ exports.storeFrontNotice = async (req, res) => {
       return res.status(404).json({ error: "Store front not found" });
     }
 
-    const storeHistory = await storeFrontHistory.find({
-      storeBusiness: business,
+    const planUser = await userPlan.find({
+      business: business,
+      selling_price: { $nin: [null] },
     });
 
-    if (
-      storeProf.storeName &&
-      storeProf.storeUserName &&
-      storeHistory.length > 0
-    ) {
+    // console.log({ planUser });
+
+    if (storeProf.storeName && storeProf.storeUserName && planUser.length > 0) {
       return res.send(true);
     } else {
       return res.send(false);
