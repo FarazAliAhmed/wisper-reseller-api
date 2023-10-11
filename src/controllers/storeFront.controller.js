@@ -32,7 +32,6 @@ exports.createStoreFront = async (req, res) => {
       const storeFront = new StoreFront({
         business_id: _id.toString(),
         storeName: name,
-        storeUserName: username,
       });
 
       // Save the store front to the database
@@ -363,6 +362,34 @@ exports.customerStoreFronts = async (req, res) => {
     }
     res.json(result);
   });
+};
+
+exports.storeFrontNotice = async (req, res) => {
+  try {
+    const business = req.params.business; // Get the storeBusiness from the URL parameter
+
+    const storeProf = await StoreFront.findOne({ business_id: business });
+
+    if (!storeProf) {
+      return res.status(404).json({ error: "Store front not found" });
+    }
+
+    const storeHistory = await storeFrontHistory.find({
+      storeBusiness: business,
+    });
+
+    if (
+      storeProf.storeName &&
+      storeProf.storeUserName &&
+      storeHistory.length > 0
+    ) {
+      return res.send(true);
+    } else {
+      return res.send(false);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "Error Occured" });
+  }
 };
 
 // Function to generate a UUID as a transaction reference

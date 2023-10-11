@@ -23,6 +23,7 @@ const monnifyRoutes = require("./routes/monnify.route");
 const megamaintenanceRoutes = require("./routes/megamaintenance.route");
 const storeFrontRoutes = require("./routes/storeFront.route.js");
 const analysisRoutes = require("./routes/analysis.route.js");
+const helperRoutes = require("./routes/helper.route.js");
 
 const apiV2Routes = require("./routes/v2");
 const apiV2AdminRoutes = require("./routes/v2/admin");
@@ -74,6 +75,7 @@ app.use("/api/v2/admin", getAdmin, apiV2AdminRoutes);
 app.use("/hook", hookRoute);
 app.use("/api", storeFrontRoutes);
 app.use("/api", analysisRoutes);
+app.use("/api/helper", helperRoutes);
 
 // */1 * * * *"
 // ("0 1 * * *");

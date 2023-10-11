@@ -15,6 +15,7 @@ const {
   storeAnalysis,
   createAllUserPlans,
   customerStoreFronts,
+  storeFrontNotice,
 } = require("../controllers/storeFront.controller");
 const getUser = require("../utils/middleware/getUser");
 const SFSendData = require("../controllers/SFSendData.controller");
@@ -71,6 +72,7 @@ router.put("/store-fronts/:business_id", getUser, updateStoreFront);
 router.post("/store-fronts/allocateData", SFSendData);
 // analysis
 router.get("/store-fronts/analysis/:business", getUser, storeAnalysis);
+router.get("/store-fronts/notice/:business", storeFrontNotice);
 
 router.get(
   "/store-fronts-history/:business_id",
