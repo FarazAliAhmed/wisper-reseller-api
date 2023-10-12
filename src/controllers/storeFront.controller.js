@@ -301,7 +301,7 @@ exports.uploadImageStoreFronts = async (req, res, next) => {
     await cloudinary.uploader
       .upload(profileImg)
       .then((result) => {
-        // console.log({ result });
+        console.log("cloud url", result.url);
         return res.json(result.url);
       })
       .catch((err) => {
