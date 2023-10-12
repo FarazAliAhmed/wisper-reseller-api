@@ -218,7 +218,7 @@ exports.storeFrontAnalysisService = async (businessId) => {
     });
 
     analytics[label] = {
-      TotalStoreVisits: totalStoreVisit + 4,
+      TotalStoreVisits: totalStoreVisit,
       TotalAmountSold: totalAmountSold,
       TotalRevenue: totalRevenue,
       TotalTransactions: totalTransaction,
