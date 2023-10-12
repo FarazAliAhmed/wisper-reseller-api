@@ -99,7 +99,7 @@ const SFSendData = async (req, res) => {
     const debitAccount = await debitStoreFrontMegaWallet(
       business_id,
       network,
-      volume,
+      planDetails.volume,
       phone_number,
       price,
       custName,
