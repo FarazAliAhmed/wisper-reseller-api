@@ -40,6 +40,10 @@ const storeFrontSchema = new Schema({
     type: String,
     default: null,
   },
+  storePin: {
+    type: String,
+    default: null,
+  },
   withdrawAccount: {
     type: String,
     default: null,
