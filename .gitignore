@@ -11,7 +11,6 @@ lerna-debug.log*
 # Dependency directories
 node_modules/
 
-uploads/
 
 # Optional eslint cache
 .eslintcache
