@@ -1,23 +1,29 @@
 const { Account } = require("../models/account");
-const storeFront = require("../models/storeFront");
 const StoreFront = require("../models/storeFront");
 const storeFrontHistory = require("../models/storeFrontHistory");
+const path = require("path");
 
 const uuidv4 = require("uuid/v4");
 
-// Install with: npm i flutterwave-node-v3
+const cloudinary = require("cloudinary").v2;
 
-const Flutterwave = require("flutterwave-node-v3");
+// Configure Cloudinary
+const cloud_name = process.env.CLOUD_NAME;
+const api_key = process.env.CLOUD_API_KEY;
+const api_secret = process.env.CLOUD_API_SECRET;
+
+cloudinary.config({
+  cloud_name: cloud_name,
+  api_key: api_key,
+  api_secret: api_secret,
+});
+
 const {
   withdrawStoreFrontService,
   storeFrontAnalysisService,
   storeFrontUserPlanService,
 } = require("../services/storeFront.service");
 const userPlan = require("../models/userPlan");
-const flw = new Flutterwave(
-  process.env.FLW_PUBLIC_KEY,
-  process.env.FLW_SECRET_KEY
-);
 
 // Create a new store front
 exports.createStoreFront = async (req, res) => {
@@ -262,12 +268,46 @@ exports.uploadImageStoreFronts = async (req, res, next) => {
       return res.status(400).json({ message: "No image file provided" });
     }
 
-    console.log();
+    if (req.query.prevUrl) {
+      const url = req.query.prevUrl;
+
+      // Split the URL by '/' and get the last part
+      const parts = url.split("/");
+      const fileNameWithExtension = parts[parts.length - 1];
+
+      // Split the filename by '.' and get the first part (name without extension)
+      const fileNameWithoutExtension = fileNameWithExtension.split(".")[0];
+
+      await cloudinary.api
+        .delete_resources([`${fileNameWithoutExtension}`], {
+          type: "upload",
+          resource_type: "image",
+        })
+        .then(console.log);
+    }
 
     const url = req.protocol + "://" + req.get("host");
-    const profileImg = url + "/uploads/" + req.file.filename;
+    // const profileImg = url + "/uploads/" + req.file.filename;
 
-    return res.json(profileImg);
+    // Assuming req.file.filename contains the file name, and you want it inside the /uploads directory
+    const profileImg = path.join(
+      __dirname,
+      "/../../uploads",
+      req.file.filename
+    );
+
+    // console.log({ profileImg });
+
+    await cloudinary.uploader
+      .upload(profileImg)
+      .then((result) => {
+        // console.log({ result });
+        return res.json(result.url);
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json({ message: err.message });
+      });
   } catch (error) {
     console.error(error); // Use console.error instead of console.log for errors
     return res.status(500).json({
