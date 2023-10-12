@@ -137,22 +137,22 @@ async function debitStoreFrontMegaWallet(
       storeOwner.wallet += resolvedBal;
 
       await storeOwner.save();
+
+      const sFHist = new storeFrontHistory({
+        name: custName,
+        email: custEmail,
+        storeBusiness: businessId,
+        phone: phone_number,
+        price: price,
+        volume: dataVolume,
+        profit: `${resolvedBal}`,
+        status: "success",
+        network: network,
+        transaction_ref: trx_ref,
+      });
+
+      await sFHist.save();
     }
-
-    const sFHist = new storeFrontHistory({
-      name: custName,
-      email: custEmail,
-      storeBusiness: businessId,
-      phone: phone_number,
-      price: price,
-      volume: dataVolume,
-      profit: `${resolvedBal}`,
-      status: "success",
-      network: network,
-      transaction_ref: trx_ref,
-    });
-
-    await sFHist.save();
 
     // Return the updated balance in the specified format
     return {
@@ -223,20 +223,6 @@ async function revertStoreFrontMegaWallet(
         network: network,
         status: "failed",
       });
-
-      const sFHist = new storeFrontHistory({
-        name: custName,
-        email: custEmail,
-        storeBusiness: businessId,
-        phone: phone_number,
-        price: price,
-        volume: dataVolume,
-        status: "failed",
-        network: network,
-        transaction_ref: trx_ref,
-      });
-
-      await sFHist.save();
 
       await purchase.save();
     } else {
