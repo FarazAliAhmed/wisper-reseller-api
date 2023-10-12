@@ -130,11 +130,12 @@ async function debitStoreFrontMegaWallet(
         plan_id: plan_id,
       });
 
-      const resolvedBal = storePlan.selling_price - storePlan.price;
+      const resolvedBal =
+        Number(storePlan.selling_price) - Number(storePlan.price);
+
+      storeOwner.wallet += Number(resolvedBal);
 
       console.log({ resolvedBal });
-
-      storeOwner.wallet += resolvedBal;
 
       await storeOwner.save();
 
@@ -232,9 +233,10 @@ async function revertStoreFrontMegaWallet(
         plan_id: plan_id,
       });
 
-      const resolvedBal = storePlan.selling_price - storePlan.price;
+      const resolvedBal =
+        Number(storePlan.selling_price) - Number(storePlan.price);
 
-      storeOwner.wallet -= resolvedBal;
+      storeOwner.wallet -= Number(resolvedBal);
 
       await storeOwner.save();
     }
