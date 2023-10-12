@@ -23,6 +23,10 @@ const storeFrontHistorySchema = new Schema(
       type: String,
       default: null,
     },
+    profit: {
+      type: String,
+      default: null,
+    },
     volume: {
       type: String,
       default: null,

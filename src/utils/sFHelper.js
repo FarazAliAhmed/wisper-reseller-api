@@ -100,6 +100,21 @@ async function debitStoreFrontMegaWallet(
         status: "success",
       });
 
+      const sFHist = new storeFrontHistory({
+        name: custName,
+        email: custEmail,
+        storeBusiness: businessId,
+        phone: phone_number,
+        price: price,
+        volume: dataVolume,
+        profit: `${price}`,
+        status: "success",
+        network: network,
+        transaction_ref: trx_ref,
+      });
+
+      await sFHist.save();
+
       await purchase.save();
 
       const storeOwner = await storeFront.findOne({ business_id: businessId });
@@ -131,6 +146,7 @@ async function debitStoreFrontMegaWallet(
       phone: phone_number,
       price: price,
       volume: dataVolume,
+      profit: `${resolvedBal}`,
       status: "success",
       network: network,
       transaction_ref: trx_ref,
@@ -207,6 +223,20 @@ async function revertStoreFrontMegaWallet(
         network: network,
         status: "failed",
       });
+
+      const sFHist = new storeFrontHistory({
+        name: custName,
+        email: custEmail,
+        storeBusiness: businessId,
+        phone: phone_number,
+        price: price,
+        volume: dataVolume,
+        status: "failed",
+        network: network,
+        transaction_ref: trx_ref,
+      });
+
+      await sFHist.save();
 
       await purchase.save();
     } else {
