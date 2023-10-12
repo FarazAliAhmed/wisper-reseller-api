@@ -144,7 +144,7 @@ const SFSendData = async (req, res) => {
     await revertStoreFrontMegaWallet(
       business_id,
       network,
-      volume,
+      planDetails.volume,
       phone_number,
       price,
       storeOwner.type,
