@@ -1,25 +1,42 @@
 const bcrypt = require("bcrypt");
 
 const { Account } = require("../models/account");
+const monnifyService = require("./monnify.service");
+const { storeFrontUserPlanSingle } = require("./storeFront.service");
 
 const register = async (requestBody) => {
-  let userWithEmail = await Account.findOne({
-    email: requestBody.email,
-  }).exec();
-  let userWithUsername = await Account.findOne({
-    username: requestBody.username,
-  }).exec();
-  if (userWithEmail)
-    return { status: 400, message: "User with email already registered." };
-  if (userWithUsername)
-    return { status: 400, message: "User with username already registered." };
+  try {
+    let userWithEmail = await Account.findOne({
+      email: requestBody.email,
+    }).exec();
+    let userWithUsername = await Account.findOne({
+      username: requestBody.username,
+    }).exec();
+    if (userWithEmail)
+      return { status: 400, message: "User with email already registered." };
+    if (userWithUsername)
+      return { status: 400, message: "User with username already registered." };
 
-  let user = new Account(requestBody);
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(user.password, salt);
-  await user.save();
+    let user = new Account(requestBody);
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
 
-  return { user };
+    await user.save();
+
+    await monnifyService.createAccount(
+      user._id,
+      user.name,
+      user.email,
+      user.name
+    );
+
+    await storeFrontUserPlanSingle(user._id);
+
+    return { user };
+  } catch (error) {
+    // console.log(error);
+    throw error;
+  }
 };
 
 const update = async (requestBody, username) => {

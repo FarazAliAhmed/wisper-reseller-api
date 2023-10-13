@@ -4,32 +4,30 @@ const { validateUser, Account } = require("../models/account");
 const userService = require("../services/user.service");
 const { upgradeBalance } = require("../services/balance.service");
 const Joi = require("joi");
-const monnifyService = require("../services/monnify.service");
 
 const handleRegister = async (req, res) => {
-  const { error } = validateUser(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  try {
+    const { error } = validateUser(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
-  const data = await userService.register(req.body);
+    const data = await userService.register(req.body);
 
-  console.log(data.user);
+    console.log(data.user);
 
-  if (data.user) {
-    const token = data.user.generateAuthToken();
+    if (data.user) {
+      const token = data.user.generateAuthToken();
 
-    await monnifyService.createAccount(
-      data.user._id,
-      data.user.name,
-      data.user.email,
-      data.user.name
-    );
-
-    return res
-      .header("x-auth-token", token)
-      .header("access-control-expose-headers", "x-auth-token")
-      .send(_.pick(data.user, ["_id", "name", "email"]));
+      return res
+        .header("x-auth-token", token)
+        .header("access-control-expose-headers", "x-auth-token")
+        .send(_.pick(data.user, ["_id", "name", "email"]));
+    } else {
+      return res.status(data.status).send(data.message);
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
   }
-  return res.status(data.status).send(data.message);
 };
 
 const handleUpdate = async (req, res) => {
