@@ -10,7 +10,14 @@ const uuid = require("uuid");
 const client = new postmark.ServerClient(process.env.POSTMARK);
 
 class AgentService {
-  async createAgent({ business, fullName, email, username, phoneNumber }) {
+  async createAgent({
+    business,
+    fullName,
+    email,
+    username,
+    phoneNumber,
+    agent_business_name,
+  }) {
     const tempPassword = await this.generateTemporaryPassword();
 
     const salt = await bcrypt.genSalt(10);
@@ -33,6 +40,7 @@ class AgentService {
 
     const agent = new Account({
       name: fullName,
+      business_name: agent_business_name || null,
       email,
       username,
       dealer: business,
@@ -69,26 +77,6 @@ class AgentService {
       );
     }
     return tempPassword;
-  }
-
-  // Helper function to send a welcome email
-  async sendWelcomeEmail(agent) {
-    console.log(agent.email);
-    await client.sendEmail({
-      From: "admin@wisper.ng",
-      To: agent.email,
-      Subject: "Welcome to the Wisper Dealer Network!",
-      TextBody:
-        `Dear ${agent.fullName},\n\n` +
-        `Welcome to the Wisper Dealer Network! We're thrilled to have you on board as a sub-dealer with [Your Company Name]. Your account is now ready, and you can start accessing our platform right away.\n\n` +
-        `Here are your login details:\n\n` +
-        `Username: ${agent.username}\n` +
-        `Email: ${agent.email}\n` +
-        `Password: ${agent.password}\n\n` +
-        `Please Note: We recommend changing your password after your first login for security reasons.`,
-    });
-
-    console.log("Email Sent");
   }
 
   async getAgentsByBusiness(businessId) {

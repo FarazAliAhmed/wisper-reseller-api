@@ -52,13 +52,6 @@ const forgotPassword = async (req, res) => {
       );
       const link = `${url}/reset-password/${oldUser.email}/${token}`;
 
-      // client.sendEmail({
-      //   From: "admin@wisper.ng",
-      //   To: email,
-      //   Subject: "Reset Password Link",
-      //   TextBody: `Click on this link to reset your password or copy and paste on your browser if it doesn't work. This link is valid for 30mins ${link}`,
-      // });
-
       await sendEmail(
         email,
         "Reset Password Link",

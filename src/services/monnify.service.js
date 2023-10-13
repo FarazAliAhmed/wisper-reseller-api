@@ -234,14 +234,23 @@ class MonnifyService {
         throw new Error("User not found");
       }
 
+      const newBankAcct = [];
+
       for (const account of accounts) {
         const bankInfo = {
           bankName: account.bankName,
           accountNumber: account.accountNumber,
           accountName: account.accountName,
         };
-        await user.addBankAccount(bankInfo);
+        // await user.addBankAccount(bankInfo);
+        newBankAcct.push(bankInfo);
       }
+
+      await Account.findOneAndUpdate(
+        { email: customerEmail },
+        { $push: { bankAccounts: { $each: newBankAcct } } },
+        { new: true }
+      );
 
       return response.data;
     } catch (error) {
