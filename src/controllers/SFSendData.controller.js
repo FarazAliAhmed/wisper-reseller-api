@@ -95,11 +95,19 @@ const SFSendData = async (req, res) => {
 
     const storeOwner = await Account.findOne({ _id: business_id });
 
+    let dataVolume = planDetails.volume;
+
+    if (planDetails.volume > 1000) {
+      dataVolume = Math.round(planDetails.volume / 1000) * 1000;
+    }
+
+    // console.log("volume", Math.round(planDetails.volume / 1000) * 1000);
+
     // check account balance and debit
     const debitAccount = await debitStoreFrontMegaWallet(
       business_id,
       network,
-      planDetails.volume,
+      dataVolume,
       phone_number,
       price,
       custName,
@@ -141,10 +149,16 @@ const SFSendData = async (req, res) => {
 
     const storeOwner = await Account.findOne({ _id: business_id });
 
+    let dataVolume = planDetails.volume;
+
+    if (planDetails.volume > 1000) {
+      dataVolume = Math.round(planDetails.volume / 1000) * 1000;
+    }
+
     await revertStoreFrontMegaWallet(
       business_id,
       network,
-      planDetails.volume,
+      dataVolume,
       phone_number,
       price,
       storeOwner.type,

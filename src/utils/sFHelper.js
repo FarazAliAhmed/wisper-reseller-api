@@ -83,8 +83,12 @@ async function debitStoreFrontMegaWallet(
         };
       }
 
+      console.log({ oldUser_bal, networkBalance, volume: Number(dataVolume) });
+
       // Deduct the data volume from the mega wallet
       balance.mega_wallet[network] -= Number(dataVolume);
+
+      console.log(balance);
 
       await balance.save();
 
@@ -119,7 +123,9 @@ async function debitStoreFrontMegaWallet(
 
       const storeOwner = await storeFront.findOne({ business_id: businessId });
 
-      storeOwner.wallet += parseInt(price).toFixed(2);
+      const newWal = Number(storeOwner.wallet) + Number(price);
+
+      storeOwner.wallet = newWal.toFixed(2);
 
       await storeOwner.save();
     } else {
@@ -130,12 +136,18 @@ async function debitStoreFrontMegaWallet(
         plan_id: plan_id,
       });
 
+      // console.log({ storeOwner, storePlan });
+
+      // console.log({ plan_id, businessId });
+
       const resolvedBal =
         Number(storePlan.selling_price) - Number(storePlan.price);
 
-      storeOwner.wallet += Number(resolvedBal);
+      const newWal = Number(storeOwner.wallet) + resolvedBal;
 
-      console.log({ resolvedBal });
+      // console.log({ resolvedBal, newWal });
+
+      storeOwner.wallet = newWal.toFixed(2);
 
       await storeOwner.save();
 
@@ -209,7 +221,7 @@ async function revertStoreFrontMegaWallet(
       }
 
       // Deduct the data volume from the mega wallet
-      balance.mega_wallet[network] -= Number(dataVolume);
+      balance.mega_wallet[network] += Number(dataVolume);
 
       await balance.save();
 
@@ -226,6 +238,14 @@ async function revertStoreFrontMegaWallet(
       });
 
       await purchase.save();
+
+      const storeOwner = await storeFront.findOne({ business_id: businessId });
+
+      const newWal = Number(storeOwner.wallet) - Number(price);
+
+      storeOwner.wallet = newWal.toFixed(2);
+
+      await storeOwner.save();
     } else {
       const storeOwner = await storeFront.findOne({ business_id: businessId });
       const storePlan = await userPlan.findOne({
@@ -236,7 +256,9 @@ async function revertStoreFrontMegaWallet(
       const resolvedBal =
         Number(storePlan.selling_price) - Number(storePlan.price);
 
-      storeOwner.wallet -= Number(resolvedBal);
+      const newWal = Number(storeOwner.wallet) - resolvedBal;
+
+      storeOwner.wallet = newWal.toFixed(2);
 
       await storeOwner.save();
     }
