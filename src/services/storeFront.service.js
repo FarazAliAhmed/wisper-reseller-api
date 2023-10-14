@@ -27,6 +27,10 @@ exports.withdrawStoreFrontService = async (
     throw new Error("Store front not found");
   }
 
+  if (store.wallet < Number(amount)) {
+    throw new Error("Insufficient balance");
+  }
+
   const user = await Account.findOne({
     _id: businessId,
   });
