@@ -318,14 +318,14 @@ exports.uploadImageStoreFronts = async (req, res, next) => {
 
 exports.withdrawStoreFronts = async (req, res, next) => {
   const business = req.params.business;
-  const { amount, withType, token } = req.body;
+  const { amount, withType, password } = req.body;
 
   try {
     const withdrawStore = await withdrawStoreFrontService(
       business,
       withType,
       amount,
-      token
+      password
     );
 
     return res.json(withdrawStore);

@@ -19,7 +19,7 @@ exports.withdrawStoreFrontService = async (
   businessId,
   withType,
   amount,
-  token
+  password
 ) => {
   const store = await storeFront.findOne({ business_id: businessId });
 
@@ -27,12 +27,17 @@ exports.withdrawStoreFrontService = async (
     throw new Error("Store front not found");
   }
 
-  if (!store.token) {
-    throw new Error("Store token not found");
+  const user = await Account.findOne({
+    _id: businessId,
+  });
+
+  if (!user) {
+    throw new Error("user not found");
   }
 
-  if (store.token != token) {
-    throw new Error("Invalid token");
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+    throw new Error("password not correct");
   }
 
   const userBal = await dataBalance.findOne({ business: businessId });
@@ -40,10 +45,6 @@ exports.withdrawStoreFrontService = async (
   if (!userBal) {
     throw new Error("user balance not found");
   }
-
-  const user = await Account.findOne({
-    _id: businessId,
-  });
 
   const amountTaxed = await calStoreFrontTax(amount);
 
