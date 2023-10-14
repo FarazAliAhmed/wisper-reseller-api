@@ -336,6 +336,28 @@ exports.withdrawStoreFronts = async (req, res, next) => {
   }
 };
 
+// Update a store front by business_id
+exports.clearStoreBankDetails = async (req, res) => {
+  const businessId = req.params.business_id;
+
+  try {
+    const updatedStoreFront = await StoreFront.findOneAndUpdate(
+      { business_id: businessId },
+      { acctName: null, withdrawAccount: null, bankName: null, bankCode: null },
+      { new: true }
+    );
+
+    if (!updatedStoreFront) {
+      return res.status(404).json({ error: "Store front not found" });
+    }
+
+    res.status(200).json(updatedStoreFront);
+  } catch (error) {
+    console.error("Error updating store front:", error);
+    res.status(500).json({ error: "Error updating store front" });
+  }
+};
+
 exports.storeAnalysis = async (req, res, next) => {
   const business = req.params.business;
 

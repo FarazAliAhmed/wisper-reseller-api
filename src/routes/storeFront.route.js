@@ -17,6 +17,7 @@ const {
   customerStoreFronts,
   storeFrontNotice,
   withdrawStoreFronts,
+  clearStoreBankDetails,
 } = require("../controllers/storeFront.controller");
 const getUser = require("../utils/middleware/getUser");
 const SFSendData = require("../controllers/SFSendData.controller");
@@ -70,6 +71,11 @@ router.get("/store-fronts-username/:username", getStoreFrontByUserName);
 router.get("/store-fronts-phone/:phone", checkPhoneStoreFronts);
 router.get("/store-fronts", getAdmin, getAllStoreFronts);
 router.put("/store-fronts/:business_id", getUser, updateStoreFront);
+router.put(
+  "/store-fronts/clearBank/:business_id",
+  getUser,
+  clearStoreBankDetails
+);
 router.post("/store-fronts/allocateData", SFSendData);
 router.post("/store-fronts/withdrawal/:business", withdrawStoreFronts);
 // analysis
