@@ -10,6 +10,10 @@ const withdrawalSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    tax: {
+      type: Number,
+      required: true,
+    },
     withdrawalType: {
       type: String,
       enum: ["Bank", "Wallet"],

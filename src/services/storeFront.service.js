@@ -8,6 +8,7 @@ const userPlan = require("../models/userPlan");
 const withdrawalHistory = require("../models/withdrawHistory.model");
 
 const Flutterwave = require("flutterwave-node-v3");
+const { calStoreFrontTax } = require("../utils/sFHelper");
 const flw = new Flutterwave(
   process.env.FLW_PUBLIC_KEY,
   process.env.FLW_SECRET_KEY
@@ -28,8 +29,10 @@ exports.withdrawStoreFrontService = async (businessId, withType, amount) => {
   }
 
   const user = await Account.findOne({
-    _id: addData.business_id,
+    _id: businessId,
   });
+
+  const amountTaxed = await calStoreFrontTax(amount);
 
   if (withType.toLowerCase() === "bank") {
     const reference = generateTransactionReference();
@@ -47,18 +50,21 @@ exports.withdrawStoreFrontService = async (businessId, withType, amount) => {
       .then(async (res) => {
         console.log(res);
 
-        store.wallet -= amount;
+        await storeFront.updateOne(
+          { business_id: businessId },
+          { $inc: { wallet: -amountTaxed.taxedAmount } }
+        );
 
         const newWithdrawal = new withdrawalHistory({
           businessId: businessId,
           amount: amount,
           withdrawalType: withType,
+          tax: amountTaxed.tax,
           description: `withdrawal from store front ₦${amount} to bank account code ${store.bankCode} account number ${store.withdrawAccount}`,
           status: "success",
         });
 
         await newWithdrawal.save();
-        await store.save();
 
         return store;
       })
@@ -71,12 +77,24 @@ exports.withdrawStoreFrontService = async (businessId, withType, amount) => {
     try {
       const oldBal = store.wallet;
 
-      store.wallet -= amount;
-      userBal.wallet_balance += amount;
+      // store.wallet -= amount;
+
+      await storeFront.updateOne(
+        { business_id: businessId },
+        { $inc: { wallet: -amount } }
+      );
+
+      // userBal.wallet_balance += amount;
+
+      await Account.updateOne(
+        { _id: businessId },
+        { $inc: { wallet: amount } }
+      );
 
       const newWithdrawal = new withdrawalHistory({
         businessId: businessId,
         amount: amount,
+        tax: 0,
         withdrawalType: withType,
         description: `withdrawal from store front to wallet balance ₦${amount}`,
         status: "success",
@@ -98,8 +116,8 @@ exports.withdrawStoreFrontService = async (businessId, withType, amount) => {
 
       await newWithdrawal.save();
       await newMonnifyHistory.save();
-      await store.save();
-      await userBal.save();
+      // await store.save();
+      // await userBal.save();
 
       return store;
     } catch (error) {

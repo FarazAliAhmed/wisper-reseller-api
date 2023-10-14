@@ -293,8 +293,24 @@ async function revertStoreFrontMegaWallet(
   }
 }
 
+async function calStoreFrontTax(amount) {
+  let tax = 0;
+
+  if (Number(amount) <= 5000) {
+    tax = 10;
+  } else if (Number(amount) > 5000 && Number(amount) <= 50000) {
+    tax = 25;
+  } else if (Number(amount) > 50000) {
+    tax = 50;
+  }
+
+  const taxedAmount = Number(amount) - tax;
+  return { taxedAmount, tax };
+}
+
 module.exports = {
   debitStoreFrontMegaWallet,
   revertStoreFrontMegaWallet,
   verifyFlutterWaveTransaction,
+  calStoreFrontTax,
 };
