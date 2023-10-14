@@ -6,6 +6,7 @@ const StoreFront = require("../models/storeFront");
 const storeFrontHistory = require("../models/storeFrontHistory");
 const userPlan = require("../models/userPlan");
 const withdrawalHistory = require("../models/withdrawHistory.model");
+const bcrypt = require("bcrypt");
 
 const Flutterwave = require("flutterwave-node-v3");
 const { calStoreFrontTax } = require("../utils/sFHelper");
