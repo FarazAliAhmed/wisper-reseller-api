@@ -379,9 +379,9 @@ exports.storeFrontUserPlanSingle = async (business) => {
 };
 
 function generateTransactionReference() {
-  const dateString = new Date().toISOString().replace(/[-T:]/g, ""); // Convert current timestamp to a string and remove '-', 'T', and ':'
+  const timestamp = new Date().toISOString().replace(/[-T:Z.]/g, ""); // Convert current timestamp to a string and remove '-', 'T', ':', 'Z', and '.'
   const randomString = Math.random().toString(36).substring(2, 8); // Generate a random 6-character alphanumeric string
 
-  const transactionReference = `${dateString}${randomString}`;
+  const transactionReference = `${timestamp}${randomString}`;
   return transactionReference;
 }

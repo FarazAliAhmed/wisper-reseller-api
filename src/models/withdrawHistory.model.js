@@ -16,7 +16,7 @@ const withdrawalSchema = new mongoose.Schema(
     },
     withdrawalType: {
       type: String,
-      enum: ["Bank", "Wallet"],
+      enum: ["bank", "wallet"],
       required: true,
     },
     date: {
