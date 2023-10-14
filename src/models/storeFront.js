@@ -44,6 +44,10 @@ const storeFrontSchema = new Schema({
     type: String,
     default: null,
   },
+  token: {
+    type: String,
+    default: null,
+  },
   acctName: {
     type: String,
     default: null,

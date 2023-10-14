@@ -318,13 +318,14 @@ exports.uploadImageStoreFronts = async (req, res, next) => {
 
 exports.withdrawStoreFronts = async (req, res, next) => {
   const business = req.params.business;
-  const { amount, withType } = req.body;
+  const { amount, withType, token } = req.body;
 
   try {
     const withdrawStore = await withdrawStoreFrontService(
       business,
       withType,
-      amount
+      amount,
+      token
     );
 
     return res.json(withdrawStore);
@@ -454,7 +455,53 @@ exports.storeFrontNotice = async (req, res) => {
   }
 };
 
+exports.storeFrontSendOTP = async (req, res) => {
+  try {
+    const business = req.params.business; // Get the storeBusiness from the URL parameter
+
+    const token = generateToken();
+
+    // Update the StoreFront document with the generated token
+    const updatedStoreFront = await StoreFront.findOneAndUpdate(
+      { business_id: business },
+      { $set: { token } },
+      { new: true } // To get the updated document
+    );
+
+    if (!updatedStoreFront) {
+      return res.status(404).json({ message: "StoreFront not found" });
+    }
+
+    // Send the token to the user's email
+    const emailText = `Your token for withdrawing funds from the store front is: ${token}`;
+    await sendEmail(
+      updatedStoreFront.email,
+      "Token for Fund Withdrawal - Wisper Ng Storefront",
+      emailText
+    );
+
+    res
+      .status(200)
+      .json({ message: "Token generated and sent to the user's email" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error generating and sending token" });
+  }
+};
+
 // Function to generate a UUID as a transaction reference
 function generateTransactionReference() {
   return uuidv4();
+}
+
+// Generate a 6-character random token
+function generateToken() {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let token = "";
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    token += characters.charAt(randomIndex);
+  }
+  return token;
 }

@@ -15,11 +15,24 @@ const flw = new Flutterwave(
 );
 
 // withdraw from a store front by business_id
-exports.withdrawStoreFrontService = async (businessId, withType, amount) => {
+exports.withdrawStoreFrontService = async (
+  businessId,
+  withType,
+  amount,
+  token
+) => {
   const store = await storeFront.findOne({ business_id: businessId });
 
   if (!store) {
     throw new Error("Store front not found");
+  }
+
+  if (!store.token) {
+    throw new Error("Store token not found");
+  }
+
+  if (store.token != token) {
+    throw new Error("Invalid token");
   }
 
   const userBal = await dataBalance.findOne({ business: businessId });
@@ -52,7 +65,7 @@ exports.withdrawStoreFrontService = async (businessId, withType, amount) => {
 
         await storeFront.updateOne(
           { business_id: businessId },
-          { $inc: { wallet: -amountTaxed.taxedAmount } }
+          { $inc: { wallet: -amountTaxed.taxedAmount }, $set: { token: null } }
         );
 
         const newWithdrawal = new withdrawalHistory({
@@ -81,7 +94,7 @@ exports.withdrawStoreFrontService = async (businessId, withType, amount) => {
 
       await storeFront.updateOne(
         { business_id: businessId },
-        { $inc: { wallet: -amount } }
+        { $inc: { wallet: -amount }, $set: { token: null } }
       );
 
       // userBal.wallet_balance += amount;
