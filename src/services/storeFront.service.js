@@ -56,6 +56,8 @@ exports.withdrawStoreFrontService = async (
   if (withType.toLowerCase() === "bank") {
     const reference = generateTransactionReference();
 
+    console.log({ reference });
+
     const details = {
       account_bank: store.bankCode,
       account_number: store.withdrawAccount,
@@ -375,3 +377,11 @@ exports.storeFrontUserPlanSingle = async (business) => {
     throw error;
   }
 };
+
+function generateTransactionReference() {
+  const dateString = new Date().toISOString().replace(/[-T:]/g, ""); // Convert current timestamp to a string and remove '-', 'T', and ':'
+  const randomString = Math.random().toString(36).substring(2, 8); // Generate a random 6-character alphanumeric string
+
+  const transactionReference = `${dateString}${randomString}`;
+  return transactionReference;
+}
