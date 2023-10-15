@@ -2,7 +2,6 @@ const { Account } = require("../models/account");
 const dataBalance = require("../models/dataBalance");
 const monnifyHistory = require("../models/monnifyHistory");
 const storeFront = require("../models/storeFront");
-const StoreFront = require("../models/storeFront");
 const storeFrontHistory = require("../models/storeFrontHistory");
 const userPlan = require("../models/userPlan");
 const withdrawalHistory = require("../models/withdrawHistory.model");
@@ -108,13 +107,9 @@ exports.withdrawStoreFrontService = async (
 
       // userBal.wallet_balance += amount;
 
-      const objbusinessId = mongoose.Types.ObjectId(`${businessId}`);
-
-      console.log({ objbusinessId });
-
-      await Account.updateOne(
-        { _id: objbusinessId },
-        { $inc: { wallet: amount } }
+      await dataBalance.updateOne(
+        { business: businessId },
+        { $inc: { wallet_balance: amount } }
       );
 
       const newWithdrawal = new withdrawalHistory({
