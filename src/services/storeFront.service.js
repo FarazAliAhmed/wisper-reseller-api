@@ -129,7 +129,7 @@ exports.withdrawStoreFrontService = async (
         new_bal: userBal.wallet_balance,
         old_bal: oldBal,
         purpose: "Funding - StoreFront",
-        desc: `Deposit of ${balance.wallet_balance} NGN made by ${user.name}.`,
+        desc: `Deposit of ${userBal.wallet_balance} NGN made by ${user.name}.`,
         pay_type: "credit",
         date_of_payment: new Date(),
         payment_ref: "AD-trx-" + Math.floor(Math.random() * 10000000000000000),
