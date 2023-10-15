@@ -107,8 +107,12 @@ exports.withdrawStoreFrontService = async (
 
       // userBal.wallet_balance += amount;
 
+      const objbusinessId = mongoose.Types.ObjectId(`${businessId}`);
+
+      console.log({ objbusinessId });
+
       await Account.updateOne(
-        { _id: businessId },
+        { _id: objbusinessId },
         { $inc: { wallet: amount } }
       );
 
@@ -326,8 +330,10 @@ exports.storeFrontUserPlanService = async () => {
 
 exports.storeFrontUserPlanSingle = async (business) => {
   try {
+    const objbusinessId = mongoose.Types.ObjectId(`${business}`);
+
     const currUser = await Account.findOne({
-      _id: business,
+      _id: objbusinessId,
     });
 
     // console.log({ currUser });
