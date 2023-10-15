@@ -10,6 +10,7 @@ const bcrypt = require("bcrypt");
 
 const Flutterwave = require("flutterwave-node-v3");
 const { calStoreFrontTax } = require("../utils/sFHelper");
+const { default: mongoose } = require("mongoose");
 const flw = new Flutterwave(
   process.env.FLW_PUBLIC_KEY,
   process.env.FLW_SECRET_KEY
