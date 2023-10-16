@@ -24,6 +24,7 @@ const {
   storeFrontUserPlanService,
 } = require("../services/storeFront.service");
 const userPlan = require("../models/userPlan");
+const withdrawalHistory = require("../models/withdrawHistory.model");
 
 // Create a new store front
 exports.createStoreFront = async (req, res) => {
@@ -186,6 +187,28 @@ exports.getAllStoreFrontHistoryBusiness = async (req, res) => {
     const storeFronts = await storeFrontHistory
       .find({
         storeBusiness: business_id,
+      })
+      .skip(skip)
+      .limit(parseInt(limit))
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(storeFronts);
+  } catch (error) {
+    console.error("Error getting all store fronts:", error);
+    res.status(500).json({ error: "Error getting all store fronts" });
+  }
+};
+
+// Get all store fronts withdraw history
+exports.getAllStoreFrontWithdrawBusiness = async (req, res) => {
+  try {
+    const { limit = 10, page = 1 } = req.query;
+    const { business_id } = req.params;
+    const skip = (page - 1) * limit;
+
+    const storeFronts = await withdrawalHistory
+      .find({
+        businessId: business_id,
       })
       .skip(skip)
       .limit(parseInt(limit))
