@@ -2,6 +2,7 @@ const { Account } = require("../models/account");
 const StoreFront = require("../models/storeFront");
 const storeFrontHistory = require("../models/storeFrontHistory");
 const path = require("path");
+const Flutterwave = require("flutterwave-node-v3");
 
 const uuidv4 = require("uuid/v4");
 
@@ -510,6 +511,32 @@ exports.storeFrontSendOTP = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Error generating and sending token" });
   }
+};
+
+// bank verification
+exports.storeFrontBankVerification = async (req, res) => {
+  const { bank, code } = req.params; // Get the storeBusiness from the URL parameter
+
+  // Install with: npm i flutterwave-node-v3
+
+  const flw = new Flutterwave(
+    process.env.FLW_PUBLIC_KEY,
+    process.env.FLW_SECRET_KEY
+  );
+  const details = {
+    account_number: bank,
+    account_bank: code,
+  };
+  await flw.Misc.verify_Account(details)
+    .then((response) => {
+      console.log(response.data);
+
+      return res.json(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).json({ message: "error verifying bank" });
+    });
 };
 
 // Function to generate a UUID as a transaction reference

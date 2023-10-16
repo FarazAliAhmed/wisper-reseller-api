@@ -20,6 +20,7 @@ const {
   clearStoreBankDetails,
   storeFrontSendOTP,
   getAllStoreFrontWithdrawBusiness,
+  storeFrontBankVerification,
 } = require("../controllers/storeFront.controller");
 const getUser = require("../utils/middleware/getUser");
 const SFSendData = require("../controllers/SFSendData.controller");
@@ -67,12 +68,16 @@ router.get("/store-fronts-all-history", getAdmin, getAllStoreFrontHistory);
 
 // user
 router.get("/check-store-username/:username", checkStoreFrontUserName);
+// verify bank
+router.get("/store-fronts-bank-verify/:bank/:code", storeFrontBankVerification);
+
 router.get("/store-fronts-customers/:id", customerStoreFronts);
 router.get("/store-fronts/:business_id", getStoreFrontByBusinessId);
 router.get("/store-fronts-username/:username", getStoreFrontByUserName);
 router.get("/store-fronts-phone/:phone", checkPhoneStoreFronts);
 router.get("/store-fronts", getAdmin, getAllStoreFronts);
 router.put("/store-fronts/:business_id", getUser, updateStoreFront);
+
 router.put(
   "/store-fronts/clearBank/:business_id",
   getUser,
