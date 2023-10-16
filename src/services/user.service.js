@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const { Account } = require("../models/account");
 const monnifyService = require("./monnify.service");
 const { storeFrontUserPlanSingle } = require("./storeFront.service");
+const storeFront = require("../models/storeFront");
 
 const register = async (requestBody) => {
   console.log({ requestBody });
@@ -34,6 +35,14 @@ const register = async (requestBody) => {
     );
 
     await storeFrontUserPlanSingle(user._id);
+
+    const new_storeFront = new storeFront({
+      business_id: user._id,
+      storeName: user.name,
+    });
+
+    // Save the store front to the database
+    await new_storeFront.save();
 
     return { user };
   } catch (error) {
