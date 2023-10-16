@@ -37,15 +37,18 @@ exports.createStoreFront = async (req, res) => {
 
     for (const account of accounts) {
       const { _id, username, name } = account;
+      try {
+        const storeFront = new StoreFront({
+          business_id: _id.toString(),
+          storeName: name,
+        });
 
-      const storeFront = new StoreFront({
-        business_id: _id.toString(),
-        storeName: name,
-      });
-
-      // Save the store front to the database
-      await storeFront.save();
-      console.log(`Store front created for ${username}`);
+        // Save the store front to the database
+        await storeFront.save();
+        console.log(`Store front created for ${username}`);
+      } catch (error) {
+        console.log(`Error creating store front for user ${username}`);
+      }
     }
 
     res.status(201).json("Store fronts created for all accounts.");
