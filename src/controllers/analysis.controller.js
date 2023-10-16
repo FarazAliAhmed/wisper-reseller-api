@@ -880,6 +880,7 @@ const populateWalletUsage = async (req, res) => {
 
     const updatedWalletUsage = {
       startOfDayBalance: lastWalletUsage.startOfDayBalance,
+      endOfDayBalance: actBal.toFixed(2),
       totalFunding: allFundMH.toFixed(2),
       totalDataPurchase: tDPurchase.toFixed(2),
       totalDataBought: tDBought.toFixed(2),
