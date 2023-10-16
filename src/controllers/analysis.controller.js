@@ -876,6 +876,8 @@ const populateWalletUsage = async (req, res) => {
       Number(allFundMH) -
       Number(tDPurchase);
 
+    const balWU = Math.abs(Number(actBal) - Number(calProWal)).toFixed(2);
+
     const updatedWalletUsage = {
       startOfDayBalance: lastWalletUsage.startOfDayBalance,
       totalFunding: allFundMH.toFixed(2),
@@ -884,6 +886,7 @@ const populateWalletUsage = async (req, res) => {
       proWalBal: calProWal.toFixed(2),
       actWalBal: actBal.toFixed(2),
       balance: Math.abs(Number(actBal) - Number(calProWal)).toFixed(2),
+      status: balWU > 0 ? "Green" : "Red",
     };
 
     // Use .update() to update the last WalletUsage document
