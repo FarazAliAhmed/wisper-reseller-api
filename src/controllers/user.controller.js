@@ -22,7 +22,7 @@ const handleRegister = async (req, res) => {
         .header("access-control-expose-headers", "x-auth-token")
         .send(_.pick(data.user, ["_id", "name", "email"]));
     } else {
-      return res.status(data.status).send(data.message);
+      return res.status(500).send("could not create user");
     }
   } catch (error) {
     console.log(error);
