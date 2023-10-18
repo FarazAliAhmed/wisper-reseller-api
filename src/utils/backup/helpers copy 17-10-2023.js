@@ -30,9 +30,6 @@ const {
   eazymobile_glo_size_map,
   zoedata_size_map,
   msorg_size_map,
-  n3tdata_mtn_size_map,
-  n3tdata_airtel_size_map,
-  n3tdata_9mobile_size_map,
 } = require("./networkData");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
@@ -66,10 +63,6 @@ const superjara_token = process.env.SUPERJARA_AUTH_NEW_KEY;
 
 const zoedata_url = "https://zoedatahub.com/api/data/";
 const zoedata_auth = `Token ${process.env.ZOEDATA_AUTH_KEY}`;
-
-// N3TDATA
-const n3tdata_url = process.env.N3TDATA_URL;
-const n3tdata_token = process.env.N3TDATA_TOKEN;
 
 // Names of integration used in saving gateway response to DB
 const integrationTypes = {
@@ -287,10 +280,58 @@ exports.initiate_data_transfer = async (
   let integName;
   try {
     if (requestPayload.network == 4) {
-      // SECTION - AIRTEL PURCHASE
+      // FIXME - Should be 4. Temporarily 400 for now
+      // Data purchase for Airtel
+
+      // SECTION - Purchase from SIMSERVER
+      /*
+            const {error, param} = simservers_size_map(size)
+            if (error) return {error: true, status: 400, message: "This data plan is not available"}
+
+            const req_body = {
+                "process": "buy",
+                "product_code": param,
+                "recipient": requestPayload.mobile_number,
+                "user_reference": ref,
+                "api_key": simservers_key,
+            }
+            const response = await axios.post(
+                simservers_url,
+                req_body,
+                {headers: {'Content-Type': 'application/json'}}
+            )
+            */
+
+      // SECTION - Purchase from OGDAMS SIMHOSTING
+      /*
+            const {error, plan_id} = ogdams_size_map(size)
+            if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+            const req_header = {
+                headers: {
+                    'Authorization': `Bearer ${ogdams_key}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+
+            const req_body = {
+                "networkId" : 2,    // Do not change this: networkId = 2 is for Airtel
+                "planId" : plan_id,
+                "phoneNumber" : requestPayload.mobile_number
+            }
+
+            const response = await axios.post(
+                ogdams_url,
+                req_body,
+                req_header
+            )
+            */
+
+      // SECTION - PURCHASE FOR CLOUDSIMHOST
       integName = integrationTypes.CLOUDSIMHOST;
 
-      const { error, plan_id } = n3tdata_airtel_size_map(size);
+      const { error, plan_id } = cloudsimhost_size_map(size);
       if (error)
         return {
           error: true,
@@ -298,35 +339,59 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      const req_body = {
-        network: requestPayload.network,
-        phone: requestPayload.mobile_number,
-        data_plan: plan_id,
-        bypass: false,
-        "request-id": ref,
+      const req_header = {
+        headers: {
+          Authorization: `Token ${cloudsimhost_key}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       };
 
-      // console.log({ req_body });
+      const req_body = {
+        plan: plan_id,
+        phone: requestPayload.mobile_number,
+        customer_ref: ref,
+      };
 
-      // console.log({ n3tdata_url });
+      const response = await axios.post(cloudsimhost_url, req_body, req_header);
 
-      const response = await axios.post(
-        `${n3tdata_url}/data`,
-        req_body,
-        req_header
-      );
+      // Fire event to save gateway response to DB
+      integResp = response.data;
 
+      // !SECTION - SIMSERVER RESPONSE CHECK
+      /*
+            if(integResp && integResp["status"] == true && integResp["data"]["text_status"] == "success"){
+                const message = integResp["data"]["true_response"]
+                return {error: false, response: integResp, message}
+            }else{
+                return {error: true, status: 400, message: "An error occured with data transfer server"}
+            }
+            */
+
+      // !SECTION - OGDAMS RESPONSE CHECK
+      // if(integResp && integResp["status"] == true && [200, 201, 202].includes(integResp["code"])){
+      //     const message = integResp["data"]["msg"]
+      //     return {error: false, response: integResp, message}
+      // }else{
+      //     return {error: true, status: 400, message: "An error occured with data transfer server"}
+      // }
+
+      // !SECTION - CLOUDSIMHOST RESPONSE CHECK
       if (
-        response.data &&
-        response.data.status &&
-        response.data.status === "success"
+        integResp &&
+        integResp.data["status"] == "success" &&
+        integResp.data["success"] == true
       ) {
-        return {
-          error: false,
-          response: response.data,
-          message: response.data.response.message,
-        };
+        const message = integResp.data["msg"];
+        return { error: false, response: integResp, message };
       } else {
+        // client.sendEmail({
+        //   From: "admin@wisper.ng",
+        //   To: "Arinzeebuka@gmail.com",
+        //   Subject: "Cloudsimhost is down",
+        //   TextBody: `Cloudsimhost server is currently down`,
+        // });
+
         return {
           error: true,
           status: 400,
@@ -513,6 +578,13 @@ exports.initiate_data_transfer = async (
         }
       } while (attempt < 3 && !bucketIDVar);
 
+      // client.sendEmail({
+      //   From: "admin@wisper.ng",
+      //   To: "Arinzeebuka@gmail.com",
+      //   Subject: "Glo service is down on wisper",
+      //   TextBody: "Almamgt server is currently down",
+      // });
+
       console.log({
         error: true,
         status: 400,
@@ -524,7 +596,46 @@ exports.initiate_data_transfer = async (
         status: 400,
         message: "An error occured with data transfer server",
       };
-      // end of glo
+
+      // SECTION - PURCHASE FOR EAZYMOBILE GLO
+
+      // integName = integrationTypes.EAZYMOBILE
+      // const {error, plan_id} = eazymobile_glo_size_map(size)
+      // if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+      // const req_header = {
+      //     headers: {
+      //         'Authorization': `Bearer ${eazymobile_key}`,
+      //         'Content-Type': 'application/json',
+      //         'Accept': 'application/json'
+      //     }
+      // }
+
+      // const req_body = {
+      //     "accessToken" : eazymobile_token,
+      //     "transID" : ref.slice(0, 12),
+      //     "merchantUrl" : "wisper-reseller.herokuapp.com",
+      //     "phone" : `${requestPayload.mobile_number}`,
+      //     "network" : `${4}`,
+      //     "planID" : `${plan_id}`
+      // }
+
+      // const response = await axios.post(
+      //     `${eazymobile_url}/api/v2/seamless/purchase/data`,
+      //     req_body,
+      //     req_header
+      // )
+
+      // // Fire event to save gateway response to DB
+      // integResp = response.data
+
+      // // ALMAMGT GLO RESPONSE CHECK
+      // if(integResp && integResp["status"] == true && integResp["response"]["code"] == "200"){
+      //     const message = integResp["response"]["provider_response"]
+      //     return {error: false, response: integResp, message}
+      // }else{
+      //     return {error: true, status: 400, message: "An error occured with data transfer server"}
+      // }
     } else if (requestPayload.network == 400) {
       // FIXME - New Data purcahse for Airtel
       integName = integrationTypes.ZOEDATA;
@@ -575,10 +686,55 @@ exports.initiate_data_transfer = async (
         };
       }
     } else if (requestPayload.network == 3) {
-      integName = integrationTypes.OGDAMS_9MOBILE;
-      // start of 9mobile integration
+      // SECTION - MSORG - PURCHASE FOR 9MOBILE
+      // integName = integrationTypes.MSORG
 
-      const { error, plan_id } = n3tdata_9mobile_size_map(size);
+      // const {error, plan_id} = msorg_size_map(size);
+      // if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+      // const authUrl = 'https://bulkdatabackend.9mobile.com.ng/v1/api/sercom/login';
+      // const authHeaders = {'Accept': 'application/json, text/plain, */*'};
+      // const authPayload = {
+      //     espmsisdn: process.env.MSORG_USERNAME,
+      //     password: process.env.MSORG_PASSWORD,
+      // };
+
+      // const authResponse = await axios.post(authUrl, authPayload, {headers: authHeaders, timeout: 30000});
+
+      // // Save Integration auth response to DB
+      // integResp = [authResponse?.data];
+
+      // SECTION - MSORG - 9MOBILE RESPONSE CHECK
+      // if (authResponse.status === 200 || authResponse.status === 201) {
+      //     const msorg_token = authResponse.data?.data?.token;
+
+      //     const url = 'https://bulkdatabackend.9mobile.com.ng/v1/api/sercom/vendproduct-cbs';
+      //     const headers = {'Accept': 'application/json, text/plain, */*', 'token': msorg_token};
+      //     const payload = {
+      //         msisdn: requestPayload.mobile_number.substring(1),
+      //         dataamount: plan_id
+      //     };
+
+      //     const response = await axios.post(url, payload, {headers, timeout: 50000});
+      //     const resp = response.data;
+
+      //     // Save integratiion response to DB
+      //     integResp.push(resp);
+
+      //     if (resp.status === 200) {
+      //         const message = `Congrats! You have successfully gifted ${requestPayload.mobile_number} with ${size} [CG] worth of data. To check your data balance dial *228#`;
+      //         return {error: false, response: resp, message}
+      //     } else {
+      //         return {error: true, status: 400, message: "An error occured with data transfer server"}
+      //     }
+      // } else {
+      //     return {error: true, status: 400, message: "An error occured with data transfer server"}
+      // }
+
+      // SECTION - Purchase from OGDAMS SIMHOSTING - 9MOBILE
+      integName = integrationTypes.OGDAMS_9MOBILE;
+
+      const { error, plan_id } = ogdams_9mobile_size_map(size);
       if (error)
         return {
           error: true,
@@ -586,50 +742,56 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      const req_body = {
-        network: requestPayload.network,
-        phone: requestPayload.mobile_number,
-        data_plan: plan_id,
-        bypass: false,
-        "request-id": ref,
+      const req_header = {
+        headers: {
+          Authorization: `Bearer ${ogdams_key}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       };
 
-      // console.log({ req_body });
+      const req_body = {
+        networkId: 4, // Do not change this: networkId = 4 is for 9Mobile
+        planId: plan_id,
+        phoneNumber: requestPayload.mobile_number,
+      };
 
-      // console.log({ n3tdata_url });
+      const response = await axios.post(ogdams_url, req_body, req_header);
 
-      const response = await axios.post(
-        `${n3tdata_url}/data`,
-        req_body,
-        req_header
-      );
+      console.log("OGDAM RESPONSE:", response?.data);
 
+      integResp = response.data;
+
+      // !SECTION - OGDAMS RESPONSE CHECK
       if (
-        response.data &&
-        response.data.status &&
-        response.data.status === "success"
+        integResp &&
+        integResp["status"] == true &&
+        [200, 201, 202].includes(integResp["code"])
       ) {
-        return {
-          error: false,
-          response: response.data,
-          message: response.data.response.message,
-        };
+        const message = integResp["data"]["msg"];
+        return { error: false, response: integResp, message };
       } else {
+        // client.sendEmail({
+        //   From: "admin@wisper.ng",
+        //   To: "Arinzeebuka@gmail.com",
+        //   Subject: "9mobile service is down on wisper",
+        //   TextBody: "OGDAMS server is currently down",
+        // });
+
         return {
           error: true,
           status: 400,
           message: "An error occured with data transfer server",
         };
       }
-
-      // end of 9mobile integration
     }
 
-    // N3TDATA MTN/ // // // // // // // // // //
+    // SUPER JARA // // // // // // // // // // //
     else if (requestPayload.network == 1) {
-      // SECTION - PURCHASE FOR N3TDATA
+      // SECTION - PURCHASE FOR SUPER JARA
+      integName = integrationTypes.SUPERJARA;
 
-      const { error, plan_id } = n3tdata_mtn_size_map(size);
+      const { error, plan_id } = superjara_size_map(size);
       if (error)
         return {
           error: true,
@@ -637,41 +799,109 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      const req_body = {
-        network: requestPayload.network,
-        phone: requestPayload.mobile_number,
-        data_plan: plan_id,
-        bypass: false,
-        "request-id": ref,
+      // console.log("jara planid", plan_id)
+      // console.log("jara planid", size)
+      // console.log("jara request", requestPayload)
+
+      // console.log("superjara_token", superjara_token)
+
+      const req_header = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${superjara_token}`,
+          Accept: "application/json",
+        },
       };
 
-      // console.log({ req_body });
+      const req_body = {
+        network: 1,
+        mobile_number: `${requestPayload.mobile_number}`,
+        plan: plan_id,
+        Ported_number: true,
+      };
 
-      // console.log({ n3tdata_url });
+      // console.log("reqbody", req_body)
 
-      const response = await axios.post(
-        `${n3tdata_url}/data`,
-        req_body,
-        req_header
+      // SUPER JARA
+      // const response = await axios.post(
+      //     `${superjara_url}`,
+      //     req_body,
+      //     req_header
+      // )
+
+      const response = await axios.get(
+        `https://apisubportal.com/api/buydata.php?api_key=652cf58c55dbe87b507bc1d384fb6bf0&network=MTN_CGD&plans=${plan_id}&phonenumber=${requestPayload.mobile_number}`
       );
 
+      console.log("ABISUBPORTAL RESPONSE:", response?.data);
+
+      // console.log(response)
+
+      //   console.log(response)
+
+      // Fire event to save gateway response to DB
       if (
         response.data &&
         response.data.status &&
         response.data.status === "success"
       ) {
-        return {
-          error: false,
-          response: response.data,
-          message: response.data.response.message,
-        };
+        const message =
+          "Data purchase was successful. Check Balance to confirm.";
+        return { error: false, response: response.data, message };
       } else {
+        // client.sendEmail({
+        //   From: "admin@wisper.ng",
+        //   To: "Arinzeebuka@gmail.com",
+        //   Subject: "MTN service is down on wisper",
+        //   TextBody: "ABISUBPORTAL server is currently down",
+        // });
+
         return {
           error: true,
           status: 400,
           message: "An error occured with data transfer server",
         };
       }
+
+      // SECTION - PURCHASE FOR EAZYMOBILE GLO
+
+      // integName = integrationTypes.EAZYMOBILE
+      // const {error, plan_id} = eazymobile_glo_size_map(size)
+      // if (error) return {error: true, status: 400, message: "This data plan is currently not available"}
+
+      // const req_header = {
+      //     headers: {
+      //         'Authorization': `Bearer ${eazymobile_key}`,
+      //         'Content-Type': 'application/json',
+      //         'Accept': 'application/json'
+      //     }
+      // }
+
+      // const req_body = {
+      //     "accessToken" : eazymobile_token,
+      //     "transID" : ref.slice(0, 12),
+      //     "merchantUrl" : "wisper-reseller.herokuapp.com",
+      //     "phone" : `${requestPayload.mobile_number}`,
+      //     "network" : `${4}`,
+      //     "planID" : `${plan_id}`
+      // }
+
+      // const response = await axios.post(
+      //     `${eazymobile_url}/api/v2/seamless/purchase/data`,
+      //     req_body,
+      //     req_header
+      // )
+
+      // // Fire event to save gateway response to DB
+      // integResp = response.data
+
+      // // ALMAMGT GLO RESPONSE CHECK
+      // if(integResp && integResp["status"] == true && integResp["response"]["code"] == "200"){
+      //     const message = integResp["response"]["provider_response"]
+      //     return {error: false, response: integResp, message}
+      // }else{
+      //     return {error: true, status: 400, message: "An error occured with data transfer server"}
+      // }
     } else {
       // Data purchase for other network
       integName = integrationTypes.FASTLINK;

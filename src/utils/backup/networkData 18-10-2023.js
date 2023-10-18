@@ -67,8 +67,8 @@ exports.plans = (function () {
   return allPlans;
 })();
 
-// mtn n3tdata jara
-exports.n3tdata_mtn_size_map = (size) => {
+// mtn super jara
+exports.superjara_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(" ", "");
   let error = false,
     plan_id;
@@ -76,117 +76,48 @@ exports.n3tdata_mtn_size_map = (size) => {
   switch (f_size) {
     // sme plans
     case "500mbe":
-      plan_id = 6;
+      plan_id = 242;
       break;
     case "1gbe":
-      plan_id = 1;
+      plan_id = 234;
       break;
     case "2gbe":
-      plan_id = 3;
-      break;
-    case "3gbe":
-      plan_id = 2;
+      plan_id = 235;
       break;
     case "5gbe":
-      plan_id = 4;
+      plan_id = 237;
       break;
     case "10gbe":
-      plan_id = 5;
+      plan_id = 246;
       break;
 
     // gifting plans
     case "500mb":
-      plan_id = 7;
+      plan_id = 500;
       break;
     case "1gb":
-      plan_id = 8;
-      break;
-    case "2gb":
-      plan_id = 9;
-      break;
-    case "3gb":
       plan_id = 10;
       break;
-    case "5gb":
-      plan_id = 11;
-      break;
-    case "10gb":
-      plan_id = 12;
-      break;
-    default:
-      error = true;
-  }
-
-  return { error, plan_id };
-};
-
-// 9mobile n3tdata jara
-exports.n3tdata_9mobile_size_map = (size) => {
-  const f_size = size.trim().toLowerCase().replace(" ", "");
-  let error = false,
-    plan_id;
-
-  switch (f_size) {
-    // gifting plans
-    case "500mb":
-      plan_id = 52;
-      break;
-    case "1gb":
-      plan_id = 53;
-      break;
     case "2gb":
-      plan_id = 54;
+      plan_id = 20;
       break;
     case "3gb":
-      plan_id = 55;
+      plan_id = 30;
       break;
     case "5gb":
-      plan_id = 56;
-      break;
-    case "10gb":
-      plan_id = 57;
-      break;
-    default:
-      error = true;
-  }
-
-  return { error, plan_id };
-};
-
-// airtel n3tdata jara
-exports.n3tdata_airtel_size_map = (size) => {
-  const f_size = size.trim().toLowerCase().replace(" ", "");
-  let error = false,
-    plan_id;
-
-  switch (f_size) {
-    // gifting plans
-    case "100mb":
-      plan_id = 51;
-      break;
-    case "300mb":
       plan_id = 50;
       break;
-    case "500mb":
-      plan_id = 13;
-      break;
-    case "1gb":
-      plan_id = 14;
-      break;
-    case "2gb":
-      plan_id = 15;
-      break;
-    case "5gb":
-      plan_id = 17;
-      break;
-    case "10gb":
-      plan_id = 36;
-      break;
     case "15gb":
-      plan_id = 58;
+      plan_id = 150;
       break;
     case "20gb":
-      plan_id = 59;
+      plan_id = 200;
+      break;
+    case "10gb":
+      plan_id = 100;
+      break;
+    case "40gb":
+      plan_id = 400;
       break;
     default:
       error = true;
