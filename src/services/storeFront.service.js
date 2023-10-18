@@ -275,9 +275,29 @@ exports.storeFrontUserPlanService = async () => {
       type: { $nin: notAllowedTypes },
     });
 
+    // const body = {
+    //   plan_id: 431,
+    //   network: "glo",
+    //   plan_type: "gifting",
+    //   price: 0,
+    //   volume: 25,
+    //   unit: "mb",
+    //   validity: "30 days",
+    // };
+
+    // const toMap = [
+    //   { plan_id: 701, price: 50, volume: 200, unit: "mb" },
+    //   { plan_id: 702, price: 125, volume: 500, unit: "mb" },
+    //   { plan_id: 703, price: 250, volume: 1, unit: "gb" },
+    //   { plan_id: 704, price: 500, volume: 2, unit: "gb" },
+    //   { plan_id: 705, price: 750, volume: 3, unit: "gb" },
+    //   { plan_id: 706, price: 1250, volume: 5, unit: "gb" },
+    //   { plan_id: 707, price: 2500, volume: 10, unit: "gb" },
+    // ];
+
     const body = {
       plan_id: 431,
-      network: "glo",
+      network: "mtn",
       plan_type: "gifting",
       price: 0,
       volume: 25,
@@ -286,31 +306,29 @@ exports.storeFrontUserPlanService = async () => {
     };
 
     const toMap = [
-      { plan_id: 701, price: 50, volume: 200, unit: "mb" },
-      { plan_id: 702, price: 125, volume: 500, unit: "mb" },
-      { plan_id: 703, price: 250, volume: 1, unit: "gb" },
-      { plan_id: 704, price: 500, volume: 2, unit: "gb" },
-      { plan_id: 705, price: 750, volume: 3, unit: "gb" },
-      { plan_id: 706, price: 1250, volume: 5, unit: "gb" },
-      { plan_id: 707, price: 2500, volume: 10, unit: "gb" },
+      { plan_id: 210, price: 117.5, volume: 500, unit: "mb" },
+      { plan_id: 52, price: 235, volume: 1, unit: "gb" },
+      { plan_id: 51, price: 470, volume: 2, unit: "gb" },
+      { plan_id: 43, price: 705, volume: 3, unit: "gb" },
+      { plan_id: 50, price: 1175, volume: 5, unit: "gb" },
+      { plan_id: 206, price: 2350, volume: 10, unit: "gb" },
     ];
 
     for (let i = 0; i < allUsers.length; i++) {
       const currUser = allUsers[i]._id;
       for (let j = 0; j < toMap.length; j++) {
         try {
-          const newPlan = new userPlan({
-            business: currUser._id,
-            plan_id: toMap[j].plan_id,
-            network: body.network,
-            plan_type: body.plan_type,
-            price: toMap[j].price,
-            volume: toMap[j].volume,
-            unit: toMap[j].unit,
-            validity: body.validity,
-          });
-
-          newPlan.save();
+          // const newPlan = new userPlan({
+          //   business: currUser._id,
+          //   plan_id: toMap[j].plan_id,
+          //   network: body.network,
+          //   plan_type: body.plan_type,
+          //   price: toMap[j].price,
+          //   volume: toMap[j].volume,
+          //   unit: toMap[j].unit,
+          //   validity: body.validity,
+          // });
+          // newPlan.save();
         } catch (error) {
           console.log("failed to create plan for", currUser.name);
         }
