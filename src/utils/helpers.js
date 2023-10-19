@@ -690,13 +690,13 @@ exports.initiate_data_transfer = async (
         console.log({
           error: false,
           response: response.data,
-          message: response.data.response.message,
+          message: response.data.message,
         });
 
         return {
           error: false,
           response: response.data,
-          message: response.data.response.message,
+          message: response.data.message,
         };
       } else {
         console.log("ERROROR");
