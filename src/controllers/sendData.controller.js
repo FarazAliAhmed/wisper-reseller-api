@@ -163,7 +163,7 @@ const sendData = async (req, res, next) => {
 
     // glo resolution start
 
-    if (send_response.response.data["balance"]) {
+    if (send_response?.response?.data?.balance) {
       const glo_bal = send_response.response.data["balance"];
 
       console.log({ glo_bal });
