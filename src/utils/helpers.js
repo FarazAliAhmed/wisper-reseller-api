@@ -298,6 +298,14 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
+      const req_header = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${n3tdata_token}`,
+          Accept: "application/json",
+        },
+      };
+
       const req_body = {
         network: requestPayload.network,
         phone: requestPayload.mobile_number,
@@ -586,6 +594,14 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
+      const req_header = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${n3tdata_token}`,
+          Accept: "application/json",
+        },
+      };
+
       const req_body = {
         network: requestPayload.network,
         phone: requestPayload.mobile_number,
@@ -636,6 +652,14 @@ exports.initiate_data_transfer = async (
           status: 400,
           message: "This data plan is currently not available",
         };
+
+      const req_header = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${n3tdata_token}`,
+          Accept: "application/json",
+        },
+      };
 
       const req_body = {
         network: requestPayload.network,
