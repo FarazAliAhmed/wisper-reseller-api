@@ -164,17 +164,19 @@ const sendData = async (req, res, next) => {
     // glo resolution start
     const glo_bal = send_response.response.data["balance"];
 
-    console.log({ glo_bal });
+    if (glo_bal) {
+      console.log({ glo_bal });
 
-    console.log(savedTransaction);
+      console.log(savedTransaction);
 
-    const sameTrx = await transactionHistory.findOne({
-      _id: savedTransaction.transaction._id,
-    });
-    sameTrx.gloB = glo_bal;
+      const sameTrx = await transactionHistory.findOne({
+        _id: savedTransaction.transaction._id,
+      });
+      sameTrx.gloB = glo_bal;
 
-    await sameTrx.save();
-    // glo resolution end
+      await sameTrx.save();
+      // glo resolution end
+    }
 
     // send gateway response along with API response
     responseObject["gateway_response"] = send_response.message;
@@ -196,7 +198,7 @@ const sendData = async (req, res, next) => {
       .status(201)
       .json({ ...responseObject, message: "Transaction Successful!" });
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     console.log("In catch: " + error.message);
     await revert_debit_account_balance(_id, planDetails, type);
   }

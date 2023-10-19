@@ -679,17 +679,32 @@ exports.initiate_data_transfer = async (
         req_header
       );
 
+      // console.log(response);
+
       if (
         response.data &&
         response.data.status &&
         response.data.status === "success"
       ) {
+        console.log("SUCCESS");
+        console.log({
+          error: false,
+          response: response.data,
+          message: response.data.response.message,
+        });
+
         return {
           error: false,
           response: response.data,
           message: response.data.response.message,
         };
       } else {
+        console.log("ERROROR");
+        console.log({
+          error: true,
+          status: 400,
+          message: "An error occured with data transfer server",
+        });
         return {
           error: true,
           status: 400,
