@@ -611,6 +611,7 @@ exports.initiate_data_transfer = async (
         mobile_number: requestPayload.mobile_number,
         plan: plan_id,
         Ported_number: false,
+        payment_medium: "MAIN WALLET",
       };
 
       console.log({ req_body });
