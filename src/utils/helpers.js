@@ -618,11 +618,21 @@ exports.initiate_data_transfer = async (
 
       console.log({ gladtidings_url });
 
-      const response = await axios.post(
-        `https://www.gladtidingsdata.com/api/data/`,
-        req_body,
-        req_header
-      );
+      let response;
+
+      try {
+        response = await axios.post(
+          `https://www.gladtidingsdata.com/api/data/`,
+          req_body,
+          req_header
+        );
+      } catch (error) {
+        return {
+          error: true,
+          status: 400,
+          message: "An error occured with data transfer server",
+        };
+      }
 
       console.log({ response });
 
