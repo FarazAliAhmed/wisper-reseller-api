@@ -606,14 +606,6 @@ exports.initiate_data_transfer = async (
         },
       };
 
-      // const req_body = {
-      //   network: requestPayload.network,
-      //   phone: requestPayload.mobile_number,
-      //   data_plan: plan_id,
-      //   bypass: false,
-      //   "request-id": ref,
-      // };
-
       const req_body = {
         network: 6,
         mobile_number: requestPayload.mobile_number,
@@ -621,7 +613,8 @@ exports.initiate_data_transfer = async (
         Ported_number: true,
       };
 
-      // console.log({ req_body });
+      console.log({ req_body });
+      console.log({ req_header });
 
       // console.log({ n3tdata_url });
 
@@ -631,7 +624,7 @@ exports.initiate_data_transfer = async (
         req_header
       );
 
-      console.log({ response: response.data.results });
+      console.log({ response: response.data });
 
       if (
         response.data &&
