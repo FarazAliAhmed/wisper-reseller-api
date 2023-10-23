@@ -602,7 +602,7 @@ exports.initiate_data_transfer = async (
         headers: {
           "Content-Type": "application/json",
           Authorization: `Token ${gladtidings_token}`,
-          // Accept: "application/json",
+          Accept: "application/json",
         },
       };
 
@@ -616,7 +616,7 @@ exports.initiate_data_transfer = async (
       console.log({ req_body });
       console.log({ req_header });
 
-      // console.log({ n3tdata_url });
+      console.log({ gladtidings_url });
 
       const response = await axios.post(
         `${gladtidings_url}/data`,
