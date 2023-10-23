@@ -627,6 +627,7 @@ exports.initiate_data_transfer = async (
           req_header
         );
       } catch (error) {
+        console.log({ error });
         return {
           error: true,
           status: 400,
