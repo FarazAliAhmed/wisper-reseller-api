@@ -134,6 +134,68 @@ exports.n3tdata_9mobile_size_map = (size) => {
   return { error, plan_id };
 };
 
+// 9mobile gladtidings jara
+exports.gladtidings_9mobile_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id;
+
+  switch (f_size) {
+    case "10mb":
+      plan_id = 376;
+      break;
+    case "15mb":
+      plan_id = 377;
+      break;
+    case "25mb":
+      plan_id = 361;
+      break;
+    case "100mb":
+      plan_id = 372;
+      break;
+    case "500mb":
+      plan_id = 182;
+      break;
+    case "1gb":
+      plan_id = 298;
+      break;
+    case "1.5gb":
+      plan_id = 300;
+      break;
+    case "2gb":
+      plan_id = 299;
+      break;
+    case "3gb":
+      plan_id = 303;
+      break;
+    case "4gb":
+      plan_id = 347;
+      break;
+    case "4.5gb":
+      plan_id = 348;
+      break;
+    case "5gb":
+      plan_id = 304;
+      break;
+    case "10gb":
+      plan_id = 305;
+      break;
+    case "11gb":
+      plan_id = 362;
+      break;
+    case "50gb":
+      plan_id = 374;
+      break;
+    case "100gb":
+      plan_id = 391;
+      break;
+    default:
+      error = true;
+  }
+
+  return { error, plan_id };
+};
+
 // airtel n3tdata jara
 exports.n3tdata_airtel_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(" ", "");
@@ -510,6 +572,7 @@ exports.cloudsimhost_glo_size_map = (size) => {
   }
   return { error, plan_id };
 };
+
 exports.eazymobile_glo_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(" ", "");
   let error = false,

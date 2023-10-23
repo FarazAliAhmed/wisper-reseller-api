@@ -63,7 +63,7 @@ const upload = multer({
 
 // admin
 router.post("/create-all-store-fronts", getAdmin, createStoreFront);
-router.post("/create-all-user-plans", getAdmin, createAllUserPlans);
+router.post("/create-all-user-plans", createAllUserPlans);
 router.get("/store-fronts-all-history", getAdmin, getAllStoreFrontHistory);
 
 // user

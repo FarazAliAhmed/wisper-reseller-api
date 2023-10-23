@@ -297,8 +297,8 @@ exports.storeFrontUserPlanService = async () => {
 
     const body = {
       plan_id: 431,
-      network: "mtn",
-      plan_type: "gifting",
+      network: "9mobile",
+      plan_type: "cg",
       price: 0,
       volume: 25,
       unit: "mb",
@@ -306,12 +306,22 @@ exports.storeFrontUserPlanService = async () => {
     };
 
     const toMap = [
-      { plan_id: 210, price: 117.5, volume: 500, unit: "mb" },
-      { plan_id: 52, price: 235, volume: 1, unit: "gb" },
-      { plan_id: 51, price: 470, volume: 2, unit: "gb" },
-      { plan_id: 43, price: 705, volume: 3, unit: "gb" },
-      { plan_id: 50, price: 1175, volume: 5, unit: "gb" },
-      { plan_id: 206, price: 2350, volume: 10, unit: "gb" },
+      // { plan_id: 376, price: d10, volume: 10, unit: "mb" },
+      // { plan_id: 377, price: 1d5, volume: 15, unit: "mb" },
+      { plan_id: 431, price: 5, volume: 25, unit: "mb" },
+      { plan_id: 411, price: 20, volume: 100, unit: "mb" },
+      { plan_id: 413, price: 80, volume: 500, unit: "mb" },
+      { plan_id: 414, price: 160, volume: 1, unit: "gb" },
+      { plan_id: 421, price: 240, volume: 1.5, unit: "gb" },
+      { plan_id: 415, price: 320, volume: 2, unit: "gb" },
+      { plan_id: 420, price: 480, volume: 3, unit: "gb" },
+      { plan_id: 422, price: 640, volume: 4, unit: "gb" },
+      { plan_id: 424, price: 720, volume: 4.5, unit: "gb" },
+      { plan_id: 416, price: 800, volume: 5, unit: "gb" },
+      { plan_id: 417, price: 1600, volume: 10, unit: "gb" },
+      { plan_id: 423, price: 1760, volume: 11, unit: "gb" },
+      { plan_id: 429, price: 8000, volume: 50, unit: "gb" },
+      { plan_id: 430, price: 16000, volume: 100, unit: "gb" },
     ];
 
     for (let i = 0; i < allUsers.length; i++) {

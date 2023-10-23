@@ -33,6 +33,7 @@ const {
   n3tdata_mtn_size_map,
   n3tdata_airtel_size_map,
   n3tdata_9mobile_size_map,
+  gladtidings_9mobile_size_map,
 } = require("./networkData");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
@@ -70,6 +71,9 @@ const zoedata_auth = `Token ${process.env.ZOEDATA_AUTH_KEY}`;
 // N3TDATA
 const n3tdata_url = process.env.N3TDATA_URL;
 const n3tdata_token = process.env.N3TDATA_TOKEN;
+
+const gladtidings_url = process.env.GLADTIDINGS_URL;
+const gladtidings_token = process.env.GLADTIDINGS_TOKEN;
 
 // Names of integration used in saving gateway response to DB
 const integrationTypes = {
@@ -586,28 +590,35 @@ exports.initiate_data_transfer = async (
       integName = integrationTypes.OGDAMS_9MOBILE;
       // start of 9mobile integration
 
-      const { error, plan_id } = n3tdata_9mobile_size_map(size);
+      const { error, plan_id } = gladtidings_9mobile_size_map(size);
       if (error)
         return {
           error: true,
           status: 400,
           message: "This data plan is currently not available",
         };
-
+      //
       const req_header = {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${n3tdata_token}`,
+          Authorization: `Token ${gladtidings_token}`,
           Accept: "application/json",
         },
       };
 
+      // const req_body = {
+      //   network: requestPayload.network,
+      //   phone: requestPayload.mobile_number,
+      //   data_plan: plan_id,
+      //   bypass: false,
+      //   "request-id": ref,
+      // };
+
       const req_body = {
-        network: requestPayload.network,
-        phone: requestPayload.mobile_number,
-        data_plan: plan_id,
-        bypass: false,
-        "request-id": ref,
+        network: 6,
+        mobile_number: requestPayload.mobile_number,
+        plan: plan_id,
+        Ported_number: true,
       };
 
       // console.log({ req_body });
@@ -615,7 +626,7 @@ exports.initiate_data_transfer = async (
       // console.log({ n3tdata_url });
 
       const response = await axios.post(
-        `${n3tdata_url}/data`,
+        `${gladtidings_url}/data`,
         req_body,
         req_header
       );
