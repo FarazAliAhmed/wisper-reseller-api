@@ -155,7 +155,7 @@ const sendData = async (req, res, next) => {
       delete responseObject.new_balance;
       await update_transaction_status(responseObject.transaction_ref, "failed");
 
-      res
+      return res
         .status(400)
         .json({ ...responseObject, message: send_response.message });
       throw new Error(send_response.message);
