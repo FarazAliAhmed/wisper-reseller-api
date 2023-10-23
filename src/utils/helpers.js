@@ -610,7 +610,7 @@ exports.initiate_data_transfer = async (
         network: 6,
         mobile_number: requestPayload.mobile_number,
         plan: plan_id,
-        Ported_number: true,
+        Ported_number: false,
       };
 
       console.log({ req_body });
