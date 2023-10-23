@@ -602,7 +602,7 @@ exports.initiate_data_transfer = async (
         headers: {
           "Content-Type": "application/json",
           Authorization: `Token ${gladtidings_token}`,
-          Accept: "application/json",
+          // Accept: "application/json",
         },
       };
 
