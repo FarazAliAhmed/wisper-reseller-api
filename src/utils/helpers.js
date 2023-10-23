@@ -631,7 +631,7 @@ exports.initiate_data_transfer = async (
         req_header
       );
 
-      console.log({ response: response.data });
+      console.log({ response: response.data.results });
 
       if (
         response.data &&
