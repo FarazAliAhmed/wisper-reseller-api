@@ -5,6 +5,7 @@ const Flutterwave = require("flutterwave-node-v3");
 const storeFrontHistory = require("../models/storeFrontHistory");
 const storeFront = require("../models/storeFront");
 const userPlan = require("../models/userPlan");
+const monnifyHistory = require("../models/monnifyHistory");
 
 async function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
   const flw = new Flutterwave(
@@ -58,6 +59,8 @@ async function debitStoreFrontMegaWallet(
 ) {
   try {
     const balance = await dataBalance.findOne({ business: businessId });
+
+    const old_bal = balance.wallet_balance;
 
     if (store_type == "mega") {
       console.log("MEGAAAA");
@@ -121,6 +124,22 @@ async function debitStoreFrontMegaWallet(
 
       await purchase.save();
 
+      const newMonnifyHistory = new monnifyHistory({
+        business_name: custName,
+        business_id: businessId,
+        amount: price,
+        resolvedAmount: price,
+        new_bal: balance.wallet_balance,
+        old_bal: old_bal,
+        purpose: "Data Purchase",
+        desc: `Data purchase of ${addData.amount} NGN made by ${custName}.`,
+        pay_type: "debit",
+        date_of_payment: new Date(),
+        payment_ref: "AD-trx-" + trx_ref,
+      });
+
+      await newMonnifyHistory.save();
+
       const storeOwner = await storeFront.findOne({ business_id: businessId });
 
       const newWal = Number(storeOwner.wallet) + Number(price);
@@ -165,6 +184,22 @@ async function debitStoreFrontMegaWallet(
       });
 
       await sFHist.save();
+
+      const newMonnifyHistory = new monnifyHistory({
+        business_name: custName,
+        business_id: businessId,
+        amount: price,
+        resolvedAmount: resolvedBal,
+        new_bal: balance.wallet_balance,
+        old_bal: old_bal,
+        purpose: "Data Purchase",
+        desc: `Data purchase of ${addData.amount} NGN made by ${custName}.`,
+        pay_type: "debit",
+        date_of_payment: new Date(),
+        payment_ref: "AD-trx-" + trx_ref,
+      });
+
+      await newMonnifyHistory.save();
     }
 
     // Return the updated balance in the specified format
@@ -196,9 +231,11 @@ async function revertStoreFrontMegaWallet(
   trx_ref
 ) {
   try {
+    const balance = await dataBalance.findOne({ business: businessId });
+    const oldUser_bal = balance.mega_wallet[network];
+
     if (store_type == "mega") {
       // Find the balance document for the specified business
-      const balance = await dataBalance.findOne({ business: businessId });
 
       if (!balance) {
         return {
@@ -207,8 +244,6 @@ async function revertStoreFrontMegaWallet(
           message: "Balance not found for the business",
         };
       }
-
-      const oldUser_bal = balance.mega_wallet[network];
 
       // Check if the mega wallet for the specified network has enough balance
       const networkBalance = balance.mega_wallet[network];
@@ -268,6 +303,7 @@ async function revertStoreFrontMegaWallet(
       email: custEmail,
       storeBusiness: businessId,
       phone: phone_number,
+      profit: 0,
       price: price,
       volume: dataVolume,
       status: "failed",
@@ -276,6 +312,22 @@ async function revertStoreFrontMegaWallet(
     });
 
     await sFHist.save();
+
+    const newMonnifyHistory = new monnifyHistory({
+      business_name: custName,
+      business_id: businessId,
+      amount: price,
+      resolvedAmount: price,
+      new_bal: balance.wallet_balance,
+      old_bal: oldUser_bal,
+      purpose: "Data Purchase",
+      desc: `Refund ${addData.amount} NGN made by ${custName}.`,
+      pay_type: "credit",
+      date_of_payment: new Date(),
+      payment_ref: "AD-trx-" + trx_ref,
+    });
+
+    await newMonnifyHistory.save();
 
     // Return the updated balance in the specified format
     return {

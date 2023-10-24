@@ -268,11 +268,11 @@ exports.storeFrontAnalysisService = async (businessId) => {
 };
 
 exports.storeFrontUserPlanService = async () => {
-  const notAllowedTypes = ["admin"];
+  const notAllowedTypes = ["mega", "lite"];
 
   try {
     const allUsers = await Account.find({
-      type: { $nin: notAllowedTypes },
+      type: { $in: notAllowedTypes },
     });
 
     // const body = {
@@ -379,18 +379,19 @@ exports.storeFrontUserPlanService = async () => {
       const currUser = allUsers[i]._id;
       for (let j = 0; j < toMap.length; j++) {
         try {
-          // const newPlan = new userPlan({
-          //   business: currUser._id,
-          //   plan_id: toMap[j].plan_id,
-          //   network: toMap[i].network,
-          //   plan_type: body.plan_type,
-          //   price: toMap[j].price,
-          //   volume: toMap[j].volume,
-          //   unit: toMap[j].unit,
-          //   validity: body.validity,
-          // });
-          // newPlan.save();
+          const newPlan = new userPlan({
+            business: currUser._id,
+            plan_id: toMap[j].plan_id,
+            network: toMap[j].network,
+            plan_type: body.plan_type,
+            price: toMap[j].price,
+            volume: toMap[j].volume,
+            unit: toMap[j].unit,
+            validity: body.validity,
+          });
+          newPlan.save();
         } catch (error) {
+          console.log(error);
           console.log("failed to create plan for", currUser.name);
         }
       }
