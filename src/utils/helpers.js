@@ -984,7 +984,7 @@ exports.checkMaintenance = async (planDetails) => {
   }
 };
 
-exports.generateTransactionId = () => {
+const generateTransactionId = () => {
   const timestamp = Date.now(); // Get the current timestamp in milliseconds
   const random = Math.floor(Math.random() * 10000); // Generate a random number between 0 and 9999
   const trxId = `AD-trx-${timestamp}${random}`; // Concatenate timestamp and random number
