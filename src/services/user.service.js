@@ -46,7 +46,6 @@ const register = async (requestBody) => {
     await new_storeFront.save();
 
     // create user plans
-
     for (let j = 0; j < toMapPlans.length; j++) {
       try {
         const newPlan = new userPlan({

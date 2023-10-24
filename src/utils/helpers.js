@@ -38,6 +38,8 @@ const {
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
 const { buyGloData, gatewayResponse } = require("./gloHelper");
+const monnifyHistory = require("../models/monnifyHistory");
+const dataBalance = require("../models/dataBalance");
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -251,6 +253,28 @@ exports.debit_account_balance = async (
 ) => {
   const { amount, field } = getFieldAndAmount(type, planDetails, price, volume);
   const updatedBalance = await debit(account_id, amount, field);
+
+  const balance = await dataBalance.findOne({ business: account_id });
+  const oldUser_bal = balance.mega_wallet[network];
+
+  userAcct = await Account.findOne({ _id: account_id });
+
+  const newMonnifyHistory = new monnifyHistory({
+    business_name: userAcct.name,
+    business_id: account_id,
+    amount: price,
+    resolvedAmount: price,
+    new_bal: balance.wallet_balance,
+    old_bal: oldUser_bal,
+    purpose: "Data Purchase",
+    desc: `Data purchase of ${price} NGN made by ${userAcct.name}.`,
+    pay_type: "debit",
+    date_of_payment: new Date(),
+    payment_ref: this.generateTransactionId(),
+  });
+
+  await newMonnifyHistory.save();
+
   if (updatedBalance.error) return updatedBalance;
   return {
     error: false,
@@ -268,6 +292,30 @@ exports.revert_debit_account_balance = async (
   const { amount, field } = getFieldAndAmount(type, planDetails);
   const incrementBy = amount * -1;
   const updatedBalance = await debit(account_id, incrementBy, field);
+
+  const balance = await dataBalance.findOne({ business: account_id });
+  const oldUser_bal = balance.mega_wallet[network];
+
+  // add to wallet
+  userAcct = await Account.findOne({ _id: account_id });
+
+  const newMonnifyHistory = new monnifyHistory({
+    business_name: userAcct.name,
+    business_id: account_id,
+    amount: price,
+    resolvedAmount: price,
+    new_bal: balance.wallet_balance,
+    old_bal: oldUser_bal,
+    purpose: "Data Purchase",
+    desc: `Refund of ${price} NGN made by ${userAcct.name}.`,
+    pay_type: "credit",
+    date_of_payment: new Date(),
+    payment_ref: this.generateTransactionId(),
+  });
+
+  await newMonnifyHistory.save();
+  // add to wallet
+
   if (updatedBalance.error) return updatedBalance;
   return { error: false, status: 201, balance: updatedBalance.balance };
 };
@@ -931,4 +979,11 @@ exports.checkMaintenance = async (planDetails) => {
       message: "Network is available for use",
     };
   }
+};
+
+exports.generateTransactionId = () => {
+  const timestamp = Date.now(); // Get the current timestamp in milliseconds
+  const random = Math.floor(Math.random() * 10000); // Generate a random number between 0 and 9999
+  const trxId = `AD-trx-${timestamp}${random}`; // Concatenate timestamp and random number
+  return trxId;
 };
