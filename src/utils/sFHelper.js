@@ -360,9 +360,80 @@ async function calStoreFrontTax(amount) {
   return { taxedAmount, tax };
 }
 
+const toMapPlans = [
+  // glo
+  { plan_id: 701, price: 50, volume: 200, unit: "mb", network: "glo" },
+  { plan_id: 702, price: 125, volume: 500, unit: "mb", network: "glo" },
+  { plan_id: 703, price: 250, volume: 1, unit: "gb", network: "glo" },
+  { plan_id: 704, price: 500, volume: 2, unit: "gb", network: "glo" },
+  { plan_id: 705, price: 750, volume: 3, unit: "gb", network: "glo" },
+  { plan_id: 706, price: 1250, volume: 5, unit: "gb", network: "glo" },
+  { plan_id: 707, price: 2500, volume: 10, unit: "gb", network: "glo" },
+
+  // mtn
+  { plan_id: 210, price: 117.5, volume: 500, unit: "mb", network: "mtn" },
+  { plan_id: 52, price: 235, volume: 1, unit: "gb", network: "mtn" },
+  { plan_id: 51, price: 470, volume: 2, unit: "gb", network: "mtn" },
+  { plan_id: 43, price: 705, volume: 3, unit: "gb", network: "mtn" },
+  { plan_id: 50, price: 1175, volume: 5, unit: "gb", network: "mtn" },
+  { plan_id: 206, price: 2350, volume: 10, unit: "gb", network: "mtn" },
+
+  // airtel
+  {
+    plan_id: 257,
+    price: 25,
+    volume: 100,
+    unit: "mb",
+    network: "airtel",
+  },
+  {
+    plan_id: 258,
+    price: 70,
+    volume: 300,
+    unit: "mb",
+    network: "airtel",
+  },
+  {
+    plan_id: 253,
+    price: 115,
+    volume: 500,
+    unit: "mb",
+    network: "airtel",
+  },
+  { plan_id: 254, price: 225, volume: 1, unit: "gb", network: "airtel" },
+  { plan_id: 255, price: 450, volume: 2, unit: "gb", network: "airtel" },
+  { plan_id: 256, price: 1125, volume: 5, unit: "gb", network: "airtel" },
+  { plan_id: 261, price: 2250, volume: 10, unit: "gb", network: "airtel" },
+  { plan_id: 320, price: 3375, volume: 15, unit: "gb", network: "airtel" },
+  { plan_id: 262, price: 4500, volume: 20, unit: "gb", network: "airtel" },
+
+  // 9mobile
+  { plan_id: 431, price: 5, volume: 25, unit: "mb", network: "9mobile" },
+  { plan_id: 411, price: 20, volume: 100, unit: "mb", network: "9mobile" },
+  { plan_id: 413, price: 80, volume: 500, unit: "mb", network: "9mobile" },
+  { plan_id: 414, price: 160, volume: 1, unit: "gb", network: "9mobile" },
+  { plan_id: 421, price: 240, volume: 1.5, unit: "gb", network: "9mobile" },
+  { plan_id: 415, price: 320, volume: 2, unit: "gb", network: "9mobile" },
+  { plan_id: 420, price: 480, volume: 3, unit: "gb", network: "9mobile" },
+  { plan_id: 422, price: 640, volume: 4, unit: "gb", network: "9mobile" },
+  { plan_id: 424, price: 720, volume: 4.5, unit: "gb", network: "9mobile" },
+  { plan_id: 416, price: 800, volume: 5, unit: "gb", network: "9mobile" },
+  { plan_id: 417, price: 1600, volume: 10, unit: "gb", network: "9mobile" },
+  { plan_id: 423, price: 1760, volume: 11, unit: "gb", network: "9mobile" },
+  { plan_id: 429, price: 8000, volume: 50, unit: "gb", network: "9mobile" },
+  {
+    plan_id: 430,
+    price: 16000,
+    volume: 100,
+    unit: "gb",
+    network: "9mobile",
+  },
+];
+
 module.exports = {
   debitStoreFrontMegaWallet,
   revertStoreFrontMegaWallet,
   verifyFlutterWaveTransaction,
   calStoreFrontTax,
+  toMapPlans,
 };

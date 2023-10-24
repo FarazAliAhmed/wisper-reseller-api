@@ -4,6 +4,7 @@ const { Account } = require("../models/account");
 const monnifyService = require("./monnify.service");
 const { storeFrontUserPlanSingle } = require("./storeFront.service");
 const storeFront = require("../models/storeFront");
+const { toMapPlans } = require("../utils/sFHelper");
 
 const register = async (requestBody) => {
   console.log({ requestBody });
@@ -43,6 +44,27 @@ const register = async (requestBody) => {
 
     // Save the store front to the database
     await new_storeFront.save();
+
+    // create user plans
+
+    for (let j = 0; j < toMapPlans.length; j++) {
+      try {
+        const newPlan = new userPlan({
+          business: user._id,
+          plan_id: toMapPlans[j].plan_id,
+          network: toMapPlans[j].network,
+          plan_type: "gifting",
+          price: toMapPlans[j].price,
+          volume: toMapPlans[j].volume,
+          unit: toMapPlans[j].unit,
+          validity: "30 days",
+        });
+        newPlan.save();
+      } catch (error) {
+        console.log(error);
+        console.log("failed to create plan for", user.name);
+      }
+    }
 
     return { user };
   } catch (error) {
