@@ -201,7 +201,12 @@ const sendData = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     console.log("In catch: " + error.message);
-    await revert_debit_account_balance(_id, planDetails, type);
+    await revert_debit_account_balance(
+      _id,
+      planDetails,
+      type,
+      planDetails.price
+    );
   }
 };
 

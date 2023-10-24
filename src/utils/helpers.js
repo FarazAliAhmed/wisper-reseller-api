@@ -287,7 +287,8 @@ exports.debit_account_balance = async (
 exports.revert_debit_account_balance = async (
   account_id,
   planDetails,
-  type
+  type,
+  price
 ) => {
   const { amount, field } = getFieldAndAmount(type, planDetails);
   const incrementBy = amount * -1;
