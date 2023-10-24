@@ -124,21 +124,21 @@ async function debitStoreFrontMegaWallet(
 
       await purchase.save();
 
-      const newMonnifyHistory = new monnifyHistory({
-        business_name: custName,
-        business_id: businessId,
-        amount: price,
-        resolvedAmount: price,
-        new_bal: balance.wallet_balance,
-        old_bal: old_bal,
-        purpose: "Data Purchase",
-        desc: `Data purchase of ${addData.amount} NGN made by ${custName}.`,
-        pay_type: "debit",
-        date_of_payment: new Date(),
-        payment_ref: "AD-trx-" + trx_ref,
-      });
+      // const newMonnifyHistory = new monnifyHistory({
+      //   business_name: custName,
+      //   business_id: businessId,
+      //   amount: price,
+      //   resolvedAmount: price,
+      //   new_bal: balance.wallet_balance,
+      //   old_bal: old_bal,
+      //   purpose: "Data Purchase",
+      //   desc: `Data purchase of ${addData.amount} NGN made by ${custName}.`,
+      //   pay_type: "debit",
+      //   date_of_payment: new Date(),
+      //   payment_ref: "AD-trx-" + trx_ref,
+      // });
 
-      await newMonnifyHistory.save();
+      // await newMonnifyHistory.save();
 
       const storeOwner = await storeFront.findOne({ business_id: businessId });
 
@@ -185,21 +185,21 @@ async function debitStoreFrontMegaWallet(
 
       await sFHist.save();
 
-      const newMonnifyHistory = new monnifyHistory({
-        business_name: custName,
-        business_id: businessId,
-        amount: price,
-        resolvedAmount: resolvedBal,
-        new_bal: balance.wallet_balance,
-        old_bal: old_bal,
-        purpose: "Data Purchase",
-        desc: `Data purchase of ${addData.amount} NGN made by ${custName}.`,
-        pay_type: "debit",
-        date_of_payment: new Date(),
-        payment_ref: "AD-trx-" + trx_ref,
-      });
+      // const newMonnifyHistory = new monnifyHistory({
+      //   business_name: custName,
+      //   business_id: businessId,
+      //   amount: price,
+      //   resolvedAmount: resolvedBal,
+      //   new_bal: balance.wallet_balance,
+      //   old_bal: old_bal,
+      //   purpose: "Data Purchase",
+      //   desc: `Data purchase of ${addData.amount} NGN made by ${custName}.`,
+      //   pay_type: "debit",
+      //   date_of_payment: new Date(),
+      //   payment_ref: "AD-trx-" + trx_ref,
+      // });
 
-      await newMonnifyHistory.save();
+      // await newMonnifyHistory.save();
     }
 
     // Return the updated balance in the specified format
@@ -313,21 +313,21 @@ async function revertStoreFrontMegaWallet(
 
     await sFHist.save();
 
-    const newMonnifyHistory = new monnifyHistory({
-      business_name: custName,
-      business_id: businessId,
-      amount: price,
-      resolvedAmount: price,
-      new_bal: balance.wallet_balance,
-      old_bal: oldUser_bal,
-      purpose: "Data Purchase",
-      desc: `Refund ${addData.amount} NGN made by ${custName}.`,
-      pay_type: "credit",
-      date_of_payment: new Date(),
-      payment_ref: "AD-trx-" + trx_ref,
-    });
+    // const newMonnifyHistory = new monnifyHistory({
+    //   business_name: custName,
+    //   business_id: businessId,
+    //   amount: price,
+    //   resolvedAmount: price,
+    //   new_bal: balance.wallet_balance,
+    //   old_bal: oldUser_bal,
+    //   purpose: "Data Purchase",
+    //   desc: `Refund ${addData.amount} NGN made by ${custName}.`,
+    //   pay_type: "credit",
+    //   date_of_payment: new Date(),
+    //   payment_ref: "AD-trx-" + trx_ref,
+    // });
 
-    await newMonnifyHistory.save();
+    // await newMonnifyHistory.save();
 
     // Return the updated balance in the specified format
     return {

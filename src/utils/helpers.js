@@ -255,7 +255,7 @@ exports.debit_account_balance = async (
   const updatedBalance = await debit(account_id, amount, field);
 
   const balance = await dataBalance.findOne({ business: account_id });
-  const oldUser_bal = balance.mega_wallet[network];
+  const oldUser_bal = balance.wallet_balance;
 
   userAcct = await Account.findOne({ _id: account_id });
 
@@ -294,7 +294,7 @@ exports.revert_debit_account_balance = async (
   const updatedBalance = await debit(account_id, incrementBy, field);
 
   const balance = await dataBalance.findOne({ business: account_id });
-  const oldUser_bal = balance.mega_wallet[network];
+  const oldUser_bal = balance.wallet_balance;
 
   // add to wallet
   userAcct = await Account.findOne({ _id: account_id });
