@@ -262,15 +262,15 @@ exports.debit_account_balance = async (
   const newMonnifyHistory = new monnifyHistory({
     business_name: userAcct.name,
     business_id: account_id,
-    amount: price,
-    resolvedAmount: price,
+    amount: Number(price),
+    resolvedAmount: Number(price),
     new_bal: balance.wallet_balance,
     old_bal: oldUser_bal,
     purpose: "Data Purchase",
-    desc: `Data purchase of ${price} NGN made by ${userAcct.name}.`,
+    desc: `Data purchase of ${Number(price)} NGN made by ${userAcct.name}.`,
     pay_type: "debit",
     date_of_payment: new Date(),
-    payment_ref: this.generateTransactionId(),
+    payment_ref: generateTransactionId(),
   });
 
   await newMonnifyHistory.save();
@@ -313,7 +313,7 @@ exports.revert_debit_account_balance = async (
     desc: `Refund of ${Number(price)} NGN made by ${userAcct.name}.`,
     pay_type: "credit",
     date_of_payment: new Date(),
-    payment_ref: this.generateTransactionId(),
+    payment_ref: generateTransactionId(),
   });
 
   await newMonnifyHistory.save();
