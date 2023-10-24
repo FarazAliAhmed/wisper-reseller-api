@@ -259,15 +259,17 @@ exports.debit_account_balance = async (
 
   userAcct = await Account.findOne({ _id: account_id });
 
+  console.log("DEBBIT PRICE", amount);
+
   const newMonnifyHistory = new monnifyHistory({
     business_name: userAcct.name,
     business_id: account_id,
-    amount: Number(price),
-    resolvedAmount: Number(price),
+    amount: amount,
+    resolvedAmount: amount,
     new_bal: balance.wallet_balance,
     old_bal: oldUser_bal,
     purpose: "Data Purchase",
-    desc: `Data purchase of ${Number(price)} NGN made by ${userAcct.name}.`,
+    desc: `Data purchase of ${amount} NGN made by ${userAcct.name}.`,
     pay_type: "debit",
     date_of_payment: new Date(),
     payment_ref: generateTransactionId(),
