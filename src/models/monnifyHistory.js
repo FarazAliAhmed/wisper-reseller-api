@@ -20,11 +20,11 @@ const monnifyHistorySchema = new Schema(
       default: null,
     },
     old_bal: {
-      type: Number,
+      type: String,
       required: true,
     },
     new_bal: {
-      type: Number,
+      type: String,
       required: true,
     },
     bank: {

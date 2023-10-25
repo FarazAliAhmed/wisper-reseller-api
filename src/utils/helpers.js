@@ -257,25 +257,27 @@ exports.debit_account_balance = async (
   const balance = await dataBalance.findOne({ business: account_id });
   const oldUser_bal = balance.wallet_balance;
 
-  userAcct = await Account.findOne({ _id: account_id });
+  const userAcct = await Account.findOne({ _id: account_id });
 
   console.log("DEBBIT PRICE", amount);
 
-  const newMonnifyHistory = new monnifyHistory({
-    business_name: userAcct.name,
-    business_id: account_id,
-    amount: amount,
-    resolvedAmount: amount,
-    new_bal: balance.wallet_balance,
-    old_bal: oldUser_bal,
-    purpose: "Data Purchase",
-    desc: `Data purchase of ${amount} NGN made by ${userAcct.name}.`,
-    pay_type: "debit",
-    date_of_payment: new Date(),
-    payment_ref: generateTransactionId(),
-  });
+  if (userAcct.type == "lite") {
+    const newMonnifyHistory = new monnifyHistory({
+      business_name: userAcct.name,
+      business_id: account_id,
+      amount: amount,
+      resolvedAmount: amount,
+      new_bal: balance.wallet_balance,
+      old_bal: oldUser_bal,
+      purpose: "Data Purchase",
+      desc: `Data purchase of ${amount} NGN made by ${userAcct.name}.`,
+      pay_type: "debit",
+      date_of_payment: new Date(),
+      payment_ref: generateTransactionId(),
+    });
 
-  await newMonnifyHistory.save();
+    await newMonnifyHistory.save();
+  }
 
   if (updatedBalance.error) return updatedBalance;
   return {
@@ -300,25 +302,28 @@ exports.revert_debit_account_balance = async (
   const oldUser_bal = balance.wallet_balance;
 
   // add to wallet
-  userAcct = await Account.findOne({ _id: account_id });
+  const userAcct = await Account.findOne({ _id: account_id });
 
-  console.log("REVERRRT PRICE", price);
+  if (userAcct.type == "lite") {
+    console.log("REVERRRT PRICE", price);
 
-  const newMonnifyHistory = new monnifyHistory({
-    business_name: userAcct.name,
-    business_id: account_id,
-    amount: Number(price),
-    resolvedAmount: Number(price),
-    new_bal: balance.wallet_balance,
-    old_bal: oldUser_bal,
-    purpose: "Data Purchase",
-    desc: `Refund of ${Number(price)} NGN made by ${userAcct.name}.`,
-    pay_type: "credit",
-    date_of_payment: new Date(),
-    payment_ref: generateTransactionId(),
-  });
+    const newMonnifyHistory = new monnifyHistory({
+      business_name: userAcct.name,
+      business_id: account_id,
+      amount: Number(price),
+      resolvedAmount: Number(price),
+      new_bal: balance.wallet_balance,
+      old_bal: oldUser_bal,
+      purpose: "Data Purchase",
+      desc: `Refund of ${Number(price)} NGN made by ${userAcct.name}.`,
+      pay_type: "credit",
+      date_of_payment: new Date(),
+      payment_ref: generateTransactionId(),
+    });
 
-  await newMonnifyHistory.save();
+    await newMonnifyHistory.save();
+  }
+
   // add to wallet
 
   if (updatedBalance.error) return updatedBalance;
