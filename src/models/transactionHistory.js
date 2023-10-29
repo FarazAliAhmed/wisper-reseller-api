@@ -20,26 +20,53 @@ const transactionHistorySchema = new Schema(
     },
     data_volume: {
       type: Number,
+      default: null,
     },
     price: {
       type: Number,
+      default: null,
     },
     lite_volume: {
       type: String,
+      default: null,
     },
     data_price: {
       type: Number,
+      default: null,
     },
     new_balance: {
       type: Schema.Types.Mixed,
+      default: null,
     },
     business_id: {
       type: String,
       required: true,
     },
+    // tyoe of transaction
+    purchase_type: {
+      type: String,
+      default: null,
+    },
+    desc: {
+      type: String,
+      default: null,
+    },
+    volume: {
+      type: Number,
+      default: null,
+    },
+    new_bal: {
+      type: String,
+      default: null,
+    },
+    old_bal: {
+      type: String,
+      default: null,
+    },
     network_provider: {
       type: String,
       maxlength: 10,
+      default: null,
     },
     gloB: {
       type: String,
