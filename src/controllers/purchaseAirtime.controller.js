@@ -72,6 +72,7 @@ const purchaseAirtime = async (req, res) => {
       await revertTransactionStatus(
         savedTransaction._id,
         Number(price),
+        isStoreFront,
         email,
         name
       );
@@ -91,6 +92,7 @@ const purchaseAirtime = async (req, res) => {
     await revertTransactionStatus(
       savedTransaction._id,
       Number(price),
+      isStoreFront,
       email,
       name
     );

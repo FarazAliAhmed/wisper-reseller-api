@@ -7,6 +7,6 @@ const {
 } = require("../controllers/purchaseAirtime.controller");
 
 router.post("/buyAirtime", parseKey, purchaseAirtime);
-router.post("/buyAirtimeSF", parseKey, purchaseAirtime);
+router.post("/buyAirtimeSF", purchaseAirtime);
 
 module.exports = router;
