@@ -8,18 +8,18 @@ const addAirtimeTransaction = trxHelper.addAirtimeTransaction;
 const revertTransactionStatus = trxHelper.revertTransactionStatus;
 
 const purchaseAirtime = async (req, res) => {
-  const { business_id, network, phone_number, volume, price } = req.body;
-
-  // console.log({ business_id, network, phone_number, volume, price });
-
-  // console.log({ business_id });
+  const { business_id, network, phone_number, volume, price, email, name } =
+    req.body;
 
   let businessIdentity;
+  let isStoreFront = true;
 
   if (req.user) {
     // console.log("No business_id");
 
     const { _id: buss } = req.user;
+
+    isStoreFront = false;
 
     businessIdentity = buss.toString();
   } else {
@@ -43,7 +43,10 @@ const purchaseAirtime = async (req, res) => {
       volume,
       price,
       network,
-      phone_number
+      phone_number,
+      isStoreFront,
+      email,
+      name
     );
   } catch (error) {
     return res.status(500).json({ message: "Error adding transaction" });
@@ -66,7 +69,12 @@ const purchaseAirtime = async (req, res) => {
     // Check if there was an error
     if (response.error) {
       // revert transaction
-      await revertTransactionStatus(savedTransaction._id, Number(price));
+      await revertTransactionStatus(
+        savedTransaction._id,
+        Number(price),
+        email,
+        name
+      );
       return res
         .status(response.status)
         .json({ error: true, message: response.message });
@@ -80,7 +88,12 @@ const purchaseAirtime = async (req, res) => {
     }
   } catch (error) {
     // revert transaction
-    await revertTransactionStatus(savedTransaction._id, Number(price));
+    await revertTransactionStatus(
+      savedTransaction._id,
+      Number(price),
+      email,
+      name
+    );
 
     console.error("Error:", error);
     return res.status(500).json({

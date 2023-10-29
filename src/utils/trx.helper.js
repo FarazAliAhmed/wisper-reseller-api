@@ -1,6 +1,7 @@
 const dataBalance = require("../models/dataBalance");
 const Account = require("../models/account").Account;
 const transactionHistory = require("../models/transactionHistory");
+const storeFrontHistory = require("../models/storeFrontHistory");
 
 // Function to add a new transaction
 async function addAirtimeTransaction(
@@ -9,7 +10,10 @@ async function addAirtimeTransaction(
   volume,
   price,
   network,
-  mobile_number
+  mobile_number,
+  isStoreFront,
+  email,
+  name
 ) {
   try {
     const userAccount = await dataBalance.findOne({ business: business });
@@ -45,6 +49,26 @@ async function addAirtimeTransaction(
     await dataBalance.updateOne({ business }, { wallet_balance: new_bal });
 
     await newTransaction.save();
+
+    if (isStoreFront) {
+      const sFHist = new storeFrontHistory({
+        name: name,
+        email: email,
+        storeBusiness: business,
+        phone: mobile_number,
+        profit: 0,
+        price: price,
+        volume: volume,
+        purchase_type: "airtime",
+        desc: generatedDesc,
+        status: "success",
+        network: network,
+        transaction_ref: transaction_ref,
+      });
+
+      await sFHist.save();
+    }
+
     return newTransaction;
   } catch (error) {
     console.log(error);
@@ -53,7 +77,13 @@ async function addAirtimeTransaction(
 }
 
 // Function to update the status of a transaction to Failed (revert)
-async function revertTransactionStatus(transactionId, price) {
+async function revertTransactionStatus(
+  transactionId,
+  price,
+  isStoreFront,
+  email,
+  name
+) {
   try {
     const updatedTransaction = await transactionHistory.findByIdAndUpdate(
       transactionId,
@@ -62,6 +92,25 @@ async function revertTransactionStatus(transactionId, price) {
     );
 
     // console.log({ updatedTransaction });
+
+    if (isStoreFront) {
+      const sFHist = new storeFrontHistory({
+        name: name,
+        email: email,
+        storeBusiness: updatedTransaction.business_id,
+        phone: updatedTransaction.phone_number,
+        profit: 0,
+        price: updatedTransaction.price,
+        volume: updatedTransaction.volume,
+        purchase_type: "airtime",
+        desc: updatedTransaction.desc,
+        status: "failed",
+        network: updatedTransaction.network_provider,
+        transaction_ref: updatedTransaction.transaction_ref,
+      });
+
+      await sFHist.save();
+    }
 
     const userAccount = await dataBalance.findOne({
       business: updatedTransaction?.business_id,

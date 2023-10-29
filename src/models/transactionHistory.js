@@ -42,7 +42,7 @@ const transactionHistorySchema = new Schema(
       type: String,
       required: true,
     },
-    // tyoe of transaction
+    // type of transaction
     purchase_type: {
       type: String,
       default: null,

@@ -27,6 +27,15 @@ const storeFrontHistorySchema = new Schema(
       type: String,
       default: null,
     },
+    // type of transaction
+    purchase_type: {
+      type: String,
+      default: null,
+    },
+    desc: {
+      type: String,
+      default: null,
+    },
     volume: {
       type: String,
       default: null,
