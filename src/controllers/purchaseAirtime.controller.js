@@ -49,7 +49,9 @@ const purchaseAirtime = async (req, res) => {
       name
     );
   } catch (error) {
-    return res.status(500).json({ message: "Error adding transaction" });
+    return res
+      .status(500)
+      .json({ error: true, message: "Error adding transaction" });
   }
 
   try {
@@ -84,7 +86,6 @@ const purchaseAirtime = async (req, res) => {
         error: false,
         message: response.message,
         data: response.data,
-        user: userData,
       });
     }
   } catch (error) {
