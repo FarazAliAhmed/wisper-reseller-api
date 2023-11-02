@@ -66,7 +66,7 @@ const purchaseAirtime = async (req, res) => {
       reference
     );
 
-    const userData = await Account.findById(businessIdentity);
+    // const userData = await Account.findById(businessIdentity);
 
     // Check if there was an error
     if (response.error) {
