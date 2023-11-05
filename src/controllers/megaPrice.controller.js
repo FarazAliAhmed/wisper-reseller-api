@@ -25,10 +25,10 @@ class MegaPriceController {
 
           await megaPriceService.updateOrCreateMegaPrice(updateData);
 
-          console.log(`Monnify account created for user ${user.name}`);
+          console.log(`Mega Price created for user ${user.name}`);
         } catch (error) {
           console.error(
-            `Error creating Monnify account for user ${user.name}:`,
+            `Error creating Mega Price for user ${user.name}:`,
             error.message
           );
           // You can add additional error handling here if needed
@@ -94,7 +94,7 @@ class MegaPriceController {
       return res.status(500).json({ error: error.message });
     }
   }
-  
+
   async purchaseAdminMegaData(req, res) {
     try {
       // Validate the request body
