@@ -386,6 +386,8 @@ exports.initiate_data_transfer = async (
         req_header
       );
 
+      console.log({ response: response.data });
+
       if (
         response.data &&
         response.data.status &&
@@ -671,10 +673,10 @@ exports.initiate_data_transfer = async (
         Ported_number: false,
       };
 
-      console.log({ req_body });
-      console.log({ req_header });
+      // console.log({ req_body });
+      // console.log({ req_header });
 
-      console.log({ gladtidings_url });
+      // console.log({ gladtidings_url });
 
       let response;
 
@@ -694,7 +696,18 @@ exports.initiate_data_transfer = async (
         };
       }
 
-      console.log({ response });
+      console.log({ response: response.data });
+
+      if (response.data.Status) {
+        console.log(response.data.Status);
+
+        return {
+          error: false,
+          response: response.data,
+          // message: `Data purchase for ${requestPayload.mobile_number} is processing`,
+          message: `processing`,
+        };
+      }
 
       if (
         response.data &&
@@ -756,6 +769,7 @@ exports.initiate_data_transfer = async (
       );
 
       // console.log(response);
+      console.log({ response: response.data });
 
       if (
         response.data &&
@@ -899,7 +913,7 @@ exports.format_transaction_response = ({
 
 exports.save_transaction = async (business_id, details, volume) => {
   const newTransaction = details;
-  console.log({ newTransaction });
+  // console.log({ newTransaction });
   newTransaction.business_id = business_id;
   newTransaction.lite_volume = volume;
   try {

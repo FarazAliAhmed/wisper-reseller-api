@@ -143,6 +143,9 @@ const sendData = async (req, res, next) => {
       ref: responseObject.transaction_ref,
       type: planDetails.plan_type,
     });
+
+    console.log({ send_response });
+
     if (send_response?.error) {
       responseObject.status = "failed";
       delete responseObject.new_balance;
