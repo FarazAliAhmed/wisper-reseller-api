@@ -45,7 +45,7 @@ const transactionHistorySchema = new Schema(
     // type of transaction
     purchase_type: {
       type: String,
-      default: null,
+      default: "data",
     },
     desc: {
       type: String,

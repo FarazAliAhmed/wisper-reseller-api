@@ -899,6 +899,7 @@ exports.format_transaction_response = ({
 
 exports.save_transaction = async (business_id, details, volume) => {
   const newTransaction = details;
+  console.log({ newTransaction });
   newTransaction.business_id = business_id;
   newTransaction.lite_volume = volume;
   try {
