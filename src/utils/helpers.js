@@ -352,7 +352,7 @@ exports.initiate_data_transfer = async (
       // SECTION - AIRTEL PURCHASE
       integName = integrationTypes.CLOUDSIMHOST;
 
-      console.log({ requestPayload });
+      // console.log({ requestPayload });
 
       const { error, plan_id } = n3tdata_airtel_size_map(size);
       if (error)
@@ -371,7 +371,7 @@ exports.initiate_data_transfer = async (
       };
 
       const req_body = {
-        network: requestPayload.network,
+        network: 2,
         phone: requestPayload.mobile_number,
         data_plan: plan_id,
         bypass: false,
