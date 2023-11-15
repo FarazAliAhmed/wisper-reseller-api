@@ -40,6 +40,7 @@ const register = async (requestBody) => {
     const new_storeFront = new storeFront({
       business_id: user._id,
       storeName: user.name,
+      storeUserName: user.username,
     });
 
     // Save the store front to the database

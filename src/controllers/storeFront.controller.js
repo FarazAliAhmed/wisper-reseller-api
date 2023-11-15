@@ -41,12 +41,14 @@ exports.createStoreFront = async (req, res) => {
         const storeFront = new StoreFront({
           business_id: _id.toString(),
           storeName: name,
+          storeUserName: username,
         });
 
         // Save the store front to the database
         await storeFront.save();
         console.log(`Store front created for ${username}`);
       } catch (error) {
+        console.log(error.message);
         console.log(`Error creating store front for user ${username}`);
       }
     }

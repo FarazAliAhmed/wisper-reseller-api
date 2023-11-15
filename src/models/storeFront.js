@@ -17,7 +17,6 @@ const storeFrontSchema = new Schema({
   },
   storeUserName: {
     type: String,
-    unique: true,
     default: null,
   },
   storeImg: {
