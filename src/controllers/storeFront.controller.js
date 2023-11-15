@@ -41,7 +41,6 @@ exports.createStoreFront = async (req, res) => {
         const storeFront = new StoreFront({
           business_id: _id.toString(),
           storeName: name,
-          storeUserName: username,
         });
 
         // Save the store front to the database

@@ -3,8 +3,6 @@ const CallbackEvent = require("../events/callback.event");
 const { handle_callback } = require("../events/_eventTypes");
 const _ = require("lodash");
 
-var postmark = require("postmark");
-const client = new postmark.ServerClient(process.env.POSTMARK);
 const {
   validateSendData,
   get_plan_details,
@@ -30,6 +28,13 @@ const {
   revertStoreFrontMegaWallet,
 } = require("../utils/sFHelper");
 const { Account } = require("../models/account");
+
+const Flutterwave = require("flutterwave-node-v3");
+
+const flw = new Flutterwave(
+  process.env.FLW_PUBLIC_KEY,
+  process.env.FLW_SECRET_KEY
+);
 
 const SFSendData = async (req, res) => {
   const {
@@ -146,6 +151,12 @@ const SFSendData = async (req, res) => {
   } catch (error) {
     console.log(error);
     // console.log("In catch: " + error.message);
+
+    await flw.Transaction.refund({
+      id: trx_ref,
+      amount: price,
+      comments: "Refund from wisper",
+    });
 
     const storeOwner = await Account.findOne({ _id: business_id });
 

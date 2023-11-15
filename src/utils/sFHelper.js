@@ -363,12 +363,12 @@ async function calStoreFrontTax(amount) {
 const toMapPlans = [
   // glo
   { plan_id: 701, price: 50, volume: 200, unit: "mb", network: "glo" },
-  { plan_id: 702, price: 125, volume: 500, unit: "mb", network: "glo" },
-  { plan_id: 703, price: 250, volume: 1, unit: "gb", network: "glo" },
-  { plan_id: 704, price: 500, volume: 2, unit: "gb", network: "glo" },
-  { plan_id: 705, price: 750, volume: 3, unit: "gb", network: "glo" },
-  { plan_id: 706, price: 1250, volume: 5, unit: "gb", network: "glo" },
-  { plan_id: 707, price: 2500, volume: 10, unit: "gb", network: "glo" },
+  { plan_id: 702, price: 115, volume: 500, unit: "mb", network: "glo" },
+  { plan_id: 703, price: 230, volume: 1, unit: "gb", network: "glo" },
+  { plan_id: 704, price: 460, volume: 2, unit: "gb", network: "glo" },
+  { plan_id: 705, price: 690, volume: 3, unit: "gb", network: "glo" },
+  { plan_id: 706, price: 1150, volume: 5, unit: "gb", network: "glo" },
+  { plan_id: 707, price: 2300, volume: 10, unit: "gb", network: "glo" },
 
   // mtn
   { plan_id: 210, price: 117.5, volume: 500, unit: "mb", network: "mtn" },

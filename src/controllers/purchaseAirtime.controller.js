@@ -7,9 +7,24 @@ const trxHelper = require("../utils/trx.helper");
 const addAirtimeTransaction = trxHelper.addAirtimeTransaction;
 const revertTransactionStatus = trxHelper.revertTransactionStatus;
 
+const Flutterwave = require("flutterwave-node-v3");
+
+const flw = new Flutterwave(
+  process.env.FLW_PUBLIC_KEY,
+  process.env.FLW_SECRET_KEY
+);
+
 const purchaseAirtime = async (req, res) => {
-  const { business_id, network, phone_number, volume, price, email, name } =
-    req.body;
+  const {
+    business_id,
+    network,
+    phone_number,
+    volume,
+    price,
+    email,
+    name,
+    trx_ref,
+  } = req.body;
 
   let businessIdentity;
   let isStoreFront = true;
@@ -37,6 +52,14 @@ const purchaseAirtime = async (req, res) => {
   let savedTransaction = null;
 
   try {
+    if (!req.user) {
+      const verfiyFlw = await verifyFlutterWaveTransaction(trx_ref, price);
+
+      if (verfiyFlw.error) {
+        throw new Error(verfiyFlw.message);
+      }
+    }
+
     savedTransaction = await addAirtimeTransaction(
       reference,
       businessIdentity,
@@ -89,6 +112,13 @@ const purchaseAirtime = async (req, res) => {
       });
     }
   } catch (error) {
+    if (!req.user) {
+      await flw.Transaction.refund({
+        id: trx_ref,
+        amount: price,
+        comments: "Refund from wisper",
+      });
+    }
     // revert transaction
     await revertTransactionStatus(
       savedTransaction._id,
