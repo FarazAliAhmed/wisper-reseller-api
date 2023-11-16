@@ -18,7 +18,7 @@ class AgentService {
     phoneNumber,
     agent_business_name,
   }) {
-    const tempPassword = await this.generateTemporaryPassword();
+    const tempPassword = await generateTemporaryPassword();
 
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(tempPassword, salt);
@@ -64,19 +64,6 @@ class AgentService {
     await sendEmail(agent.email, Subject, TextBody);
 
     return agent;
-  }
-
-  async generateTemporaryPassword() {
-    const length = 10;
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let tempPassword = "";
-    for (let i = 0; i < length; i++) {
-      tempPassword += characters.charAt(
-        Math.floor(Math.random() * characters.length)
-      );
-    }
-    return tempPassword;
   }
 
   async getAgentsByBusiness(businessId) {
@@ -215,6 +202,19 @@ class AgentService {
       throw error;
     }
   }
+}
+
+function generateTemporaryPassword() {
+  const length = 10;
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let tempPassword = "";
+  for (let i = 0; i < length; i++) {
+    tempPassword += characters.charAt(
+      Math.floor(Math.random() * characters.length)
+    );
+  }
+  return tempPassword;
 }
 
 module.exports = new AgentService();
