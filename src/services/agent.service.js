@@ -18,7 +18,7 @@ class AgentService {
     phoneNumber,
     agent_business_name,
   }) {
-    const tempPassword = await generateTemporaryPassword();
+    const tempPassword = generateTemporaryPassword();
 
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(tempPassword, salt);
