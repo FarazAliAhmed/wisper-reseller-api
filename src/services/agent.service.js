@@ -38,6 +38,18 @@ class AgentService {
       }
     }
 
+    console.log({
+      name: fullName,
+      business_name: agent_business_name || null,
+      email,
+      username,
+      dealer: business,
+      mobile_number: phoneNumber,
+      password,
+      type: "agent",
+      access_token, // Set the access_token here
+    });
+
     const agent = new Account({
       name: fullName,
       business_name: agent_business_name || null,
