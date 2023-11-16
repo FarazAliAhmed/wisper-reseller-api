@@ -7,6 +7,8 @@ const createAgent = async (req, res) => {
   try {
     const { fullName, email, username, phoneNumber, business } = req.body; // Destructure the request body
 
+    console.log({ fullName, email, username, phoneNumber, business }, "AGENT");
+
     const subdealer = await agentService.createAgent({
       business,
       fullName,
