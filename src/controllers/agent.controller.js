@@ -15,6 +15,7 @@ const createAgent = async (req, res) => {
       email,
       username,
       phoneNumber,
+      fullName,
     });
 
     res
