@@ -3,7 +3,7 @@ const dataBalance = require("../models/dataBalance");
 const agentHistory = require("../models/agentHistory");
 const agentService = require("../services/agent.service");
 
-const createAgent = async (req, res) => {
+const createAgentController = async (req, res) => {
   try {
     const { fullName, email, username, phoneNumber, business } = req.body; // Destructure the request body
 
@@ -148,7 +148,7 @@ const AgentPurchaseMegaData = async (req, res) => {
 };
 
 module.exports = {
-  createAgent,
+  createAgentController,
   getAllAgents,
   AgentGetPurchaseHistory,
   AgentPurchaseMegaData,

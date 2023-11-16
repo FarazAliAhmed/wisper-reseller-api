@@ -8,15 +8,15 @@ const {
   getAllAgentAdmin,
   getAllAgentsTrx,
   AgentPurchaseMegaData,
+  createAgentController,
 } = require("../controllers/agent.controller");
 const getUser = require("../utils/middleware/getUser");
 const getAdmin = require("../utils/middleware/getAdmin");
-const { createAgent } = require("../services/agent.service");
 
 const router = express.Router();
 
 router.get("/getAgentsInfo/:id", getUser, getAgentInfo);
-router.post("/createAgent", getUser, createAgent);
+router.post("/createAgent", getUser, createAgentController);
 router.get("/getAllAgentsId/:id", getUser, getAllAgents);
 router.get("/getAgentHistory/:id", getUser, AgentGetPurchaseHistory);
 router.get("/DealerGetHistory/:id", getUser, DealerGetHistory);
