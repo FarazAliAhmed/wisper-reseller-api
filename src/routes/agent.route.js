@@ -16,7 +16,7 @@ const { createAgent } = require("../services/agent.service");
 const router = express.Router();
 
 router.get("/getAgentsInfo/:id", getUser, getAgentInfo);
-router.post("/createAgent", createAgent);
+router.post("/createAgent", getUser, createAgent);
 router.get("/getAllAgentsId/:id", getUser, getAllAgents);
 router.get("/getAgentHistory/:id", getUser, AgentGetPurchaseHistory);
 router.get("/DealerGetHistory/:id", getUser, DealerGetHistory);
@@ -24,7 +24,7 @@ router.post("/allocateData", getUser, AgentPurchaseMegaData);
 router.get("/allTrx/:id", getUser, getAllAgentsTrx);
 
 // admin
-router.get("/getAgentsAdmin", getAllAgentAdmin);
+router.get("/getAgentsAdmin", getAdmin, getAllAgentAdmin);
 router.get("/getAgentHistoryAdmin", getAdmin, AgentGetPurchaseHistoryAdmin);
 
 module.exports = router;
