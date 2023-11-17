@@ -17,18 +17,39 @@ async function addAirtimeTransaction(
 ) {
   try {
     const userAccount = await dataBalance.findOne({ business: business });
+    const user = await Account.findById(business);
 
     if (!userAccount) {
       throw new Error("User not found");
     }
 
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // console.log({ userRole: user.type });
+    // console.log({ userAccount });
+
     const old_bal = userAccount.wallet_balance;
+
+    // console.log({ old_bal, price });
 
     if (Number(old_bal) < Number(price)) {
       throw new Error("Insufficient balance");
     }
 
-    const new_bal = Number(old_bal) - Number(price); // Ensure 'price' is a number
+    // const new_bal = Number(old_bal) - Number(price);
+
+    let chargedPrice;
+
+    if (user.type == "lite") {
+      chargedPrice = Number(price) * 0.985;
+    } else {
+      chargedPrice = Number(price) * 0.98;
+    }
+
+    console.log({ chargedPrice });
+    const new_bal = Number(old_bal) - Number(chargedPrice);
 
     const generatedDesc = generateAirtimeDesc(network, volume, mobile_number);
 
@@ -36,7 +57,7 @@ async function addAirtimeTransaction(
       business_id: business,
       volume,
       phone_number: mobile_number,
-      price,
+      price: chargedPrice,
       old_bal,
       new_bal,
       network_provider: network,
