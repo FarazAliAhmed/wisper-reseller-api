@@ -131,9 +131,9 @@ const sendData = async (req, res, next) => {
       volume || ""
     );
     if (savedTransaction.error) {
-      res
-        .status(400)
-        .json({ status: 400, message: "Server Error! Please try again later" });
+      // res
+      //   .status(400)
+      //   .json({ status: 400, message: "Server Error! Please try again later" });
       throw new Error("Server Error! Please try again later");
     }
 
@@ -150,6 +150,13 @@ const sendData = async (req, res, next) => {
       responseObject.status = "failed";
       delete responseObject.new_balance;
       await update_transaction_status(responseObject.transaction_ref, "failed");
+
+      await revert_debit_account_balance(
+        _id,
+        planDetails,
+        type,
+        planDetails.price
+      );
 
       return res
         .status(400)

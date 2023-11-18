@@ -93,6 +93,14 @@ const purchaseAirtime = async (req, res) => {
 
     // Check if there was an error
     if (response.error) {
+      if (!req.user) {
+        await flw.Transaction.refund({
+          id: trx_ref,
+          amount: price,
+          comments: "Refund from wisper",
+        });
+      }
+
       // revert transaction
       await revertTransactionStatus(
         savedTransaction._id,
