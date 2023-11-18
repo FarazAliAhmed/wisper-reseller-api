@@ -131,9 +131,9 @@ const sendData = async (req, res, next) => {
       volume || ""
     );
     if (savedTransaction.error) {
-      // res
-      //   .status(400)
-      //   .json({ status: 400, message: "Server Error! Please try again later" });
+      res
+        .status(400)
+        .json({ status: 400, message: "Server Error! Please try again later" });
       throw new Error("Server Error! Please try again later");
     }
 
@@ -216,7 +216,7 @@ const sendData = async (req, res, next) => {
       planDetails.price
     );
 
-    return res.status(500).json({ message: "Internal Server Errror" });
+    // return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

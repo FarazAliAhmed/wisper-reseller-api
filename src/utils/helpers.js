@@ -295,7 +295,14 @@ exports.revert_debit_account_balance = async (
   price
 ) => {
   const { amount, field } = getFieldAndAmount(type, planDetails);
-  const incrementBy = amount * -1;
+  let incrementBy;
+
+  if (type == "lite") {
+    incrementBy = price * -1;
+  } else {
+    incrementBy = amount * -1;
+  }
+
   const updatedBalance = await debit(account_id, incrementBy, field);
 
   const balance = await dataBalance.findOne({ business: account_id });
