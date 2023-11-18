@@ -151,7 +151,19 @@ const sendData = async (req, res, next) => {
       delete responseObject.new_balance;
       await update_transaction_status(responseObject.transaction_ref, "failed");
 
-      throw new Error(send_response.message);
+      console.log("SEND ERROR");
+      await revert_debit_account_balance(
+        _id,
+        planDetails,
+        type,
+        planDetails.price
+      );
+
+      return res
+        .status(400)
+        .json({ ...responseObject, message: send_response.message });
+
+      // throw new Error(send_response.message);
     }
 
     // glo resolution start
@@ -192,6 +204,8 @@ const sendData = async (req, res, next) => {
       .status(201)
       .json({ ...responseObject, message: "Transaction Successful!" });
   } catch (error) {
+    console.log("CATCH ERROR");
+
     console.log(error);
     console.log("In catch: " + error.message);
 
@@ -202,9 +216,7 @@ const sendData = async (req, res, next) => {
       planDetails.price
     );
 
-    return res
-      .status(400)
-      .json({ ...responseObject, message: send_response.message });
+    return res.status(500).json({ message: "Internal Server Errror" });
   }
 };
 
