@@ -151,16 +151,6 @@ const sendData = async (req, res, next) => {
       delete responseObject.new_balance;
       await update_transaction_status(responseObject.transaction_ref, "failed");
 
-      await revert_debit_account_balance(
-        _id,
-        planDetails,
-        type,
-        planDetails.price
-      );
-
-      return res
-        .status(400)
-        .json({ ...responseObject, message: send_response.message });
       throw new Error(send_response.message);
     }
 
@@ -204,12 +194,17 @@ const sendData = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     console.log("In catch: " + error.message);
+
     await revert_debit_account_balance(
       _id,
       planDetails,
       type,
       planDetails.price
     );
+
+    return res
+      .status(400)
+      .json({ ...responseObject, message: send_response.message });
   }
 };
 
