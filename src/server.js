@@ -25,6 +25,7 @@ const storeFrontRoutes = require("./routes/storeFront.route.js");
 const analysisRoutes = require("./routes/analysis.route.js");
 const helperRoutes = require("./routes/helper.route.js");
 const purchaseRoutes = require("./routes/purchase.route");
+const apiBalanceRoutes = require("./routes/apiBalance.route.js");
 
 const apiV2Routes = require("./routes/v2");
 const apiV2AdminRoutes = require("./routes/v2/admin");
@@ -78,6 +79,7 @@ app.use("/api", storeFrontRoutes);
 app.use("/api", analysisRoutes);
 app.use("/api/helper", helperRoutes);
 app.use("/api/purchase", purchaseRoutes);
+app.use("/api/apiBalance", apiBalanceRoutes);
 
 // */1 * * * *"
 // ("0 1 * * *");
