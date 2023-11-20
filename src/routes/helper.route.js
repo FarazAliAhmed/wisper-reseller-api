@@ -8,6 +8,6 @@ const getAdmin = require("../utils/middleware/getAdmin");
 const router = express.Router();
 
 router.post("/changeToAgent", getAdmin, changeSubdealerToAgents);
-router.post("/updateMegaPrice", getAdmin, updateDefaultMegaPrice);
+router.post("/updateMegaPrice", updateDefaultMegaPrice);
 
 module.exports = router;

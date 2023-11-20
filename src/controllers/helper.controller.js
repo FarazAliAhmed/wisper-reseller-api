@@ -33,7 +33,7 @@ exports.updateDefaultMegaPrice = async (req, res) => {
 
     const dataUpdate = {
       // "9mobile": 0,
-      glo: 206,
+      glo: 201,
       // airtel: 0,
       // mtn_gifting: 0,
       // mtn_sme: 0,
