@@ -40,6 +40,7 @@ const { Account } = require("../models/account");
 const { buyGloData, gatewayResponse } = require("./gloHelper");
 const monnifyHistory = require("../models/monnifyHistory");
 const dataBalance = require("../models/dataBalance");
+const apiBalanceModel = require("../models/apiBalance.model");
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -395,6 +396,11 @@ exports.initiate_data_transfer = async (
         req_header
       );
 
+      await apiBalanceModel.findOneAndUpdate(
+        { api: "n3tdata", network: "airtel", type: "data" },
+        { $set: { volume: Number(response?.data?.newbal) } }
+      );
+
       console.log({ response: response.data });
 
       if (
@@ -529,6 +535,11 @@ exports.initiate_data_transfer = async (
             } catch (error) {
               // console.log(error);
             }
+
+            await apiBalanceModel.findOneAndUpdate(
+              { api: "almamgt", network: "glo", type: "data" },
+              { $set: { volume: Number(integResp["balance"]) } }
+            );
 
             console.log({ error: false, message });
             return { error: false, response: respGlo, message };
@@ -741,7 +752,7 @@ exports.initiate_data_transfer = async (
 
     // N3TDATA MTN/ // // // // // // // // // //
     else if (requestPayload.network == 1) {
-      // SECTION - PURCHASE FOR N3TDATA
+      // SECTION - PURCHASE FOR N3TDATA MTN
 
       const { error, plan_id } = n3tdata_mtn_size_map(size);
       if (error)
@@ -779,6 +790,11 @@ exports.initiate_data_transfer = async (
 
       // console.log(response);
       console.log({ response: response.data });
+
+      await apiBalanceModel.findOneAndUpdate(
+        { api: "n3tdata", network: "mtn", type: "data" },
+        { $set: { volume: Number(response?.data?.newbal) } }
+      );
 
       if (
         response.data &&
@@ -847,7 +863,7 @@ exports.initiate_data_transfer = async (
     }
   } catch (e) {
     console.log("ERROOORR MESSAGE::", e.message);
-    console.log({ error: e });
+    // console.log({ error: e });
     integResp =
       e?.response?.data || e?.message || "Data volume transafer failed";
     return {

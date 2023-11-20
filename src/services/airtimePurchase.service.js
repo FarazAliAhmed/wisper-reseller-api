@@ -1,4 +1,7 @@
 const axios = require("axios");
+const apiBalanceModel = require("../models/apiBalance.model");
+
+const map_network_reverse = { 1: "mtn", 3: "glo", 2: "airtel", 4: "9mobile" };
 
 class AirtimePurchaseService {
   static async topupAirtime(network, phone, plan_type, volume, requestId) {
@@ -28,6 +31,15 @@ class AirtimePurchaseService {
       );
 
       console.log(response?.data);
+
+      await apiBalanceModel.findOneAndUpdate(
+        {
+          api: "n3tdata",
+          network: map_network_reverse[network],
+          type: "airtime",
+        },
+        { $set: { volume: Number(response.data.newbal) } }
+      );
 
       if (response.data.status != "success") {
         throw new Error(`${response.data.message}`);
