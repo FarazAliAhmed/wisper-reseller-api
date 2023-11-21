@@ -68,9 +68,13 @@ exports.withdrawStoreFrontService = async (
       reference: reference,
     };
 
-    flw.Transfer.initiate(details)
+    await flw.Transfer.initiate(details)
       .then(async (res) => {
-        console.log(res);
+        console.log({ flw_res: res });
+
+        if (res.status == "error") {
+          throw new Error(res.message);
+        }
 
         await storeFront.updateOne(
           { business_id: businessId },
@@ -91,7 +95,7 @@ exports.withdrawStoreFrontService = async (
         return store;
       })
       .catch((err) => {
-        console.log(err);
+        console.log({ flw_err: err });
 
         throw err;
       });
