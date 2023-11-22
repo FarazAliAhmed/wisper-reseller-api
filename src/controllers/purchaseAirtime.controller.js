@@ -97,7 +97,7 @@ const purchaseAirtime = async (req, res) => {
         await flw.Transaction.refund({
           id: trx_ref,
           amount: price,
-          comments: "Refund from wisper",
+          // comments: "Refund from wisper",
         });
       }
 
@@ -124,7 +124,7 @@ const purchaseAirtime = async (req, res) => {
       await flw.Transaction.refund({
         id: trx_ref,
         amount: price,
-        comments: "Refund from wisper",
+        // comments: "Refund from wisper",
       });
     }
     // revert transaction

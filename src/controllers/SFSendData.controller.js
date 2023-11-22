@@ -155,7 +155,7 @@ const SFSendData = async (req, res) => {
     await flw.Transaction.refund({
       id: trx_ref,
       amount: price,
-      comments: "Refund from wisper",
+      // comments: "Refund from wisper",
     });
 
     const storeOwner = await Account.findOne({ _id: business_id });

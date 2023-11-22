@@ -27,6 +27,13 @@ const {
 const userPlan = require("../models/userPlan");
 const withdrawalHistory = require("../models/withdrawHistory.model");
 
+// flw
+
+const flw = new Flutterwave(
+  process.env.FLW_PUBLIC_KEY,
+  process.env.FLW_SECRET_KEY
+);
+
 // Create a new store front
 exports.createStoreFront = async (req, res) => {
   try {
@@ -537,6 +544,26 @@ exports.storeFrontBankVerification = async (req, res) => {
       console.log(err);
       return res.status(500).json({ message: "error verifying bank" });
     });
+};
+
+// refund transaction
+exports.refundFlwTransaction = async (req, res) => {
+  try {
+    const { trx_ref, price } = req.body;
+
+    const response = await flw.Transaction.refund({
+      id: trx_ref,
+      amount: price,
+      // comments: "Refund from wisper",
+    });
+
+    console.log({ response });
+
+    return res.json({ message: "Refund processed successfully" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err.message });
+  }
 };
 
 // Function to generate a UUID as a transaction reference

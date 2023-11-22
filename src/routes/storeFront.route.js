@@ -21,6 +21,7 @@ const {
   storeFrontSendOTP,
   getAllStoreFrontWithdrawBusiness,
   storeFrontBankVerification,
+  refundFlwTransaction,
 } = require("../controllers/storeFront.controller");
 const getUser = require("../utils/middleware/getUser");
 const SFSendData = require("../controllers/SFSendData.controller");
@@ -86,6 +87,11 @@ router.put(
 router.post("/store-fronts/allocateData", SFSendData);
 router.post("/store-fronts/sendotp/:business", storeFrontSendOTP);
 router.post("/store-fronts/withdrawal/:business", getUser, withdrawStoreFronts);
+router.post(
+  "/store-fronts/refundFlwTransaction",
+  getUser,
+  refundFlwTransaction
+);
 // analysis
 router.get("/store-fronts/analysis/:business", getUser, storeAnalysis);
 router.get("/store-fronts/notice/:business", storeFrontNotice);
