@@ -64,7 +64,7 @@ exports.withdrawStoreFrontService = async (
       account_number: store.withdrawAccount,
       amount: Number(amount),
       currency: "NGN",
-      narration: "withdraw of ${amount} from store front balance",
+      narration: `withdraw of ${amount} from store front balance`,
       reference: reference,
     };
 
@@ -92,7 +92,9 @@ exports.withdrawStoreFrontService = async (
 
         await newWithdrawal.save();
 
-        return store;
+        console.log({ newWithdrawal });
+
+        return newWithdrawal;
       })
       .catch((err) => {
         console.log({ flw_err: err });

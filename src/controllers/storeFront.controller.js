@@ -349,18 +349,14 @@ exports.withdrawStoreFronts = async (req, res, next) => {
   const { amount, withType, password } = req.body;
 
   try {
-    const withdrawStore = await withdrawStoreFrontService(
-      business,
-      withType,
-      amount,
-      password
-    );
+    await withdrawStoreFrontService(business, withType, amount, password);
 
-    return res.json(withdrawStore);
+    return res.json({ error: false, message: "Withdraw successfull" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      error: error.message,
+      error: true,
+      message: error.message,
     });
   }
 };
