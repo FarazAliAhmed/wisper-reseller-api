@@ -262,6 +262,8 @@ exports.debit_account_balance = async (
 
   console.log("DEBBIT PRICE", amount);
 
+  if (updatedBalance.error) return updatedBalance;
+
   if (userAcct.type == "lite") {
     const newMonnifyHistory = new monnifyHistory({
       business_name: userAcct.name,
@@ -280,7 +282,6 @@ exports.debit_account_balance = async (
     await newMonnifyHistory.save();
   }
 
-  if (updatedBalance.error) return updatedBalance;
   return {
     error: false,
     status: 201,
