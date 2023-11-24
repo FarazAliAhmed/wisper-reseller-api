@@ -51,11 +51,12 @@ class AirtimePurchaseService {
         data: response.data.message,
       };
     } catch (error) {
+      console.log({ message: error.message });
       console.log(error.response.data);
       return {
         error: true,
         status: error.response?.status || 500,
-        message: error.message,
+        message: "An error occurred during the airtime purchase.",
       };
     }
   }
