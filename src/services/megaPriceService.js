@@ -184,7 +184,7 @@ class MegaPriceService {
       );
 
       const user = await Account.findOne({
-        _id: addData.business_id,
+        _id: business_id,
       });
 
       const purchase = new megaPurchaseHistory({
@@ -225,6 +225,7 @@ class MegaPriceService {
       throw error;
     }
   }
+
   async debitAdminMegaData(business_id, network, amountInGB) {
     try {
       const userBalance = await dataBalance.findOne({ business: business_id });
@@ -250,7 +251,7 @@ class MegaPriceService {
       );
 
       const user = await Account.findOne({
-        _id: addData.business_id,
+        _id: business_id,
       });
 
       const purchase = new megaPurchaseHistory({

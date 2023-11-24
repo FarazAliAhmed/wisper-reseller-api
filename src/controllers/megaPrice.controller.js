@@ -125,6 +125,7 @@ class MegaPriceController {
       return res.status(500).json({ error: error.message });
     }
   }
+
   async debitAdminMegaData(req, res) {
     try {
       // Validate the request body

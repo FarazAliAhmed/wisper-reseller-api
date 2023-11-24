@@ -24,6 +24,12 @@ class MonnifyController {
     try {
       console.log("Add balance", req.body);
 
+      const { error, value } = addBalanceSchema.validate(req.body);
+
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
+
       const updatedBalance = await monnifyService.addBalanceByBusinessIdAdmin(
         req.body
       );
@@ -38,6 +44,12 @@ class MonnifyController {
   async debitBalanceAdmin(req, res) {
     try {
       console.log("Add balance", req.body);
+
+      const { error, value } = addBalanceSchema.validate(req.body);
+
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
 
       const updatedBalance = await monnifyService.debitBalanceByBusinessIdAdmin(
         req.body
@@ -248,7 +260,7 @@ const getAccountSchema = Joi.object({
 });
 
 const addBalanceSchema = Joi.object({
-  business: Joi.string().required(),
+  business_id: Joi.string().required(),
   amount: Joi.number().min(0).required(),
 });
 

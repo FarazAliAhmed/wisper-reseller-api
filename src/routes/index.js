@@ -90,17 +90,7 @@ const {
   setNoticeMessag,
   clearNoticeMessag,
 } = require("../controllers/maintenance.controller");
-const {
-  payment_analysis,
-  revenueAnalysis,
-  totalCurrentCredit,
-  paymentTable,
-  walletAnalysis,
-  calWalBal_analysis,
-  populateBucketUsage,
-  populateWalletUsage,
-  getBucketUsage,
-} = require("../controllers/analysis.controller");
+
 const {
   getBucketID,
   updateBucketID,
