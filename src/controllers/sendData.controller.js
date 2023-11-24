@@ -216,7 +216,7 @@ const sendData = async (req, res, next) => {
       planDetails.price
     );
 
-    // return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

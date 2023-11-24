@@ -89,14 +89,11 @@ const SFSendData = async (req, res) => {
 
   // Transaction block
   try {
-    const verfiyFlw = await verifyFlutterWaveTransaction(trx_ref, price);
+    // const verfiyFlw = await verifyFlutterWaveTransaction(trx_ref, price);
 
-    if (verfiyFlw.error) {
-      // res
-      //   .status(verfiyFlw.status)
-      //   .json({ status: verfiyFlw.status, message: verfiyFlw.message });
-      throw new Error(verfiyFlw.message);
-    }
+    // if (verfiyFlw.error) {
+    //   throw new Error(verfiyFlw.message);
+    // }
 
     const storeOwner = await Account.findOne({ _id: business_id });
 
@@ -138,7 +135,7 @@ const SFSendData = async (req, res) => {
       type: planDetails.plan_type,
     });
 
-    // console.log({ send_response });
+    console.log({ send_response });
 
     if (send_response?.error) {
       throw new Error(send_response.message);
@@ -178,10 +175,14 @@ const SFSendData = async (req, res) => {
       trx_ref
     );
 
-    console.log({ message: "Data allocation failed", status: "failed" });
-    return res
-      .status(500)
-      .json({ message: "Data allocation failed", status: "failed" });
+    console.log({
+      message: error.message || "Data allocation failed",
+      status: "failed",
+    });
+    return res.status(500).json({
+      message: error.message || "Data allocation failed",
+      status: "failed",
+    });
   }
 };
 
