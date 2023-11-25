@@ -18,64 +18,80 @@ class AgentService {
     phoneNumber,
     agent_business_name,
   }) {
-    const tempPassword = generateTemporaryPassword();
+    try {
+      const tempPassword = generateTemporaryPassword();
 
-    const salt = await bcrypt.genSalt(10);
-    const password = await bcrypt.hash(tempPassword, salt);
+      const salt = await bcrypt.genSalt(10);
+      const password = await bcrypt.hash(tempPassword, salt);
 
-    let access_token;
-    let isUnique = false;
+      let access_token;
+      let isUnique = false;
 
-    // Generate a unique access_token
-    while (!isUnique) {
-      access_token = uuid.v4();
+      // Generate a unique access_token
+      while (!isUnique) {
+        access_token = uuid.v4();
 
-      // Check if the generated access_token is unique in the database
-      const existingAccount = await Account.findOne({ access_token });
+        // Check if the generated access_token is unique in the database
+        const existingAccount = await Account.findOne({ access_token });
 
-      if (!existingAccount) {
-        isUnique = true;
+        if (!existingAccount) {
+          isUnique = true;
+        }
       }
+
+      // console.log({
+      //   name: fullName,
+      //   business_name: agent_business_name || null,
+      //   email,
+      //   username,
+      //   dealer: business,
+      //   mobile_number: phoneNumber,
+      //   password,
+      //   type: "agent",
+      //   access_token, // Set the access_token here
+      // });
+
+      const alreadyExistsEmail = await Account.findOne({ email });
+
+      if (alreadyExistsEmail) {
+        throw new Error("Email already exists");
+      }
+
+      const alreadyExistsUserName = await Account.findOne({ username });
+
+      if (alreadyExistsUserName) {
+        throw new Error("Username already exists");
+      }
+
+      const agent = new Account({
+        name: fullName,
+        business_name: agent_business_name || null,
+        email,
+        username,
+        dealer: business,
+        mobile_number: phoneNumber,
+        password,
+        type: "agent",
+        access_token, // Set the access_token here
+      });
+      await agent.save();
+
+      const Subject = "Welcome to the Wisper Dealer Network!";
+      const TextBody =
+        `Dear ${agent.name},\n\n` +
+        `Welcome to the Wisper Dealer Network! We're thrilled to have you on board as an agent with Wisper NG. Your account is now ready, and you can start accessing our platform right away.\n\n` +
+        `Here are your login details:\n\n` +
+        `Username: ${agent.username}\n` +
+        `Email: ${agent.email}\n` +
+        `Password: ${tempPassword}\n\n` +
+        `Please Note: We recommend changing your password after your first login for security reasons.`;
+
+      await sendEmail(agent.email, Subject, TextBody);
+
+      return agent;
+    } catch (error) {
+      throw error;
     }
-
-    console.log({
-      name: fullName,
-      business_name: agent_business_name || null,
-      email,
-      username,
-      dealer: business,
-      mobile_number: phoneNumber,
-      password,
-      type: "agent",
-      access_token, // Set the access_token here
-    });
-
-    const agent = new Account({
-      name: fullName,
-      business_name: agent_business_name || null,
-      email,
-      username,
-      dealer: business,
-      mobile_number: phoneNumber,
-      password,
-      type: "agent",
-      access_token, // Set the access_token here
-    });
-    await agent.save();
-
-    const Subject = "Welcome to the Wisper Dealer Network!";
-    const TextBody =
-      `Dear ${agent.name},\n\n` +
-      `Welcome to the Wisper Dealer Network! We're thrilled to have you on board as an agent with Wisper NG. Your account is now ready, and you can start accessing our platform right away.\n\n` +
-      `Here are your login details:\n\n` +
-      `Username: ${agent.username}\n` +
-      `Email: ${agent.email}\n` +
-      `Password: ${tempPassword}\n\n` +
-      `Please Note: We recommend changing your password after your first login for security reasons.`;
-
-    await sendEmail(agent.email, Subject, TextBody);
-
-    return agent;
   }
 
   async getAgentsByBusiness(businessId) {

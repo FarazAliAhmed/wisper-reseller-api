@@ -16,7 +16,7 @@ const getAdmin = require("../utils/middleware/getAdmin");
 const router = express.Router();
 
 router.get("/getAgentsInfo/:id", getUser, getAgentInfo);
-router.post("/createAgent", getUser, createAgentController);
+router.post("/createAgent", createAgentController);
 router.get("/getAllAgentsId/:id", getUser, getAllAgents);
 router.get("/getAgentHistory/:id", getUser, AgentGetPurchaseHistory);
 router.get("/DealerGetHistory/:id", getUser, DealerGetHistory);
