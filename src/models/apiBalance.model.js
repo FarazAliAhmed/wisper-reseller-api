@@ -7,14 +7,6 @@ const ApiBalanceSchema = new Schema(
       type: String,
       required: true,
     },
-    network: {
-      type: String,
-      required: true,
-    },
-    type: {
-      type: String,
-      required: true,
-    },
     volume: {
       type: Number,
       required: true,

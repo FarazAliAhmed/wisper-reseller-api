@@ -41,6 +41,10 @@ const { buyGloData, gatewayResponse } = require("./gloHelper");
 const monnifyHistory = require("../models/monnifyHistory");
 const dataBalance = require("../models/dataBalance");
 const apiBalanceModel = require("../models/apiBalance.model");
+const {
+  n3tdataApiUpdateBalance,
+  almamgtApiUpdateBalance,
+} = require("./middleware/api.helper");
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -397,10 +401,13 @@ exports.initiate_data_transfer = async (
         req_header
       );
 
-      await apiBalanceModel.findOneAndUpdate(
-        { api: "n3tdata", network: "airtel", type: "data" },
-        { $set: { volume: Number(response?.data?.newbal) } }
-      );
+      // await apiBalanceModel.findOneAndUpdate(
+      //   { api: "n3tdata", network: "airtel", type: "data" },
+      //   { $set: { volume: Number(response?.data?.newbal) } }
+      // );
+
+      // update api balance
+      await n3tdataApiUpdateBalance(response);
 
       console.log({ response: response.data });
 
@@ -537,10 +544,12 @@ exports.initiate_data_transfer = async (
               // console.log(error);
             }
 
-            await apiBalanceModel.findOneAndUpdate(
-              { api: "almamgt", network: "glo", type: "data" },
-              { $set: { volume: Number(integResp["balance"]) } }
-            );
+            // await apiBalanceModel.findOneAndUpdate(
+            //   { api: "almamgt", network: "glo", type: "data" },
+            //   { $set: { volume: Number(integResp["balance"]) } }
+            // );
+
+            await almamgtApiUpdateBalance(integResp["balance"]);
 
             console.log({ error: false, message });
             return { error: false, response: respGlo, message };
@@ -750,7 +759,6 @@ exports.initiate_data_transfer = async (
 
       // end of 9mobile integration
     }
-
     // N3TDATA MTN/ // // // // // // // // // //
     else if (requestPayload.network == 1) {
       // SECTION - PURCHASE FOR N3TDATA MTN
@@ -792,10 +800,8 @@ exports.initiate_data_transfer = async (
       // console.log(response);
       console.log({ response: response.data });
 
-      await apiBalanceModel.findOneAndUpdate(
-        { api: "n3tdata", network: "mtn", type: "data" },
-        { $set: { volume: Number(response?.data?.newbal) } }
-      );
+      // update api balance
+      await n3tdataApiUpdateBalance(response);
 
       if (
         response.data &&
