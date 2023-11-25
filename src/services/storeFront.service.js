@@ -164,38 +164,53 @@ exports.storeFrontAnalysisService = async (businessId) => {
   const todayDate = new Date(currentDate);
   todayDate.setDate(currentDate.getDate() + 1);
 
-  const formattedCurrentDate = new Date(
-    todayDate.getFullYear(),
-    todayDate.getMonth(),
-    todayDate.getDate()
-  ).toISOString();
+  // const formattedCurrentDate = new Date(
+  //   todayDate.getFullYear(),
+  //   todayDate.getMonth(),
+  //   todayDate.getDate()
+  // ).toISOString();
+
+  const formattedCurrentDate = currentDate.toISOString();
 
   // Calculate the date filters
   const dateFilters = [
     {
       label: "Today",
       start: formattedCurrentDate.slice(0, 10) + "T00:00:00.000Z",
-      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+      end: formattedCurrentDate,
     },
     {
       label: "Yesterday",
-      start: formattedCurrentDate.slice(0, 10) + "T00:00:00.000Z",
-      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+      start:
+        new Date(currentDate - 86400000).toISOString().slice(0, 10) +
+        "T00:00:00.000Z",
+      end:
+        new Date(currentDate - 86400000).toISOString().slice(0, 10) +
+        "T23:59:59.999Z",
     },
     {
       label: "This Week",
-      start: formattedCurrentDate.slice(0, 10) + "T00:00:00.000Z",
-      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+      start:
+        new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate() - currentDate.getDay()
+        )
+          .toISOString()
+          .slice(0, 10) + "T00:00:00.000Z",
+      end: formattedCurrentDate,
     },
     {
       label: "This Month",
       start: formattedCurrentDate.slice(0, 7) + "-01T00:00:00.000Z",
-      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+      end: formattedCurrentDate,
     },
     {
       label: "Last 30 Days",
-      start: formattedCurrentDate.slice(0, 10) + "T00:00:00.000Z",
-      end: formattedCurrentDate.slice(0, 10) + "T23:59:59.999Z",
+      start:
+        new Date(currentDate - 30 * 86400000).toISOString().slice(0, 10) +
+        "T00:00:00.000Z",
+      end: formattedCurrentDate,
     },
     {
       label: "Last Month",
@@ -234,8 +249,8 @@ exports.storeFrontAnalysisService = async (businessId) => {
           $match: {
             storeBusiness: businessId,
             createdAt: {
-              $gte: start,
-              $lt: end,
+              $gte: new Date(start),
+              $lt: new Date(end),
             },
           },
         },
@@ -244,13 +259,15 @@ exports.storeFrontAnalysisService = async (businessId) => {
             _id: null,
             totalAmountSold: {
               $sum: {
-                $toDouble: "$price",
+                $toDouble: "$profit", // Use "$profit" instead of "$price"
               },
             },
           },
         },
       ])
       .exec();
+
+    // console.log({ totalAmountSold });
 
     const totalRevenue =
       totalAmountSold.length > 0 ? totalAmountSold[0].totalAmountSold : 0;
@@ -265,7 +282,7 @@ exports.storeFrontAnalysisService = async (businessId) => {
 
     analytics[label] = {
       TotalStoreVisits: totalStoreVisit,
-      TotalAmountSold: totalAmountSold,
+      TotalAmountSold: totalRevenue,
       TotalRevenue: totalRevenue,
       TotalTransactions: totalTransaction,
     };
