@@ -47,7 +47,7 @@ class AirtimePurchaseService {
       return {
         error: false,
         status: response.status,
-        message: "Request successful",
+        message: "Airtime Purchase successful",
         data: response.data.message,
       };
     } catch (error) {
