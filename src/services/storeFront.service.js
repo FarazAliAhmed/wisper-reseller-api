@@ -259,7 +259,31 @@ exports.storeFrontAnalysisService = async (businessId) => {
             _id: null,
             totalAmountSold: {
               $sum: {
-                $toDouble: "$profit", // Use "$profit" instead of "$price"
+                $toDouble: "$price", // Use "$price"
+              },
+            },
+          },
+        },
+      ])
+      .exec();
+
+    const totalRevenueAmount = await storeFrontHistory
+      .aggregate([
+        {
+          $match: {
+            storeBusiness: businessId,
+            createdAt: {
+              $gte: new Date(start),
+              $lt: new Date(end),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalRevenueAmount: {
+              $sum: {
+                $toDouble: "$profit", // Use "$profit"
               },
             },
           },
@@ -269,8 +293,13 @@ exports.storeFrontAnalysisService = async (businessId) => {
 
     // console.log({ totalAmountSold });
 
-    const totalRevenue =
+    const totalAmountSoldResult =
       totalAmountSold.length > 0 ? totalAmountSold[0].totalAmountSold : 0;
+
+    const totalRevenueResult =
+      totalRevenueAmount.length > 0
+        ? totalRevenueAmount[0].totalRevenueAmount
+        : 0;
 
     const totalTransaction = await storeFrontHistory.countDocuments({
       storeBusiness: businessId,
@@ -282,8 +311,8 @@ exports.storeFrontAnalysisService = async (businessId) => {
 
     analytics[label] = {
       TotalStoreVisits: totalStoreVisit,
-      TotalAmountSold: totalRevenue,
-      TotalRevenue: totalRevenue,
+      TotalAmountSold: totalAmountSoldResult,
+      TotalRevenue: totalRevenueResult,
       TotalTransactions: totalTransaction,
     };
   }
