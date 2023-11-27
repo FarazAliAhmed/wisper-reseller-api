@@ -21,6 +21,7 @@ const Plan = new Schema(
     price: {
       type: Number,
       required: true,
+      float: true,
     },
     volume: {
       type: Number,
