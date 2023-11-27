@@ -63,7 +63,7 @@ const accountSchema = mongoose.Schema(
     },
     type: {
       type: String,
-      default: "mega",
+      default: "lite",
     },
     mobile_number: String,
     address: String,
