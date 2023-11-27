@@ -6,9 +6,11 @@ const n3tdataApiUpdateBalance = async (response) => {
       { api: "n3tdata" },
       { $set: { volume: Number(response?.data?.newbal) } }
     );
+    return;
   } catch (error) {
     console.log(error);
     console.log("error updating n3tdata balance");
+    return;
   }
 };
 
@@ -18,9 +20,11 @@ const almamgtApiUpdateBalance = async (bal) => {
       { api: "almamgt" },
       { $set: { volume: Number(bal) } }
     );
+    return;
   } catch (error) {
     console.log(error);
     console.log("error updating almamgt balance");
+    return;
   }
 };
 
