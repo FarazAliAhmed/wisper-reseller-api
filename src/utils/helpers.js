@@ -544,12 +544,10 @@ exports.initiate_data_transfer = async (
               // console.log(error);
             }
 
-            // await apiBalanceModel.findOneAndUpdate(
-            //   { api: "almamgt", network: "glo", type: "data" },
-            //   { $set: { volume: Number(integResp["balance"]) } }
-            // );
-
-            await almamgtApiUpdateBalance(integResp["balance"]);
+            await apiBalanceModel.findOneAndUpdate(
+              { api: "almamgt" },
+              { $set: { volume: Number(integResp["balance"]) } }
+            );
 
             console.log({ error: false, message });
             return { error: false, response: respGlo, message };

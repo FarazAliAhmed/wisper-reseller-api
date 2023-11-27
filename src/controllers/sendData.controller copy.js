@@ -107,17 +107,10 @@ const sendData = async (req, res, next) => {
     // console.log("debit", debitAccount)
 
     if (debitAccount.error) {
-      await revert_debit_account_balance(
-        _id,
-        planDetails,
-        type,
-        planDetails.price
-      );
-
-      return res
+      res
         .status(debitAccount.status)
         .json({ status: debitAccount.status, message: debitAccount.message });
-      // throw new Error(debitAccount.message);
+      throw new Error(debitAccount.message);
     }
 
     // **********************
@@ -138,13 +131,6 @@ const sendData = async (req, res, next) => {
       volume || ""
     );
     if (savedTransaction.error) {
-      await revert_debit_account_balance(
-        _id,
-        planDetails,
-        type,
-        planDetails.price
-      );
-
       return res
         .status(400)
         .json({ status: 400, message: "Server Error! Please try again later" });
@@ -160,7 +146,6 @@ const sendData = async (req, res, next) => {
 
     console.log({ send_response });
 
-    // send_response error handling
     if (send_response?.error) {
       responseObject.status = "failed";
       delete responseObject.new_balance;
@@ -177,17 +162,24 @@ const sendData = async (req, res, next) => {
       return res
         .status(400)
         .json({ ...responseObject, message: send_response.message });
+
+      // throw new Error(send_response.message);
     }
 
     // glo resolution start
+
     if (send_response?.response?.data?.balance) {
       const glo_bal = send_response.response.data["balance"];
+
       console.log({ glo_bal });
+
+      console.log(savedTransaction);
 
       const sameTrx = await transactionHistory.findOne({
         _id: savedTransaction.transaction._id,
       });
       sameTrx.gloB = glo_bal;
+
       await sameTrx.save();
       // glo resolution end
     }
