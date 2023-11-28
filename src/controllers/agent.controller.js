@@ -27,6 +27,26 @@ const createAgentController = async (req, res) => {
   }
 };
 
+const disableAgentAccount = async (req, res) => {
+  try {
+    const { agentId } = req.body; // Destructure the request body
+
+    console.log("AGENT", "create agent");
+
+    const subdealer = await agentService.disableAgentAccount(
+      req?.user?._id,
+      agentId
+    );
+
+    return res
+      .status(201)
+      .json({ message: "agent account disabled successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 const getAllAgents = async (req, res) => {
   try {
     const { id: businessId } = req.params;
@@ -56,10 +76,10 @@ const getAllAgentAdmin = async (req, res) => {
     const { id: businessId } = req.params;
 
     const subdealers = await agentService.getAgentsAdmin(businessId);
-    res.json({ subdealers });
+    return res.json({ subdealers });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -71,10 +91,10 @@ const getAgentInfo = async (req, res) => {
 
     const databal = await dataBalance.findOne({ business: businessId });
 
-    res.json({ subdealers, dataBalance: databal });
+    return res.json({ subdealers, dataBalance: databal });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -157,4 +177,5 @@ module.exports = {
   AgentGetPurchaseHistoryAdmin,
   getAllAgentsTrx,
   DealerGetHistory,
+  disableAgentAccount,
 };

@@ -147,6 +147,27 @@ class AgentService {
     }
   }
 
+  async disableAgentAccount(dealer, agentId) {
+    try {
+      const agent = await Account.findOne({ _id: agentId, dealer });
+
+      if (!agent) {
+        throw new Error("Not authorized to disable");
+      }
+
+      const updatedAccount = await Account.findOneAndUpdate(
+        { _id: agentId },
+        { $set: { active: false } },
+        { new: true }
+      );
+
+      return updatedAccount;
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
+
   async purchaseAgentMegaData(dealer, business_id, network, amountInGB) {
     try {
       const userBalance = await dataBalance.findOne({ business: dealer });

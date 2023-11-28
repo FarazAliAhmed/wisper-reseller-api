@@ -9,6 +9,7 @@ const {
   getAllAgentsTrx,
   AgentPurchaseMegaData,
   createAgentController,
+  disableAgentAccount,
 } = require("../controllers/agent.controller");
 const getUser = require("../utils/middleware/getUser");
 const getAdmin = require("../utils/middleware/getAdmin");
@@ -16,11 +17,19 @@ const getAdmin = require("../utils/middleware/getAdmin");
 const router = express.Router();
 
 router.get("/getAgentsInfo/:id", getUser, getAgentInfo);
+
+router.post("/disbaleAgentAccount", getUser, disableAgentAccount);
+
 router.post("/createAgent", createAgentController);
+
 router.get("/getAllAgentsId/:id", getUser, getAllAgents);
+
 router.get("/getAgentHistory/:id", getUser, AgentGetPurchaseHistory);
+
 router.get("/DealerGetHistory/:id", getUser, DealerGetHistory);
+
 router.post("/allocateData", getUser, AgentPurchaseMegaData);
+
 router.get("/allTrx/:id", getUser, getAllAgentsTrx);
 
 // admin
