@@ -257,7 +257,14 @@ exports.debit_account_balance = async (
   volume
 ) => {
   const { amount, field } = getFieldAndAmount(type, planDetails, price, volume);
-  const updatedBalance = await debit(account_id, amount, field);
+
+  if (type == "lite") {
+    decrementBy = price;
+  } else {
+    decrementBy = amount;
+  }
+
+  const updatedBalance = await debit(account_id, decrementBy, field);
 
   const balance = await dataBalance.findOne({ business: account_id });
   const oldUser_bal = balance.wallet_balance;
