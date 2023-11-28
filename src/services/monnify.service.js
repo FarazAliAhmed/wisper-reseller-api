@@ -58,12 +58,18 @@ class MonnifyService {
         );
       }
 
+      let new_bal = 0;
+
+      if (Number(addData.eventData.amountPaid) > 50) {
+        new_bal = Number(old_bal) + Number(resolvedBalance);
+      }
+
       const newMonnifyHistory = new monnifyHistory({
         business_name: addData.eventData.customer.name,
         business_id: addData.eventData.product.reference,
         amount: resolvedBalance,
         resolvedAmount: resolvedBalance,
-        new_bal: balance.wallet_balance,
+        new_bal: `${new_bal}`,
         old_bal: old_bal,
         purpose: "Funding - Monnify",
         desc: `Deposit of ${resolvedBalance} NGN made by ${addData.eventData.customer.name}.`,
@@ -116,12 +122,14 @@ class MonnifyService {
         { new: true }
       );
 
+      const new_bal = Number(old_bal) + Number(addData.amount);
+
       const newMonnifyHistory = new monnifyHistory({
         business_name: user.name,
         business_id: addData.business_id,
         amount: addData.amount,
         resolvedAmount: balance.wallet_balance,
-        new_bal: balance.wallet_balance,
+        new_bal: `${new_bal}`,
         old_bal: old_bal,
         purpose: "Funding - Admin",
         desc: `Deposit of ${addData.amount} NGN made by ${user.name}.`,
@@ -171,12 +179,14 @@ class MonnifyService {
         { new: true }
       );
 
+      const new_bal = Number(old_bal) - Number(addData.amount);
+
       const newMonnifyHistory = new monnifyHistory({
         business_name: user.username,
         business_id: addData.business_id,
         amount: addData.amount,
         resolvedAmount: balance.wallet_balance,
-        new_bal: balance.wallet_balance,
+        new_bal: `${new_bal}`,
         old_bal: old_bal,
         purpose: "Debit - Admin",
         desc: `Deposit of ${balance.wallet_balance} NGN made by ${user.name}.`,
