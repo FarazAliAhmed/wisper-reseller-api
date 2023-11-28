@@ -31,11 +31,31 @@ class MonnifyService {
       const old_bal = balance.wallet_balance;
 
       if (Number(addData.eventData.amountPaid) > 50) {
-        balance.wallet_balance += resolvedBalance;
-        balance.last_purchase = new Date();
+        // balance.wallet_balance += resolvedBalance;
+
+        await dataBalance.findOneAndUpdate(
+          { business: addData.eventData.product.reference },
+          {
+            $inc: {
+              wallet_balance: resolvedBalance,
+            },
+            last_purchase: new Date(),
+          },
+          { new: true }
+        );
+
+        // balance.last_purchase = new Date();
       } else {
-        balance.wallet_balance += 0;
-        balance.last_purchase = new Date();
+        await dataBalance.findOneAndUpdate(
+          { business: addData.eventData.product.reference },
+          {
+            $inc: {
+              wallet_balance: 0,
+            },
+            last_purchase: new Date(),
+          },
+          { new: true }
+        );
       }
 
       const newMonnifyHistory = new monnifyHistory({
@@ -82,8 +102,19 @@ class MonnifyService {
 
       const old_bal = balance.wallet_balance;
 
-      balance.wallet_balance += Number(addData.amount);
-      balance.last_purchase = new Date();
+      // balance.wallet_balance += Number(addData.amount);
+      // balance.last_purchase = new Date();
+
+      await dataBalance.findOneAndUpdate(
+        { business: addData.business_id },
+        {
+          $inc: {
+            wallet_balance: Number(addData.amount),
+          },
+          last_purchase: new Date(),
+        },
+        { new: true }
+      );
 
       const newMonnifyHistory = new monnifyHistory({
         business_name: user.name,
@@ -126,8 +157,19 @@ class MonnifyService {
 
       const old_bal = balance.wallet_balance;
 
-      balance.wallet_balance -= Number(addData.amount);
-      balance.last_purchase = new Date();
+      // balance.wallet_balance -= Number(addData.amount);
+      // balance.last_purchase = new Date();
+
+      await dataBalance.findOneAndUpdate(
+        { business: addData.business_id },
+        {
+          $inc: {
+            wallet_balance: -Number(addData.amount),
+          },
+          last_purchase: new Date(),
+        },
+        { new: true }
+      );
 
       const newMonnifyHistory = new monnifyHistory({
         business_name: user.username,

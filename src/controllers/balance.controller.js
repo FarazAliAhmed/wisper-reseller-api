@@ -61,41 +61,32 @@ const creditBalance = async (req, res) => {
     if (allowedWallets.includes(wallet)) {
       field = `mega_wallet.${wallet}`;
     } else {
-      return res
-        .status(400)
-        .json({
-          status: 400,
-          message:
-            'This wallet type does not exist. Allowed types are: ["mtn_sme", "mtn_gifting", "airtel", "glo", "9mobile"] ',
-        });
+      return res.status(400).json({
+        status: 400,
+        message:
+          'This wallet type does not exist. Allowed types are: ["mtn_sme", "mtn_gifting", "airtel", "glo", "9mobile"] ',
+      });
     }
   } else if (unit === "money") {
     field = "wallet_balance";
   } else {
-    return res
-      .status(400)
-      .json({
-        status: 400,
-        message:
-          "You must set a 'wallet' field when allocating to a data wallet",
-      });
+    return res.status(400).json({
+      status: 400,
+      message: "You must set a 'wallet' field when allocating to a data wallet",
+    });
   }
 
   const newBalance = await credit(businessId, creditAmount, field);
   if (newBalance.error)
-    return res
-      .status(400)
-      .json({
-        status: 400,
-        message: "Error. Unable to credit account balance",
-      });
-  res
-    .status(newBalance.status)
-    .json({
-      status: newBalance.status,
-      message: newBalance.message,
-      newBalance: newBalance.balance,
+    return res.status(400).json({
+      status: 400,
+      message: "Error. Unable to credit account balance",
     });
+  res.status(newBalance.status).json({
+    status: newBalance.status,
+    message: newBalance.message,
+    newBalance: newBalance.balance,
+  });
 };
 
 const debitBalance = async (req, res) => {
@@ -111,59 +102,46 @@ const debitBalance = async (req, res) => {
     if (allowedWallets.includes(wallet)) {
       field = `mega_wallet.${wallet}`;
     } else {
-      return res
-        .status(400)
-        .json({
-          status: 400,
-          message:
-            'This wallet type does not exist. Allowed types are: ["mtn_sme", "mtn_gifting", "airtel", "glo", "9mobile"] ',
-        });
+      return res.status(400).json({
+        status: 400,
+        message:
+          'This wallet type does not exist. Allowed types are: ["mtn_sme", "mtn_gifting", "airtel", "glo", "9mobile"] ',
+      });
     }
   } else if (unit === "money") {
     field = "wallet_balance";
   } else {
-    return res
-      .status(400)
-      .json({
-        status: 400,
-        message:
-          "You must set a 'wallet' field when allocating to a data wallet",
-      });
+    return res.status(400).json({
+      status: 400,
+      message: "You must set a 'wallet' field when allocating to a data wallet",
+    });
   }
 
   const newBalance = await debit(businessId, debitAmount, field);
   if (newBalance.error)
-    return res
-      .status(200)
-      .json({
-        status: 200,
-        message: "Warning! Account balance is now negative",
-      });
-  res
-    .status(newBalance.status)
-    .json({
-      status: newBalance.status,
-      message: newBalance.message,
-      newBalance: newBalance.balance,
+    return res.status(200).json({
+      status: 200,
+      message: "Warning! Account balance is now negative",
     });
+  res.status(newBalance.status).json({
+    status: newBalance.status,
+    message: newBalance.message,
+    newBalance: newBalance.balance,
+  });
 };
 
 const updateAllBalance = async (req, res) => {
   const allBalance = await upgradeAllBalance();
   if (allBalance.error)
-    return res
-      .status(400)
-      .json({
-        status: 400,
-        message: "Error. Unable to upgrade all balance accounts",
-      });
-  res
-    .status(allBalance.status)
-    .json({
-      status: allBalance.status,
-      message: allBalance.message,
-      allBalance,
+    return res.status(400).json({
+      status: 400,
+      message: "Error. Unable to upgrade all balance accounts",
     });
+  res.status(allBalance.status).json({
+    status: allBalance.status,
+    message: allBalance.message,
+    allBalance,
+  });
 };
 
 const getApiBalance = async (req, res) => {
