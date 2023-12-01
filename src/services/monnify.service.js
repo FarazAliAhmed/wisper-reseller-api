@@ -125,7 +125,7 @@ class MonnifyService {
       const new_bal = Number(old_bal) + Number(addData.amount);
 
       const newMonnifyHistory = new monnifyHistory({
-        business_name: user.name,
+        business_name: user.username,
         business_id: addData.business_id,
         amount: addData.amount,
         resolvedAmount: balance.wallet_balance,
