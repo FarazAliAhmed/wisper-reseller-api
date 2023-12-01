@@ -134,6 +134,7 @@ accountSchema.methods.generateAuthToken = function () {
       isAdmin: this.isAdmin,
       type: this.type,
       bankAccounts: this.bankAccounts,
+      confirmed: this.confirmed,
     },
     config.get("jwtSecret")
   );

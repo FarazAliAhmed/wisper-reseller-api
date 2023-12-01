@@ -6,6 +6,14 @@ const auth = async (email, password) => {
   const user = await Account.findOne({ email }).exec();
   if (!user) return { status: 400, message: "Invalid email or password." };
 
+  const checkDate = user.createdAt > new Date("2023-12-01");
+
+  // console.log({ checkDate });
+
+  if (user.createdAt && checkDate && !user.confirmed) {
+    return { status: 400, message: "Email not confirmed" };
+  }
+
   if (!user.active) {
     // If the user account is not disabled
     return { status: 400, message: "Account disabled contact admin." };
