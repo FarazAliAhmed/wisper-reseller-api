@@ -21,6 +21,7 @@ const agentsRoutes = require("./routes/agent.route");
 const megaPriceRoutes = require("./routes/megaPrice.route");
 const monnifyRoutes = require("./routes/monnify.route");
 const megamaintenanceRoutes = require("./routes/megamaintenance.route");
+const airtimemaintenanceRoutes = require("./routes/airtimemaintenance.route.js");
 const storeFrontRoutes = require("./routes/storeFront.route.js");
 const analysisRoutes = require("./routes/analysis.route.js");
 const helperRoutes = require("./routes/helper.route.js");
@@ -71,6 +72,7 @@ app.use("/api/agent", agentsRoutes);
 app.use("/api", megaPriceRoutes);
 app.use("/api", monnifyRoutes);
 app.use("/api", megamaintenanceRoutes);
+app.use("/api", airtimemaintenanceRoutes);
 
 app.use("/api/v2", getUser, apiV2Routes);
 app.use("/api/v2/admin", getAdmin, apiV2AdminRoutes);
