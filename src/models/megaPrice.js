@@ -3,11 +3,6 @@ const Schema = mongoose.Schema;
 
 const MegaPrice = new Schema(
   {
-    business_id: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     mtn_sme: {
       type: Number,
       default: 0,

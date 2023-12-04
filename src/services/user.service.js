@@ -12,12 +12,15 @@ const register = async (requestBody) => {
     let userWithEmail = await Account.findOne({
       email: requestBody.email,
     }).exec();
+
     let userWithUsername = await Account.findOne({
       username: requestBody.username,
     }).exec();
+
     if (userWithEmail) {
       throw new Error("email already exists");
     }
+
     if (userWithUsername) {
       throw new Error("user with username already exists");
     }

@@ -16,31 +16,15 @@ class MegaPriceController {
         return res.status(400).json({ message: error.details[0].message });
       }
 
-      const users = await Account.find({}); // Fetch all users from the database
+      await megaPriceService.updateOrCreateMegaPrice(updateData);
 
-      for (const user of users) {
-        try {
-          // Call the Mega Price service to create the account
-          updateData.business_id = user._id;
-
-          await megaPriceService.updateOrCreateMegaPrice(updateData);
-
-          console.log(`Mega Price created for user ${user.name}`);
-        } catch (error) {
-          console.error(
-            `Error creating Mega Price for user ${user.name}:`,
-            error.message
-          );
-          // You can add additional error handling here if needed
-        }
-      }
-
-      res.json({ message: "Mega Prices Created For All Users" });
+      res.json({ message: "Mega Prices Created" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "An error occurred" });
     }
   }
+
   async updateMegaPrice(req, res) {
     try {
       // Validate the request body
@@ -200,9 +184,7 @@ class MegaPriceController {
   async getMegaPriceUser(req, res) {
     try {
       const businessId = req.params.id;
-      const megaPriceData = await megaPrice.findOne({
-        business_id: businessId,
-      });
+      const megaPriceData = await megaPrice.findOne({});
 
       if (!megaPriceData) {
         return res.status(404).json({ message: "MegaPrice not found" });
@@ -225,9 +207,9 @@ const purchaseMegaDataSchema = Joi.object({
 });
 
 const updateMegaPriceSchema = Joi.object({
-  business_id: Joi.string().optional(),
-  mtn_sme: Joi.number().min(0).optional(),
-  mtn_gifting: Joi.number().min(0).optional(),
+  // mtn_sme: Joi.number().min(0).optional(),
+  // mtn_gifting: Joi.number().min(0).optional(),
+  mtn: Joi.number().min(0).optional(),
   airtel: Joi.number().min(0).optional(),
   glo: Joi.number().min(0).optional(),
   "9mobile": Joi.number().min(0).optional(),

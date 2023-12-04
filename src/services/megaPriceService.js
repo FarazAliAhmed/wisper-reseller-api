@@ -7,27 +7,14 @@ const monnifyHistory = require("../models/monnifyHistory");
 class MegaPriceService {
   async updateOrCreateMegaPrice(updateData) {
     try {
-      const user = await Account.findById(updateData.business_id);
-      if (!user) {
-        throw new Error("No user of this ID");
+      let existingMegaPrice = await megaPrice.findOne();
+
+      if (!existingMegaPrice) {
+        existingMegaPrice = new megaPrice(updateData);
+        await existingMegaPrice.save();
       }
 
-      // console.log({ user });
-
-      if (user.type != "mega") {
-        throw new Error("Not a mega user");
-      }
-
-      const filter = { business_id: updateData.business_id };
-      const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-
-      const updatedMegaPrice = await megaPrice.findOneAndUpdate(
-        filter,
-        updateData,
-        options
-      );
-
-      return updatedMegaPrice;
+      return existingMegaPrice;
     } catch (error) {
       throw error;
     }

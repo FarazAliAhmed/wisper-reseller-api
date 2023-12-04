@@ -1,3 +1,4 @@
+const { Joi } = require("celebrate");
 const { Account } = require("../models/account");
 const dataBalance = require("../models/dataBalance");
 const megaPrice = require("../models/megaPrice");
@@ -30,22 +31,14 @@ exports.changeSubdealerToAgents = async (req, res) => {
 
 exports.updateDefaultMegaPrice = async (req, res) => {
   try {
-    const allDocs = await megaPrice.find();
+    // Validate the request body
+    const { error, value: updateData } = updateMegaPriceSchema.validate(
+      req.body
+    );
 
-    const dataUpdate = {
-      // "9mobile": 0,
-      glo: 220,
-      // airtel: 0,
-      // mtn_gifting: 0,
-      // mtn_sme: 0,
-    };
-
-    for (let i = 0; i < allDocs.length; i++) {
-      const user = allDocs[i];
-      await megaPrice.findOneAndUpdate({ _id: user._id }, dataUpdate, {
-        new: true,
-      });
-    }
+    await megaPrice.findOneAndUpdate({}, updateData, {
+      new: true,
+    });
 
     // console.log(users);
 
@@ -145,3 +138,12 @@ exports.filterAndLeaveOneZeroAcount = async (req, res) => {
     });
   }
 };
+
+const updateMegaPriceSchema = Joi.object({
+  // mtn_sme: Joi.number().min(0).optional(),
+  // mtn_gifting: Joi.number().min(0).optional(),
+  mtn: Joi.number().min(0).optional(),
+  airtel: Joi.number().min(0).optional(),
+  glo: Joi.number().min(0).optional(),
+  "9mobile": Joi.number().min(0).optional(),
+});
