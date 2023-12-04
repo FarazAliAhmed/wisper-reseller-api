@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const dataBalance = require("../models/dataBalance");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const agentHistory = require("../models/agentHistory");
-const { sendEmail } = require("../utils/email/transporter");
+const { sendEmail, sendHtmlEmail } = require("../utils/email/transporter");
 const transactionHistory = require("../models/transactionHistory");
 const uuid = require("uuid");
 const client = new postmark.ServerClient(process.env.POSTMARK);
@@ -77,16 +77,29 @@ class AgentService {
       await agent.save();
 
       const Subject = "Welcome to the Wisper Dealer Network!";
-      const TextBody =
-        `Dear ${agent.name},\n\n` +
-        `Welcome to the Wisper Dealer Network! We're thrilled to have you on board as an agent with Wisper NG. Your account is now ready, and you can start accessing our platform right away.\n\n` +
-        `Here are your login details:\n\n` +
-        `Username: ${agent.username}\n` +
-        `Email: ${agent.email}\n` +
-        `Password: ${tempPassword}\n\n` +
-        `Please Note: We recommend changing your password after your first login for security reasons.`;
+      // const TextBody =
+      //   `Dear ${agent.name},\n\n` +
+      //   `Welcome to the Wisper Dealer Network! We're thrilled to have you on board as an agent with Wisper NG. Your account is now ready, and you can start accessing our platform right away.\n\n` +
+      //   `Here are your login details:\n\n` +
+      //   `Username: ${agent.username}\n` +
+      //   `Email: ${agent.email}\n` +
+      //   `Password: ${tempPassword}\n\n` +
+      //   `Please Note: We recommend changing your password after your first login for security reasons.`;
 
-      await sendEmail(agent.email, Subject, TextBody);
+      const HTMLBody =
+        `<p>Dear ${agent.name},</p>` +
+        `<p>Welcome to the Wisper Dealer Network! We're thrilled to have you on board as an agent with Wisper NG. Your account is now ready, and you can start accessing our platform right away.</p>` +
+        `<p>Here are your login details:</p>` +
+        `<ul>` +
+        `<li>Username: ${agent.username}</li>` +
+        `<li>Email: ${agent.email}</li>` +
+        `<li>Password: ${tempPassword}</li>` +
+        `</ul>` +
+        `<p>Please Note: We recommend changing your password after your first login for security reasons.</p>` +
+        `<p>To log in, <a href="https://app.wisper.ng/login">click here</a>.</p>`;
+
+      // await sendEmail(agent.email, Subject, TextBody);
+      await sendHtmlEmail(agent.email, Subject, HTMLBody);
 
       return agent;
     } catch (error) {

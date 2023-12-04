@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Define the helper function to send an email
-async function sendEmail(to, subject, text) {
+const sendEmail = async (to, subject, text) => {
   const mailOptions = {
     from: "support@wisper.ng",
     to: to,
@@ -26,6 +26,23 @@ async function sendEmail(to, subject, text) {
   } catch (error) {
     console.error("Error sending email: ", error);
   }
-}
+};
 
-module.exports = { sendEmail };
+// Define the helper function to send an email
+const sendHtmlEmail = async (to, subject, html) => {
+  const mailOptions = {
+    from: "support@wisper.ng",
+    to: to,
+    subject: subject,
+    html: html,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+  } catch (error) {
+    console.error("Error sending email: ", error);
+  }
+};
+
+module.exports = { sendEmail, sendHtmlEmail };
