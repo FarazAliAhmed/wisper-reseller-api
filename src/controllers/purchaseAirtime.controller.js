@@ -15,16 +15,11 @@ const flw = new Flutterwave(
 );
 
 const purchaseAirtime = async (req, res) => {
-  const {
-    business_id,
-    network,
-    phone_number,
-    volume,
-    price,
-    email,
-    name,
-    trx_ref,
-  } = req.body;
+  const { business_id, network, phone_number, volume, email, name, trx_ref } =
+    req.body;
+
+  // defining price
+  const price = volume;
 
   let businessIdentity;
   let isStoreFront = true;
