@@ -3,9 +3,13 @@ const jwt = require("jsonwebtoken");
 const { Account } = require("../models/account");
 const bcrypt = require("bcrypt");
 var postmark = require("postmark");
+const fs = require("fs");
+const path = require("path");
+const ejs = require("ejs");
 
 const authService = require("../services/auth.service");
-const { sendEmail } = require("../utils/email/transporter");
+const { sendEmail, transporter } = require("../utils/email/transporter");
+const { generateRandomPassword } = require("../utils/auth.helper");
 const client = new postmark.ServerClient(process.env.POSTMARK);
 
 const handleLogin = async (req, res) => {
@@ -61,7 +65,12 @@ const forgotPassword = async (req, res) => {
       console.log(link);
       return res.json({ status: "User Exists!!", link: link });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ error: error.message, message: "error occured" });
+  }
 };
 
 const resetPassword = async (req, res) => {
@@ -96,25 +105,79 @@ const resetPassword = async (req, res) => {
 
 const confirmEmail = async (req, res) => {
   try {
-    const { token } = req.params;
+    const { token, email } = req.body;
 
-    const user = Account.findOne({ confirmationToken: token }).exec();
+    const user = Account.findOne({
+      email: email,
+      confirmationToken: token,
+    }).exec();
 
     if (!user) {
       return res.status(404).send("Invalid confirmation token");
     }
 
-    user.confirmed = true;
-    user.confirmationToken = undefined;
+    // await user.save();
 
-    await user.save();
-
+    await Account.findOneAndUpdate(
+      { email: email },
+      { confirmed: true, confirmationToken: null },
+      { new: true }
+    ).exec();
     // Redirect the user to a success page or display a success message
-    res.send("Email confirmed successfully!");
+    return res.json({ message: "Email confirmed successfully!" });
   } catch (error) {
     // Handle any errors that occur during the confirmation process
     console.error("Confirmation error:", error);
-    res.status(500).send("An error occurred during email confirmation");
+    return res
+      .status(500)
+      .json({ message: "An error occurred during email confirmation" });
+  }
+};
+
+const resendConfirmEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const __dirname = process.cwd();
+    const emailTemplate = fs.readFileSync(
+      path.join(__dirname, "src/emails/ConfirmEmail.ejs"),
+      "utf-8"
+    );
+
+    const token = await generateRandomPassword(6);
+
+    const user = await Account.findOneAndUpdate(
+      { email: email },
+      { confirmationToken: token },
+      { new: true }
+    ).exec();
+
+    const mailOptions = {
+      from: "support@wisper.ng",
+      to: `${user.email}`,
+      subject: "Wisper Account Confirmation Email",
+      html: ejs.render(emailTemplate, {
+        user,
+        // confirmLink: `${process.env.WEB_URL}/confirm-email/${token}`,
+        token: token,
+      }),
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
+    // Redirect the user to a success page or display a success message
+    return res.json({ message: "Confirmation email sent" });
+  } catch (error) {
+    // Handle any errors that occur during the confirmation process
+    console.error("Confirmation error:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred during email confirmation" });
   }
 };
 
@@ -219,4 +282,5 @@ module.exports = {
   updateWhitelist,
   deleteIPAddress,
   changeUserPassword,
+  resendConfirmEmail,
 };

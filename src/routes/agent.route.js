@@ -13,12 +13,15 @@ const {
 } = require("../controllers/agent.controller");
 const getUser = require("../utils/middleware/getUser");
 const getAdmin = require("../utils/middleware/getAdmin");
+const { enableAgentAccount } = require("../services/agent.service");
 
 const router = express.Router();
 
 router.get("/getAgentsInfo/:id", getUser, getAgentInfo);
 
 router.post("/disbaleAgentAccount", getUser, disableAgentAccount);
+
+router.put("/enableAgentAccount", getUser, enableAgentAccount);
 
 router.post("/createAgent", createAgentController);
 

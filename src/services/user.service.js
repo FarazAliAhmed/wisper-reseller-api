@@ -5,6 +5,12 @@ const monnifyService = require("./monnify.service");
 const { storeFrontUserPlanSingle } = require("./storeFront.service");
 const storeFront = require("../models/storeFront");
 const { toMapPlans } = require("../utils/sFHelper");
+const { transporter } = require("../utils/email/transporter");
+const fs = require("fs");
+const path = require("path");
+const ejs = require("ejs");
+const userPlan = require("../models/userPlan");
+const { generateRandomPassword } = require("../utils/auth.helper");
 
 const register = async (requestBody) => {
   console.log({ requestBody });
@@ -68,6 +74,39 @@ const register = async (requestBody) => {
         console.log("failed to create plan for", user.name);
       }
     }
+
+    const __dirname = process.cwd();
+    const emailTemplate = fs.readFileSync(
+      path.join(__dirname, "src/emails/ConfirmEmail.ejs"),
+      "utf-8"
+    );
+
+    const token = await generateRandomPassword(6);
+
+    await Account.findOneAndUpdate(
+      { _id: user._id },
+      { confirmationToken: token },
+      { new: true }
+    ).exec();
+
+    const mailOptions = {
+      from: "support@wisper.ng",
+      to: `${user.email}`,
+      subject: "Wisper Account Confirmation Email",
+      html: ejs.render(emailTemplate, {
+        user,
+        // confirmLink: `${process.env.WEB_URL}/confirm-email/${token}`,
+        token: token,
+      }),
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
 
     return { user };
   } catch (error) {

@@ -16,6 +16,7 @@ const getAdmin = require("./utils/middleware/getAdmin");
 const getUser = require("./utils/middleware/getUser");
 
 const apiRoutes = require("./routes");
+const authRoutes = require("./routes/auth.route.js");
 const notiRoutes = require("./routes/notification.route");
 const agentsRoutes = require("./routes/agent.route");
 const megaPriceRoutes = require("./routes/megaPrice.route");
@@ -67,6 +68,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", apiRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api", notiRoutes);
 app.use("/api/agent", agentsRoutes);
 app.use("/api", megaPriceRoutes);

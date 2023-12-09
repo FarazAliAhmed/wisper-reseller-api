@@ -12,7 +12,7 @@ const handleRegister = async (req, res) => {
 
     const data = await userService.register(req.body);
 
-    console.log(data.user);
+    // console.log(data.user);
 
     if (data.user) {
       const token = data.user.generateAuthToken();

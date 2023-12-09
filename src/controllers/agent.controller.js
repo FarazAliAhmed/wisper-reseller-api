@@ -47,6 +47,26 @@ const disableAgentAccount = async (req, res) => {
   }
 };
 
+const enableAgentAccount = async (req, res) => {
+  try {
+    const { agentId } = req.body; // Destructure the request body
+
+    console.log("AGENT", "create agent");
+
+    const subdealer = await agentService.enableAgentAccount(
+      req?.user?._id,
+      agentId
+    );
+
+    return res
+      .status(201)
+      .json({ message: "agent account disabled successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 const getAllAgents = async (req, res) => {
   try {
     const { id: businessId } = req.params;

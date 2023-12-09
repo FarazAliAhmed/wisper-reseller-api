@@ -45,4 +45,4 @@ const sendHtmlEmail = async (to, subject, html) => {
   }
 };
 
-module.exports = { sendEmail, sendHtmlEmail };
+module.exports = { sendEmail, sendHtmlEmail, transporter };
