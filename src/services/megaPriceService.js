@@ -10,9 +10,15 @@ class MegaPriceService {
       let existingMegaPrice = await megaPrice.findOne();
 
       if (!existingMegaPrice) {
+        // Create a new MegaPrice document with the provided updateData
         existingMegaPrice = new megaPrice(updateData);
-        await existingMegaPrice.save();
+      } else {
+        // Update specific fields in the existing MegaPrice document
+        existingMegaPrice.set(updateData);
       }
+
+      // Save the updated or newly created MegaPrice document
+      await existingMegaPrice.save();
 
       return existingMegaPrice;
     } catch (error) {
@@ -20,20 +26,18 @@ class MegaPriceService {
     }
   }
 
-  async getMegaPrices(business_id) {
-    const userMegaPrice = await megaPrice.findOne({ business_id: business_id });
-    // console.log({ userMegaPrice });
-    if (!userMegaPrice) {
-      throw new Error("No mega Price");
-    }
+  async calculateAmountToPay(selectedPrice, amountInGB) {
+    const matchingRange = selectedPrice.find((range) => {
+      return amountInGB >= range.rangeStart && amountInGB <= range.rangeEnd;
+    });
 
-    return userMegaPrice;
+    return matchingRange ? amountInGB * matchingRange.pricePerGB : null;
   }
 
   async purchaseMegaData(business_id, network, amountInGB) {
     try {
       // console.log("user id", business_id);
-      const megaPrices = await this.getMegaPrices(business_id);
+      const megaPrices = await megaPrice.findOne();
       if (!megaPrices) {
         throw new Error("Mega prices not found");
       }
@@ -45,12 +49,19 @@ class MegaPriceService {
 
       const selectedPrice = megaPrices[network];
 
-      if (selectedPrice == 0) {
+      // console.log({ selectedPrice });
+
+      if (!selectedPrice || selectedPrice == 0) {
         throw new Error("Price Not yet set");
       }
 
-      const amountToPay = selectedPrice * amountInGB;
-      console.log({ selectedPrice });
+      // const amountToPay = selectedPrice * amountInGB;
+      const amountToPay = await this.calculateAmountToPay(
+        selectedPrice,
+        amountInGB
+      );
+
+      console.log({ amountToPay });
 
       if (selectedPrice === undefined) {
         throw new Error("Invalid data plan selected");
@@ -121,6 +132,7 @@ class MegaPriceService {
       throw error;
     }
   }
+
   async purchaseAdminMegaData(business_id, network, amountInGB) {
     try {
       // console.log("user id", business_id);

@@ -63,6 +63,7 @@ const accountSchema = mongoose.Schema(
     },
     type: {
       type: String,
+      enum: ["lite", "mega", "admin", "agent"],
       default: "lite",
     },
     mobile_number: String,

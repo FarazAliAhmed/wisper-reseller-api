@@ -15,10 +15,22 @@ const MegaPrice = new Schema(
       type: Number,
       default: 0,
     },
-    glo: {
-      type: Number,
-      default: 210,
-    },
+    glo: [
+      {
+        rangeStart: {
+          type: Number,
+          required: true,
+        },
+        rangeEnd: {
+          type: Number,
+          required: true,
+        },
+        pricePerGB: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
     "9mobile": {
       type: Number,
       default: 0,

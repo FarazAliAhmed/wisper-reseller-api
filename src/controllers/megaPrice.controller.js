@@ -207,10 +207,18 @@ const purchaseMegaDataSchema = Joi.object({
 });
 
 const updateMegaPriceSchema = Joi.object({
-  // mtn_sme: Joi.number().min(0).optional(),
-  // mtn_gifting: Joi.number().min(0).optional(),
   mtn: Joi.number().min(0).optional(),
   airtel: Joi.number().min(0).optional(),
-  glo: Joi.number().min(0).optional(),
   "9mobile": Joi.number().min(0).optional(),
+  glo: Joi.array()
+    .items(
+      Joi.object({
+        rangeStart: Joi.number().required(),
+        rangeEnd: Joi.any()
+          .optional()
+          .custom((value, helpers) => (value === null ? Infinity : value)),
+        pricePerGB: Joi.number().min(0).required(),
+      })
+    )
+    .optional(),
 });
