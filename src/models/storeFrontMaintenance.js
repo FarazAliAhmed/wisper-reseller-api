@@ -10,6 +10,10 @@ const sFMaintenance = new Schema({
     type: Boolean,
     default: false,
   },
+  notice: {
+    type: String,
+    default: null,
+  },
 });
 
 // NOTE - About sFMaintenance Mood
