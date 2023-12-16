@@ -153,7 +153,7 @@ const validateUser = (user) => {
     password: Joi.string().min(5).max(255).required(),
     mobile_number: Joi.number().required(),
     address: Joi.string(),
-    type: Joi.string().valid("lite", "mega", "glo_dealer").default("lite"),
+    // type: Joi.string().valid("lite", "mega", "glo_dealer").default("lite"),
   });
 
   return schema.validate(user);
