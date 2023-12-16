@@ -159,8 +159,7 @@ const resendConfirmEmail = async (req, res) => {
       html: ejs.render(emailTemplate, {
         user,
         // confirmLink: `${process.env.WEB_URL}/confirm-email/${token}`,
-        // token: token,
-        token: `${process.env.WEB_URL}/confirm-email/${token}`,
+        token: token,
       }),
     };
 
