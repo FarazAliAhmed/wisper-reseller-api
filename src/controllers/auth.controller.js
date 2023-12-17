@@ -105,22 +105,30 @@ const resetPassword = async (req, res) => {
 
 const confirmEmail = async (req, res) => {
   try {
-    const { token, email } = req.body;
+    const { token } = req.body;
 
-    const user = Account.findOne({
-      email: email,
-      confirmationToken: token,
-    }).exec();
+    const decodedToken = jwt.verify(token, `${process.env.JWT_SECRET}`);
+    const userId = decodedToken.userId;
 
-    if (!user) {
-      return res.status(404).send("Invalid confirmation token");
-    }
+    console.log(decodedToken);
+
+    const user = await Account.findById(userId);
+    // const { token, email } = req.body;
+
+    // const user = Account.findOne({
+    //   email: email,
+    //   confirmationToken: token,
+    // }).exec();
+
+    // if (!user) {
+    //   return res.status(404).send("Invalid confirmation token");
+    // }
 
     // await user.save();
 
     await Account.findOneAndUpdate(
       { email: email },
-      { confirmed: true, confirmationToken: null },
+      { confirmed: true },
       { new: true }
     ).exec();
     // Redirect the user to a success page or display a success message
@@ -152,24 +160,26 @@ const resendConfirmEmail = async (req, res) => {
       { new: true }
     ).exec();
 
-    const mailOptions = {
-      from: "support@wisper.ng",
-      to: `${user.email}`,
-      subject: "Wisper Account Confirmation Email",
-      html: ejs.render(emailTemplate, {
-        user,
-        // confirmLink: `${process.env.WEB_URL}/confirm-email/${token}`,
-        token: token,
-      }),
-    };
+    await authService.sendConfirmationEmail(user);
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending email:", error);
-      } else {
-        console.log("Email sent:", info.response);
-      }
-    });
+    // const mailOptions = {
+    //   from: "support@wisper.ng",
+    //   to: `${user.email}`,
+    //   subject: "Wisper Account Confirmation Email",
+    //   html: ejs.render(emailTemplate, {
+    //     user,
+    //     // confirmLink: `${process.env.WEB_URL}/confirm-email/${token}`,
+    //     token: token,
+    //   }),
+    // };
+
+    // transporter.sendMail(mailOptions, (error, info) => {
+    //   if (error) {
+    //     console.error("Error sending email:", error);
+    //   } else {
+    //     console.log("Email sent:", info.response);
+    //   }
+    // });
     // Redirect the user to a success page or display a success message
     return res.json({ message: "Confirmation email sent" });
   } catch (error) {

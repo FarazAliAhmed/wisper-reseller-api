@@ -11,6 +11,7 @@ const path = require("path");
 const ejs = require("ejs");
 const userPlan = require("../models/userPlan");
 const { generateRandomPassword } = require("../utils/auth.helper");
+const { sendConfirmationEmail } = require("./auth.service");
 
 const register = async (requestBody) => {
   console.log({ requestBody });
@@ -89,24 +90,26 @@ const register = async (requestBody) => {
       { new: true }
     ).exec();
 
-    const mailOptions = {
-      from: "support@wisper.ng",
-      to: `${user.email}`,
-      subject: "Wisper Account Confirmation Email",
-      html: ejs.render(emailTemplate, {
-        user,
-        // confirmLink: `${process.env.WEB_URL}/confirm-email/${token}`,
-        token: token,
-      }),
-    };
+    await sendConfirmationEmail(user);
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending email:", error);
-      } else {
-        console.log("Email sent:", info.response);
-      }
-    });
+    // const mailOptions = {
+    //   from: "support@wisper.ng",
+    //   to: `${user.email}`,
+    //   subject: "Wisper Account Confirmation Email",
+    //   html: ejs.render(emailTemplate, {
+    //     user,
+    //     // confirmLink: `${process.env.WEB_URL}/confirm-email/${token}`,
+    //     token: token,
+    //   }),
+    // };
+
+    // transporter.sendMail(mailOptions, (error, info) => {
+    //   if (error) {
+    //     console.error("Error sending email:", error);
+    //   } else {
+    //     console.log("Email sent:", info.response);
+    //   }
+    // });
 
     return { user };
   } catch (error) {

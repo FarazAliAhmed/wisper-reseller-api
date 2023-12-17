@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
-
+const jwt = require("jsonwebtoken");
 const { Account } = require("../models/account");
+const JWT_SECRET = `${process.env.JWT_SECRET}`;
 
 const auth = async (email, password) => {
   const user = await Account.findOne({ email }).exec();
@@ -101,10 +102,53 @@ async function changePassword(userId, oldPassword, newPassword) {
   await Account.updateOne({ _id: userId }, { password: newHashedPassword });
 }
 
+async function sendConfirmationEmail(newUser) {
+  try {
+    const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, {
+      expiresIn: "1hr",
+    });
+
+    if (!token) {
+      throw new Error("Error generating Token");
+    }
+
+    const confirmationLink = `${process.env.WEB_URL}/confirm-email?token=${token}`;
+
+    const __dirname = process.cwd();
+    const emailTemplate = fs.readFileSync(
+      path.join(__dirname, "src/emails/ConfirmEmail.ejs"),
+      "utf-8"
+    );
+
+    const mailOptions = {
+      from: "support@wisper.ng",
+      to: `${user.email}`,
+      subject: "Wisper Account Confirmation Email",
+      html: ejs.render(emailTemplate, {
+        user: newUser,
+        token: confirmationLink,
+      }),
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error sending confirmation email:", error);
+  }
+}
+
 module.exports = {
   auth,
   whoami,
   updateWhitelist,
   deleteIPAddress,
   changePassword,
+  sendConfirmationEmail,
 };
