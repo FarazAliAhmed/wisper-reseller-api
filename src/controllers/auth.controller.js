@@ -120,14 +120,14 @@ const confirmEmail = async (req, res) => {
     //   confirmationToken: token,
     // }).exec();
 
-    // if (!user) {
-    //   return res.status(404).send("Invalid confirmation token");
-    // }
+    if (!user) {
+      return res.status(404).send("Invalid confirmation token");
+    }
 
     // await user.save();
 
     await Account.findOneAndUpdate(
-      { email: email },
+      { _id: userId },
       { confirmed: true },
       { new: true }
     ).exec();
