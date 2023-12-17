@@ -191,6 +191,45 @@ const resendConfirmEmail = async (req, res) => {
   }
 };
 
+const ResetActivationLinkEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await Account.findOne({ _id: req.user._id });
+
+    if (!user) {
+      res.status(500).json({ message: "no user found" });
+    }
+
+    if (user.confirmed) {
+      return res.json({ message: "user already confirmed" });
+    }
+
+    if (user.email != email) {
+      const existingUser = await Account.findOne({ email: email });
+      if (existingUser) {
+        return res.status(500).json({ message: "Email already in use" });
+      }
+
+      await Account.findOneAndUpdate(
+        { _id: req.user._id },
+        { email: email },
+        { new: true }
+      ).exec();
+    }
+
+    await authService.sendConfirmationEmail(user);
+
+    return res.json({ message: "Confirmation email sent" });
+  } catch (error) {
+    // Handle any errors that occur during the confirmation process
+    console.error("Confirmation error:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred during email confirmation" });
+  }
+};
+
 const updateConfirmedFieldForExistingUsers = async () => {
   try {
     await Account.updateMany({}, { confirmed: true }).exec();
@@ -293,4 +332,5 @@ module.exports = {
   deleteIPAddress,
   changeUserPassword,
   resendConfirmEmail,
+  ResetActivationLinkEmail,
 };
