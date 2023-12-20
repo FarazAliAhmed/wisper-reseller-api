@@ -33,11 +33,11 @@ const register = async (requestBody) => {
     }
 
     let user = new Account(requestBody);
+    await user.save();
+
     const salt = await bcrypt.genSalt(10);
     // user.password = await bcrypt.hash(user.password, salt);
     const newUserpassword = await bcrypt.hash(user.password, salt);
-
-    // await user.save();
 
     await Account.findOneAndUpdate(
       { _id: user._id },
