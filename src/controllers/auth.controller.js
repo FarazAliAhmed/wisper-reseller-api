@@ -136,9 +136,9 @@ const confirmEmail = async (req, res) => {
   } catch (error) {
     // Handle any errors that occur during the confirmation process
     console.error("Confirmation error:", error);
-    return res
-      .status(500)
-      .json({ message: "An error occurred during email confirmation" });
+    return res.status(500).json({
+      message: error.message || "An error occurred during email confirmation",
+    });
   }
 };
 
