@@ -5,6 +5,7 @@ const JWT_SECRET = `${process.env.JWT_SECRET}`;
 const fs = require("fs");
 const path = require("path");
 const ejs = require("ejs");
+const { transporter } = require("../utils/email/transporter");
 
 const auth = async (email, password) => {
   const user = await Account.findOne({ email }).exec();
