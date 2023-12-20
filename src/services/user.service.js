@@ -12,6 +12,7 @@ const ejs = require("ejs");
 const userPlan = require("../models/userPlan");
 const { generateRandomPassword } = require("../utils/auth.helper");
 const { sendConfirmationEmail } = require("./auth.service");
+const uuid = require("uuid");
 
 const register = async (requestBody) => {
   console.log({ requestBody });
@@ -31,9 +32,13 @@ const register = async (requestBody) => {
     if (userWithUsername) {
       throw new Error("user with username already exists");
     }
+    const accessToken = await generateUniqueAccessToken();
 
-    let user = new Account(requestBody);
-    await user.save();
+    // Include the unique access token in the user object
+    const user = new Account({
+      ...requestBody,
+      access_token: accessToken,
+    });
 
     const salt = await bcrypt.genSalt(10);
     // user.password = await bcrypt.hash(user.password, salt);
@@ -190,6 +195,18 @@ const saveWebhook = async (username, webhook_url) => {
       message: "Error occured while updating webhook url.",
     };
   return { user };
+};
+
+const generateUniqueAccessToken = async () => {
+  let uniqueToken = uuid.v4();
+
+  // Check if the token already exists in the database
+  while (await Account.findOne({ access_token: uniqueToken })) {
+    // If it exists, generate a new one
+    uniqueToken = uuid.v4();
+  }
+
+  return uniqueToken;
 };
 
 module.exports = {
