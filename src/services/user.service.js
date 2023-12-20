@@ -40,6 +40,8 @@ const register = async (requestBody) => {
       access_token: accessToken,
     });
 
+    await user.save();
+
     const salt = await bcrypt.genSalt(10);
     // user.password = await bcrypt.hash(user.password, salt);
     const newUserpassword = await bcrypt.hash(user.password, salt);
