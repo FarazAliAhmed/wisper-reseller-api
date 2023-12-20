@@ -27,7 +27,7 @@
       <tr style="width: 100%">
         <td>
           <h1 style="font-size: 28px; font-weight: bold; margin-top: 48px">
-            Wisper Ng Confirmation Code
+            Wisper Ng Confirmation Link
           </h1>
           <table
             style="margin: 24px 0"
@@ -42,16 +42,18 @@
               <tr>
                 <td>
                   <p style="font-size: 16px; line-height: 26px; margin: 16px 0">
-                    <h3
+                    <h1
                       style="color: #125286; text-decoration: none"
-                      >Hi <%= user.name %> here is your wisper account your confirmation code
+                      >Hi <%= user.name %> here is your wisper account your confirmation link
                       <span>
-                        <h1 style="font-weight: bold; color: gray;">
-                          <%= token %>
-                        </h1>
+                        <h3>
+                          <a href="<%= token %>" style="font-weight: bold; color: gray;">
+                          Confirmation Link
+                          </a>
+                        </h3>
                       </span>
                       
-                    </h3>
+                    </h1>
                   </p>
                   <p style="font-size: 16px; line-height: 26px; margin: 16px 0">
                     If you didn't request this, please ignore this email.
