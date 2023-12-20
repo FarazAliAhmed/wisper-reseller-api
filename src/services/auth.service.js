@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Account } = require("../models/account");
 const JWT_SECRET = `${process.env.JWT_SECRET}`;
+const fs = require("fs");
 
 const auth = async (email, password) => {
   const user = await Account.findOne({ email }).exec();
