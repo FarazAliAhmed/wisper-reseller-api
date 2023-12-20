@@ -126,7 +126,7 @@ async function sendConfirmationEmail(newUser) {
 
     const mailOptions = {
       from: "support@wisper.ng",
-      to: `${user.email}`,
+      to: `${newUser.email}`,
       subject: "Wisper Account Confirmation Email",
       html: ejs.render(emailTemplate, {
         user: newUser,
