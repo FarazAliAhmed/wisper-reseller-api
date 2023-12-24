@@ -137,6 +137,8 @@ exports.getStoreFrontByUserName = async (req, res) => {
       return res.status(404).json({ error: "Store front not found" });
     }
 
+    const user = await Account.findById(storeFront.business_id);
+
     const uniquePhoneCount = await storeFrontHistory.aggregate([
       {
         $match: { storeBusiness: storeFront._id },
@@ -163,6 +165,7 @@ exports.getStoreFrontByUserName = async (req, res) => {
     const responseObj = {
       ...storeFront.toObject(),
       customer: totalUniquePhoneCount,
+      userType: user?.type,
     };
     res.status(200).json(responseObj);
   } catch (error) {
