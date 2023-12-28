@@ -585,8 +585,6 @@ const populateBucketUsage = async (req, res) => {
       })
       .sort({ createdAt: -1 });
 
-    // console.log({ firstTransaction });
-
     const firstTransaction = await transactionHistory.findOne({
       status: "success",
       network_provider: "glo",
@@ -596,6 +594,7 @@ const populateBucketUsage = async (req, res) => {
       },
     });
 
+    // console.log({ firstTransaction });
     // console.log({ lastTransaction });
 
     // Calculate the date for the previous day
@@ -631,16 +630,17 @@ const populateBucketUsage = async (req, res) => {
 
     const numberOfTransactions = transactions.length;
 
-    let dataSoldOnGlo = Math.abs(Number(firstTransaction.gloB));
+    let dataSoldOnGlo = Math.abs(Number(firstTransaction?.gloB)) || 0;
 
     if (lastTransaction) {
-      dataSoldOnGlo = Math.abs(
-        Number(firstTransaction.gloB) - Number(lastTransaction.gloB)
-      );
+      dataSoldOnGlo =
+        Math.abs(
+          Number(firstTransaction?.gloB) - Number(lastTransaction?.gloB)
+        ) || 0;
     }
 
-    const dataWisperGB = (Number(dataSoldOnWisper) / 1000) * 1024;
-    const dataWisperGB2 = (Number(dataSoldOnWisper2) / 1000) * 1024;
+    const dataWisperGB = (Number(dataSoldOnWisper) / 1000) * 1024 || 0;
+    const dataWisperGB2 = (Number(dataSoldOnWisper2) / 1000) * 1024 || 0;
 
     const balance = Math.abs(
       Number(dataSoldOnGlo) - Number(dataWisperGB)
@@ -657,8 +657,8 @@ const populateBucketUsage = async (req, res) => {
     const bucketUsage = new BucketUsage({
       date: formattedPreviousDate,
       bucketID,
-      startOfDayBalance: firstTransaction ? Number(firstTransaction.gloB) : 0,
-      endOfDayBalance: lastTransaction ? Number(lastTransaction.gloB) : 0,
+      startOfDayBalance: firstTransaction ? Number(firstTransaction?.gloB) : 0,
+      endOfDayBalance: lastTransaction ? Number(lastTransaction?.gloB) : 0,
       dataSoldOnGlo,
       dataSoldOnWisper: dataWisperGB.toFixed(2),
       numberOfTransactions,
