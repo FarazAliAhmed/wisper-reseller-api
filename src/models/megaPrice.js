@@ -3,15 +3,11 @@ const Schema = mongoose.Schema;
 
 const MegaPrice = new Schema(
   {
-    // mtn_sme: {
-    //   type: Number,
-    //   default: 0,
-    // },
-    // mtn_gifting: {
-    //   type: Number,
-    //   default: 0,
-    // },
-    mtn: {
+    mtn_sme: {
+      type: Number,
+      default: 0,
+    },
+    mtn_gifting: {
       type: Number,
       default: 0,
     },
@@ -29,7 +25,11 @@ const MegaPrice = new Schema(
     },
     special: {
       type: {
-        mtn: {
+        mtn_sme: {
+          type: Number,
+          default: 0,
+        },
+        mtn_gifting: {
           type: Number,
           default: 0,
         },

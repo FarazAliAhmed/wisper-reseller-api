@@ -222,12 +222,14 @@ const purchaseMegaDataSchema = Joi.object({
 });
 
 const updateMegaPriceSchema = Joi.object({
-  mtn: Joi.number().min(0).optional(),
+  mtn_sme: Joi.number().min(0).optional(),
+  mtn_gifting: Joi.number().min(0).optional(),
   airtel: Joi.number().min(0).optional(),
   "9mobile": Joi.number().min(0).optional(),
   glo: Joi.number().min(0).optional(),
   special: Joi.object({
-    mtn: Joi.number().default(0),
+    mtn_sme: Joi.number().default(0),
+    mtn_gifting: Joi.number().default(0),
     "9mobile": Joi.number().default(0),
     airtel: Joi.number().default(0),
     glo: Joi.number().default(0),
