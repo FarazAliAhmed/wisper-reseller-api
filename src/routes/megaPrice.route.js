@@ -34,7 +34,7 @@ router.get(
 );
 router.post(
   "/defaultPrice",
-
+  getAdmin,
   megaPriceController.createDefaultMegaPrice
 );
 

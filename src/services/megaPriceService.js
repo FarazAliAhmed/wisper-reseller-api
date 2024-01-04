@@ -9,20 +9,27 @@ const specialBusiness = require("../models/specialBusiness");
 class MegaPriceService {
   async updateOrCreateMegaPrice(updateData) {
     try {
-      let existingMegaPrice = await megaPrice.findOne();
-
-      if (!existingMegaPrice) {
-        // Create a new MegaPrice document with the provided updateData
-        existingMegaPrice = new megaPrice(updateData);
-      } else {
-        // Update specific fields in the existing MegaPrice document
-        existingMegaPrice.set(updateData);
+      const user = await Account.findById(updateData.business_id);
+      if (!user) {
+        throw new Error("No user of this ID");
       }
 
-      // Save the updated or newly created MegaPrice document
-      await existingMegaPrice.save();
+      // console.log({ user });
 
-      return existingMegaPrice;
+      // if (user.type != "mega") {
+      //   throw new Error("Not a mega user");
+      // }
+
+      const filter = { business_id: updateData.business_id };
+      const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+      const updatedMegaPrice = await megaPrice.findOneAndUpdate(
+        filter,
+        updateData,
+        options
+      );
+
+      return updatedMegaPrice;
     } catch (error) {
       throw error;
     }
@@ -54,10 +61,19 @@ class MegaPriceService {
     }
   }
 
+  async getMegaPrices(business_id) {
+    const userMegaPrice = await megaPrice.findOne({ business_id: business_id });
+    // console.log({ userMegaPrice });
+    if (!userMegaPrice) {
+      throw new Error("No mega Price");
+    }
+
+    return userMegaPrice;
+  }
+
   async purchaseMegaData(business_id, network, amountInGB) {
     try {
-      // console.log("user id", business_id);
-      const megaPrices = await megaPrice.findOne();
+      const megaPrices = await this.getMegaPrices(business_id);
       if (!megaPrices) {
         throw new Error("Mega prices not found");
       }
@@ -75,19 +91,9 @@ class MegaPriceService {
         throw new Error("User not found");
       }
 
-      let selectedPrice = null;
+      let selectedPrice = megaPrices[network];
 
-      let special = await this.checkSpecialBusiness(user.email);
-
-      console.log({ special });
-
-      if (special) {
-        selectedPrice = megaPrices["special"][network];
-      } else {
-        selectedPrice = megaPrices[network];
-      }
-
-      console.log({ selectedPrice });
+      console.log({ selectedPrice, network });
 
       if (!selectedPrice || selectedPrice == 0) {
         throw new Error("Price Not yet set");

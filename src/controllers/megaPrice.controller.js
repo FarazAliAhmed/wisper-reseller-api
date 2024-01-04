@@ -16,15 +16,31 @@ class MegaPriceController {
         return res.status(400).json({ message: error.details[0].message });
       }
 
-      await megaPriceService.updateOrCreateMegaPrice(updateData);
+      const users = await Account.find({}); // Fetch all users from the database
 
-      res.json({ message: "Mega Prices Created" });
+      for (const user of users) {
+        try {
+          // Call the Mega Price service to create the account
+          updateData.business_id = user._id;
+
+          await megaPriceService.updateOrCreateMegaPrice(updateData);
+
+          console.log(`Monnify account created for user ${user.name}`);
+        } catch (error) {
+          console.error(
+            `Error creating Monnify account for user ${user.name}:`,
+            error.message
+          );
+          // You can add additional error handling here if needed
+        }
+      }
+
+      res.json({ message: "Mega Prices Created For All Users" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "An error occurred" });
     }
   }
-
   async updateMegaPrice(req, res) {
     try {
       // Validate the request body
@@ -44,7 +60,7 @@ class MegaPriceController {
       return res.json(updatedMegaPrice);
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ message: "An error occurred" });
+      return res.status(500).json({ message: error.message });
     }
   }
 
@@ -183,29 +199,16 @@ class MegaPriceController {
 
   async getMegaPriceUser(req, res) {
     try {
-      // const businessId = req.params.id;
-
-      const userId = req.user._id;
-
-      // console.log({ userId });
-
-      const user = await Account.findOne({
-        _id: userId,
+      const businessId = req.params.id;
+      const megaPriceData = await megaPrice.findOne({
+        business_id: businessId,
       });
-
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      const special = await megaPriceService.checkSpecialBusiness(user.email);
-
-      const megaPriceData = await megaPrice.findOne({});
 
       if (!megaPriceData) {
         return res.status(404).json({ message: "MegaPrice not found" });
       }
 
-      res.json({ price: megaPriceData, special });
+      res.json(megaPriceData);
     } catch (error) {
       console.error("Error fetching MegaPrice:", error);
       res.status(500).json({ message: "Internal server error" });
@@ -222,18 +225,19 @@ const purchaseMegaDataSchema = Joi.object({
 });
 
 const updateMegaPriceSchema = Joi.object({
+  business_id: Joi.string().min(0).optional(),
   mtn_sme: Joi.number().min(0).optional(),
   mtn_gifting: Joi.number().min(0).optional(),
   airtel: Joi.number().min(0).optional(),
   "9mobile": Joi.number().min(0).optional(),
   glo: Joi.number().min(0).optional(),
-  special: Joi.object({
-    mtn_sme: Joi.number().default(0),
-    mtn_gifting: Joi.number().default(0),
-    "9mobile": Joi.number().default(0),
-    airtel: Joi.number().default(0),
-    glo: Joi.number().default(0),
-  }).default({}),
+  // special: Joi.object({
+  //   mtn_sme: Joi.number().default(0),
+  //   mtn_gifting: Joi.number().default(0),
+  //   "9mobile": Joi.number().default(0),
+  //   airtel: Joi.number().default(0),
+  //   glo: Joi.number().default(0),
+  // }).default({}),
   gloDealer: Joi.array()
     .items(
       Joi.object({
