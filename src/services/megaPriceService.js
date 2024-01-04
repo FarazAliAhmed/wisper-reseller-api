@@ -47,6 +47,14 @@ class MegaPriceService {
         throw new Error("User data balance not found");
       }
 
+      const user = await Account.findOne({
+        _id: business_id,
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
       const selectedPrice = megaPrices[network];
 
       // console.log({ selectedPrice });
@@ -55,11 +63,16 @@ class MegaPriceService {
         throw new Error("Price Not yet set");
       }
 
-      // const amountToPay = selectedPrice * amountInGB;
-      const amountToPay = await this.calculateAmountToPay(
-        selectedPrice,
-        amountInGB
-      );
+      let amountToPay = null;
+
+      if (user.type == "glo_dealer" || user.type == "glo_agent") {
+        amountToPay = await this.calculateAmountToPay(
+          megaPrices["gloDealer"],
+          amountInGB
+        );
+      } else {
+        amountToPay = selectedPrice * amountInGB;
+      }
 
       console.log({ amountToPay });
 
@@ -89,10 +102,6 @@ class MegaPriceService {
         },
         { new: true }
       );
-
-      const user = await Account.findOne({
-        _id: business_id,
-      });
 
       const purchase = new megaPurchaseHistory({
         business_id: business_id,

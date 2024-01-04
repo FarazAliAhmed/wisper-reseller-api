@@ -15,7 +15,11 @@ const MegaPrice = new Schema(
       type: Number,
       default: 0,
     },
-    glo: [
+    glo: {
+      type: Number,
+      default: 0,
+    },
+    gloDealer: [
       {
         rangeStart: {
           type: Number,
