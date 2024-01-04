@@ -3,7 +3,6 @@ const megaPriceService = require("../services/megaPriceService");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const megaPrice = require("../models/megaPrice");
 const megaMaintenance = require("../models/megaMaintenance");
-const { Account } = require("../models/account");
 
 class MegaPriceController {
   async createDefaultMegaPrice(req, res) {
@@ -183,7 +182,7 @@ class MegaPriceController {
 
   async getMegaPriceUser(req, res) {
     try {
-      const businessId = req.params.id;
+      // const businessId = req.params.id;
       const megaPriceData = await megaPrice.findOne({});
 
       if (!megaPriceData) {
@@ -210,7 +209,14 @@ const updateMegaPriceSchema = Joi.object({
   mtn: Joi.number().min(0).optional(),
   airtel: Joi.number().min(0).optional(),
   "9mobile": Joi.number().min(0).optional(),
-  glo: Joi.array()
+  glo: Joi.number().min(0).optional(),
+  special: Joi.object({
+    mtn: Joi.number().default(0),
+    "9mobile": Joi.number().default(0),
+    airtel: Joi.number().default(0),
+    glo: Joi.number().default(0),
+  }).default({}),
+  gloDealer: Joi.array()
     .items(
       Joi.object({
         rangeStart: Joi.number().required(),

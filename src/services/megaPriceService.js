@@ -1,8 +1,10 @@
+/* eslint-disable no-useless-catch */
 const { Account } = require("../models/account");
 const dataBalance = require("../models/dataBalance");
 const megaPrice = require("../models/megaPrice");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const monnifyHistory = require("../models/monnifyHistory");
+const specialBusiness = require("../models/specialBusiness");
 
 class MegaPriceService {
   async updateOrCreateMegaPrice(updateData) {
@@ -34,6 +36,24 @@ class MegaPriceService {
     return matchingRange ? amountInGB * matchingRange.pricePerGB : null;
   }
 
+  async checkSpecialBusiness(email) {
+    try {
+      // Fetch all documents from the SpecialBusiness collection
+      const specialBusinesses = await specialBusiness.find({}, "email");
+
+      // Extract the emails from the fetched documents
+      const emailArray = specialBusinesses.map((doc) => doc.email);
+
+      // console.log(emailArray);
+
+      // Check if the provided email is in the array
+      return emailArray.includes(email);
+    } catch (error) {
+      console.error("Error checking special business:", error);
+      return false;
+    }
+  }
+
   async purchaseMegaData(business_id, network, amountInGB) {
     try {
       // console.log("user id", business_id);
@@ -55,9 +75,19 @@ class MegaPriceService {
         throw new Error("User not found");
       }
 
-      const selectedPrice = megaPrices[network];
+      let selectedPrice = null;
 
-      // console.log({ selectedPrice });
+      let special = await this.checkSpecialBusiness(user.email);
+
+      console.log({ special });
+
+      if (special) {
+        selectedPrice = megaPrices["special"][network];
+      } else {
+        selectedPrice = megaPrices[network];
+      }
+
+      console.log({ selectedPrice });
 
       if (!selectedPrice || selectedPrice == 0) {
         throw new Error("Price Not yet set");
@@ -265,7 +295,7 @@ class MegaPriceService {
       const purchase = new megaPurchaseHistory({
         business_id: business_id,
         username: user.username,
-        amount: amountToPay,
+        amount: 0,
         volume: amountInGB,
         channel: "Debit - Admin",
         old_bal: oldUser_bal,

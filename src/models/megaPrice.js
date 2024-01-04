@@ -3,11 +3,15 @@ const Schema = mongoose.Schema;
 
 const MegaPrice = new Schema(
   {
-    mtn_sme: {
-      type: Number,
-      default: 0,
-    },
-    mtn_gifting: {
+    // mtn_sme: {
+    //   type: Number,
+    //   default: 0,
+    // },
+    // mtn_gifting: {
+    //   type: Number,
+    //   default: 0,
+    // },
+    mtn: {
       type: Number,
       default: 0,
     },
@@ -18,6 +22,31 @@ const MegaPrice = new Schema(
     glo: {
       type: Number,
       default: 0,
+    },
+    "9mobile": {
+      type: Number,
+      default: 0,
+    },
+    special: {
+      type: {
+        mtn: {
+          type: Number,
+          default: 0,
+        },
+        "9mobile": {
+          type: Number,
+          default: 0,
+        },
+        airtel: {
+          type: Number,
+          default: 0,
+        },
+        glo: {
+          type: Number,
+          default: 0,
+        },
+      },
+      default: {},
     },
     gloDealer: [
       {
@@ -35,10 +64,6 @@ const MegaPrice = new Schema(
         },
       },
     ],
-    "9mobile": {
-      type: Number,
-      default: 0,
-    },
   },
   { timestamps: true }
 );
