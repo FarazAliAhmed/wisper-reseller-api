@@ -321,12 +321,10 @@ exports.storeFrontAnalysisService = async (businessId) => {
 };
 
 exports.storeFrontUserPlanService = async () => {
-  const notAllowedTypes = ["mega", "lite"];
+  // const notAllowedTypes = ["mega", "lite"];
 
   try {
-    const allUsers = await Account.find({
-      type: { $in: notAllowedTypes },
-    });
+    const allUsers = await Account.find();
 
     // const body = {
     //   plan_id: 431,
@@ -430,22 +428,53 @@ exports.storeFrontUserPlanService = async () => {
 
     for (let i = 0; i < allUsers.length; i++) {
       const currUser = allUsers[i]._id;
+      // for (let j = 0; j < toMapPlans.length; j++) {
+      //   try {
+      //     const newPlan = new userPlan({
+      //       business: currUser._id,
+      //       plan_id: toMapPlans[j].plan_id,
+      //       network: toMapPlans[j].network,
+      //       plan_type: body.plan_type,
+      //       price: toMapPlans[j].price,
+      //       volume: toMapPlans[j].volume,
+      //       unit: toMapPlans[j].unit,
+      //       validity: body.validity,
+      //     });
+      //     newPlan.save();
+      //   } catch (error) {
+      //     console.log(error);
+      //     console.log("failed to create plan for", currUser.name);
+      //   }
+      // }
+
       for (let j = 0; j < toMapPlans.length; j++) {
+        console.log("plan id", toMapPlans[j].plan_id);
+
         try {
-          const newPlan = new userPlan({
+          const filter = {
             business: currUser._id,
             plan_id: toMapPlans[j].plan_id,
-            network: toMapPlans[j].network,
-            plan_type: body.plan_type,
-            price: toMapPlans[j].price,
-            volume: toMapPlans[j].volume,
-            unit: toMapPlans[j].unit,
-            validity: body.validity,
-          });
-          newPlan.save();
+          };
+
+          const update = {
+            $set: {
+              business: currUser._id,
+              plan_id: toMapPlans[j].plan_id,
+              network: toMapPlans[j].network,
+              plan_type: body.plan_type,
+              price: toMapPlans[j].price,
+              volume: toMapPlans[j].volume,
+              unit: toMapPlans[j].unit,
+              validity: body.validity,
+            },
+          };
+
+          const options = { upsert: true };
+
+          await userPlan.updateOne(filter, update, options);
         } catch (error) {
           console.log(error);
-          console.log("failed to create plan for", currUser.name);
+          console.log("Failed to create or update plan for", currUser.name);
         }
       }
     }
@@ -478,23 +507,54 @@ exports.storeFrontUserPlanSingle = async (business) => {
     };
 
     for (let j = 0; j < toMapPlans.length; j++) {
+      console.log("plan id", toMapPlans[j].plan_id);
+
       try {
-        const newPlan = new userPlan({
+        const filter = {
           business: currUser._id,
           plan_id: toMapPlans[j].plan_id,
-          network: toMapPlans[j].network,
-          plan_type: body.plan_type,
-          price: toMapPlans[j].price,
-          volume: toMapPlans[j].volume,
-          unit: toMapPlans[j].unit,
-          validity: body.validity,
-        });
-        newPlan.save();
+        };
+
+        const update = {
+          $set: {
+            business: currUser._id,
+            plan_id: toMapPlans[j].plan_id,
+            network: toMapPlans[j].network,
+            plan_type: body.plan_type,
+            price: toMapPlans[j].price,
+            volume: toMapPlans[j].volume,
+            unit: toMapPlans[j].unit,
+            validity: body.validity,
+          },
+        };
+
+        const options = { upsert: true };
+
+        await userPlan.updateOne(filter, update, options);
       } catch (error) {
         console.log(error);
-        console.log("failed to create plan for", currUser.name);
+        console.log("Failed to create or update plan for", currUser.name);
       }
     }
+
+    // for (let j = 0; j < toMapPlans.length; j++) {
+    //   try {
+    //     const newPlan = new userPlan({
+    //       business: currUser._id,
+    //       plan_id: toMapPlans[j].plan_id,
+    //       network: toMapPlans[j].network,
+    //       plan_type: body.plan_type,
+    //       price: toMapPlans[j].price,
+    //       volume: toMapPlans[j].volume,
+    //       unit: toMapPlans[j].unit,
+    //       validity: body.validity,
+    //     });
+    //     newPlan.save();
+    //   } catch (error) {
+    //     console.log(error);
+    //     console.log("failed to create plan for", currUser.name);
+    //   }
+    // }
 
     return currUser;
   } catch (error) {
