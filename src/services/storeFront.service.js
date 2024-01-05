@@ -428,53 +428,22 @@ exports.storeFrontUserPlanService = async () => {
 
     for (let i = 0; i < allUsers.length; i++) {
       const currUser = allUsers[i]._id;
-      // for (let j = 0; j < toMapPlans.length; j++) {
-      //   try {
-      //     const newPlan = new userPlan({
-      //       business: currUser._id,
-      //       plan_id: toMapPlans[j].plan_id,
-      //       network: toMapPlans[j].network,
-      //       plan_type: body.plan_type,
-      //       price: toMapPlans[j].price,
-      //       volume: toMapPlans[j].volume,
-      //       unit: toMapPlans[j].unit,
-      //       validity: body.validity,
-      //     });
-      //     newPlan.save();
-      //   } catch (error) {
-      //     console.log(error);
-      //     console.log("failed to create plan for", currUser.name);
-      //   }
-      // }
-
       for (let j = 0; j < toMapPlans.length; j++) {
-        // console.log("plan id", toMapPlans[j].plan_id);
-
         try {
-          const filter = {
+          const newPlan = new userPlan({
             business: currUser._id,
             plan_id: toMapPlans[j].plan_id,
-          };
-
-          const update = {
-            $set: {
-              business: currUser._id,
-              plan_id: toMapPlans[j].plan_id,
-              network: toMapPlans[j].network,
-              plan_type: body.plan_type,
-              price: toMapPlans[j].price,
-              volume: toMapPlans[j].volume,
-              unit: toMapPlans[j].unit,
-              validity: body.validity,
-            },
-          };
-
-          const options = { upsert: true };
-
-          await userPlan.updateOne(filter, update, options);
+            network: toMapPlans[j].network,
+            plan_type: body.plan_type,
+            price: toMapPlans[j].price,
+            volume: toMapPlans[j].volume,
+            unit: toMapPlans[j].unit,
+            validity: body.validity,
+          });
+          newPlan.save();
         } catch (error) {
           console.log(error);
-          console.log("Failed to create or update plan for", currUser.name);
+          console.log("failed to create plan for", currUser.name);
         }
       }
     }
@@ -507,54 +476,23 @@ exports.storeFrontUserPlanSingle = async (business) => {
     };
 
     for (let j = 0; j < toMapPlans.length; j++) {
-      // console.log("plan id", toMapPlans[j].plan_id);
-
       try {
-        const filter = {
+        const newPlan = new userPlan({
           business: currUser._id,
           plan_id: toMapPlans[j].plan_id,
-        };
-
-        const update = {
-          $set: {
-            business: currUser._id,
-            plan_id: toMapPlans[j].plan_id,
-            network: toMapPlans[j].network,
-            plan_type: body.plan_type,
-            price: toMapPlans[j].price,
-            volume: toMapPlans[j].volume,
-            unit: toMapPlans[j].unit,
-            validity: body.validity,
-          },
-        };
-
-        const options = { upsert: true };
-
-        await userPlan.updateOne(filter, update, options);
+          network: toMapPlans[j].network,
+          plan_type: body.plan_type,
+          price: toMapPlans[j].price,
+          volume: toMapPlans[j].volume,
+          unit: toMapPlans[j].unit,
+          validity: body.validity,
+        });
+        newPlan.save();
       } catch (error) {
         console.log(error);
-        console.log("Failed to create or update plan for", currUser.name);
+        console.log("failed to create plan for", currUser.name);
       }
     }
-
-    // for (let j = 0; j < toMapPlans.length; j++) {
-    //   try {
-    //     const newPlan = new userPlan({
-    //       business: currUser._id,
-    //       plan_id: toMapPlans[j].plan_id,
-    //       network: toMapPlans[j].network,
-    //       plan_type: body.plan_type,
-    //       price: toMapPlans[j].price,
-    //       volume: toMapPlans[j].volume,
-    //       unit: toMapPlans[j].unit,
-    //       validity: body.validity,
-    //     });
-    //     newPlan.save();
-    //   } catch (error) {
-    //     console.log(error);
-    //     console.log("failed to create plan for", currUser.name);
-    //   }
-    // }
 
     return currUser;
   } catch (error) {
