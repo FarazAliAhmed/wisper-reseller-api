@@ -448,7 +448,7 @@ exports.storeFrontUserPlanService = async () => {
       // }
 
       for (let j = 0; j < toMapPlans.length; j++) {
-        console.log("plan id", toMapPlans[j].plan_id);
+        // console.log("plan id", toMapPlans[j].plan_id);
 
         try {
           const filter = {
@@ -507,7 +507,7 @@ exports.storeFrontUserPlanSingle = async (business) => {
     };
 
     for (let j = 0; j < toMapPlans.length; j++) {
-      console.log("plan id", toMapPlans[j].plan_id);
+      // console.log("plan id", toMapPlans[j].plan_id);
 
       try {
         const filter = {
