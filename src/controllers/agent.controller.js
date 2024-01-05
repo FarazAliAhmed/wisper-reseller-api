@@ -60,7 +60,7 @@ const enableAgentAccount = async (req, res) => {
 
     return res
       .status(201)
-      .json({ message: "agent account disabled successfully" });
+      .json({ message: "agent account enabled successfully" });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: error.message });
@@ -198,4 +198,5 @@ module.exports = {
   getAllAgentsTrx,
   DealerGetHistory,
   disableAgentAccount,
+  enableAgentAccount,
 };
