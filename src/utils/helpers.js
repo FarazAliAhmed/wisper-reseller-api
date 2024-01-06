@@ -497,7 +497,7 @@ exports.initiate_data_transfer = async (
         const payload = {
           msisdn: requestPayload.mobile_number,
           planId: plan_id,
-          sponsorId: "almamgt",
+          sponsorId: `${process.env.GLO_SPONSOR_ID}`,
           quantity: 1,
           bucketId: bucketIDVar,
           ignoresms: false,
