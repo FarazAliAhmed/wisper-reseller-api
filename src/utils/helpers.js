@@ -499,7 +499,7 @@ exports.initiate_data_transfer = async (
           planId: plan_id,
           sponsorId: `${process.env.GLO_SPONSOR_ID}`,
           quantity: 1,
-          bucketId: 79,
+          bucketId: bucketIDVar,
           ignoresms: false,
           transId: Math.floor(
             Number(
@@ -510,8 +510,6 @@ exports.initiate_data_transfer = async (
             )
           ).toString(),
         };
-
-        console.log(payload);
 
         try {
           const respGlo = await axios.post(
