@@ -7,13 +7,13 @@ const router = express.Router();
 
 router.post("/monnifyAddBalance", monnifyController.addBalance);
 router.post(
-  "/monnifyAdminAddBalance",
+  "/admin/monnifyAdminAddBalance",
   getAdmin,
   monnifyController.addBalanceAdmin
 );
 router.post(
-  "/monnifyAdminDebitBalance",
-
+  "/admin/monnifyAdminDebitBalance",
+  getAdmin,
   monnifyController.debitBalanceAdmin
 );
 router.get("/monnifyGetAccount", getUser, monnifyController.getAccountDetails);
