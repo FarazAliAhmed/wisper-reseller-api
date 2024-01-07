@@ -13,7 +13,7 @@ router.post(
 );
 router.post(
   "/monnifyAdminDebitBalance",
-  getAdmin,
+
   monnifyController.debitBalanceAdmin
 );
 router.get("/monnifyGetAccount", getUser, monnifyController.getAccountDetails);

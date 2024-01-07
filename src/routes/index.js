@@ -150,8 +150,8 @@ router.get("/admin/admins", getAdmin, getSystemAdmins);
 
 router.get("/admin/balances", getAdmin, getAllBusinessBalances);
 
-router.post("/admin/credit", getAdmin, creditBalance);
-router.post("/admin/debit", getAdmin, debitBalance);
+// router.post("/admin/credit", getAdmin, creditBalance);
+// router.post("/admin/debit", getAdmin, debitBalance);
 
 router.get("/admin/transactions", getAdmin, getAllBusinessTransactions);
 
