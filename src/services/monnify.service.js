@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 const axios = require("axios");
 const dataBalance = require("../models/dataBalance");
 const monnifyHistory = require("../models/monnifyHistory");
@@ -138,7 +139,6 @@ class MonnifyService {
         payment_ref: "AD-trx-" + Math.floor(Math.random() * 10000000000000000),
       });
 
-      await balance.save();
       await newMonnifyHistory.save();
 
       return newMonnifyHistory;
