@@ -19,7 +19,7 @@ const router = express.Router();
 
 router.get("/getAgentsInfo/:id", getUser, getAgentInfo);
 
-router.put("/disbaleAgentAccount", getUser, disableAgentAccount);
+router.put("/disableAgentAccount", getUser, disableAgentAccount);
 
 router.put("/enableAgentAccount", getUser, enableAgentAccount);
 
