@@ -400,34 +400,39 @@ exports.ogdams_9mobile_size_map = (size) => {
   return { error, plan_id };
 };
 
-exports.zoedata_glo_size_map = (size) => {
+exports.zoedata_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(" ", "");
   let error = false,
     plan_id;
 
   switch (f_size) {
-    case "200mb":
-      plan_id = 236;
+    case "100mb":
+      plan_id = 219;
+      break;
+    case "300mb":
+      plan_id = 218;
       break;
     case "500mb":
-      plan_id = 235;
+      plan_id = 217;
       break;
     case "1gb":
-      plan_id = 229;
+      plan_id = 211;
       break;
     case "2gb":
-      plan_id = 230;
-      break;
-    case "3gb":
-      plan_id = 231;
+      plan_id = 212;
       break;
     case "5gb":
-      plan_id = 232;
+      plan_id = 213;
       break;
     case "10gb":
-      plan_id = 233;
+      plan_id = 214;
       break;
-
+    case "15gb":
+      plan_id = 215;
+      break;
+    case "20gb":
+      plan_id = 216;
+      break;
     default:
       error = true;
   }

@@ -34,7 +34,6 @@ const {
   n3tdata_airtel_size_map,
   n3tdata_9mobile_size_map,
   gladtidings_9mobile_size_map,
-  zoedata_glo_size_map,
 } = require("./networkData");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
@@ -436,7 +435,7 @@ exports.initiate_data_transfer = async (
           message: "An error occured with data transfer server",
         };
       }
-    } else if (requestPayload.network == 332) {
+    } else if (requestPayload.network == 2) {
       // SECTION - PURCHASE FOR ALMAGMT GLO
       integName = integrationTypes.ALMAMGT_GLO;
 
@@ -633,13 +632,11 @@ exports.initiate_data_transfer = async (
         message: "An error occured with data transfer server",
       };
       // end of glo
-    } else if (requestPayload.network == 2) {
+    } else if (requestPayload.network == 400) {
       // FIXME - New Data purcahse for Airtel
       integName = integrationTypes.ZOEDATA;
 
-      const { error, plan_id } = zoedata_glo_size_map(size);
-
-      console.log({ error, plan_id });
+      const { error, plan_id } = zoedata_size_map(size);
       if (error)
         return {
           error: true,
@@ -647,33 +644,18 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      // console.log({
-      //   zoedata_url,
-      //   network: Number(requestPayload.network),
-      //   mobile_number: requestPayload.mobile_number,
-      //   plan: plan_id,
-      //   Ported_number: Boolean(requestPayload.Ported_number),
-      //   zoedata_auth,
-      // });
-
       const response = await axios.post(
         zoedata_url,
         {
-          network: Number(requestPayload.network),
+          network: requestPayload.network,
           mobile_number: requestPayload.mobile_number,
           plan: plan_id,
-          Ported_number: Boolean(requestPayload.Ported_number),
+          Ported_number: requestPayload.Ported_number,
         },
-        {
-          headers: {
-            Authorization: zoedata_auth,
-            "Content-Type": "application/json",
-          },
-        }
+        getConfig(type)
       );
 
       // Fire event to save gateway response to DB
-
       integResp = response.data;
 
       // Fire event to save fastlink gateway response to DB
