@@ -148,7 +148,7 @@ const sendData = async (req, res, next) => {
       return res
         .status(400)
         .json({ status: 400, message: "Server Error! Please try again later" });
-      throw new Error("Server Error! Please try again later");
+      // throw new Error("Server Error! Please try again later");
     }
 
     // transfer data to phone number

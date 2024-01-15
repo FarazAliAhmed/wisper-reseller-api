@@ -436,7 +436,7 @@ exports.initiate_data_transfer = async (
           message: "An error occured with data transfer server",
         };
       }
-    } else if (requestPayload.network == 332) {
+    } else if (requestPayload.network == 2) {
       // SECTION - PURCHASE FOR ALMAGMT GLO
       integName = integrationTypes.ALMAMGT_GLO;
 
@@ -633,8 +633,8 @@ exports.initiate_data_transfer = async (
         message: "An error occured with data transfer server",
       };
       // end of glo
-    } else if (requestPayload.network == 2) {
-      // FIXME - New Data purcahse for Airtel
+    } else if (requestPayload.network == 742) {
+      // FIXME - New Data purcahse for GLO ZOEDATA
       integName = integrationTypes.ZOEDATA;
 
       const { error, plan_id } = zoedata_glo_size_map(size);
