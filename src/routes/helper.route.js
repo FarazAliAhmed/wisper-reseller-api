@@ -1,25 +1,35 @@
 const express = require("express");
-const {
-  changeSubdealerToAgents,
-  updateDefaultMegaPrice,
-  filterAndLeaveOneBalanceForAllAccounts,
-  filterAndLeaveOneZeroAcount,
-} = require("../controllers/helper.controller");
+
 const getAdmin = require("../utils/middleware/getAdmin");
+const helperController = require("../controllers/helper.controller");
 
 const router = express.Router();
 
-router.post("/changeToAgent", getAdmin, changeSubdealerToAgents);
-router.post("/updateMegaPrice", getAdmin, updateDefaultMegaPrice);
+router.post(
+  "/changeToAgent",
+  getAdmin,
+  helperController.changeSubdealerToAgents
+);
+// router.post(
+//   "/updateMegaPrice",
+//   getAdmin,
+//   helperController.updateDefaultMegaPrice
+// );
 router.post(
   "/filterAndLeaveOneBalanceForAllAccounts",
   getAdmin,
-  filterAndLeaveOneBalanceForAllAccounts
+  helperController.filterAndLeaveOneBalanceForAllAccounts
 );
 router.post(
   "/filterAndLeaveOneZeroAcount",
   getAdmin,
-  filterAndLeaveOneZeroAcount
+  helperController.filterAndLeaveOneZeroAcount
+);
+
+router.post(
+  "/calculateTotalVolume",
+
+  helperController.calculateTotalVolume
 );
 
 module.exports = router;

@@ -38,6 +38,7 @@ const {
   populateStartWalletUsage,
   populateWalletUsage,
 } = require("./controllers/analysis.controller");
+const { errorHandler } = require("./utils/middleware/customError.js");
 const corsOptions = {
   origin: "*",
 };
@@ -137,7 +138,8 @@ cron.schedule("59 23 * * *", async () => {
 
 // task2.start();
 
-app.use(errors());
+// app.use(errors());
+app.use(errorHandler);
 
 dbSetUp();
 app.listen(PORT, () => console.log(`Server running on PORT: ${PORT}`));
