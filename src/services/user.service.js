@@ -13,6 +13,7 @@ const userPlan = require("../models/userPlan");
 const { generateRandomPassword } = require("../utils/auth.helper");
 const { sendConfirmationEmail } = require("./auth.service");
 const uuid = require("uuid");
+const megaPrice = require("../models/megaPrice");
 
 const register = async (requestBody) => {
   console.log({ requestBody });
@@ -83,7 +84,7 @@ const register = async (requestBody) => {
           unit: toMapPlans[j].unit,
           validity: "30 days",
         });
-        newPlan.save();
+        await newPlan.save();
       } catch (error) {
         console.log(error);
         console.log("failed to create plan for", user.name);
@@ -142,7 +143,9 @@ const update = async (requestBody, username) => {
     { ...requestBody },
     { new: true }
   ).exec();
+
   if (!user) return { status: 404, message: "User not found." };
+
   return { user };
 };
 

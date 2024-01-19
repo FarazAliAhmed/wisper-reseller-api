@@ -79,7 +79,7 @@ const setBusinessAccountType = async (req, res) => {
 const validateAccountType = (fields) => {
   const schema = Joi.object({
     account_id: Joi.string().required(),
-    type: Joi.string().valid("lite", "mega"),
+    type: Joi.string().valid("lite", "mega", "agent", "glo_dealer"),
   });
   return schema.validate(fields);
 };
