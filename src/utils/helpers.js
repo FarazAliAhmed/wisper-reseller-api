@@ -257,11 +257,11 @@ exports.debit_account_balance = async (
   price,
   volume
 ) => {
-  console.log({ account_id, planDetails, type, price, volume });
+  // console.log({ account_id, planDetails, type, price, volume });
 
   const { amount, field } = getFieldAndAmount(type, planDetails, price, volume);
 
-  console.log({ amount, field });
+  // console.log({ amount, field });
 
   // let decrementBy = null;
   // let fieldType = null;
