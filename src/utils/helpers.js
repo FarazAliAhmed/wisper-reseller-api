@@ -197,7 +197,7 @@ const getFieldAndAmount = (type, planDetails, price, volume) => {
     }
   }
 
-  if (type === "mega") {
+  if (type != "lite") {
     let pType;
     let volume = convertStorageSize(size);
     if (network === "mtn") {
@@ -257,15 +257,28 @@ exports.debit_account_balance = async (
   price,
   volume
 ) => {
+  console.log({ account_id, planDetails, type, price, volume });
+
   const { amount, field } = getFieldAndAmount(type, planDetails, price, volume);
 
-  if (type == "lite") {
-    decrementBy = price;
-  } else {
-    decrementBy = amount;
-  }
+  console.log({ amount, field });
 
-  const updatedBalance = await debit(account_id, decrementBy, field);
+  // let decrementBy = null;
+  // let fieldType = null;
+
+  // if (type == "lite") {
+  //   decrementBy = planDetails.price;
+  //   fieldType = "wallet_balance";
+  // } else {
+  //   decrementBy = planDetails.volume;
+  //   fieldType = `mega_wallet.${planDetails.network}`;
+  // }
+
+  const updatedBalance = await debit(account_id, amount, field);
+
+  // console.log({ account_id, decrementBy, fieldType });
+
+  // const updatedBalance = await debit(account_id, decrementBy, fieldType);
 
   const balance = await dataBalance.findOne({ business: account_id });
   const oldUser_bal = balance.wallet_balance;
