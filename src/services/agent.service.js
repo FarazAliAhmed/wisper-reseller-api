@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 const { Account } = require("../models/account");
 var postmark = require("postmark");
 const bcrypt = require("bcrypt");
@@ -68,6 +69,7 @@ class AgentService {
         business_name: agent_business_name || null,
         email,
         username,
+        confirmed: true,
         dealer: business,
         mobile_number: phoneNumber,
         password,

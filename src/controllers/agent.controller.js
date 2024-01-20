@@ -15,7 +15,7 @@ const createAgentController = async (req, res) => {
       email,
       username,
       phoneNumber,
-      fullName,
+      agent_business_name: fullName,
     });
 
     res
@@ -31,12 +31,7 @@ const disableAgentAccount = async (req, res) => {
   try {
     const { agentId } = req.body; // Destructure the request body
 
-    console.log("AGENT", "create agent");
-
-    const subdealer = await agentService.disableAgentAccount(
-      req?.user?._id,
-      agentId
-    );
+    await agentService.disableAgentAccount(req?.user?._id, agentId);
 
     return res
       .status(201)
@@ -51,12 +46,7 @@ const enableAgentAccount = async (req, res) => {
   try {
     const { agentId } = req.body; // Destructure the request body
 
-    console.log("AGENT", "create agent");
-
-    const subdealer = await agentService.enableAgentAccount(
-      req?.user?._id,
-      agentId
-    );
+    await agentService.enableAgentAccount(req?.user?._id, agentId);
 
     return res
       .status(201)
