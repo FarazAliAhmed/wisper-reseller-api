@@ -28,6 +28,7 @@ const getAllPlans = async (req, res) => {
         "network",
         "plan_type",
         "volume",
+        "price",
         "unit",
         "validity",
         "size",

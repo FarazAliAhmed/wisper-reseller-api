@@ -213,7 +213,7 @@ router.get(
   getAdmin,
   disableBusinessAccount
 );
-router.post("/admin/account/type", setBusinessAccountType);
+router.post("/admin/account/type", getAdmin, setBusinessAccountType);
 
 // upgrade user from lite to mega and back to lite
 
