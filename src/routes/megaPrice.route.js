@@ -22,6 +22,8 @@ router.get(
   getUser,
   megaPriceController.getMegaPriceUser
 );
+router.get("/getOneMegaPrice", getAdmin, megaPriceController.getOneMegaPrice);
+
 router.get(
   "/getMegaHistory/:id",
   getUser,
@@ -34,7 +36,7 @@ router.get(
 );
 router.post(
   "/defaultPrice",
-
+  getAdmin,
   megaPriceController.createDefaultMegaPrice
 );
 

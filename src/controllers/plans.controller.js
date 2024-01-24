@@ -206,10 +206,22 @@ const updateSellingPlan = async (req, res) => {
     }
 
     // Update the plan fields as needed
-    planData.selling_price = Number(req.body.selling_price);
+    // planData.selling_price = Number(req.body.selling_price);
+    const newSellingPrice = Number(req.body.selling_price);
 
     // Save the user to persist the changes
-    await planData.save();
+    // await planData.save();
+
+    await planData.findOneAndUpdate(
+      {
+        business: req.params.userId,
+        plan_id: req.body.planId,
+      },
+      {
+        selling_price: newSellingPrice,
+      },
+      { new: true }
+    );
 
     res.json(planData);
   } catch (error) {

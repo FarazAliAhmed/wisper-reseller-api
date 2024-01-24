@@ -215,6 +215,21 @@ class MegaPriceController {
       res.status(500).json({ message: "Internal server error" });
     }
   }
+
+  async getOneMegaPrice(req, res) {
+    try {
+      const megaPriceData = await megaPrice.findOne({});
+
+      if (!megaPriceData) {
+        return res.status(404).json({ message: "MegaPrice not found" });
+      }
+
+      res.json(megaPriceData);
+    } catch (error) {
+      console.error("Error fetching MegaPrice:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
 }
 
 module.exports = new MegaPriceController();
