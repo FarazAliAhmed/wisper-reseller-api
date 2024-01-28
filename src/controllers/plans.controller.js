@@ -212,7 +212,7 @@ const updateSellingPlan = async (req, res) => {
     // Save the user to persist the changes
     // await planData.save();
 
-    await planData.findOneAndUpdate(
+    await userPlan.findOneAndUpdate(
       {
         business: req.params.userId,
         plan_id: req.body.planId,

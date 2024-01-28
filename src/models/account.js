@@ -137,8 +137,8 @@ accountSchema.methods.generateAuthToken = function () {
       bankAccounts: this.bankAccounts,
       confirmed: this.confirmed,
     },
-    config.get("jwtSecret"),
-    { expiresIn: "3hr" }
+    config.get("jwtSecret")
+    // { expiresIn: "3hr" }
   );
   return token;
 };
