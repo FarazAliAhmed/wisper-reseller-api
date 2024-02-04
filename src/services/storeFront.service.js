@@ -357,6 +357,8 @@ exports.storeFrontUserPlanService = async () => {
         const options = { upsert: true, new: true };
 
         await plan.findOneAndUpdate(filter, update, options);
+
+        console.log("created", toMapPlans[j].plan_type);
       } catch (error) {
         console.log(error);
         console.log(
@@ -463,6 +465,8 @@ exports.storeFrontUserPlanService = async () => {
           const options = { upsert: true, new: true };
 
           await userPlan.findOneAndUpdate(filter, update, options);
+
+          console.log("created", toMapPlans[j].plan_type);
         } catch (error) {
           console.log(error);
           console.log("failed to create or update plan for", currUser.name);
