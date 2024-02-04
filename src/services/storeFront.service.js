@@ -11,6 +11,7 @@ const { toMapPlans } = require("../utils/sFHelper");
 const Flutterwave = require("flutterwave-node-v3");
 const { calStoreFrontTax } = require("../utils/sFHelper");
 const { default: mongoose } = require("mongoose");
+const plan = require("../models/plan");
 const flw = new Flutterwave(
   process.env.FLW_PUBLIC_KEY,
   process.env.FLW_SECRET_KEY
@@ -323,38 +324,49 @@ exports.storeFrontAnalysisService = async (businessId) => {
 exports.storeFrontUserPlanService = async () => {
   // const notAllowedTypes = ["mega", "lite"];
 
+  const body = {
+    plan_id: 431,
+    network: "9mobile",
+    plan_type: "gifting",
+    price: 0,
+    volume: 25,
+    unit: "mb",
+    validity: "30 days",
+  };
+
   try {
+    // update the plans for api users
+    for (let j = 0; j < toMapPlans.length; j++) {
+      try {
+        const filter = {
+          plan_id: toMapPlans[j].plan_id,
+        };
+
+        const update = {
+          $set: {
+            plan_id: toMapPlans[j].plan_id,
+            network: toMapPlans[j].network,
+            plan_type: toMapPlans[j].plan_type,
+            price: toMapPlans[j].price,
+            volume: toMapPlans[j].volume,
+            unit: toMapPlans[j].unit,
+            validity: body.validity,
+          },
+        };
+
+        const options = { upsert: true, new: true };
+
+        await plan.findOneAndUpdate(filter, update, options);
+      } catch (error) {
+        console.log(error);
+        console.log(
+          "failed to create or update plan for",
+          toMapPlans[j].plan_type
+        );
+      }
+    }
+
     const allUsers = await Account.find();
-
-    // const body = {
-    //   plan_id: 431,
-    //   network: "glo",
-    //   plan_type: "gifting",
-    //   price: 0,
-    //   volume: 25,
-    //   unit: "mb",
-    //   validity: "30 days",
-    // };
-
-    // const toMap = [
-    //   { plan_id: 701, price: 50, volume: 200, unit: "mb" },
-    //   { plan_id: 702, price: 125, volume: 500, unit: "mb" },
-    //   { plan_id: 703, price: 250, volume: 1, unit: "gb" },
-    //   { plan_id: 704, price: 500, volume: 2, unit: "gb" },
-    //   { plan_id: 705, price: 750, volume: 3, unit: "gb" },
-    //   { plan_id: 706, price: 1250, volume: 5, unit: "gb" },
-    //   { plan_id: 707, price: 2500, volume: 10, unit: "gb" },
-    // ];
-
-    const body = {
-      plan_id: 431,
-      network: "9mobile",
-      plan_type: "gifting",
-      price: 0,
-      volume: 25,
-      unit: "mb",
-      validity: "30 days",
-    };
 
     // const toMap = [
     //   // glo
@@ -430,20 +442,30 @@ exports.storeFrontUserPlanService = async () => {
       const currUser = allUsers[i]._id;
       for (let j = 0; j < toMapPlans.length; j++) {
         try {
-          const newPlan = new userPlan({
-            business: currUser._id,
+          const filter = {
+            business: currUser,
             plan_id: toMapPlans[j].plan_id,
-            network: toMapPlans[j].network,
-            plan_type: body.plan_type,
-            price: toMapPlans[j].price,
-            volume: toMapPlans[j].volume,
-            unit: toMapPlans[j].unit,
-            validity: body.validity,
-          });
-          newPlan.save();
+          };
+
+          const update = {
+            $set: {
+              business: currUser,
+              plan_id: toMapPlans[j].plan_id,
+              network: toMapPlans[j].network,
+              plan_type: toMapPlans[j].plan_type,
+              price: toMapPlans[j].price,
+              volume: toMapPlans[j].volume,
+              unit: toMapPlans[j].unit,
+              validity: body.validity,
+            },
+          };
+
+          const options = { upsert: true, new: true };
+
+          await userPlan.findOneAndUpdate(filter, update, options);
         } catch (error) {
           console.log(error);
-          console.log("failed to create plan for", currUser.name);
+          console.log("failed to create or update plan for", currUser.name);
         }
       }
     }

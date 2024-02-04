@@ -35,8 +35,6 @@ const {
   n3tdata_9mobile_size_map,
   gladtidings_9mobile_size_map,
   zoedata_glo_size_map,
-  ayinlak_mtn_size_map,
-  ayinlak_airtel_size_map,
 } = require("./networkData");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
@@ -48,7 +46,6 @@ const {
   n3tdataApiUpdateBalance,
   almamgtApiUpdateBalance,
 } = require("./middleware/api.helper");
-const { ApiDataHelper } = require("./data/apiDataHelper");
 
 // Config variables
 const fastlink_url = "https://www.fastlink.com.ng/api/data/";
@@ -387,8 +384,11 @@ exports.initiate_data_transfer = async (
   try {
     if (requestPayload.network == 4) {
       // SECTION - AIRTEL PURCHASE
+      integName = integrationTypes.CLOUDSIMHOST;
 
-      const { error, plan_id } = ayinlak_airtel_size_map(size);
+      // console.log({ requestPayload });
+
+      const { error, plan_id } = n3tdata_airtel_size_map(size);
       if (error)
         return {
           error: true,
@@ -396,14 +396,59 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      return await ApiDataHelper.Ayinlak(
-        requestPayload.network,
-        plan_id,
-        requestPayload.mobile_number
+      const req_header = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${n3tdata_token}`,
+          Accept: "application/json",
+        },
+      };
+
+      const req_body = {
+        network: 2,
+        phone: requestPayload.mobile_number,
+        data_plan: plan_id,
+        bypass: false,
+        "request-id": ref,
+      };
+
+      // console.log({ req_body });
+
+      // console.log({ n3tdata_url });
+
+      const response = await axios.post(
+        `${n3tdata_url}/data`,
+        req_body,
+        req_header
       );
 
+      // await apiBalanceModel.findOneAndUpdate(
+      //   { api: "n3tdata", network: "airtel", type: "data" },
+      //   { $set: { volume: Number(response?.data?.newbal) } }
+      // );
+
       // update api balance
-      // await n3tdataApiUpdateBalance(response);
+      await n3tdataApiUpdateBalance(response);
+
+      console.log({ response: response.data });
+
+      if (
+        response.data &&
+        response.data.status &&
+        response.data.status === "success"
+      ) {
+        return {
+          error: false,
+          response: response.data,
+          message: response.data.response.message,
+        };
+      } else {
+        return {
+          error: true,
+          status: 400,
+          message: "An error occured with data transfer server",
+        };
+      }
     } else if (requestPayload.network == 2) {
       // SECTION - PURCHASE FOR ALMAGMT GLO
       integName = integrationTypes.ALMAMGT_GLO;
@@ -750,11 +795,11 @@ exports.initiate_data_transfer = async (
 
       // end of 9mobile integration
     }
-    // ANYINLAK MTN/ // // // // // // // // // //
+    // N3TDATA MTN/ // // // // // // // // // //
     else if (requestPayload.network == 1) {
-      // SECTION - PURCHASE FOR ANYINLAK MTN
+      // SECTION - PURCHASE FOR N3TDATA MTN
 
-      const { error, plan_id } = ayinlak_mtn_size_map(size);
+      const { error, plan_id } = n3tdata_mtn_size_map(size);
       if (error)
         return {
           error: true,
@@ -762,14 +807,68 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      return await ApiDataHelper.Ayinlak(
-        requestPayload.network,
-        plan_id,
-        requestPayload.mobile_number
+      const req_header = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${n3tdata_token}`,
+          Accept: "application/json",
+        },
+      };
+
+      const req_body = {
+        network: requestPayload.network,
+        phone: requestPayload.mobile_number,
+        data_plan: plan_id,
+        bypass: false,
+        "request-id": ref,
+      };
+
+      // console.log({ req_body });
+
+      // console.log({ n3tdata_url });
+
+      const response = await axios.post(
+        `${n3tdata_url}/data`,
+        req_body,
+        req_header
       );
 
+      // console.log(response);
+      console.log({ response: response.data });
+
       // update api balance
-      // await n3tdataApiUpdateBalance(response);
+      await n3tdataApiUpdateBalance(response);
+
+      if (
+        response.data &&
+        response.data.status &&
+        response.data.status === "success"
+      ) {
+        console.log("SUCCESS");
+        console.log({
+          error: false,
+          response: response.data,
+          message: response.data.message,
+        });
+
+        return {
+          error: false,
+          response: response.data,
+          message: response.data.message,
+        };
+      } else {
+        console.log("ERROROR");
+        console.log({
+          error: true,
+          status: 400,
+          message: "An error occured with data transfer server",
+        });
+        return {
+          error: true,
+          status: 400,
+          message: "An error occured with data transfer server",
+        };
+      }
     } else {
       // Data purchase for other network
       integName = integrationTypes.FASTLINK;

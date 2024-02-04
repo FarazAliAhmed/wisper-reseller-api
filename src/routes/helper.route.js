@@ -10,6 +10,11 @@ router.post(
   getAdmin,
   helperController.changeSubdealerToAgents
 );
+router.post(
+  "/verifyAllUsers",
+
+  helperController.verifyAllUsersEmail
+);
 // router.post(
 //   "/updateMegaPrice",
 //   getAdmin,

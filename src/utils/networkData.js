@@ -600,3 +600,117 @@ exports.eazymobile_glo_size_map = (size) => {
   }
   return { error, plan_id };
 };
+
+// AYINLAK
+
+// mtn ayinlak jara
+exports.ayinlak_mtn_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id;
+
+  switch (f_size) {
+    // sme plans
+    case "500mbe":
+      plan_id = 6;
+      break;
+    case "1gbe":
+      plan_id = 7;
+      break;
+    case "2gbe":
+      plan_id = 8;
+      break;
+    case "3gbe":
+      plan_id = 250;
+      break;
+    case "5gbe":
+      plan_id = 11;
+      break;
+    case "10gbe":
+      plan_id = 233;
+      break;
+
+    // gifting plans
+    case "500mb":
+      plan_id = 216;
+      break;
+    case "1gb":
+      plan_id = 217;
+      break;
+    case "2gb":
+      plan_id = 218;
+      break;
+    case "3gb":
+      plan_id = 219;
+      break;
+    case "5gb":
+      plan_id = 220;
+      break;
+    case "10gb":
+      plan_id = 221;
+      break;
+    case "15gb":
+      plan_id = 222;
+      break;
+    case "20gb":
+      plan_id = 223;
+      break;
+    case "40gb":
+      plan_id = 224;
+      break;
+    case "75gb":
+      plan_id = 225;
+      break;
+    case "100gb":
+      plan_id = 226;
+      break;
+
+    default:
+      error = true;
+  }
+
+  return { error, plan_id };
+};
+
+// mtn ayinlak jara
+exports.ayinlak_airtel_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id;
+
+  switch (f_size) {
+    // gifting plans
+    case "100mb":
+      plan_id = 240;
+      break;
+    case "300mb":
+      plan_id = 245;
+      break;
+    case "500mb":
+      plan_id = 244;
+      break;
+    case "1gb":
+      plan_id = 241;
+      break;
+    case "2gb":
+      plan_id = 242;
+      break;
+    case "5gb":
+      plan_id = 243;
+      break;
+    case "10gb":
+      plan_id = 251;
+      break;
+    case "15gb":
+      plan_id = 252;
+      break;
+    case "20gb":
+      plan_id = 253;
+      break;
+
+    default:
+      error = true;
+  }
+
+  return { error, plan_id };
+};

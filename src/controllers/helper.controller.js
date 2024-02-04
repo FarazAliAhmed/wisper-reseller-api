@@ -5,6 +5,31 @@ const megaPrice = require("../models/megaPrice");
 const helperService = require("../services/helperService");
 
 class HelperController {
+  async verifyAllUsersEmail(req, res) {
+    try {
+      const users = await Account.find();
+
+      for (let i = 0; i < users.length; i++) {
+        const user = users[i];
+        await Account.findOneAndUpdate(
+          { _id: user._id },
+          { confirmed: true },
+          { new: true }
+        );
+        console.log(user.username, "confirmed");
+      }
+
+      // console.log(users);
+
+      return res.json("user successfully updated");
+    } catch (error) {
+      console.error(error); // Use console.error instead of console.log for errors
+      return res.status(500).json({
+        error: error.message,
+      });
+    }
+  }
+
   async changeSubdealerToAgents(req, res) {
     try {
       const users = await Account.find({
