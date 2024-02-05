@@ -358,7 +358,7 @@ exports.storeFrontUserPlanService = async () => {
 
         await plan.findOneAndUpdate(filter, update, options);
 
-        console.log("created", toMapPlans[j].plan_type);
+        console.log("plans", j);
       } catch (error) {
         console.log(error);
         console.log(
@@ -466,7 +466,7 @@ exports.storeFrontUserPlanService = async () => {
 
           await userPlan.findOneAndUpdate(filter, update, options);
 
-          console.log("created", toMapPlans[j].plan_type);
+          console.log("user", i, j);
         } catch (error) {
           console.log(error);
           console.log("failed to create or update plan for", currUser.name);
