@@ -1,5 +1,4 @@
 const { Account } = require("../models/account");
-const { verifyFlutterWaveTransaction } = require("../utils/sFHelper");
 
 const {
   AirtimePurchaseService,
@@ -41,13 +40,7 @@ const purchaseAirtime = async (req, res) => {
 
   const reference = generateTransactionId();
 
-  // const map_network = { mtn: 1, glo: 3, airtel: 2, "9mobile": 4 };
-  const map_network = {
-    mtn: "mtn",
-    glo: "glo",
-    airtel: "airtel",
-    "9mobile": "etisalat",
-  };
+  const map_network = { mtn: 1, glo: 3, airtel: 2, "9mobile": 4 };
 
   // console.log(map_network[network]);
 
@@ -147,32 +140,10 @@ const purchaseAirtime = async (req, res) => {
 };
 
 function generateTransactionId() {
-  const lagosTimezone = "Africa/Lagos";
-
-  const currentDateTime = new Date().toLocaleString("en-US", {
-    timeZone: lagosTimezone,
-  });
-
-  const formattedDateTime = currentDateTime.replace(/\/|,|\s|:|PM|AM/g, "");
-
-  const alphanumericString = generateRandomString(4);
-
-  const requestId = formattedDateTime + alphanumericString;
-
-  return requestId;
-}
-
-function generateRandomString(length) {
-  const charset =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let result = "";
-
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * charset.length);
-    result += charset.charAt(randomIndex);
-  }
-
-  return result;
+  const timestamp = Date.now(); // Get the current timestamp in milliseconds
+  const random = Math.floor(Math.random() * 10000); // Generate a random number between 0 and 9999
+  const trxId = `Airtime_${timestamp}${random}`; // Concatenate timestamp and random number
+  return trxId;
 }
 
 module.exports = {

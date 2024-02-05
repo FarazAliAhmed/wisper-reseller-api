@@ -8,22 +8,24 @@ class AirtimePurchaseService {
     const reqConfig = {
       headers: {
         "Content-Type": "application/json",
-        "api-key": `${process.env.VTPASS_API_KEY}/topup`,
-        "secret-key": `${process.env.VTPASS_API_SECRET}/topup`,
+        Authorization: `Token ${process.env.N3TDATA_TOKEN}`,
         Accept: "application/json",
       },
     };
 
     const reqBody = {
-      serviceID: network,
+      network,
       phone,
+      plan_type,
       amount: volume,
-      request_id: requestId,
+      bypass: false,
+      volume,
+      "request-id": requestId,
     };
 
     try {
       const response = await axios.post(
-        `${process.env.VTPASS_URL}`,
+        `${process.env.N3TDATA_URL}/topup`,
         reqBody,
         reqConfig
       );
