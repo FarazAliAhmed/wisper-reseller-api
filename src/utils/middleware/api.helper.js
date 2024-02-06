@@ -14,6 +14,20 @@ const n3tdataApiUpdateBalance = async (response) => {
   }
 };
 
+const ayinlakApiUpdateBalance = async (response) => {
+  try {
+    await apiBalanceModel.findOneAndUpdate(
+      { api: "ayinlak" },
+      { $set: { volume: Number(response?.data?.balance_after) } }
+    );
+    return;
+  } catch (error) {
+    console.log(error);
+    console.log("error updating n3tdata balance");
+    return;
+  }
+};
+
 const almamgtApiUpdateBalance = async (bal) => {
   try {
     await apiBalanceModel.findOneAndUpdate(
@@ -31,4 +45,5 @@ const almamgtApiUpdateBalance = async (bal) => {
 module.exports = {
   n3tdataApiUpdateBalance,
   almamgtApiUpdateBalance,
+  ayinlakApiUpdateBalance,
 };

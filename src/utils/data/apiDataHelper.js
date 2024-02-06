@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { ayinlakApiUpdateBalance } = require("../middleware/api.helper");
 
 const ayinlak_token = process.env.AYINLAK_TOKEN;
 const ayinlak_url = process.env.AYINLAK_URL;
@@ -40,13 +41,15 @@ class ApiDataHelper {
       console.log({
         error: false,
         response: response.data,
-        message: response.data.message,
+        message: response.data.api_response,
       });
+
+      await ayinlakApiUpdateBalance(response);
 
       return {
         error: false,
         response: response.data,
-        message: response.data.message,
+        message: response.data.api_response,
       };
     } else {
       console.log("ERROROR");
