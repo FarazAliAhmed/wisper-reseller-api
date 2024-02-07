@@ -139,7 +139,7 @@ const purchaseAirtime = async (req, res) => {
       email,
       name
     );
-
+    //
     console.error("Error:", error);
     return res.status(500).json({
       error: true,
