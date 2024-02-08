@@ -120,6 +120,7 @@ const purchaseAirtime = async (req, res) => {
         ...{
           network_provider: network,
           volume: price,
+          status: "success",
           transaction_ref: savedTransaction._id,
           created_at: savedTransaction.createdAt,
           business_id: businessIdentity,
