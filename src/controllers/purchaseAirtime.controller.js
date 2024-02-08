@@ -117,8 +117,16 @@ const purchaseAirtime = async (req, res) => {
       return res.status(500).json({ error: true, message: response.message });
     } else {
       return res.json({
+        ...{
+          network_provider: network,
+          volume: price,
+          transaction_ref: savedTransaction._id,
+          created_at: savedTransaction.createdAt,
+          business_id: businessIdentity,
+        },
+        gateway_response: response.message,
         error: false,
-        message: response.message,
+        message: "Transaction Successful!",
         data: response.data,
       });
     }
