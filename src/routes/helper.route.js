@@ -37,4 +37,10 @@ router.post(
   helperController.calculateTotalVolume
 );
 
+router.delete(
+  "/deleteUser",
+
+  helperController.deleteUserFromWisper
+);
+
 module.exports = router;

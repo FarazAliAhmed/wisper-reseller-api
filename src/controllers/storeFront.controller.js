@@ -37,10 +37,7 @@ const flw = new Flutterwave(
 // Create a new store front
 exports.createStoreFront = async (req, res) => {
   try {
-    const accounts = await Account.find({
-      _id: { $exists: true },
-      username: { $exists: true },
-    });
+    const accounts = await Account.find({});
 
     for (const account of accounts) {
       const { _id, username, name } = account;

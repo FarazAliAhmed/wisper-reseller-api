@@ -3,6 +3,11 @@ const { Account } = require("../models/account");
 const dataBalance = require("../models/dataBalance");
 const megaPrice = require("../models/megaPrice");
 const helperService = require("../services/helperService");
+const transactionHistory = require("../models/transactionHistory");
+const userPlan = require("../models/userPlan");
+const monnifyHistory = require("../models/monnifyHistory");
+const storeFront = require("../models/storeFront");
+const storeFrontHistory = require("../models/storeFrontHistory");
 
 class HelperController {
   async verifyAllUsersEmail(req, res) {
@@ -189,15 +194,50 @@ class HelperController {
   }
 
   // delete user
-  // async deleteUserFromWisper(req, res){
-  //   try {
-  //     const {email} = req.body
+  async deleteUserFromWisper(req, res) {
+    try {
+      const { email } = req.body;
 
-  //     const user = Account.findOne({em})
-  //   } catch (error) {
+      const user = await Account.findOne({ email });
 
-  //   }
-  // }
+      console.log({ user });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      // Delete transactions associated with the user
+      await transactionHistory.deleteMany({ business_id: user._id });
+
+      // Delete user plans associated with the user
+      await userPlan.deleteMany({ business: user._id });
+
+      // Delete balances associated with the user
+      await dataBalance.deleteMany({ business: user._id });
+
+      // delete megaprice
+      await megaPrice.deleteMany({ business_id: user._id });
+
+      // delete monnify history
+      await monnifyHistory.deleteMany({ business_id: user._id });
+
+      // delete storefront history
+      await storeFrontHistory.deleteMany({ storeBusiness: user._id });
+
+      // Delete the storefront
+      await storeFront.deleteOne({ business_id: user._id });
+
+      // Delete the user
+      await Account.deleteOne({ _id: user._id });
+
+      return res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        message: `error deleting user`,
+      });
+    }
+  }
 }
 
 module.exports = new HelperController();
