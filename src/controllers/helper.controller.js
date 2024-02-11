@@ -187,6 +187,17 @@ class HelperController {
       next(error);
     }
   }
+
+  // delete user
+  // async deleteUserFromWisper(req, res){
+  //   try {
+  //     const {email} = req.body
+
+  //     const user = Account.findOne({em})
+  //   } catch (error) {
+
+  //   }
+  // }
 }
 
 module.exports = new HelperController();

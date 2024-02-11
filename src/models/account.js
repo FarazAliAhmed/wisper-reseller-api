@@ -138,8 +138,34 @@ accountSchema.methods.generateAuthToken = function () {
       confirmed: this.confirmed,
     },
     config.get("jwtSecret")
-    // { expiresIn: "3hr" }
   );
+  // const token = jwt.sign(
+  //   {
+  //     _id: this._id,
+  //     username: this.username,
+  //     email: this.email,
+  //     isAdmin: this.isAdmin,
+  //     type: this.type,
+  //     bankAccounts: this.bankAccounts,
+  //     confirmed: this.confirmed,
+  //   },
+  //   config.get("jwtSecret"),
+  //   { expiresIn: "30m" }
+  // );
+
+  // const refreshToken = jwt.sign(
+  //   {
+  //     _id: this._id,
+  //     username: this.username,
+  //     email: this.email,
+  //     isAdmin: this.isAdmin,
+  //     type: this.type,
+  //     bankAccounts: this.bankAccounts,
+  //     confirmed: this.confirmed,
+  //   },
+  //   config.get("jwtSecret"),
+  //   { expiresIn: "1d" }
+  // );
   return token;
 };
 
