@@ -6,7 +6,7 @@ class TermiiService {
     // sms example -- Hello there wellcome to our platform
 
     const data = {
-      to: `${phoneNumber}`,
+      to: `234${String(phoneNumber).slice(1)}`,
       sms: `${sms}`,
       api_key: `${process.env.TERMII_API_KEY}`,
       channel: "generic",
