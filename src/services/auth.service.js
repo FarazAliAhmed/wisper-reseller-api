@@ -142,7 +142,7 @@ async function sendConfirmationEmail(newUser) {
       }
     });
 
-    return true;
+    return confirmationLink;
   } catch (error) {
     console.error("Error sending confirmation email:", error);
   }

@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 const bcrypt = require("bcrypt");
 
 const { Account } = require("../models/account");
@@ -14,6 +15,7 @@ const { generateRandomPassword } = require("../utils/auth.helper");
 const { sendConfirmationEmail } = require("./auth.service");
 const uuid = require("uuid");
 const megaPrice = require("../models/megaPrice");
+const { TermiiService } = require("../services/termii.service");
 
 const register = async (requestBody) => {
   console.log({ requestBody });
@@ -105,7 +107,26 @@ const register = async (requestBody) => {
       { new: true }
     ).exec();
 
-    await sendConfirmationEmail(user);
+    const sentLink = await sendConfirmationEmail(user);
+
+    console.log({ sentLink });
+
+    try {
+      await TermiiService.sendNumberAPI(
+        user.mobile_number,
+        `Hello ${user.username},
+
+      Thank you for registering with WisperNg! To confirm your email address and complete your registration, please click on the following link: ${sentLink}
+      
+      If you didn't request this, please ignore this message.
+      
+      Best regards,
+      WisperNg
+      `
+      );
+    } catch (error) {
+      console.log(error);
+    }
 
     // const mailOptions = {
     //   from: "support@wisper.ng",
