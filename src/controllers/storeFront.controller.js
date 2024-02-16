@@ -469,14 +469,14 @@ exports.storeFrontNotice = async (req, res) => {
       return res.status(404).json({ error: "Store front not found" });
     }
 
-    const planUser = await userPlan.find({
-      business: business,
-      selling_price: { $nin: [null] },
-    });
+    // const planUser = await userPlan.find({
+    //   business: business,
+    //   selling_price: { $nin: [null] },
+    // });
 
     // console.log({ planUser });
 
-    if (storeProf.storeName && storeProf.storeUserName && planUser.length > 0) {
+    if (storeProf.storeName && storeProf.storeUserName) {
       return res.send(true);
     } else {
       return res.send(false);
