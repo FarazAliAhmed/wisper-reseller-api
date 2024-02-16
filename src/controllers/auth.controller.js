@@ -122,10 +122,14 @@ const confirmEmail = async (req, res) => {
 
     const { token, email } = req.body;
 
-    const user = Account.findOne({
+    // console.log({ token, email });
+
+    const user = await Account.findOne({
       email: email,
       confirmationToken: token,
     }).exec();
+
+    // console.log({ user });
 
     if (!user) {
       return res.status(404).send("Invalid confirmation token");
