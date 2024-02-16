@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const ejs = require("ejs");
 const { transporter } = require("../utils/email/transporter");
+const { TermiiService } = require("../services/termii.service");
 
 const auth = async (email, password) => {
   const user = await Account.findOne({ email }).exec();
@@ -106,7 +107,7 @@ async function changePassword(userId, oldPassword, newPassword) {
   await Account.updateOne({ _id: userId }, { password: newHashedPassword });
 }
 
-async function sendConfirmationEmail(newUser) {
+async function sendConfirmationEmail(newUser, tokenCode) {
   try {
     const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, {
       expiresIn: "1hr",
@@ -130,7 +131,8 @@ async function sendConfirmationEmail(newUser) {
       subject: "Wisper Account Confirmation Email",
       html: ejs.render(emailTemplate, {
         user: newUser,
-        token: confirmationLink,
+        // token: confirmationLink,
+        token: tokenCode,
       }),
     };
 
@@ -141,6 +143,21 @@ async function sendConfirmationEmail(newUser) {
         console.log("Email sent:", info.response);
       }
     });
+
+    try {
+      await TermiiService.sendNumberAPI(
+        newUser.mobile_number,
+        `Hello ${newUser.username}, 
+Thank you for registering with WisperNg! To complete your registration, please enter the following code on the platform: ${tokenCode}  
+
+If you didn't request this, please ignore this message.
+Best regards,
+WisperNg
+       `
+      );
+    } catch (error) {
+      console.log(error);
+    }
 
     return confirmationLink;
   } catch (error) {

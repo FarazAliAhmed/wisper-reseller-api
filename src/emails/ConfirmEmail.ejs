@@ -44,12 +44,13 @@
                   <p style="font-size: 16px; line-height: 26px; margin: 16px 0">
                     <h1
                       style="color: #125286; text-decoration: none"
-                      >Hi <%= user.name %> here is your wisper account your confirmation link
+                      >Hi <%= user.name %> here is your wisper account your confirmation code
                       <span>
                         <h3>
-                          <a href="<%= token %>" style="font-weight: bold; color: gray;">
-                          Confirmation Link
-                          </a>
+                          <!-- <a href="<%= token %>" style="font-weight: bold; color: gray;">
+                          Confirmation Code
+                          </a> -->
+                          <%= token %>
                         </h3>
                       </span>
                       

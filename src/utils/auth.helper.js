@@ -1,7 +1,6 @@
 // generate Short URL
 const generateRandomPassword = async (length) => {
-  const characters =
-    "ABCDEFGHIJKLMNOstuvwxyz0123456789PQRSTUVWXYZabcdefghijklmnopqr";
+  const characters = "0123456789";
   let result = "";
 
   for (let i = 0; i < length; i++) {

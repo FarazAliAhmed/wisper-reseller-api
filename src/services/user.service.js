@@ -15,7 +15,6 @@ const { generateRandomPassword } = require("../utils/auth.helper");
 const { sendConfirmationEmail } = require("./auth.service");
 const uuid = require("uuid");
 const megaPrice = require("../models/megaPrice");
-const { TermiiService } = require("../services/termii.service");
 
 const register = async (requestBody) => {
   console.log({ requestBody });
@@ -100,7 +99,7 @@ const register = async (requestBody) => {
       "utf-8"
     );
 
-    const token = await generateRandomPassword(6);
+    const token = await generateRandomPassword(5);
 
     await Account.findOneAndUpdate(
       { _id: user._id },
@@ -108,26 +107,9 @@ const register = async (requestBody) => {
       { new: true }
     ).exec();
 
-    const sentLink = await sendConfirmationEmail(user);
+    const sentLink = await sendConfirmationEmail(user, token);
 
     console.log({ sentLink });
-
-    try {
-      await TermiiService.sendNumberAPI(
-        user.mobile_number,
-        `Hello ${user.username},
-
-      Thank you for registering with WisperNg! To confirm your email address and complete your registration, please click on the following link: ${sentLink}
-      
-      If you didn't request this, please ignore this message.
-      
-      Best regards,
-      WisperNg
-      `
-      );
-    } catch (error) {
-      console.log(error);
-    }
 
     // const mailOptions = {
     //   from: "support@wisper.ng",

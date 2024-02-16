@@ -105,32 +105,40 @@ const resetPassword = async (req, res) => {
 
 const confirmEmail = async (req, res) => {
   try {
-    const { token } = req.body;
+    // const { token } = req.body;
 
-    const decodedToken = jwt.verify(token, `${process.env.JWT_SECRET}`);
-    const userId = decodedToken.userId;
+    // const decodedToken = jwt.verify(token, `${process.env.JWT_SECRET}`);
+    // const userId = decodedToken.userId;
 
-    console.log(decodedToken);
+    // console.log(decodedToken);
 
-    const user = await Account.findById(userId);
-    // const { token, email } = req.body;
+    // const user = await Account.findById(userId);
 
-    // const user = Account.findOne({
-    //   email: email,
-    //   confirmationToken: token,
-    // }).exec();
+    // await Account.findOneAndUpdate(
+    //   { _id: userId },
+    //   { confirmed: true },
+    //   { new: true }
+    // ).exec();
+
+    const { token, email } = req.body;
+
+    const user = Account.findOne({
+      email: email,
+      confirmationToken: token,
+    }).exec();
 
     if (!user) {
       return res.status(404).send("Invalid confirmation token");
     }
 
-    // await user.save();
-
     await Account.findOneAndUpdate(
-      { _id: userId },
-      { confirmed: true },
+      { email: email },
+      { confirmed: true, confirmationToken: null },
       { new: true }
     ).exec();
+
+    // await user.save();
+
     // Redirect the user to a success page or display a success message
     return res.json({ message: "Email confirmed successfully!" });
   } catch (error) {
@@ -152,7 +160,7 @@ const resendConfirmEmail = async (req, res) => {
       "utf-8"
     );
 
-    const token = await generateRandomPassword(6);
+    const token = await generateRandomPassword(5);
 
     const user = await Account.findOneAndUpdate(
       { email: email },
@@ -160,7 +168,7 @@ const resendConfirmEmail = async (req, res) => {
       { new: true }
     ).exec();
 
-    await authService.sendConfirmationEmail(user);
+    await authService.sendConfirmationEmail(user, token);
 
     // const mailOptions = {
     //   from: "support@wisper.ng",
