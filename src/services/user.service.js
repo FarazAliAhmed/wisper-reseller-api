@@ -85,6 +85,7 @@ const register = async (requestBody) => {
           volume: toMapPlans[j].volume,
           unit: toMapPlans[j].unit,
           validity: "30 days",
+          selling_price: Number(toMapPlans[j].price) + 50,
         });
         await newPlan.save();
       } catch (error) {
