@@ -459,6 +459,7 @@ exports.storeFrontUserPlanService = async () => {
               volume: toMapPlans[j].volume,
               unit: toMapPlans[j].unit,
               validity: body.validity,
+              selling_price: toMapPlans[j].price + 50,
             },
           };
 

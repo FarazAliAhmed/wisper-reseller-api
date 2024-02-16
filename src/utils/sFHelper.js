@@ -364,7 +364,7 @@ const toMapPlans = [
   // glo
   {
     plan_id: 701,
-    price: 50,
+    price: 45,
     volume: 200,
     unit: "mb",
     plan_type: "gifting",
@@ -372,7 +372,7 @@ const toMapPlans = [
   },
   {
     plan_id: 702,
-    price: 115,
+    price: 113,
     volume: 500,
     unit: "mb",
     plan_type: "gifting",
@@ -380,7 +380,7 @@ const toMapPlans = [
   },
   {
     plan_id: 703,
-    price: 230,
+    price: 226,
     volume: 1,
     unit: "gb",
     plan_type: "gifting",
@@ -388,7 +388,7 @@ const toMapPlans = [
   },
   {
     plan_id: 704,
-    price: 460,
+    price: 452,
     volume: 2,
     unit: "gb",
     plan_type: "gifting",
@@ -396,7 +396,7 @@ const toMapPlans = [
   },
   {
     plan_id: 705,
-    price: 690,
+    price: 678,
     volume: 3,
     unit: "gb",
     plan_type: "gifting",
@@ -404,7 +404,7 @@ const toMapPlans = [
   },
   {
     plan_id: 706,
-    price: 1150,
+    price: 1130,
     volume: 5,
     unit: "gb",
     plan_type: "gifting",
@@ -412,7 +412,7 @@ const toMapPlans = [
   },
   {
     plan_id: 707,
-    price: 2300,
+    price: 2260,
     volume: 10,
     unit: "gb",
     plan_type: "gifting",
@@ -422,7 +422,7 @@ const toMapPlans = [
   // mtn gifting
   {
     plan_id: 210,
-    price: 140,
+    price: 130,
     volume: 500,
     unit: "mb",
     plan_type: "gifting",
@@ -430,7 +430,7 @@ const toMapPlans = [
   },
   {
     plan_id: 52,
-    price: 280,
+    price: 260,
     volume: 1,
     unit: "gb",
     plan_type: "gifting",
@@ -438,7 +438,7 @@ const toMapPlans = [
   },
   {
     plan_id: 51,
-    price: 560,
+    price: 520,
     volume: 2,
     unit: "gb",
     plan_type: "gifting",
@@ -446,7 +446,7 @@ const toMapPlans = [
   },
   {
     plan_id: 43,
-    price: 840,
+    price: 780,
     volume: 3,
     unit: "gb",
     plan_type: "gifting",
@@ -454,7 +454,7 @@ const toMapPlans = [
   },
   {
     plan_id: 50,
-    price: 1400,
+    price: 1300,
     volume: 5,
     unit: "gb",
     plan_type: "gifting",
@@ -462,7 +462,7 @@ const toMapPlans = [
   },
   {
     plan_id: 206,
-    price: 2800,
+    price: 2600,
     volume: 10,
     unit: "gb",
     plan_type: "gifting",
@@ -470,7 +470,7 @@ const toMapPlans = [
   },
   {
     plan_id: 218,
-    price: 4200,
+    price: 3900,
     volume: 15,
     unit: "gb",
     plan_type: "gifting",
@@ -478,7 +478,7 @@ const toMapPlans = [
   },
   {
     plan_id: 208,
-    price: 5600,
+    price: 5200,
     volume: 20,
     unit: "gb",
     plan_type: "gifting",
@@ -486,7 +486,7 @@ const toMapPlans = [
   },
   {
     plan_id: 209,
-    price: 11200,
+    price: 10400,
     volume: 40,
     unit: "gb",
     plan_type: "gifting",
@@ -494,7 +494,7 @@ const toMapPlans = [
   },
   {
     plan_id: 219,
-    price: 21000,
+    price: 19500,
     volume: 75,
     unit: "gb",
     plan_type: "gifting",
@@ -502,7 +502,7 @@ const toMapPlans = [
   },
   {
     plan_id: 220,
-    price: 28000,
+    price: 26000,
     volume: 100,
     unit: "gb",
     plan_type: "gifting",
@@ -512,7 +512,7 @@ const toMapPlans = [
   // mtn sme
   {
     plan_id: 301,
-    price: 140,
+    price: 130,
     volume: 500,
     unit: "mb",
     plan_type: "sme",
@@ -520,7 +520,7 @@ const toMapPlans = [
   },
   {
     plan_id: 302,
-    price: 280,
+    price: 260,
     volume: 1,
     unit: "gb",
     plan_type: "sme",
@@ -528,7 +528,7 @@ const toMapPlans = [
   },
   {
     plan_id: 303,
-    price: 560,
+    price: 520,
     volume: 2,
     unit: "gb",
     plan_type: "sme",
@@ -536,7 +536,7 @@ const toMapPlans = [
   },
   {
     plan_id: 304,
-    price: 840,
+    price: 780,
     volume: 3,
     unit: "gb",
     plan_type: "sme",
@@ -544,7 +544,7 @@ const toMapPlans = [
   },
   {
     plan_id: 305,
-    price: 1400,
+    price: 1300,
     volume: 5,
     unit: "gb",
     plan_type: "sme",
@@ -552,7 +552,7 @@ const toMapPlans = [
   },
   {
     plan_id: 306,
-    price: 2800,
+    price: 2600,
     volume: 10,
     unit: "gb",
     plan_type: "sme",
@@ -562,7 +562,7 @@ const toMapPlans = [
   // airtel
   {
     plan_id: 257,
-    price: 25,
+    price: 21,
     volume: 100,
     unit: "mb",
     plan_type: "gifting",
@@ -570,7 +570,7 @@ const toMapPlans = [
   },
   {
     plan_id: 258,
-    price: 70,
+    price: 62,
     volume: 300,
     unit: "mb",
     plan_type: "gifting",
@@ -578,7 +578,7 @@ const toMapPlans = [
   },
   {
     plan_id: 253,
-    price: 115,
+    price: 102.5,
     volume: 500,
     unit: "mb",
     plan_type: "gifting",
@@ -586,7 +586,7 @@ const toMapPlans = [
   },
   {
     plan_id: 254,
-    price: 225,
+    price: 205,
     volume: 1,
     unit: "gb",
     plan_type: "gifting",
@@ -594,7 +594,7 @@ const toMapPlans = [
   },
   {
     plan_id: 255,
-    price: 450,
+    price: 410,
     volume: 2,
     unit: "gb",
     plan_type: "gifting",
@@ -602,7 +602,7 @@ const toMapPlans = [
   },
   {
     plan_id: 256,
-    price: 1125,
+    price: 1025,
     volume: 5,
     unit: "gb",
     plan_type: "gifting",
@@ -610,7 +610,7 @@ const toMapPlans = [
   },
   {
     plan_id: 261,
-    price: 2250,
+    price: 2050,
     volume: 10,
     unit: "gb",
     plan_type: "gifting",
@@ -618,7 +618,7 @@ const toMapPlans = [
   },
   {
     plan_id: 320,
-    price: 3375,
+    price: 3075,
     volume: 15,
     unit: "gb",
     plan_type: "gifting",
@@ -626,7 +626,7 @@ const toMapPlans = [
   },
   {
     plan_id: 262,
-    price: 4500,
+    price: 4100,
     volume: 20,
     unit: "gb",
     plan_type: "gifting",
@@ -644,7 +644,7 @@ const toMapPlans = [
   },
   {
     plan_id: 411,
-    price: 15,
+    price: 13,
     volume: 100,
     unit: "mb",
     plan_type: "gifting",
@@ -652,7 +652,7 @@ const toMapPlans = [
   },
   {
     plan_id: 413,
-    price: 75,
+    price: 65,
     volume: 500,
     unit: "mb",
     plan_type: "gifting",
@@ -660,7 +660,7 @@ const toMapPlans = [
   },
   {
     plan_id: 414,
-    price: 150,
+    price: 130,
     volume: 1,
     unit: "gb",
     plan_type: "gifting",
@@ -668,7 +668,7 @@ const toMapPlans = [
   },
   {
     plan_id: 421,
-    price: 225,
+    price: 195,
     volume: 1.5,
     unit: "gb",
     plan_type: "gifting",
@@ -676,7 +676,7 @@ const toMapPlans = [
   },
   {
     plan_id: 415,
-    price: 300,
+    price: 260,
     volume: 2,
     unit: "gb",
     plan_type: "gifting",
@@ -684,7 +684,7 @@ const toMapPlans = [
   },
   {
     plan_id: 420,
-    price: 450,
+    price: 390,
     volume: 3,
     unit: "gb",
     plan_type: "gifting",
@@ -692,7 +692,7 @@ const toMapPlans = [
   },
   {
     plan_id: 422,
-    price: 600,
+    price: 520,
     volume: 4,
     unit: "gb",
     plan_type: "gifting",
@@ -700,7 +700,7 @@ const toMapPlans = [
   },
   {
     plan_id: 424,
-    price: 675,
+    price: 585,
     volume: 4.5,
     unit: "gb",
     plan_type: "gifting",
@@ -708,7 +708,7 @@ const toMapPlans = [
   },
   {
     plan_id: 416,
-    price: 750,
+    price: 650,
     volume: 5,
     unit: "gb",
     plan_type: "gifting",
@@ -716,7 +716,7 @@ const toMapPlans = [
   },
   {
     plan_id: 417,
-    price: 1500,
+    price: 1300,
     volume: 10,
     unit: "gb",
     plan_type: "gifting",
@@ -724,7 +724,7 @@ const toMapPlans = [
   },
   {
     plan_id: 423,
-    price: 1650,
+    price: 1430,
     volume: 11,
     unit: "gb",
     plan_type: "gifting",
@@ -732,7 +732,7 @@ const toMapPlans = [
   },
   {
     plan_id: 418,
-    price: 2250,
+    price: 1950,
     volume: 15,
     unit: "gb",
     plan_type: "gifting",
@@ -740,7 +740,7 @@ const toMapPlans = [
   },
   {
     plan_id: 419,
-    price: 3000,
+    price: 2600,
     volume: 20,
     unit: "gb",
     plan_type: "gifting",
@@ -748,7 +748,7 @@ const toMapPlans = [
   },
   {
     plan_id: 426,
-    price: 6000,
+    price: 5200,
     volume: 40,
     unit: "gb",
     plan_type: "gifting",
@@ -756,7 +756,7 @@ const toMapPlans = [
   },
   {
     plan_id: 429,
-    price: 7500,
+    price: 6500,
     volume: 50,
     unit: "gb",
     plan_type: "gifting",
@@ -764,7 +764,7 @@ const toMapPlans = [
   },
   {
     plan_id: 428,
-    price: 11250,
+    price: 9360,
     volume: 75,
     unit: "gb",
     plan_type: "gifting",
@@ -772,7 +772,7 @@ const toMapPlans = [
   },
   {
     plan_id: 430,
-    price: 15000,
+    price: 13000,
     volume: 100,
     unit: "gb",
     plan_type: "gifting",
