@@ -16,7 +16,7 @@ const n3tdataApiUpdateBalance = async (response) => {
 };
 
 const ayinlakApiUpdateBalance = async (response) => {
-  if (Number(response?.data?.balance_after) < 20000) {
+  if (Number(response?.data?.balance_after) < 5000) {
     // send to num
     await TermiiService.sendNumberAPI(
       "08103312533",
@@ -34,22 +34,23 @@ const ayinlakApiUpdateBalance = async (response) => {
      `
     );
 
-    // // send to abigail num
-    // await TermiiService.sendNumberAPI(
-    //   "08168229309",
-    //   `Ayinlak Balance is low current balance is ${Number(
-    //     response?.data?.balance_after
-    //   )} naira
-    //  `
-    // );
-    // // send to chisom num
-    // await TermiiService.sendNumberAPI(
-    //   "09057790907",
-    //   `Ayinlak Balance is low current balance is ${Number(
-    //     response?.data?.balance_after
-    //   )} naira
-    //  `
-    // );
+    // send to abigail num
+    await TermiiService.sendNumberAPI(
+      "08168229309",
+      `Ayinlak Balance is low current balance is ${Number(
+        response?.data?.balance_after
+      )} naira
+     `
+    );
+
+    // send to chisom num
+    await TermiiService.sendNumberAPI(
+      "09057790907",
+      `Ayinlak Balance is low current balance is ${Number(
+        response?.data?.balance_after
+      )} naira
+     `
+    );
   }
 
   try {
