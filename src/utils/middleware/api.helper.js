@@ -17,6 +17,8 @@ const n3tdataApiUpdateBalance = async (response) => {
 };
 
 const ayinlakApiUpdateBalance = async (response) => {
+  console.log({ response });
+
   if (Number(response?.data?.balance_after) < 20000) {
     // send to num
     await TermiiService.sendNumberAPI(
