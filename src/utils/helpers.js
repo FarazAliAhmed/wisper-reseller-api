@@ -707,6 +707,8 @@ exports.initiate_data_transfer = async (
           req_body,
           req_header
         );
+
+        console.log({ gladtidings_Response: response });
       } catch (error) {
         // console.log({ error_response: error.response });
         console.log({ error_response_data: error.response.data.error });
