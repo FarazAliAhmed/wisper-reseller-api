@@ -137,7 +137,8 @@ accountSchema.methods.generateAuthToken = function () {
       bankAccounts: this.bankAccounts,
       confirmed: this.confirmed,
     },
-    config.get("jwtSecret")
+    config.get("jwtSecret"),
+    { expiresIn: "30m" }
   );
   // const token = jwt.sign(
   //   {

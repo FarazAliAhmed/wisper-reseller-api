@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 const { Account } = require("../models/account");
 const StoreFront = require("../models/storeFront");
 const storeFrontHistory = require("../models/storeFrontHistory");
@@ -40,15 +42,28 @@ exports.createStoreFront = async (req, res) => {
     const accounts = await Account.find({});
 
     for (const account of accounts) {
-      const { _id, username, name } = account;
+      const { _id, username, name, mobile_number } = account;
       try {
-        const storeFront = new StoreFront({
-          business_id: _id.toString(),
-          storeName: name,
-        });
+        // const storeFront = new StoreFront({
+        //   storeURL: `https://wisper-reseller-test.vercel.app/sf/${username}`,
+        //   business_id: _id.toString(),
+        //   storeName: name,
+        //   phoneNumber: mobile_number,
+        // });
+
+        await StoreFront.findOneAndUpdate(
+          { business_id: _id.toString() },
+          {
+            // storeURL: `${process.env.WEB_URL}sf/${username}`,
+            storeURL: `https://app.wisper.ng/sf/${username}`,
+            storeName: name,
+            phoneNumber: mobile_number,
+          },
+          { new: true, upsert: true }
+        );
 
         // Save the store front to the database
-        await storeFront.save();
+        // await storeFront.save();
         console.log(`Store front created for ${username}`);
       } catch (error) {
         console.log(error.message);
