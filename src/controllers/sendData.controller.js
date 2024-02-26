@@ -146,6 +146,7 @@ const sendData = async (req, res, next) => {
       );
 
       return res.status(400).json({
+        error: true,
         status: "failed",
         message: "Server Error! Please try again later",
       });
@@ -225,9 +226,11 @@ const sendData = async (req, res, next) => {
       planDetails.price
     );
 
-    return res
-      .status(500)
-      .json({ status: "failed", message: "Internal Server Error" });
+    return res.status(500).json({
+      error: true,
+      status: "failed",
+      message: "Internal Server Error",
+    });
   }
 };
 

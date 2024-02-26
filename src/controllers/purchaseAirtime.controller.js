@@ -69,9 +69,11 @@ const purchaseAirtime = async (req, res) => {
       name
     );
   } catch (error) {
-    return res
-      .status(500)
-      .json({ error: true, message: "Error adding transaction" });
+    return res.status(500).json({
+      error: true,
+      status: "failed",
+      message: "Error adding transaction",
+    });
   }
 
   let chargedPrice = null;
@@ -84,7 +86,13 @@ const purchaseAirtime = async (req, res) => {
 
   try {
     if (!savedTransaction) {
-      return res.status(500).json({ message: "No saved transaction" });
+      return res
+        .status(500)
+        .json({
+          error: true,
+          status: "failed",
+          message: "No saved transaction",
+        });
     }
     const response = await AirtimePurchaseService.topupAirtime(
       map_network[network],
@@ -114,7 +122,9 @@ const purchaseAirtime = async (req, res) => {
         email,
         name
       );
-      return res.status(500).json({ error: true, message: response.message });
+      return res
+        .status(500)
+        .json({ status: "failed", error: true, message: response.message });
     } else {
       return res.json({
         ...{
@@ -151,6 +161,7 @@ const purchaseAirtime = async (req, res) => {
     //
     console.error("Error:", error);
     return res.status(500).json({
+      status: "failed",
       error: true,
       message: "An error occurred during the airtime purchase.",
     });
