@@ -138,7 +138,7 @@ accountSchema.methods.generateAuthToken = function () {
       confirmed: this.confirmed,
     },
     config.get("jwtSecret")
-    { expiresIn: "3m" }
+    // { expiresIn: "3m" }
   );
   // const token = jwt.sign(
   //   {

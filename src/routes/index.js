@@ -126,6 +126,8 @@ router.get("/wallet", getUser, getWalletBalance);
 router.get("/transaction/:id", getUser, getTransaction);
 router.get("/transactions", getUser, getAllTransaction);
 
+router.get("/transactions/apiUser", parseKey, getAllTransaction);
+
 // Route for get data info start
 router.get("/trxSingle/:id", totalTrxSingle);
 router.get("/totalDataSingle/:id", totalDataSoldSingle);
