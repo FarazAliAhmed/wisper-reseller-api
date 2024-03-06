@@ -113,8 +113,6 @@ const credit = async (id, creditAmount, field) => {
  *    the debitAmount value is negative(-)
  */
 const debit = async (id, debitAmount, field) => {
-  // console.log({ id, debitAmount, field });
-
   const old_balance = await Balance.findOne({ business: id }).exec();
   const balance = await Balance.findOneAndUpdate(
     { business: id },

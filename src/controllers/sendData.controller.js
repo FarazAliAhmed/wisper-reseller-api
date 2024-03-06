@@ -39,7 +39,7 @@ const sendData = async (req, res, next) => {
     });
 
   //
-  const {
+  let {
     network,
     plan_id,
     phone_number,
@@ -88,6 +88,11 @@ const sendData = async (req, res, next) => {
     r_planId,
     r_ported
   );
+
+  // console.log({ planDetails });
+
+  price = price || planDetails.price;
+  volume = volume || planDetails.volume;
 
   // console.log("Request payloadsshsh", requestPayload)
 
