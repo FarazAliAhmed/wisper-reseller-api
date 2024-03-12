@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 const { Account } = require("../models/account");
 var postmark = require("postmark");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const dataBalance = require("../models/dataBalance");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const agentHistory = require("../models/agentHistory");

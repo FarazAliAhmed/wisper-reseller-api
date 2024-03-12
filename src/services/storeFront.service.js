@@ -5,7 +5,7 @@ const storeFront = require("../models/storeFront");
 const storeFrontHistory = require("../models/storeFrontHistory");
 const userPlan = require("../models/userPlan");
 const withdrawalHistory = require("../models/withdrawHistory.model");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { toMapPlans } = require("../utils/sFHelper");
 
 const Flutterwave = require("flutterwave-node-v3");

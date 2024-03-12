@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Account } = require("../models/account");
 const JWT_SECRET = `${process.env.JWT_SECRET}`;

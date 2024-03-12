@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const { Account } = require("../models/account");
 const monnifyService = require("./monnify.service");

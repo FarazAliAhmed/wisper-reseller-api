@@ -127,6 +127,7 @@ router.get("/transaction/:id", getUser, getTransaction);
 router.get("/transactions", getUser, getAllTransaction);
 
 router.get("/transactions/apiUser", parseKey, getAllTransaction);
+router.get("/transactions/apiUser/:id", parseKey, getTransaction);
 
 // Route for get data info start
 router.get("/trxSingle/:id", totalTrxSingle);

@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const { Account } = require("../models/account");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 var postmark = require("postmark");
 const fs = require("fs");
 const path = require("path");
