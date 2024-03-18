@@ -52,6 +52,8 @@ const {
   totalTrxAll,
   totalDataSoldSingle,
   totalDataSoldAll,
+  getAllApiTransaction,
+  getSingleApiTransaction,
 } = require("../controllers/transaction.controller");
 const {
   getPayment,
@@ -126,8 +128,12 @@ router.get("/wallet", getUser, getWalletBalance);
 router.get("/transaction/:id", getUser, getTransaction);
 router.get("/transactions", getUser, getAllTransaction);
 
-router.get("/transactions/apiUser", parseKey, getAllTransaction);
-router.get("/transactions/apiUser/:id", parseKey, getTransaction);
+router.get("/transactions/apiUser", parseKey, getAllApiTransaction);
+router.get(
+  "/transactions/apiUser/single/:id",
+  parseKey,
+  getSingleApiTransaction
+);
 
 // Route for get data info start
 router.get("/trxSingle/:id", totalTrxSingle);
