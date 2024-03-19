@@ -43,6 +43,8 @@ const corsOptions = {
   origin: "*",
 };
 
+app.set("server.timeout", 300000);
+
 app.use(cors(corsOptions));
 app.use(compression());
 app.use(express.json());
