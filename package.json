@@ -19,6 +19,7 @@
     "cloudinary": "^1.41.0",
     "compression": "^1.7.4",
     "config": "^3.3.7",
+    "connect-timeout": "^1.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "ejs": "^3.1.9",

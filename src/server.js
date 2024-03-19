@@ -1,6 +1,7 @@
 require("dotenv").config({ path: __dirname + "/../.env" });
 const express = require("express");
 const cors = require("cors");
+const timeout = require("connect-timeout");
 const compression = require("compression");
 const app = express();
 const config = require("config");
@@ -43,7 +44,7 @@ const corsOptions = {
   origin: "*",
 };
 
-app.set("server.timeout", 300000);
+app.use(timeout("10m"));
 
 app.use(cors(corsOptions));
 app.use(compression());
