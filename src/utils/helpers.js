@@ -869,7 +869,8 @@ exports.format_transaction_response = ({
       ? debitAccount.balance.mega_wallet
       : {
           cash_balance: debitAccount.balance.wallet_balance,
-          unit: debitAccount.balance.data_unit,
+          unit: "₦",
+          // unit: debitAccount.balance.data_unit,
         };
   responseObject.phone_number = validNumber.number;
   responseObject.status = "success";
