@@ -72,6 +72,10 @@ const transactionHistorySchema = new Schema(
       type: String,
       default: null,
     },
+    api_ref: {
+      type: String,
+      default: null,
+    },
     status: {
       type: String,
       maxlength: 20,

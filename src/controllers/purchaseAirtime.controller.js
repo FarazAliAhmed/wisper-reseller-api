@@ -86,13 +86,11 @@ const purchaseAirtime = async (req, res) => {
 
   try {
     if (!savedTransaction) {
-      return res
-        .status(500)
-        .json({
-          error: true,
-          status: "failed",
-          message: "No saved transaction",
-        });
+      return res.status(500).json({
+        error: true,
+        status: "failed",
+        message: "No saved transaction",
+      });
     }
     const response = await AirtimePurchaseService.topupAirtime(
       map_network[network],

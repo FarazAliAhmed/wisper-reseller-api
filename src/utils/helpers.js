@@ -883,11 +883,12 @@ exports.format_transaction_response = ({
   return responseObject;
 };
 
-exports.save_transaction = async (business_id, details, volume) => {
+exports.save_transaction = async (business_id, details, volume, api_ref) => {
   const newTransaction = details;
   // console.log({ newTransaction });
   newTransaction.business_id = business_id;
   newTransaction.lite_volume = volume;
+  newTransaction.api_ref = api_ref;
   try {
     const savedTransaction = await addTransaction(newTransaction);
     return {

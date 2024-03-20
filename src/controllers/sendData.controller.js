@@ -47,6 +47,7 @@ const sendData = async (req, res, next) => {
     business_id,
     price,
     volume,
+    api_ref,
   } = req.body;
 
   // Check for Callback url
@@ -140,7 +141,8 @@ const sendData = async (req, res, next) => {
     const savedTransaction = await save_transaction(
       _id,
       responseObject,
-      volume || ""
+      volume || "",
+      api_ref || null
     );
     if (savedTransaction.error) {
       await revert_debit_account_balance(
