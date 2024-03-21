@@ -672,7 +672,7 @@ exports.ayinlak_mtn_size_map = (size) => {
   return { error, plan_id };
 };
 
-// mtn ayinlak jara
+// airtel ayinlak jara
 exports.ayinlak_airtel_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(" ", "");
   let error = false,

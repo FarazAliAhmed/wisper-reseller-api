@@ -84,6 +84,27 @@ const getOneApi = async (transaction_ref) => {
   };
 };
 
+const getOneApiRef = async (api_ref) => {
+  const transaction = await Transaction.findOne({ api_ref })
+    .select("-_id -admin_ref -gloB -business_id -created_at")
+    .exec();
+
+  if (transaction) {
+    const { new_balance, ...rest } = transaction.toObject();
+
+    return {
+      transaction: {
+        cashbalance: new_balance.cash_balance, // Access cash_balance directly
+        ...rest,
+      },
+    };
+  }
+  return {
+    status: 400,
+    message: `Unable to find transaction with Ref code: ${transaction_ref}`,
+  };
+};
+
 const create = async (body) => {
   let newTransaction = new Transaction(body);
   try {
@@ -121,6 +142,7 @@ module.exports = {
   getAll,
   getAllApi,
   getOneApi,
+  getOneApiRef,
   getOne,
   create,
   update,

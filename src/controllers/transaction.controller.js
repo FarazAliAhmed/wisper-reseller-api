@@ -8,6 +8,7 @@ const {
   create,
   getAllApi,
   getOneApi,
+  getOneApiRef,
 } = require("../services/transaction.service");
 const Transaction = require("../models/transactionHistory");
 
@@ -40,6 +41,14 @@ const getSingleApiTransaction = async (req, res) => {
   // used by both admin and user to get single transaction
   const transaction_ref = req.params.id;
   const resp = await getOneApi(transaction_ref);
+  if (resp.transaction) return res.status(200).json(resp.transaction);
+  return res.status(resp.status).json(resp);
+};
+
+const getSingleApiRefTransaction = async (req, res) => {
+  // used by both admin and user to get single transaction
+  const api_ref = req.params.id;
+  const resp = await getOneApiRef(api_ref);
   if (resp.transaction) return res.status(200).json(resp.transaction);
   return res.status(resp.status).json(resp);
 };
@@ -203,4 +212,5 @@ module.exports = {
   totalTrxSingle,
   getAllApiTransaction,
   getSingleApiTransaction,
+  getSingleApiRefTransaction,
 };

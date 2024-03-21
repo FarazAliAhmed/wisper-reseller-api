@@ -54,6 +54,7 @@ const {
   totalDataSoldAll,
   getAllApiTransaction,
   getSingleApiTransaction,
+  getSingleApiRefTransaction,
 } = require("../controllers/transaction.controller");
 const {
   getPayment,
@@ -133,6 +134,11 @@ router.get(
   "/transactions/apiUser/single/:id",
   parseKey,
   getSingleApiTransaction
+);
+router.get(
+  "/transactions/apiUser/Ref/:id",
+  parseKey,
+  getSingleApiRefTransaction
 );
 
 // Route for get data info start
