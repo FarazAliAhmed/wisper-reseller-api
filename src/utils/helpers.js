@@ -764,11 +764,15 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      return await ApiDataHelper.Ayinlak(
+      const response = await ApiDataHelper.Ayinlak(
         requestPayload.network,
         plan_id,
         requestPayload.mobile_number
       );
+
+      console.log({ response });
+
+      return response;
 
       // update api balance
       // await n3tdataApiUpdateBalance(response);

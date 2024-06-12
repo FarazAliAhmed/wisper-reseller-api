@@ -52,6 +52,7 @@ class ApiDataHelper {
         message: response.data.api_response,
       };
     } else {
+      console.log({ error });
       console.log("ERROROR");
       console.log({
         error: true,
