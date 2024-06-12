@@ -28,7 +28,7 @@ class ApiDataHelper {
       req_header
     );
 
-    console.log({ response });
+    // console.log({ response });
 
     // return response;
 

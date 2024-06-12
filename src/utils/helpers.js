@@ -385,6 +385,8 @@ exports.initiate_data_transfer = async (
   let integResp;
   let integName;
   try {
+    console.log({ requestPayload, size, type });
+
     if (requestPayload.network == 4) {
       // SECTION - AIRTEL PURCHASE
 
@@ -812,7 +814,7 @@ exports.initiate_data_transfer = async (
       }
     }
   } catch (e) {
-    console.log("ERROOORR MESSAGE::", e.message);
+    console.log("ERROOORR MESSAGE::", e);
     // console.log({ error: e });
     integResp =
       e?.response?.data || e?.message || "Data volume transafer failed";
