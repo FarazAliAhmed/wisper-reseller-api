@@ -320,7 +320,7 @@ class MonnifyService {
 
       return response.data;
     } catch (error) {
-      console.error(error);
+      console.error(error?.response);
       throw new Error("An error occurred In monnify");
     }
   }
