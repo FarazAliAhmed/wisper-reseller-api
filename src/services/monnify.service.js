@@ -16,6 +16,8 @@ class MonnifyService {
       if (wispa_mobile) {
         axios.post("https://wispa.up.railway.app/api/monnify/webhook", addData);
 
+        console.log({ message: "forwarded to wispa_mobile api" });
+
         return { message: "forwarded to wispa_mobile api" };
       }
 
