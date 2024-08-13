@@ -7,6 +7,18 @@ const { Account } = require("../models/account");
 class MonnifyService {
   async addBalanceByBusinessId(addData) {
     try {
+      const wispa_mobile = await this.endsWithWispa(
+        addData.eventData.product.reference
+      );
+
+      console.log({ wispa_mobile });
+
+      if (wispa_mobile) {
+        axios.post("https://wispa.up.railway.app/api/monnify/webhook", addData);
+
+        return { message: "forwarded to wispa_mobile api" };
+      }
+
       // Check if the reference exists in monnifyHistory
       const existingReference = await monnifyHistory.findOne({
         payment_ref: addData.eventData.transactionReference,
@@ -309,6 +321,11 @@ class MonnifyService {
       console.error(error);
       throw new Error("An error occurred In monnify");
     }
+  }
+
+  // for wispa
+  async endsWithWispa(input) {
+    return input.endsWith("_wispa");
   }
 }
 
