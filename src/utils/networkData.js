@@ -714,3 +714,40 @@ exports.ayinlak_airtel_size_map = (size) => {
 
   return { error, plan_id };
 };
+
+// glo n3tdata
+exports.n3tdata_glo_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id;
+
+  switch (f_size) {
+    // gifting plans
+    case "200mb":
+      plan_id = 37;
+      break;
+    case "500mb":
+      plan_id = 38;
+      break;
+    case "1gb":
+      plan_id = 39;
+      break;
+    case "2gb":
+      plan_id = 40;
+      break;
+    case "3gb":
+      plan_id = 41;
+      break;
+    case "5gb":
+      plan_id = 42;
+      break;
+    case "10gb":
+      plan_id = 43;
+      break;
+
+    default:
+      error = true;
+  }
+
+  return { error, plan_id };
+};

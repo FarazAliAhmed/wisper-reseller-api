@@ -4,6 +4,9 @@ const { ayinlakApiUpdateBalance } = require("../middleware/api.helper");
 const ayinlak_token = process.env.AYINLAK_TOKEN;
 const ayinlak_url = process.env.AYINLAK_URL;
 
+const n3tdata_token = process.env.N3TDATA_TOKEN;
+const n3tdata_url = process.env.N3TDATA_URL;
+
 class ApiDataHelper {
   static async Ayinlak(network, plan_id, phone) {
     const req_header = {
@@ -53,6 +56,56 @@ class ApiDataHelper {
       };
     } else {
       console.log({ error });
+      console.log("ERROROR");
+      console.log({
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      });
+      return {
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      };
+    }
+  }
+
+  static async N3tdata(network, plan_id, phone, transaction_ref) {
+    console.log({ network, plan_id, phone, transaction_ref });
+
+    try {
+      const req_header = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${n3tdata_token}`,
+        },
+      };
+
+      const response = await axios.post(
+        `${n3tdata_url}/data`,
+        {
+          network: network,
+          phone: phone,
+          data_plan: plan_id,
+          "request-id": transaction_ref,
+          bypass: false,
+        },
+        req_header
+      );
+
+      // console.log({ req_header, req_body, ayinlak_url });
+
+      console.log({ response: response?.data });
+
+      // return response;
+
+      return {
+        error: false,
+        response: response.data,
+        message: response.data.message,
+      };
+    } catch (error) {
+      console.log({ error: error?.response });
       console.log("ERROROR");
       console.log({
         error: true,

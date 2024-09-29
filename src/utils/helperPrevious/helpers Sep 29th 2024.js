@@ -37,7 +37,6 @@ const {
   zoedata_glo_size_map,
   ayinlak_mtn_size_map,
   ayinlak_airtel_size_map,
-  n3tdata_glo_size_map,
 } = require("./networkData");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
@@ -408,7 +407,10 @@ exports.initiate_data_transfer = async (
       // update api balance
       // await n3tdataApiUpdateBalance(response);
     } else if (requestPayload.network == 2) {
-      const { error, plan_id } = n3tdata_glo_size_map(size);
+      // SECTION - PURCHASE FOR ALMAGMT GLO
+      integName = integrationTypes.ALMAMGT_GLO;
+
+      const { error, plan_id } = cloudsimhost_glo_size_map(size);
       if (error)
         return {
           error: true,
@@ -416,209 +418,191 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      return await ApiDataHelper.N3tdata(
-        3,
-        plan_id,
-        requestPayload.mobile_number,
-        ref
-      );
+      const req_header = {
+        headers: {
+          "x-api-key": almamgt_key,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      };
 
-      // SECTION - PURCHASE FOR ALMAGMT GLO
-      // integName = integrationTypes.ALMAMGT_GLO;
+      const [url, key_algmat] = [
+        process.env.GLO_BASE_URL,
+        process.env.GLO_API_KEY,
+      ];
 
-      // const { error, plan_id } = cloudsimhost_glo_size_map(size);
-      // if (error)
-      //   return {
-      //     error: true,
-      //     status: 400,
-      //     message: "This data plan is currently not available",
-      //   };
+      const config = {
+        headers: {
+          "x-api-key": key_algmat,
+          "Content-Type": "application/json",
+        },
+      };
 
-      // const req_header = {
-      //   headers: {
-      //     "x-api-key": almamgt_key,
-      //     "Content-Type": "application/json",
-      //     Accept: "application/json",
-      //   },
-      // };
+      const randomMax = BigInt("99849294974397393924");
+      const randomMin = BigInt("10849294974397393924");
+      const unit = BigInt(10);
 
-      // const [url, key_algmat] = [
-      //   process.env.GLO_BASE_URL,
-      //   process.env.GLO_API_KEY,
-      // ];
+      let bucketIDVar;
+      let attempt = 0;
 
-      // const config = {
-      //   headers: {
-      //     "x-api-key": key_algmat,
-      //     "Content-Type": "application/json",
-      //   },
-      // };
+      do {
+        await axios
+          .post("https://wisper-reseller.herokuapp.com/api/admin/getBucketOne")
+          .then((res) => {
+            bucketIDVar = res.data;
+            console.log({ res: res.data });
+          });
 
-      // const randomMax = BigInt("99849294974397393924");
-      // const randomMin = BigInt("10849294974397393924");
-      // const unit = BigInt(10);
+        if (bucketIDVar) {
+          console.log("Bucket ID:", bucketIDVar);
+        } else {
+          console.log("Failed to retrieve bucketIDVar");
+          console.log("Bucket ID:", bucketIDVar);
+          return {
+            error: true,
+            status: 400,
+            message: "An error occured with data transfer server",
+          };
+        }
 
-      // let bucketIDVar;
-      // let attempt = 0;
+        const payload = {
+          msisdn: requestPayload.mobile_number,
+          planId: plan_id,
+          sponsorId: `${process.env.GLO_SPONSOR_ID}`,
+          quantity: 1,
+          bucketId: bucketIDVar,
+          ignoresms: false,
+          transId: Math.floor(
+            Number(
+              (BigInt(Math.floor(Math.random() * 10)) *
+                (randomMax - randomMin)) /
+                unit +
+                randomMin
+            )
+          ).toString(),
+        };
 
-      // do {
-      //   await axios
-      //     .post("https://wisper-reseller.herokuapp.com/api/admin/getBucketOne")
-      //     .then((res) => {
-      //       bucketIDVar = res.data;
-      //       console.log({ res: res.data });
-      //     });
+        try {
+          const respGlo = await axios.post(
+            url,
+            JSON.stringify(payload),
+            config
+          );
 
-      //   if (bucketIDVar) {
-      //     console.log("Bucket ID:", bucketIDVar);
-      //   } else {
-      //     console.log("Failed to retrieve bucketIDVar");
-      //     console.log("Bucket ID:", bucketIDVar);
-      //     return {
-      //       error: true,
-      //       status: 400,
-      //       message: "An error occured with data transfer server",
-      //     };
-      //   }
+          console.log("resp GLO RESPONSE", respGlo.data);
 
-      //   const payload = {
-      //     msisdn: requestPayload.mobile_number,
-      //     planId: plan_id,
-      //     sponsorId: `${process.env.GLO_SPONSOR_ID}`,
-      //     quantity: 1,
-      //     bucketId: bucketIDVar,
-      //     ignoresms: false,
-      //     transId: Math.floor(
-      //       Number(
-      //         (BigInt(Math.floor(Math.random() * 10)) *
-      //           (randomMax - randomMin)) /
-      //           unit +
-      //           randomMin
-      //       )
-      //     ).toString(),
-      //   };
+          if (respGlo.data.status === "ok") {
+            console.log("success", payload.bucketId);
 
-      //   try {
-      //     const respGlo = await axios.post(
-      //       url,
-      //       JSON.stringify(payload),
-      //       config
-      //     );
+            integResp = respGlo.data;
+            respGlo.data["actual_response"] = respGlo.data.message;
 
-      //     console.log("resp GLO RESPONSE", respGlo.data);
+            respGlo.data.message = gatewayResponse(
+              plan_id,
+              requestPayload.mobile_number
+            );
 
-      //     if (respGlo.data.status === "ok") {
-      //       console.log("success", payload.bucketId);
+            // console.log("INTEGRESP", integResp);
 
-      //       integResp = respGlo.data;
-      //       respGlo.data["actual_response"] = respGlo.data.message;
+            // const message = integResp["message"];
+            const message = gatewayResponse(
+              plan_id,
+              requestPayload.mobile_number
+            );
 
-      //       respGlo.data.message = gatewayResponse(
-      //         plan_id,
-      //         requestPayload.mobile_number
-      //       );
+            try {
+              // Update glo_almamgt for admin users
+              const updateResult = await Account.updateMany(
+                { isAdmin: true },
+                { glo_almamgt: integResp["balance"] }
+              );
 
-      //       // console.log("INTEGRESP", integResp);
+              // console.log(` admin users updated: ${updateResult}`);
+            } catch (error) {
+              // console.log(error);
+            }
 
-      //       // const message = integResp["message"];
-      //       const message = gatewayResponse(
-      //         plan_id,
-      //         requestPayload.mobile_number
-      //       );
+            await apiBalanceModel.findOneAndUpdate(
+              { api: "almamgt" },
+              { $set: { volume: Number(integResp["balance"]) } }
+            );
 
-      //       try {
-      //         // Update glo_almamgt for admin users
-      //         const updateResult = await Account.updateMany(
-      //           { isAdmin: true },
-      //           { glo_almamgt: integResp["balance"] }
-      //         );
+            console.log({ error: false, message });
+            return { error: false, response: respGlo, message };
+          }
+        } catch (error) {
+          console.log("error NOT IIF", error);
 
-      //         // console.log(` admin users updated: ${updateResult}`);
-      //       } catch (error) {
-      //         // console.log(error);
-      //       }
+          // if (
+          //   error.response.data.message.toLowerCase() ==
+          //   "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
+          // ) {
+          //   console.log("error IFFF", error.response.data.message);
 
-      //       await apiBalanceModel.findOneAndUpdate(
-      //         { api: "almamgt" },
-      //         { $set: { volume: Number(integResp["balance"]) } }
-      //       );
+          //   await axios
+          //     .post(
+          //       "https://wisper-reseller.herokuapp.com/api/admin/bucketIDSwitchOne"
+          //     )
+          //     .then((res) => {
+          //       bucketIDVar = undefined;
+          //       console.log("Attempt", { res: res.data });
+          //     })
+          //     .catch((err) => {
+          //       console.log("error switching");
+          //     });
+          // }
 
-      //       console.log({ error: false, message });
-      //       return { error: false, response: respGlo, message };
-      //     }
-      //   } catch (error) {
-      //     console.log("error NOT IIF", error);
+          if (error) {
+            if (error.response) {
+              // Check if error.response.data is defined
+              if (error.response.data) {
+                console.log("Error message:", error.response.data.message);
 
-      //     // if (
-      //     //   error.response.data.message.toLowerCase() ==
-      //     //   "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
-      //     // ) {
-      //     //   console.log("error IFFF", error.response.data.message);
+                if (
+                  error.response.data.message.toLowerCase() ==
+                  "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
+                ) {
+                  console.log("error IFFF", error.response.data.message);
 
-      //     //   await axios
-      //     //     .post(
-      //     //       "https://wisper-reseller.herokuapp.com/api/admin/bucketIDSwitchOne"
-      //     //     )
-      //     //     .then((res) => {
-      //     //       bucketIDVar = undefined;
-      //     //       console.log("Attempt", { res: res.data });
-      //     //     })
-      //     //     .catch((err) => {
-      //     //       console.log("error switching");
-      //     //     });
-      //     // }
+                  await axios
+                    .post(
+                      "https://wisper-reseller.herokuapp.com/api/admin/bucketIDSwitchOne"
+                    )
+                    .then((res) => {
+                      bucketIDVar = undefined;
+                      console.log("Attempt", { res: res.data });
+                    })
+                    .catch((err) => {
+                      console.log("error switching");
+                    });
+                }
+              } else {
+                console.log("error.response.data is undefined");
+                return {
+                  error: true,
+                  status: 400,
+                  message: "An error occured with data transfer server",
+                };
+              }
+            }
+          }
 
-      //     if (error) {
-      //       if (error.response) {
-      //         // Check if error.response.data is defined
-      //         if (error.response.data) {
-      //           console.log("Error message:", error.response.data.message);
+          attempt++;
+        }
+      } while (attempt < 3 && !bucketIDVar);
 
-      //           if (
-      //             error.response.data.message.toLowerCase() ==
-      //             "You do not have sufficient volume in bucket. To complete this transaction, please contact Globacom manager.".toLowerCase()
-      //           ) {
-      //             console.log("error IFFF", error.response.data.message);
+      console.log({
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      });
 
-      //             await axios
-      //               .post(
-      //                 "https://wisper-reseller.herokuapp.com/api/admin/bucketIDSwitchOne"
-      //               )
-      //               .then((res) => {
-      //                 bucketIDVar = undefined;
-      //                 console.log("Attempt", { res: res.data });
-      //               })
-      //               .catch((err) => {
-      //                 console.log("error switching");
-      //               });
-      //           }
-      //         } else {
-      //           console.log("error.response.data is undefined");
-      //           return {
-      //             error: true,
-      //             status: 400,
-      //             message: "An error occured with data transfer server",
-      //           };
-      //         }
-      //       }
-      //     }
-
-      //     attempt++;
-      //   }
-      // } while (attempt < 3 && !bucketIDVar);
-
-      // console.log({
-      //   error: true,
-      //   status: 400,
-      //   message: "An error occured with data transfer server",
-      // });
-
-      // return {
-      //   error: true,
-      //   status: 400,
-      //   message: "An error occured with data transfer server",
-      // };
-      // // end of glo
+      return {
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      };
+      // end of glo
     } else if (requestPayload.network == 742) {
       // FIXME - New Data purcahse for GLO ZOEDATA
       integName = integrationTypes.ZOEDATA;
