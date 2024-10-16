@@ -97,9 +97,13 @@ class ApiDataHelper {
 
       console.log({ response: response?.data });
 
-      // if(String(response?.data?.status).toLowerCase() != "success".toLowerCase() ){
-      //   throw new Error("data purchase failed")
-      // }
+      if(String(response?.data?.status).toLowerCase() == "fail".toLowerCase() ){
+        throw new Error("data purchase failed")
+      }
+   
+      if(String(response?.data?.status).toLowerCase() == "failed".toLowerCase() ){
+        throw new Error("data purchase failed")
+      }
 
       // return response;
 
