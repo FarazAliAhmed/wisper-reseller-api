@@ -19,6 +19,8 @@ class WebhookService {
         throw new Error("Failed to parse incoming Webhook data.");
       }
 
+      console.log({ parsedData });
+
       // Extract the required fields from the parsed JSON object
       const transactionRef = parsedData["request-id"];
       const status = parsedData["status"];
