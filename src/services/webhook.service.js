@@ -6,38 +6,44 @@ const Transaction = require("../models/transactionHistory");
 class WebhookService {
   async N3tdataWebhook(addData) {
     try {
-      // Check if the incoming data is a string (if so, it needs parsing)
-      if (typeof addData === "string") {
-        try {
-          // Parse the incoming string data into a proper JSON object
-          addData = JSON.parse(addData);
-        } catch (error) {
-          throw new Error("Failed to parse incoming Webhook data.");
-        }
+      let parsedData;
+
+      // If addData is improperly formatted as shown in your logs:
+      const key = Object.keys(addData)[0]; // Extract the first key (which is the JSON string)
+
+      try {
+        // Parse the key as JSON since it seems to be a stringified JSON
+        parsedData = JSON.parse(key);
+      } catch (error) {
+        console.error("Failed to parse Webhook data:", error);
+        throw new Error("Failed to parse incoming Webhook data.");
       }
 
-      console.log({ addData });
-      console.log({ statusAddData: addData?.status });
-      console.log({ requestIdAddData: addData["request-id"] });
+      // Extract the required fields from the parsed JSON object
+      const transactionRef = parsedData["request-id"];
+      const status = parsedData["status"];
+      const response = parsedData["response"];
+
+      console.log("Parsed Webhook Data:", { transactionRef, status, response });
 
       // Check if the reference exists in monnifyHistory
       const existingReference = await Transaction.findOne({
-        transaction_ref: addData["request-id"],
+        transaction_ref: parsedData["request-id"],
       });
 
       if (!existingReference) {
         return { message: "Transaction Reference does not exist" };
       }
 
-      if (!addData?.status) {
+      if (!parsedData?.status) {
         throw new Error("no status found in body");
       }
 
-      if (addData?.status == "success") {
+      if (parsedData?.status == "success") {
         console.log("webhook status success");
 
         return await Transaction.findOneAndUpdate(
-          { transaction_ref: addData["request-id"] },
+          { transaction_ref: parsedData["request-id"] },
           {
             status: "success",
           },
@@ -45,11 +51,11 @@ class WebhookService {
         );
       }
 
-      if (addData?.status == "fail") {
+      if (parsedData?.status == "fail") {
         console.log("webhook status failed");
 
         return await Transaction.findOneAndUpdate(
-          { transaction_ref: addData["request-id"] },
+          { transaction_ref: parsedData["request-id"] },
           {
             status: "failed",
           },
@@ -60,7 +66,7 @@ class WebhookService {
       console.log("webhook status pending");
 
       return await Transaction.findOneAndUpdate(
-        { transaction_ref: addData["request-id"] },
+        { transaction_ref: parsedData["request-id"] },
         {
           status: "pending",
         },
