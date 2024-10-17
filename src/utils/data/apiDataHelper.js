@@ -93,8 +93,6 @@ class ApiDataHelper {
         req_header
       );
 
-      // console.log({ req_header, req_body, ayinlak_url });
-
       // console.log({ response: response?.data });
 
       if (
