@@ -6,19 +6,19 @@ const Transaction = require("../models/transactionHistory");
 class WebhookService {
   async N3tdataWebhook(addData) {
     try {
-      // const wispa_mobile = await this.endsWithWispa(
-      //   addData.eventData.product.reference
-      // );
+      // Check if the incoming data is a string (if so, it needs parsing)
+      if (typeof addData === "string") {
+        try {
+          // Parse the incoming string data into a proper JSON object
+          addData = JSON.parse(addData);
+        } catch (error) {
+          throw new Error("Failed to parse incoming Webhook data.");
+        }
+      }
 
-      // console.log({ wispa_mobile });
-
-      // if (wispa_mobile) {
-      //   axios.post("https://wispa.up.railway.app/api/monnify/webhook", addData);
-
-      //   console.log({ message: "forwarded to wispa_mobile api" });
-
-      //   return { message: "forwarded to wispa_mobile api" };
-      // }
+      console.log({ addData });
+      console.log({ statusAddData: addData?.status });
+      console.log({ requestIdAddData: addData["request-id"] });
 
       // Check if the reference exists in monnifyHistory
       const existingReference = await Transaction.findOne({
