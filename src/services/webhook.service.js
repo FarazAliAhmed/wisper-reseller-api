@@ -1,18 +1,16 @@
 /* eslint-disable no-useless-catch */
 const axios = require("axios");
-const monnifyHistory = require("../models/monnifyHistory");
 const Transaction = require("../models/transactionHistory");
+const webhook = require("../models/webhook");
 
 class WebhookService {
   async N3tdataWebhook(addData) {
     try {
       let parsedData;
 
-      // If addData is improperly formatted as shown in your logs:
-      const key = Object.keys(addData)[0]; // Extract the first key (which is the JSON string)
+      const key = Object.keys(addData)[0];
 
       try {
-        // Parse the key as JSON since it seems to be a stringified JSON
         parsedData = JSON.parse(key);
       } catch (error) {
         console.error("Failed to parse Webhook data:", error);
@@ -21,7 +19,6 @@ class WebhookService {
 
       console.log({ parsedData });
 
-      // Extract the required fields from the parsed JSON object
       const transactionRef = parsedData["request-id"];
       const status = parsedData["status"];
       const response = parsedData["response"];
@@ -40,6 +37,8 @@ class WebhookService {
       if (!parsedData?.status) {
         throw new Error("no status found in body");
       }
+
+      this.triggerWebhooks(parsedData);
 
       if (parsedData?.status == "success") {
         console.log("webhook status success");
@@ -76,6 +75,39 @@ class WebhookService {
       );
     } catch (error) {
       throw error;
+    }
+  }
+
+  async triggerWebhooks(eventData) {
+    console.log("trigger users webhook url");
+
+    try {
+      // Fetch all registered webhooks
+      const webhooks = await webhook.find();
+
+      // Loop over each webhook and trigger them
+      const webhookPromises = webhooks.map((webhook) =>
+        axios
+          .post(webhook.url, eventData)
+          .then((response) => {
+            console.log(
+              `Webhook triggered for URL: ${webhook.url} - Status: ${response.status}`
+            );
+          })
+          .catch((error) => {
+            console.error(
+              `Failed to trigger webhook for URL: ${webhook.url}`,
+              error.message
+            );
+          })
+      );
+
+      // Await all promises to ensure all webhooks are triggered
+      await Promise.all(webhookPromises);
+
+      console.log("All webhooks triggered");
+    } catch (error) {
+      console.error("Error triggering webhooks:", error);
     }
   }
 }
