@@ -1,5 +1,6 @@
 const webhook = require("../models/webhook");
 const webhookService = require("../services/webhook.service");
+const Joi = require("joi");
 
 class WebhookController {
   async n3tData(req, res) {
@@ -16,27 +17,34 @@ class WebhookController {
   }
 
   async saveWebhookUrl(req, res) {
-    const { userId, url } = req.body;
+    // Define the validation schema
+    const schema = Joi.object({
+      url: Joi.string().uri().required(),
+    });
 
     try {
-      // Check if the user already has a webhook registered
-      const existingWebhook = await webhook.findOne({ userId });
-
-      if (existingWebhook) {
-        return res
-          .status(400)
-          .json({ message: "Webhook already exists for this user" });
+      // Validate the request body
+      const { error, value } = schema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
       }
 
-      // Create and save the webhook URL
-      const newWebhook = new webhook({ userId, url });
-      await newWebhook.save();
+      const { url } = value;
 
-      res
-        .status(201)
-        .json({ message: "Webhook URL saved successfully", newWebhook });
+      // Find the existing webhook or create a new one
+      const updatedWebhook = await webhook.findOneAndUpdate(
+        { business_id: req.user._id },
+        { url },
+        { new: true, upsert: true }
+      );
+
+      const message = updatedWebhook.isNew
+        ? "Webhook URL created successfully"
+        : "Webhook URL updated successfully";
+
+      res.status(200).json({ message, data: updatedWebhook });
     } catch (error) {
-      console.error("Error saving webhook URL:", error);
+      console.error("Error saving/updating webhook URL:", error);
       res.status(500).json({ message: "Server error" });
     }
   }
@@ -52,11 +60,12 @@ class WebhookController {
   }
 
   async getOneWebhook(req, res) {
+    let doc = null;
     try {
-      const webhook = await webhook.findOne({
+      doc = await webhook.findOne({
         business_id: req.user._id,
       });
-      res.status(200).json(webhook);
+      res.status(200).json(doc);
     } catch (error) {
       console.error("Error fetching webhooks:", error);
       res.status(500).json({ message: "Server error" });

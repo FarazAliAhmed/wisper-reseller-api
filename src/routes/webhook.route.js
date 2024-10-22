@@ -1,13 +1,15 @@
 const express = require("express");
 
 const webhookController = require("../controllers/webhook.controller");
-const getUser = require("../utils/middleware/getUser");
+const parseKey = require("../utils/middleware/parseKey");
+const getAdmin = require("../utils/middleware/getAdmin");
 const router = express.Router();
 
+router.get("/getAllWebhooks", webhookController.getAllWebhooks);
+router.get("/getOneWebhook", parseKey, webhookController.getOneWebhook);
+
 router.post("/n3tdata", webhookController.n3tData);
-router.post("/saveWebhookUrl", getUser, webhookController.saveWebhookUrl);
-router.post("/getAllWebhooks", getUser, webhookController.getAllWebhooks);
-router.post("/getOneWebhook", getUser, webhookController.getOneWebhook);
-router.post("/deleteWebhookUrl", getUser, webhookController.deleteWebhookUrl);
+router.post("/saveWebhookUrl", parseKey, webhookController.saveWebhookUrl);
+router.post("/deleteWebhookUrl", parseKey, webhookController.deleteWebhookUrl);
 
 module.exports = router;

@@ -85,6 +85,8 @@ class WebhookService {
       // Fetch all registered webhooks
       const webhooks = await webhook.find();
 
+      console.log({ webhooks });
+
       // Loop over each webhook and trigger them
       const webhookPromises = webhooks.map((webhook) =>
         axios

@@ -140,7 +140,7 @@ exports.get_plan_details = async (plan_id) => {
 
 exports.get_network_provider = (network_provider) => {
   for (let ID in network_ids) {
-    if (network_ids[ID] === network_provider.trim().toLowerCase()) {
+    if (network_ids[ID] === network_provider?.trim()?.toLowerCase()) {
       return {
         network: network_provider.trim().toLowerCase(),
         id: ID,
