@@ -38,7 +38,10 @@ class WebhookService {
         throw new Error("no status found in body");
       }
 
-      this.triggerWebhooks(parsedData);
+      this.triggerWebhooks({
+        ...parsedData,
+        api_ref: existingReference?.api_ref,
+      });
 
       if (parsedData?.status == "success") {
         console.log("webhook status success");
@@ -81,11 +84,13 @@ class WebhookService {
   async triggerWebhooks(eventData) {
     console.log("trigger users webhook url");
 
+    console.log({ eventData });
+
     try {
       // Fetch all registered webhooks
       const webhooks = await webhook.find();
 
-      console.log({ webhooks });
+      // console.log({ webhooks });
 
       // Loop over each webhook and trigger them
       const webhookPromises = webhooks.map((webhook) =>
