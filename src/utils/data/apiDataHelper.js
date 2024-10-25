@@ -7,6 +7,9 @@ const ayinlak_url = process.env.AYINLAK_URL;
 const n3tdata_token = process.env.N3TDATA_TOKEN;
 const n3tdata_url = process.env.N3TDATA_URL;
 
+const wazobia_token = process.env.WAZOBIA_TOKEN;
+const wazobia_url = process.env.WAZOBIA_URL;
+
 class ApiDataHelper {
   static async Ayinlak(network, plan_id, phone) {
     const req_header = {
@@ -89,6 +92,65 @@ class ApiDataHelper {
           data_plan: plan_id,
           "request-id": transaction_ref,
           bypass: false,
+        },
+        req_header
+      );
+
+      // console.log({ response: response?.data });
+
+      if (
+        String(response?.data?.status).toLowerCase() == "fail".toLowerCase()
+      ) {
+        throw new Error("data purchase failed");
+      }
+
+      if (
+        String(response?.data?.status).toLowerCase() == "failed".toLowerCase()
+      ) {
+        throw new Error("data purchase failed");
+      }
+
+      // return response;
+
+      return {
+        error: false,
+        response: response.data,
+        message: response.data.message,
+      };
+    } catch (error) {
+      console.log({ error: error?.response });
+      console.log("ERROROR");
+      console.log({
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      });
+      return {
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      };
+    }
+  }
+
+  static async WazobiaNet(network, plan_id, phone) {
+    console.log({ network, plan_id, phone });
+
+    try {
+      const req_header = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${wazobia_token}`,
+        },
+      };
+
+      const response = await axios.post(
+        `${wazobia_url}/data/`,
+        {
+          network_id: network,
+          phone_number: phone,
+          plan_id: plan_id,
+          ported: false,
         },
         req_header
       );
