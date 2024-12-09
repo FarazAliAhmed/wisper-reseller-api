@@ -392,7 +392,8 @@ exports.initiate_data_transfer = async (
     if (requestPayload.network == 4) {
       // SECTION - AIRTEL PURCHASE
 
-      const { error, plan_id } = ayinlak_airtel_size_map(size);
+      // const { error, plan_id } = ayinlak_airtel_size_map(size);
+      const { error, plan_id } = n3tdata_airtel_size_map(size);
       if (error)
         return {
           error: true,
@@ -400,10 +401,11 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      return await ApiDataHelper.Ayinlak(
-        requestPayload.network,
+      return await ApiDataHelper.N3tdata(
+        2,
         plan_id,
-        requestPayload.mobile_number
+        requestPayload.mobile_number,
+        ref
       );
 
       // update api balance
@@ -764,7 +766,8 @@ exports.initiate_data_transfer = async (
     else if (requestPayload.network == 1) {
       // SECTION - PURCHASE FOR ANYINLAK MTN
 
-      const { error, plan_id } = ayinlak_mtn_size_map(size);
+      // const { error, plan_id } = ayinlak_mtn_size_map(size);
+      const { error, plan_id } = n3tdata_mtn_size_map(size);
       if (error)
         return {
           error: true,
@@ -772,10 +775,11 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      const response = await ApiDataHelper.Ayinlak(
+      const response = await ApiDataHelper.N3tdata(
         requestPayload.network,
         plan_id,
-        requestPayload.mobile_number
+        requestPayload.mobile_number,
+        ref
       );
 
       console.log({ response });
