@@ -76,23 +76,43 @@ exports.n3tdata_mtn_size_map = (size) => {
   switch (f_size) {
     // sme plans
     case "500mb":
-      plan_id = 7;
+      plan_id = 6;
       break;
     case "1gb":
-      plan_id = 8;
+      plan_id = 1;
       break;
     case "2gb":
-      plan_id = 9;
+      plan_id = 3;
       break;
     case "3gb":
-      plan_id = 10;
+      plan_id = 2;
       break;
     case "5gb":
-      plan_id = 11;
+      plan_id = 4;
       break;
     case "10gb":
-      plan_id = 12;
+      plan_id = 5;
       break;
+
+    // // gifting plans
+    // case "500mb":
+    //   plan_id = 7;
+    //   break;
+    // case "1gb":
+    //   plan_id = 8;
+    //   break;
+    // case "2gb":
+    //   plan_id = 9;
+    //   break;
+    // case "3gb":
+    //   plan_id = 10;
+    //   break;
+    // case "5gb":
+    //   plan_id = 11;
+    //   break;
+    // case "10gb":
+    //   plan_id = 12;
+    //   break;
 
     default:
       error = true;
