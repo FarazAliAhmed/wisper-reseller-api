@@ -53,4 +53,26 @@ exports.updateAirtimeSwitch = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ error: 'Error updating AirtimeSwitch' });
     }
-}; 
+};
+
+// Example function to get DataSwitch for a specific network
+exports.getAllDataSwitch = async (req, res) => {
+    const dataSwitch = await switchService.getAllDataSwitches();
+
+    if (!dataSwitch) {
+        return res.status(404).json({ error: 'DataSwitch not found for the specified network' });
+    }
+
+    return res.status(200).json(dataSwitch);
+};
+
+// Example function to get AirtimeSwitch for a specific network
+exports.getAllAirtimeSwitch = async (req, res) => {
+    const airtimeSwitch = await switchService.getAllAirtimeSwitches();
+
+    if (!airtimeSwitch) {
+        return res.status(404).json({ error: 'AirtimeSwitch not found for the specified network' });
+    }
+
+    return res.status(200).json(airtimeSwitch);
+};
