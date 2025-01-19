@@ -31,6 +31,7 @@ const helperRoutes = require("./routes/helper.route.js");
 const purchaseRoutes = require("./routes/purchase.route");
 const apiBalanceRoutes = require("./routes/apiBalance.route.js");
 const webhookRoutes = require("./routes/webhook.route.js");
+const switchRoutes = require("./routes/switch.routes");
 
 const apiV2Routes = require("./routes/v2");
 const apiV2AdminRoutes = require("./routes/v2/admin");
@@ -91,6 +92,7 @@ app.use("/api", analysisRoutes);
 app.use("/api/helper", helperRoutes);
 app.use("/api/purchase", purchaseRoutes);
 app.use("/api/apiBalance", apiBalanceRoutes);
+app.use("/api/switch", switchRoutes);
 
 app.use("/api/webhook", webhookRoutes);
 
