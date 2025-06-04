@@ -251,7 +251,7 @@ class ApiDataHelper {
     };
 
     const req_body = {
-      networkId: network_id,
+      networkId: String(network_id),
       phone: phone,
       planId: plan_id,
       dataType: dataType,
@@ -259,24 +259,35 @@ class ApiDataHelper {
     };
 
     console.log({ req_body });
+    try {
+      console.log("TRYING TO PURCHASE DATA");
+      let response = await axios.post(
+        `https://autopilotng.com/api/live/v1/data`,
+        req_body,
+        req_header
+      );
 
-    let response = await axios.post(
-      `https://autopilotng.com/api/live/v1/data`,
-      req_body,
-      req_header
-    );
+      console.log({ response: response.data });
 
-    console.log({ response: response.data });
+      if (response.data.status) {
+        console.log(response?.data?.status);
 
-    if (response.data.status) {
-      console.log(response?.data?.status);
+        return {
+          error: false,
+          response: response.data,
+          message: `Topup purchase of ₦${amount} for ${phone} successful`,
+        };
+      } else {
+        return {
+          error: true,
+          status: 400,
+          message: "An error occured with data transfer server",
+        };
+      }
+    } catch (error) {
+      console.log({ error: error?.response?.data });
+      console.log("ERROROR");
 
-      return {
-        error: false,
-        response: response.data,
-        message: `Topup purchase of ₦${amount} for ${phone} successful`,
-      };
-    } else {
       return {
         error: true,
         status: 400,
