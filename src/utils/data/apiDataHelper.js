@@ -10,6 +10,10 @@ const n3tdata_url = process.env.N3TDATA_URL;
 const wazobia_token = process.env.WAZOBIA_TOKEN;
 const wazobia_url = process.env.WAZOBIA_URL;
 
+const gladtidings_token = process.env.GLADTIDINGS_TOKEN;
+
+const autopilot_token = process.env.AUTOPILOT_API_KEY;
+
 class ApiDataHelper {
   static async Ayinlak(network, plan_id, phone) {
     const req_header = {
@@ -184,6 +188,95 @@ class ApiDataHelper {
         status: 400,
         message: "An error occured with data transfer server",
       });
+      return {
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      };
+    }
+  }
+
+
+  static async Gladtidings(network_id, plan_id, phone, ref) {
+    const req_header = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${gladtidings_token}`,
+        Accept: "application/json",
+      },
+    };
+
+    const req_body = {
+      network: network_id,
+      mobile_number: phone,
+      plan: plan_id,
+      Ported_number: true,
+      ident: ref
+    };
+
+    console.log({ req_body });
+
+    let response = await axios.post(
+      `https://www.gladtidingsdata.com/api/data/`,
+      req_body,
+      req_header
+    );
+
+    console.log({ response: response.data });
+
+    if (response.data.Status == "successful") {
+      console.log(response.data.Status);
+
+      return {
+        error: false,
+        response: response.data,
+        message: `Topup purchase of ₦${amount} for ${phone} successful`,
+      };
+    } else {
+      return {
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      };
+    }
+  }
+
+  static async Autopilot(network_id, plan_id, phone, dataType, ref) {
+    const req_header = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${autopilot_token}`,
+        Accept: "application/json",
+      },
+    };
+
+    const req_body = {
+      networkId: network_id,
+      phone: phone,
+      planId: plan_id,
+      dataType: dataType,
+      reference: ref
+    };
+
+    console.log({ req_body });
+
+    let response = await axios.post(
+      `https://autopilotng.com/api/live/v1/data`,
+      req_body,
+      req_header
+    );
+
+    console.log({ response: response.data });
+
+    if (response.data.status) {
+      console.log(response?.data?.status);
+
+      return {
+        error: false,
+        response: response.data,
+        message: `Topup purchase of ₦${amount} for ${phone} successful`,
+      };
+    } else {
       return {
         error: true,
         status: 400,
