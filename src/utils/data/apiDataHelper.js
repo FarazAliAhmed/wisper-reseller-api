@@ -285,7 +285,7 @@ class ApiDataHelper {
         };
       }
     } catch (error) {
-      console.log({ error: error?.response?.data });
+      console.log({ error: error });
       console.log("ERROROR");
 
       return {
