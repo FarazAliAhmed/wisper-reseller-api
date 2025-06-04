@@ -275,7 +275,7 @@ class ApiDataHelper {
         return {
           error: false,
           response: response.data,
-          message: `Topup purchase of ₦${amount} for ${phone} successful`,
+          message: `Topup purchase of ${plan_id} for ${phone} successful`,
         };
       } else {
         return {
