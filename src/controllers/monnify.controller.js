@@ -154,6 +154,8 @@ class MonnifyController {
     try {
       const users = await Account.find({}); // Fetch all users from the database
 
+      console.log({ users });
+
       for (const user of users) {
         try {
           // Call the Monnify service to create the account
