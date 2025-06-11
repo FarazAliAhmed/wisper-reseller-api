@@ -257,7 +257,7 @@ class ApiDataHelper {
       "user_reference": ref
     };
 
-    console.log({ req_body, req_header });
+    console.log({ req_body });
 
     let response = await axios.post(
       `https://superjara.com/autobiz_vending_index.php`,
@@ -267,7 +267,7 @@ class ApiDataHelper {
 
     console.log({ response: response.data });
 
-    if (response.data.text_status == "COMPLETED") {
+    if (response.data.text_status.toLowerCase() == "COMPLETED".toLowerCase()) {
       console.log(response.data.Status);
 
       return {
