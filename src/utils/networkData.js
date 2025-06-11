@@ -222,6 +222,34 @@ exports.autopilot_mtn_size_map = (size) => {
   return { error, plan_id, dataType };
 };
 
+exports.superjara_mtn_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id,
+    dataType;
+
+  switch (f_size) {
+    case "500mb":
+      plan_id = "mtn_sme_500mb_"
+      break;
+    case "1gb":
+      plan_id = "data_share_1gb"
+      break;
+    case "2gb":
+      plan_id = "data_share_2gb"
+      break;
+      break;
+    case "3gb":
+      plan_id = "data_share_3gb";
+      break;
+    case "5gb":
+      plan_id = "data_share_5gb";
+      break;
+  }
+
+  return { error, plan_id, dataType };
+};
+
 // 9mobile gladtidings jara
 exports.gladtidings_9mobile_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(" ", "");

@@ -40,6 +40,7 @@ const {
   n3tdata_glo_size_map,
   gladtidings_mtn_size_map,
   autopilot_mtn_size_map,
+  superjara_mtn_size_map,
 } = require("./networkData");
 const { wazobia_glo_size_map } = require("./mapping/wazobianet.mapping");
 const { default: fetch } = require("node-fetch");
@@ -788,7 +789,8 @@ exports.initiate_data_transfer = async (
       // const { error, plan_id } = ayinlak_mtn_size_map(size);
       // const { error, plan_id } = n3tdata_mtn_size_map(size);
       // const { error, plan_id } = gladtidings_mtn_size_map(size);
-      const { error, plan_id, dataType } = autopilot_mtn_size_map(size);
+      // const { error, plan_id, dataType } = autopilot_mtn_size_map(size);
+      const { error, plan_id, dataType } = superjara_mtn_size_map(size);
 
       if (error)
         return {
@@ -797,13 +799,13 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      const response = await ApiDataHelper.Autopilot(
-        1 || requestPayload.network,
-        plan_id,
-        requestPayload.mobile_number,
-        dataType,
-        ref
-      );
+      // const response = await ApiDataHelper.Autopilot(
+      //   1 || requestPayload.network,
+      //   plan_id,
+      //   requestPayload.mobile_number,
+      //   dataType,
+      //   ref
+      // );
 
       // const response = await ApiDataHelper.N3tdata(
       //   requestPayload.network,
@@ -811,6 +813,13 @@ exports.initiate_data_transfer = async (
       //   requestPayload.mobile_number,
       //   ref
       // );
+
+      const response = await ApiDataHelper.Superjara(
+        // requestPayload.network,
+        plan_id,
+        requestPayload.mobile_number,
+        ref
+      );
 
       console.log({ response });
 

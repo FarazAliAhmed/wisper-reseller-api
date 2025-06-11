@@ -11,7 +11,7 @@ const wazobia_token = process.env.WAZOBIA_TOKEN;
 const wazobia_url = process.env.WAZOBIA_URL;
 
 const gladtidings_token = process.env.GLADTIDINGS_TOKEN;
-
+const superjara_token = process.env.SUPERJARA_TOKEN;
 const autopilot_token = process.env.AUTOPILOT_API_KEY;
 
 class ApiDataHelper {
@@ -225,6 +225,49 @@ class ApiDataHelper {
     console.log({ response: response.data });
 
     if (response.data.Status == "successful") {
+      console.log(response.data.Status);
+
+      return {
+        error: false,
+        response: response.data,
+        message: `Topup purchase of ₦${amount} for ${phone} successful`,
+      };
+    } else {
+      return {
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      };
+    }
+  }
+
+  static async Superjara(plan_id, phone, ref) {
+    const req_header = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${superjara_token}`,
+        Accept: "application/json",
+      },
+    };
+
+    const req_body = {
+      "product_code": plan_id,
+      "phone_number": phone,
+      "action": "vend",
+      "user_reference": ref
+    };
+
+    console.log({ req_body, req_header });
+
+    let response = await axios.post(
+      `https://superjara.com/autobiz_vending_index.php`,
+      req_body,
+      req_header
+    );
+
+    console.log({ response: response.data });
+
+    if (response.data.text_status == "COMPLETED") {
       console.log(response.data.Status);
 
       return {
