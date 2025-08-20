@@ -10,6 +10,9 @@ const n3tdata_url = process.env.N3TDATA_URL;
 const wazobia_token = process.env.WAZOBIA_TOKEN;
 const wazobia_url = process.env.WAZOBIA_URL;
 
+const autopilot_token = process.env.AUTOPILOT_API_KEY;
+const autopilot_url = process.env.AUTOPILOT_URL;
+
 class ApiDataHelper {
   static async Ayinlak(network, plan_id, phone) {
     const req_header = {
@@ -111,6 +114,59 @@ class ApiDataHelper {
       }
 
       // return response;
+
+      return {
+        error: false,
+        response: response.data,
+        message: response.data.message,
+      };
+    } catch (error) {
+      console.log({ error: error?.response });
+      console.log("ERROROR");
+      console.log({
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      });
+      return {
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      };
+    }
+  }
+
+  static async Autopilot(network, plan_id, phone, transaction_ref) {
+    console.log({ network, plan_id, phone, transaction_ref });
+
+    console.log({ autopilot_token, autopilot_url });
+
+    try {
+      const req_header = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${autopilot_token}`,
+        },
+      };
+
+      const response = await axios.post(
+        `${autopilot_url}/v1/data`,
+        {
+          networkId: network,
+          dataType: "DATA TRANSFER",
+          phone: phone,
+          planId: plan_id,
+          reference: transaction_ref,
+        },
+        req_header
+      );
+
+      // console.log({ response: response?.data });
+
+      if (!response?.data?.status) {
+        throw new Error("data purchase failed");
+      }
 
       return {
         error: false,

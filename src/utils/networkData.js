@@ -67,6 +67,87 @@ exports.plans = (function () {
   return allPlans;
 })();
 
+// autopilot
+exports.autopilot_mtn_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id;
+
+  switch (f_size) {
+    case "500mb":
+      plan_id = "MTN_DT_500MB";
+      break;
+    case "1gb":
+      plan_id = "MTN_DT_1GB";
+      break;
+    case "2gb":
+      plan_id = "MTN_DT_2GB";
+      break;
+    case "3gb":
+      plan_id = "MTN_DT_3GB";
+      break;
+    case "5gb":
+      plan_id = "MTN_DT_5GB";
+      break;
+  }
+
+  return { error, plan_id };
+};
+
+// autopilot glo
+exports.autopilot_glo_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id;
+
+  switch (f_size) {
+    case "500mb":
+      plan_id = 6;
+      break;
+    case "1gb":
+      plan_id = 1;
+      break;
+    case "2gb":
+      plan_id = 3;
+      break;
+    case "3gb":
+      plan_id = 2;
+      break;
+    case "5gb":
+      plan_id = 4;
+      break;
+  }
+
+  return { error, plan_id };
+};
+
+// autopilot airtel
+exports.autopilot_airtel_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id;
+
+  switch (f_size) {
+    case "500mb":
+      plan_id = 6;
+      break;
+    case "1gb":
+      plan_id = 1;
+      break;
+    case "2gb":
+      plan_id = 3;
+      break;
+    case "3gb":
+      plan_id = 2;
+      break;
+    case "5gb":
+      plan_id = 4;
+      break;
+  }
+
+  return { error, plan_id };
+};
+
 // mtn n3tdata jara
 exports.n3tdata_mtn_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(" ", "");

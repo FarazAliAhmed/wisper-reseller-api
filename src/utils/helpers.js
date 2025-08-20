@@ -37,6 +37,7 @@ const {
   zoedata_glo_size_map,
   ayinlak_mtn_size_map,
   ayinlak_airtel_size_map,
+  autopilot_mtn_size_map,
   n3tdata_glo_size_map,
 } = require("./networkData");
 const { wazobia_glo_size_map } = require("./mapping/wazobianet.mapping");
@@ -87,8 +88,6 @@ const n3tdata_token = process.env.N3TDATA_TOKEN;
 
 const gladtidings_url = process.env.GLADTIDINGS_URL;
 const gladtidings_token = process.env.GLADTIDINGS_TOKEN;
-
-
 
 // Names of integration used in saving gateway response to DB
 const integrationTypes = {
@@ -213,8 +212,8 @@ const getFieldAndAmount = (type, planDetails, price, volume) => {
           volume < 1024
             ? volume
             : volume < 1048576
-              ? ~~(volume / 1024) * 1000
-              : ~~(volume / 1048576) * 1000000;
+            ? ~~(volume / 1024) * 1000
+            : ~~(volume / 1048576) * 1000000;
         console.log("sme volume", volume);
         pType = `${network}_sme`;
       } else if (plan_type.includes("gifting")) {
@@ -222,8 +221,8 @@ const getFieldAndAmount = (type, planDetails, price, volume) => {
           volume < 1024
             ? volume
             : volume < 1048576
-              ? ~~(volume / 1024) * 1000
-              : ~~(volume / 1048576) * 1000000;
+            ? ~~(volume / 1024) * 1000
+            : ~~(volume / 1048576) * 1000000;
 
         pType = `${network}_gifting`;
       } else {
@@ -231,8 +230,8 @@ const getFieldAndAmount = (type, planDetails, price, volume) => {
           volume < 1024
             ? volume
             : volume < 1048576
-              ? ~~(volume / 1024) * 1000
-              : ~~(volume / 1048576) * 1000000;
+            ? ~~(volume / 1024) * 1000
+            : ~~(volume / 1048576) * 1000000;
 
         pType = `${network}`;
       }
@@ -245,8 +244,8 @@ const getFieldAndAmount = (type, planDetails, price, volume) => {
         volume < 1024
           ? volume
           : volume < 1048576
-            ? ~~(volume / 1024) * 1000
-            : ~~(volume / 1048576) * 1000000;
+          ? ~~(volume / 1024) * 1000
+          : ~~(volume / 1048576) * 1000000;
       pType = `${network}`;
     } else {
       pType = `${network}`;
@@ -432,7 +431,6 @@ exports.initiate_data_transfer = async (
       console.log({ dataSwitch });
 
       if (dataSwitch.api == "n3tdata") {
-
         // n3tdata glo
         const { error, plan_id } = n3tdata_glo_size_map(size);
         if (error)
@@ -449,15 +447,11 @@ exports.initiate_data_transfer = async (
           ref
         );
         // end of n3tdata glo
-
-      }
-
-      else if (dataSwitch.api == "gloworld") {
+      } else if (dataSwitch.api == "gloworld") {
         // start of glo almagmt
         // SECTION - PURCHASE FOR ALMAGMT GLO
         integName = integrationTypes.ALMAMGT_GLO;
         const { error, plan_id } = cloudsimhost_glo_size_map(size);
-
 
         if (error)
           return {
@@ -465,7 +459,6 @@ exports.initiate_data_transfer = async (
             status: 400,
             message: "This data plan is currently not available",
           };
-
 
         const req_header = {
           headers: {
@@ -491,7 +484,9 @@ exports.initiate_data_transfer = async (
         let attempt = 0;
         do {
           await axios
-            .post("https://wisperapi-prod.up.railway.app/api/admin/getBucketOne")
+            .post(
+              "https://wisperapi-prod.up.railway.app/api/admin/getBucketOne"
+            )
             .then((res) => {
               bucketIDVar = res.data;
               console.log({ res: res.data });
@@ -518,8 +513,8 @@ exports.initiate_data_transfer = async (
               Number(
                 (BigInt(Math.floor(Math.random() * 10)) *
                   (randomMax - randomMin)) /
-                unit +
-                randomMin
+                  unit +
+                  randomMin
               )
             ).toString(),
           };
@@ -784,7 +779,11 @@ exports.initiate_data_transfer = async (
       // SECTION - PURCHASE FOR ANYINLAK MTN
 
       // const { error, plan_id } = ayinlak_mtn_size_map(size);
-      const { error, plan_id } = n3tdata_mtn_size_map(size);
+      // const { error, plan_id } = n3tdata_mtn_size_map(size);
+      const { error, plan_id } = autopilot_mtn_size_map(size);
+
+      // console.log({ error, plan_id });
+
       if (error)
         return {
           error: true,
@@ -792,7 +791,7 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      const response = await ApiDataHelper.N3tdata(
+      const response = await ApiDataHelper.Autopilot(
         requestPayload.network,
         plan_id,
         requestPayload.mobile_number,
@@ -901,10 +900,10 @@ exports.format_transaction_response = ({
     type === "mega"
       ? debitAccount.balance.mega_wallet
       : {
-        cash_balance: debitAccount.balance.wallet_balance,
-        unit: "₦",
-        // unit: debitAccount.balance.data_unit,
-      };
+          cash_balance: debitAccount.balance.wallet_balance,
+          unit: "₦",
+          // unit: debitAccount.balance.data_unit,
+        };
   responseObject.phone_number = validNumber.number;
   responseObject.status = "success";
   responseObject.network_provider = providerId.network;
