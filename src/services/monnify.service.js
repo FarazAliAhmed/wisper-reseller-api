@@ -11,7 +11,18 @@ class MonnifyService {
         addData.eventData.product.reference
       );
 
-      console.log({ wispa_mobile });
+      const wispa_datashare = await this.endsWithWispaDatashare(
+        addData.eventData.product.reference
+      );
+
+      if (wispa_datashare) {
+        axios.post(
+          "https://datashare-wisper.up.railway.app/api/monnify/webhook",
+          addData
+        );
+
+        console.log({ message: "forwarded to wispa_datashare api" });
+      }
 
       if (wispa_mobile) {
         axios.post("https://wispa.up.railway.app/api/monnify/webhook", addData);
@@ -328,6 +339,10 @@ class MonnifyService {
   // for wispa
   async endsWithWispa(input) {
     return input.endsWith("_wispa");
+  }
+
+  async endsWithWispaDatashare(input) {
+    return input.endsWith("_datashare");
   }
 }
 
