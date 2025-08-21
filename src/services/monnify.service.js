@@ -22,6 +22,8 @@ class MonnifyService {
         );
 
         console.log({ message: "forwarded to wispa_datashare api" });
+
+        return { message: "forwarded to wispa_datashare api" };
       }
 
       if (wispa_mobile) {
