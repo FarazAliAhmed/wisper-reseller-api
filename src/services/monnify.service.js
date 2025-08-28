@@ -16,10 +16,14 @@ class MonnifyService {
       );
 
       if (wispa_datashare) {
-        axios.post(
-          "https://datashare-wisper.up.railway.app/api/monnify/webhook",
-          addData
-        );
+        try {
+          axios.post(
+            "https://datashare-wisper.up.railway.app/api/monnify/webhook",
+            addData
+          );
+        } catch (error) {
+          console.log("error occured in datashare webhook");
+        }
 
         console.log({ message: "forwarded to wispa_datashare api" });
 
@@ -27,7 +31,14 @@ class MonnifyService {
       }
 
       if (wispa_mobile) {
-        axios.post("https://wispa.up.railway.app/api/monnify/webhook", addData);
+        try {
+          axios.post(
+            "https://wispa.up.railway.app/api/monnify/webhook",
+            addData
+          );
+        } catch (error) {
+          console.log("error occured in wispa_mobile webhook");
+        }
 
         console.log({ message: "forwarded to wispa_mobile api" });
 
