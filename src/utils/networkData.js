@@ -235,6 +235,102 @@ exports.n3tdata_9mobile_size_map = (size) => {
   return { error, plan_id };
 };
 
+// mtn gladtidings jara
+exports.gladtidings_mtn_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id;
+
+  switch (f_size) {
+    case "500mb":
+      plan_id = 179;
+      break;
+    case "1gb":
+      plan_id = 166;
+      break;
+    case "2gb":
+      plan_id = 167;
+      break;
+    case "3gb":
+      plan_id = 168;
+      break;
+    case "5gb":
+      plan_id = 169;
+      break;
+    case "10gb":
+      plan_id = 160;
+      break;
+    default:
+      error = true;
+  }
+
+  return { error, plan_id };
+};
+
+exports.autopilot_mtn_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id,
+    dataType;
+
+  switch (f_size) {
+    case "200mb":
+      plan_id = "MTN_DT_200MB";
+      dataType = "DATA TRANSFER";
+      break;
+    case "500mb":
+      plan_id = "MTN_DT_500MB";
+      dataType = "DATA TRANSFER";
+      break;
+    case "1gb":
+      plan_id = "MTN_DT_1GB";
+      dataType = "DATA TRANSFER";
+      break;
+    case "2gb":
+      plan_id = "MTN_DT_2GB";
+      dataType = "DATA TRANSFER";
+      break;
+    case "3gb":
+      plan_id = "MTN_DT_3GB";
+      dataType = "DATA TRANSFER";
+      break;
+    case "5gb":
+      plan_id = "MTN_DT_5GB";
+      dataType = "DATA TRANSFER";
+      break;
+  }
+
+  return { error, plan_id, dataType };
+};
+
+exports.superjara_mtn_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false,
+    plan_id,
+    dataType;
+
+  switch (f_size) {
+    case "500mb":
+      plan_id = "mtn_sme_500mb_"
+      break;
+    case "1gb":
+      plan_id = "data_share_1gb"
+      break;
+    case "2gb":
+      plan_id = "data_share_2gb"
+      break;
+      break;
+    case "3gb":
+      plan_id = "data_share_3gb";
+      break;
+    case "5gb":
+      plan_id = "data_share_5gb";
+      break;
+  }
+
+  return { error, plan_id, dataType };
+};
+
 // 9mobile gladtidings jara
 exports.gladtidings_9mobile_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(" ", "");

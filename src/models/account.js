@@ -97,7 +97,10 @@ const accountSchema = mongoose.Schema(
       default: [], // Set the default value as an empty array
     },
 
-    plans: [plan.schema],
+    plans: {
+      type: [plan.schema],
+      default: []
+    },
 
     callback: {
       type: String,

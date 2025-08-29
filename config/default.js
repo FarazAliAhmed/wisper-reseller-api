@@ -1,7 +1,11 @@
 module.exports = {
-  dbTest:
-    "mongodb+srv://wisper_db_admin:gmC0znYurcV3ndtN@cluster0.4gzqel9.mongodb.net/resellerAPITest?retryWrites=true&w=majority",
-  db: "mongodb+srv://wisper_db_admin:gmC0znYurcV3ndtN@cluster0.4gzqel9.mongodb.net/resellerAPI?retryWrites=true&w=majority",
+  dbTest: "mongodb+srv://wisper:wisper%2312345@cluster0.4gzqel9.mongodb.net/resellerAPITest?retryWrites=true&w=majority",
+
+
+  // dbTest: "mongodb+srv://wisper:wisper%2312345@cluster0.4gzqel9.mongodb.net/resellerAPI?retryWrites=true&w=majority",
+
+
+  db: "mongodb+srv://wisper:wisper%2312345@cluster0.4gzqel9.mongodb.net/resellerAPI?retryWrites=true&w=majority",
   jwtSecret: "supersecretxxerex8Qkq1.21SxKj",
   port: "5000",
 };

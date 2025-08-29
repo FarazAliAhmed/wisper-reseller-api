@@ -39,6 +39,9 @@ const {
   ayinlak_airtel_size_map,
   autopilot_mtn_size_map,
   n3tdata_glo_size_map,
+  gladtidings_mtn_size_map,
+  autopilot_mtn_size_map,
+  superjara_mtn_size_map,
 } = require("./networkData");
 const { wazobia_glo_size_map } = require("./mapping/wazobianet.mapping");
 const { default: fetch } = require("node-fetch");

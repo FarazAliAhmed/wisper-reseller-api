@@ -293,6 +293,20 @@ class MonnifyService {
     try {
       const accessToken = await this.generateAccessToken();
 
+      const accountDetails = await this.getAccountDetails(accountReference, accessToken);
+
+      console.log({ accountDetails });
+
+      if (accountDetails?.responseBody?.status === "ACTIVE") {
+        await Account.findOneAndUpdate(
+          { email: customerEmail },
+          { $push: { bankAccounts: { $each: accountDetails.responseBody.accounts } } },
+          { new: true }
+        );
+
+        return { message: "Account already exists" };
+      }
+
       const response = await axios.post(
         `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts`,
         {
@@ -344,8 +358,27 @@ class MonnifyService {
 
       return response.data;
     } catch (error) {
-      console.error(error?.response);
+      console.error(error?.response?.data);
       throw new Error("An error occurred In monnify");
+    }
+  }
+
+  async getAccountDetails(accountReference, accessToken) {
+    try {
+      const response = await axios.get(
+        `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts/${accountReference}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error(error?.response);
+      return { message: "An error occurred In monnify", error: error?.response };
     }
   }
 
