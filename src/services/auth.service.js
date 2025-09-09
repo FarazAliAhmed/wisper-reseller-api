@@ -118,6 +118,7 @@ async function sendConfirmationEmail(newUser, tokenCode) {
     }
 
     const confirmationLink = `${process.env.WEB_URL}/confirm-email?token=${token}`;
+    // const confirmationLink = `http://localhost:7000/confirm-email?token=${token}`;
 
     const __dirname = process.cwd();
     const emailTemplate = fs.readFileSync(

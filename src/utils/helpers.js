@@ -37,7 +37,7 @@ const {
   zoedata_glo_size_map,
   ayinlak_mtn_size_map,
   ayinlak_airtel_size_map,
-  autopilot_mtn_size_map,
+  // autopilot_mtn_size_map,
   n3tdata_glo_size_map,
   gladtidings_mtn_size_map,
   autopilot_mtn_size_map,
@@ -450,7 +450,79 @@ exports.initiate_data_transfer = async (
           ref
         );
         // end of n3tdata glo
-      } else if (dataSwitch.api == "gloworld") {
+      }
+      else if (dataSwitch.api == "gladtidings") {
+    // NEW GLO via GladtidingsData
+    integName = integrationTypes.GLAD_GLO;
+
+    const { error, plan_id } = gladtidings_glo_size_map(size);
+
+    if (error)
+      return {
+        error: true,
+        status: 400,
+        message: "This data plan is currently not available",
+      };
+
+    const req_header = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${gladtidings_token}`,
+        Accept: "application/json",
+      },
+    };
+
+    const req_body = {
+      network: 2, // Glo on Gladtidings API
+      mobile_number: `${requestPayload.mobile_number}`,
+      plan: plan_id,
+      Ported_number: false,
+    };
+
+    try {
+      const response = await axios.post(
+        `https://www.gladtidingsdata.com/api/data/`,
+        req_body,
+        req_header
+      );
+
+      console.log({ gladtidings_glo_response: response.data });
+
+      if (response.data.Status) {
+        return {
+          error: false,
+          response: response.data,
+          message: "processing",
+        };
+      }
+
+      if (
+        response.data &&
+        response.data.status &&
+        response.data.status === "success"
+      ) {
+        return {
+          error: false,
+          response: response.data,
+          message: response.data.response.message,
+        };
+      } else {
+        return {
+          error: true,
+          status: 400,
+          message: "An error occured with data transfer server",
+        };
+      }
+    } catch (error) {
+      console.log({ error_response: error.response?.data });
+      return {
+        error: true,
+        status: 400,
+        message: "An error occured with data transfer server",
+      };
+    }
+  } 
+  else if (dataSwitch.api == "gloworld") {
         // start of glo almagmt
         // SECTION - PURCHASE FOR ALMAGMT GLO
         integName = integrationTypes.ALMAMGT_GLO;
@@ -783,7 +855,8 @@ exports.initiate_data_transfer = async (
 
       // const { error, plan_id } = ayinlak_mtn_size_map(size);
       // const { error, plan_id } = n3tdata_mtn_size_map(size);
-      const { error, plan_id } = autopilot_mtn_size_map(size);
+      // const { error, plan_id } = autopilot_mtn_size_map(size);
+      const {error,plan_id}=superjara_mtn_size_map(size)
 
       // console.log({ error, plan_id });
 
@@ -794,7 +867,14 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      const response = await ApiDataHelper.Autopilot(
+      // const response = await ApiDataHelper.Autopilot(
+      //   requestPayload.network,
+      //   plan_id,
+      //   requestPayload.mobile_number,
+      //   ref
+      // );
+
+      const response = await ApiDataHelper.Superjara(
         requestPayload.network,
         plan_id,
         requestPayload.mobile_number,

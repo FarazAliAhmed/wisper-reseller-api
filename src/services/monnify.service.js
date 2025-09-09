@@ -284,112 +284,97 @@ class MonnifyService {
     };
   }
 
-  async createAccount(
-    accountReference,
-    accountName,
-    customerEmail,
-    customerName
-  ) {
-    try {
-      const accessToken = await this.generateAccessToken();
+ async createAccount(accountReference, accountName, customerEmail, customerName) {
+  try {
+    const accessToken = await this.generateAccessToken();
 
-      const accountDetails = await this.getAccountDetails(accountReference, accessToken);
+    
+    const accountDetails = await this.getAccountDetails(accountReference, accessToken);
 
-      console.log({ accountDetails });
-
-      if (accountDetails?.responseBody?.status === "ACTIVE") {
-        await Account.findOneAndUpdate(
-          { email: customerEmail },
-          { $push: { bankAccounts: { $each: accountDetails.responseBody.accounts } } },
-          { new: true }
-        );
-
-        return { message: "Account already exists" };
-      }
-
-      const response = await axios.post(
-        `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts`,
-        {
-          accountReference,
-          accountName,
-          currencyCode: "NGN",
-          contractCode: process.env.MONNIFY_CONTRACT_CODE,
-          customerEmail,
-          bvn: "21212121212",
-          customerName,
-          getAllAvailableBanks: true,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      // After receiving the API response
-      const { accounts } = response.data.responseBody;
-
-      // Assuming 'user' is the Mongoose account model instance
-      // You need to fetch the user instance based on the context of your application
-      const user = await Account.findOne({ email: customerEmail });
-
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      const newBankAcct = [];
-
-      for (const account of accounts) {
-        const bankInfo = {
-          bankName: account.bankName,
-          accountNumber: account.accountNumber,
-          accountName: account.accountName,
-        };
-        // await user.addBankAccount(bankInfo);
-        newBankAcct.push(bankInfo);
-      }
-
+    if (accountDetails?.responseBody?.status === "ACTIVE") {
       await Account.findOneAndUpdate(
         { email: customerEmail },
-        { $push: { bankAccounts: { $each: newBankAcct } } },
+        { $push: { bankAccounts: { $each: accountDetails.responseBody.accounts } } },
         { new: true }
       );
 
-      return response.data;
-    } catch (error) {
-      console.error(error?.response?.data);
-      throw new Error("An error occurred In monnify");
+      return { message: "Account already exists", data: accountDetails.responseBody };
     }
-  }
 
-  async getAccountDetails(accountReference, accessToken) {
-    try {
-      const response = await axios.get(
-        `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts/${accountReference}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    
+    const response = await axios.post(
+      `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts`,
+      {
+        accountReference,
+        accountName,
+        currencyCode: "NGN",
+        contractCode: process.env.MONNIFY_CONTRACT_CODE,
+        customerEmail,
+        bvn: "21212121212",
+        customerName,
+        getAllAvailableBanks: true,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-      return response.data;
-    } catch (error) {
-      console.error(error?.response);
-      return { message: "An error occurred In monnify", error: error?.response };
-    }
-  }
+    console.log(response)
 
-  // for wispa
-  async endsWithWispa(input) {
-    return input.endsWith("_wispa");
-  }
+    const { accounts } = response.data.responseBody;
 
-  async endsWithWispaDatashare(input) {
-    return input.endsWith("_datashare");
+    const user = await Account.findOne({ email: customerEmail });
+    if (!user) throw new Error("User not found");
+
+    const newBankAcct = accounts.map(account => ({
+      bankName: account.bankName,
+      accountNumber: account.accountNumber,
+      accountName: account.accountName,
+    }));
+
+    await Account.findOneAndUpdate(
+      { email: customerEmail },
+      { $push: { bankAccounts: { $each: newBankAcct } } },
+      { new: true }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error?.response?.data || error.message);
+    throw new Error("An error occurred in Monnify");
   }
 }
+
+
+
+async getAccountDetails(accountReference, accessToken) {
+  try {
+    const response = await axios.get(
+      `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts/${accountReference}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data; 
+  } catch (error) {
+    if (error?.response?.status === 404) {
+      // account does not exist
+      return null;
+    }
+
+   
+    console.error("Monnify error in getAccountDetails:", error?.response?.data);
+    throw new Error("Monnify getAccountDetails failed");
+  }
+}
+}
+
 
 module.exports = new MonnifyService();
