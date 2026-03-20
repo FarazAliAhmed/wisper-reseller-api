@@ -3,7 +3,7 @@ const joi = require("joi");
 const _ = require("lodash");
 const moment = require("moment-timezone");
 var postmark = require("postmark");
-const client = new postmark.ServerClient(process.env.POSTMARK);
+const client = new postmark.ServerClient(process.env.POSTMARK_API_TOKEN || "dummy-token-for-dev");
 
 const Maintenance = require("../models/maintenance");
 

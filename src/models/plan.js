@@ -6,7 +6,6 @@ const Plan = new Schema(
     plan_id: {
       type: Number,
       required: true,
-      unique: true,
       index: true,
     },
     network: {

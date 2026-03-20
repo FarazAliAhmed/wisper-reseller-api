@@ -8,7 +8,7 @@ const agentHistory = require("../models/agentHistory");
 const { sendEmail, sendHtmlEmail } = require("../utils/email/transporter");
 const transactionHistory = require("../models/transactionHistory");
 const uuid = require("uuid");
-const client = new postmark.ServerClient(process.env.POSTMARK);
+const client = new postmark.ServerClient(process.env.POSTMARK_API_TOKEN || "dummy-token-for-dev");
 
 class AgentService {
   async createAgent({

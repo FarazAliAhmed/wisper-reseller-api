@@ -4,7 +4,7 @@ const { handle_callback } = require("../events/_eventTypes");
 const _ = require("lodash");
 
 var postmark = require("postmark");
-const client = new postmark.ServerClient(process.env.POSTMARK);
+const client = new postmark.ServerClient(process.env.POSTMARK_API_TOKEN || "dummy-token-for-dev");
 const {
   validateSendData,
   get_plan_details,

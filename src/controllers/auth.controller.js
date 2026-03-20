@@ -10,7 +10,7 @@ const ejs = require("ejs");
 const authService = require("../services/auth.service");
 const { sendEmail, transporter } = require("../utils/email/transporter");
 const { generateRandomPassword } = require("../utils/auth.helper");
-const client = new postmark.ServerClient(process.env.POSTMARK);
+const client = new postmark.ServerClient(process.env.POSTMARK_API_TOKEN || "dummy-token-for-dev");
 
 const handleLogin = async (req, res) => {
   const { error } = validate(req.body);
