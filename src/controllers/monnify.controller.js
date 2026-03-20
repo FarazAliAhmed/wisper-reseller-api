@@ -75,7 +75,7 @@ class MonnifyController {
 
       await axios
         .get(
-          `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts/${value.accountReference}`,
+          `${process.env.MONNIFY_BASE_URL}/api/v2/bank-transfer/reserved-accounts/${value.accountReference}`,
           {
             headers: {
               Authorization: `Bearer  ${accessToken}`,
@@ -140,7 +140,8 @@ class MonnifyController {
         value.accountReference,
         value.accountName,
         value.customerEmail,
-        value.customerName
+        value.customerName,
+        value.bvn || value.nin
       );
 
       res.json(createdMonnify);
@@ -196,7 +197,7 @@ class MonnifyController {
 
       await axios
         .delete(
-          `${process.env.MONNIFY_BASE_URL}/v1/bank-transfer/reserved-accounts/reference/${value.accountReference}`,
+          `${process.env.MONNIFY_BASE_URL}/api/v1/bank-transfer/reserved-accounts/reference/${value.accountReference}`,
           {
             headers: {
               Authorization: `Bearer  ${accessToken}`,
@@ -227,7 +228,7 @@ class MonnifyController {
       for (const user of users) {
         try {
           await axios.delete(
-            `${process.env.MONNIFY_BASE_URL}/v1/bank-transfer/reserved-accounts/reference/${user._id}`,
+            `${process.env.MONNIFY_BASE_URL}/api/v1/bank-transfer/reserved-accounts/reference/${user._id}`,
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -271,4 +272,6 @@ const createSchema = Joi.object({
   accountName: Joi.string().required(),
   customerEmail: Joi.string().required(),
   customerName: Joi.string().required(),
-});
+  bvn: Joi.string().trim().pattern(/^\d{11}$/).optional(),
+  nin: Joi.string().trim().pattern(/^\d{11}$/).optional(),
+}).or("bvn", "nin");

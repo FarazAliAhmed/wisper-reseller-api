@@ -36,10 +36,11 @@ const register = async (requestBody) => {
     }
     const accessToken = await generateUniqueAccessToken();
 
-    // Include the unique access token in the user object
+    // Create user (auto-confirm email for now)
     const user = new Account({
       ...requestBody,
       access_token: accessToken,
+      confirmed: true, // Auto-confirm for testing
     });
 
     await user.save();
@@ -54,11 +55,14 @@ const register = async (requestBody) => {
       { new: true }
     ).exec();
 
+    // Create Monnify account during registration
     await monnifyService.createAccount(
       user._id,
       user.name,
       user.email,
-      user.name
+      user.name,
+      user.bvn || null,
+      user.nin || null
     );
 
     await storeFrontUserPlanSingle(user._id);

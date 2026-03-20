@@ -5,6 +5,11 @@ const monnifyHistory = require("../models/monnifyHistory");
 const { Account } = require("../models/account");
 
 class MonnifyService {
+  getApiUrl(path) {
+    const baseUrl = process.env.MONNIFY_BASE_URL?.replace(/\/$/, "");
+    return `${baseUrl}/api${path}`;
+  }
+
   async addBalanceByBusinessId(addData) {
     try {
       const wispa_mobile = await this.endsWithWispa(
@@ -250,7 +255,7 @@ class MonnifyService {
 
     try {
       const response = await axios.post(
-        `${process.env.MONNIFY_BASE_URL}/v1/auth/login`,
+        this.getApiUrl("/v1/auth/login"),
         {},
         {
           headers: {
@@ -284,36 +289,88 @@ class MonnifyService {
     };
   }
 
- async createAccount(accountReference, accountName, customerEmail, customerName) {
+  async verifyBVN(bvn, dateOfBirth) {
+    try {
+      const accessToken = await this.generateAccessToken();
+
+      const response = await axios.post(
+        this.getApiUrl("/v1/vas/bvn-details-match"),
+        {
+          bvn: bvn,
+          dateOfBirth: dateOfBirth, // Format: DD-MM-YYYY
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return {
+        success: response.data.requestSuccessful,
+        data: response.data.responseBody,
+      };
+    } catch (error) {
+      console.error("BVN verification error:", error?.response?.data || error.message);
+      return {
+        success: false,
+        error: error?.response?.data?.responseMessage || "BVN verification failed",
+      };
+    }
+  }
+
+ async createAccount(
+  accountReference,
+  accountName,
+  customerEmail,
+  customerName,
+  bvn,
+  nin
+ ) {
   try {
     const accessToken = await this.generateAccessToken();
 
-    
+    // Check if account already exists
     const accountDetails = await this.getAccountDetails(accountReference, accessToken);
 
     if (accountDetails?.responseBody?.status === "ACTIVE") {
+      console.log("Monnify account already exists, updating bank accounts");
+      
       await Account.findOneAndUpdate(
         { email: customerEmail },
-        { $push: { bankAccounts: { $each: accountDetails.responseBody.accounts } } },
+        { $set: { bankAccounts: accountDetails.responseBody.accounts } },
         { new: true }
       );
 
       return { message: "Account already exists", data: accountDetails.responseBody };
     }
 
-    
+    // Create new Monnify account - exactly like Analytic-os
+    const payload = {
+      accountReference,
+      accountName,
+      currencyCode: "NGN",
+      contractCode: process.env.MONNIFY_CONTRACT_CODE,
+      customerEmail,
+      customerName,
+      getAllAvailableBanks: true,
+    };
+
+    // Add BVN or NIN if provided (send correct field based on what user provided)
+    if (bvn) {
+      payload.bvn = bvn;
+      console.log("Creating Monnify account with BVN");
+    } else if (nin) {
+      payload.nin = nin;
+      console.log("Creating Monnify account with NIN");
+    } else {
+      console.log("Creating Monnify account without BVN/NIN");
+    }
+
     const response = await axios.post(
-      `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts`,
-      {
-        accountReference,
-        accountName,
-        currencyCode: "NGN",
-        contractCode: process.env.MONNIFY_CONTRACT_CODE,
-        customerEmail,
-        bvn: "21212121212",
-        customerName,
-        getAllAvailableBanks: true,
-      },
+      this.getApiUrl("/v2/bank-transfer/reserved-accounts"),
+      payload,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -322,9 +379,13 @@ class MonnifyService {
       }
     );
 
-    console.log(response)
-
     const { accounts } = response.data.responseBody;
+
+    if (!accounts || accounts.length === 0) {
+      throw new Error("No bank accounts returned from Monnify");
+    }
+
+    console.log(`Monnify returned ${accounts.length} bank accounts:`, accounts.map(a => a.bankName).join(', '));
 
     const user = await Account.findOne({ email: customerEmail });
     if (!user) throw new Error("User not found");
@@ -337,14 +398,23 @@ class MonnifyService {
 
     await Account.findOneAndUpdate(
       { email: customerEmail },
-      { $push: { bankAccounts: { $each: newBankAcct } } },
+      { $set: { bankAccounts: newBankAcct } },
       { new: true }
     );
 
+    console.log("Monnify account created successfully");
+
     return response.data;
   } catch (error) {
-    console.error(error?.response?.data || error.message);
-    throw new Error("An error occurred in Monnify");
+    const monnifyError =
+      error?.response?.data?.responseMessage ||
+      error?.response?.data?.error_description ||
+      error?.response?.data?.message ||
+      error.message;
+
+    console.error("Monnify createAccount error:", monnifyError);
+    
+    throw new Error(monnifyError);
   }
 }
 
@@ -353,7 +423,7 @@ class MonnifyService {
 async getAccountDetails(accountReference, accessToken) {
   try {
     const response = await axios.get(
-      `${process.env.MONNIFY_BASE_URL}/v2/bank-transfer/reserved-accounts/${accountReference}`,
+      this.getApiUrl(`/v2/bank-transfer/reserved-accounts/${accountReference}`),
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -372,6 +442,40 @@ async getAccountDetails(accountReference, accessToken) {
    
     console.error("Monnify error in getAccountDetails:", error?.response?.data);
     throw new Error("Monnify getAccountDetails failed");
+  }
+}
+
+async updateKycInfo(accountReference, accessToken, { bvn, nin }) {
+  if (!bvn && !nin) {
+    return null;
+  }
+
+  const payload = {};
+
+  // Only send one - prefer BVN
+  if (bvn) {
+    payload.bvn = bvn;
+  } else if (nin) {
+    payload.nin = nin;
+  }
+
+  try {
+    const response = await axios.put(
+      this.getApiUrl(`/v1/bank-transfer/reserved-accounts/${accountReference}/kyc-info`),
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("KYC update error:", error?.response?.data || error.message);
+    // Don't throw, just log - KYC update is not critical
+    return null;
   }
 }
 }

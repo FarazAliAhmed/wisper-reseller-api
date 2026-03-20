@@ -68,6 +68,14 @@ const accountSchema = mongoose.Schema(
     },
     mobile_number: String,
     address: String,
+    bvn: {
+      type: String,
+      default: null,
+    },
+    nin: {
+      type: String,
+      default: null,
+    },
 
     bankAccounts: [
       {
@@ -178,13 +186,14 @@ const Account = mongoose.model("account", accountSchema);
 const validateUser = (user) => {
   const schema = Joi.object({
     name: Joi.string().min(3).max(50).required(),
-    business_name: Joi.string().min(3).max(50).optional(),
+    business_name: Joi.string().min(3).max(50).optional().allow(''),
     email: Joi.string().min(5).max(255).required().email(),
     username: Joi.string().min(5).max(10).required(),
     password: Joi.string().min(5).max(255).required(),
     mobile_number: Joi.number().required(),
-    address: Joi.string(),
-    // type: Joi.string().valid("lite", "mega", "glo_dealer").default("lite"),
+    address: Joi.string().optional().allow(''),
+    bvn: Joi.string().trim().length(11).pattern(/^\d+$/).optional().allow('', null),
+    nin: Joi.string().trim().length(11).pattern(/^\d+$/).optional().allow('', null),
   });
 
   return schema.validate(user);
