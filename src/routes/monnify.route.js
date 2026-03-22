@@ -5,6 +5,7 @@ const monnifyController = require("../controllers/monnify.controller");
 const getUser = require("../utils/middleware/getUser");
 const router = express.Router();
 
+router.post("/monnify/webhook", monnifyController.addBalance);
 router.post("/monnifyAddBalance", monnifyController.addBalance);
 router.post(
   "/admin/monnifyAdminAddBalance",
