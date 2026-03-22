@@ -478,6 +478,24 @@ async updateKycInfo(accountReference, accessToken, { bvn, nin }) {
     return null;
   }
 }
+
+async endsWithWispa(reference) {
+  try {
+    const user = await Account.findById(reference);
+    return user?.isWispaMobile === true;
+  } catch (error) {
+    return false;
+  }
+}
+
+async endsWithWispaDatashare(reference) {
+  try {
+    const user = await Account.findById(reference);
+    return user?.isWispaDatashare === true;
+  } catch (error) {
+    return false;
+  }
+}
 }
 
 

@@ -7,7 +7,7 @@ const monnifyHistory = require("../models/monnifyHistory");
 class MonnifyController {
   async addBalance(req, res) {
     try {
-      console.log("Add balance", req.body);
+      console.log("Monnify webhook received:", JSON.stringify(req.body, null, 2));
 
       const updatedBalance = await monnifyService.addBalanceByBusinessId(
         req.body
@@ -15,8 +15,9 @@ class MonnifyController {
 
       return res.json(updatedBalance);
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "An error occurred" });
+      console.error("Monnify webhook error:", error.message);
+      console.error("Full error:", error);
+      return res.status(500).json({ message: "An error occurred", error: error.message });
     }
   }
 
