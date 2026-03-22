@@ -1,6 +1,8 @@
+require("dotenv").config({ path: __dirname + "/../.env" });
+
 module.exports = {
-  db: "mongodb+srv://wisper:qxsSbrFEs9on7KdI@wisper.6y1210h.mongodb.net/resellerAPI?retryWrites=true&w=majority&appName=wisper",
-  dbTest: "mongodb+srv://wisper:qxsSbrFEs9on7KdI@wisper.6y1210h.mongodb.net/resellerAPITest?retryWrites=true&w=majority&appName=wisper",
-  jwtSecret: "supersecretxxerex8Qkq1.21SxKj",
-  port: "5000",
+  db: process.env.MONGODB_URI,
+  dbTest: process.env.MONGODB_URI_TEST,
+  jwtSecret: process.env.JWT_SECRET,
+  port: process.env.PORT || "5000",
 };
