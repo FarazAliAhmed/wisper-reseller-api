@@ -12,10 +12,11 @@ const Flutterwave = require("flutterwave-node-v3");
 const { calStoreFrontTax } = require("../utils/sFHelper");
 const { default: mongoose } = require("mongoose");
 const plan = require("../models/plan");
-const flw = new Flutterwave(
-  process.env.FLW_PUBLIC_KEY,
-  process.env.FLW_SECRET_KEY
-);
+// FLUTTERWAVE COMMENTED OUT - UNCOMMENT WHEN YOU HAVE API KEYS
+// const flw = new Flutterwave(
+//   process.env.FLW_PUBLIC_KEY,
+//   process.env.FLW_SECRET_KEY
+// );
 
 // withdraw from a store front by business_id
 exports.withdrawStoreFrontService = async (
@@ -56,6 +57,10 @@ exports.withdrawStoreFrontService = async (
   const amountTaxed = await calStoreFrontTax(amount);
 
   if (withType.toLowerCase() === "bank") {
+    // FLUTTERWAVE BANK WITHDRAWAL COMMENTED OUT
+    throw new Error("Bank withdrawal is temporarily disabled. Please use wallet withdrawal.");
+    
+    /* UNCOMMENT WHEN FLUTTERWAVE IS CONFIGURED
     const reference = generateTransactionReference();
 
     console.log({ reference });
@@ -102,6 +107,7 @@ exports.withdrawStoreFrontService = async (
 
         throw err;
       });
+    */
   } else if (withType.toLowerCase() === "wallet") {
     try {
       const oldBal = store.wallet;

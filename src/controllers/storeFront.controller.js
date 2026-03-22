@@ -31,10 +31,11 @@ const withdrawalHistory = require("../models/withdrawHistory.model");
 
 // flw
 
-const flw = new Flutterwave(
-  process.env.FLW_PUBLIC_KEY,
-  process.env.FLW_SECRET_KEY
-);
+// FLUTTERWAVE COMMENTED OUT - UNCOMMENT WHEN YOU HAVE API KEYS
+// const flw = new Flutterwave(
+//   process.env.FLW_PUBLIC_KEY,
+//   process.env.FLW_SECRET_KEY
+// );
 
 // Create a new store front
 exports.createStoreFront = async (req, res) => {
@@ -539,6 +540,13 @@ exports.storeFrontSendOTP = async (req, res) => {
 exports.storeFrontBankVerification = async (req, res) => {
   const { bank, code } = req.params; // Get the storeBusiness from the URL parameter
 
+  // FLUTTERWAVE BANK VERIFICATION COMMENTED OUT
+  return res.status(503).json({ 
+    status: "error",
+    message: "Bank verification is temporarily disabled. Flutterwave not configured." 
+  });
+
+  /* UNCOMMENT WHEN FLUTTERWAVE IS CONFIGURED
   // Install with: npm i flutterwave-node-v3
 
   const flw = new Flutterwave(
@@ -559,6 +567,7 @@ exports.storeFrontBankVerification = async (req, res) => {
       console.log(err);
       return res.status(500).json({ message: "error verifying bank" });
     });
+  */
 };
 
 // refund transaction

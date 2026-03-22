@@ -8,6 +8,13 @@ const userPlan = require("../models/userPlan");
 const monnifyHistory = require("../models/monnifyHistory");
 
 async function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
+  // FLUTTERWAVE COMMENTED OUT - RETURN ERROR FOR NOW
+  return {
+    error: true,
+    message: "Flutterwave verification is temporarily disabled. Please configure FLW_PUBLIC_KEY and FLW_SECRET_KEY.",
+  };
+
+  /* UNCOMMENT WHEN FLUTTERWAVE IS CONFIGURED
   const flw = new Flutterwave(
     process.env.FLW_PUBLIC_KEY,
     process.env.FLW_SECRET_KEY
@@ -43,6 +50,7 @@ async function verifyFlutterWaveTransaction(transactionId, expectedAmount) {
         data: null,
       };
     });
+  */
 }
 
 async function debitStoreFrontMegaWallet(
