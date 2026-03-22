@@ -8,25 +8,17 @@ console.log({ nodeEnv });
 
 const dbSetUp = async () => {
   try {
-    if (nodeEnv == "development") {
-      await mongoose.connect(config.dbTest, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+    // Use environment variable if available, otherwise fall back to config file
+    const dbUri = process.env.MONGODB_URI || (nodeEnv === "development" ? config.dbTest : config.db);
+    
+    await mongoose.connect(dbUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
-      await loadPlans();
-      console.log("plans loaded");
-      console.log(`Connected to DB:: `, config.dbTest);
-    } else {
-      await mongoose.connect(config.db, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-
-      await loadPlans();
-      console.log("plans loaded");
-      console.log(`Connected to DB:: `, config.db);
-    }
+    await loadPlans();
+    console.log("plans loaded");
+    console.log(`Connected to DB:: `, dbUri.replace(/\/\/[^:]+:[^@]+@/, '//*****:*****@')); // Hide credentials in logs
   } catch (error) {
     console.error(error);
   }
