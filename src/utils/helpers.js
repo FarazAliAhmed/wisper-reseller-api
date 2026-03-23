@@ -853,12 +853,10 @@ exports.initiate_data_transfer = async (
     else if (requestPayload.network == 1) {
       // SECTION - PURCHASE FOR ANYINLAK MTN
 
-      // const { error, plan_id } = ayinlak_mtn_size_map(size);
-      // const { error, plan_id } = n3tdata_mtn_size_map(size);
-      // const { error, plan_id } = autopilot_mtn_size_map(size);
-      const {error,plan_id}=superjara_mtn_size_map(size)
+      // Switch to Autopilot for MTN Data Transfer
+      const { error, plan_id, dataType } = autopilot_mtn_size_map(size);
 
-      // console.log({ error, plan_id });
+      console.log({ error, plan_id, dataType });
 
       if (error)
         return {
@@ -867,17 +865,12 @@ exports.initiate_data_transfer = async (
           message: "This data plan is currently not available",
         };
 
-      // const response = await ApiDataHelper.Autopilot(
-      //   requestPayload.network,
-      //   plan_id,
-      //   requestPayload.mobile_number,
-      //   ref
-      // );
-
-      const response = await ApiDataHelper.Superjara(
+      // Using Autopilot API for MTN Data Transfer
+      const response = await ApiDataHelper.Autopilot(
         requestPayload.network,
         plan_id,
         requestPayload.mobile_number,
+        dataType,
         ref
       );
 

@@ -348,46 +348,51 @@ class ApiDataHelper {
 
     const req_body = {
       networkId: String(network_id),
-      phone: phone,
-      planId: plan_id,
       dataType: dataType,
+      planId: plan_id,
+      phone: phone,
       reference: ref,
     };
 
-    console.log({ req_body });
+    console.log("AUTOPILOT REQUEST:", { req_body, url: `${autopilot_url}/v1/data` });
+    
     try {
-      console.log("TRYING TO PURCHASE DATA");
+      console.log("TRYING TO PURCHASE MTN DATA TRANSFER VIA AUTOPILOT");
+      
       let response = await axios.post(
-        `https://autopilotng.com/api/live/v1/data`,
+        `${autopilot_url}/v1/data`,
         req_body,
         req_header
       );
 
-      console.log({ response: response.data });
+      console.log("AUTOPILOT RESPONSE:", { response: response.data });
 
-      if (response.data.status) {
-        console.log(response?.data?.status);
+      if (response.data.status && response.data.code === 200) {
+        console.log("MTN DATA TRANSFER SUCCESSFUL");
 
         return {
           error: false,
           response: response.data,
-          message: `Topup purchase of ${plan_id} for ${phone} successful`,
+          message: response.data.data.message || `Data purchase successful for ${phone}`,
         };
       } else {
+        console.log("MTN DATA TRANSFER FAILED:", response.data);
         return {
           error: true,
-          status: 400,
-          message: "An error occured with data transfer server",
+          status: response.data.code || 424,
+          message: response.data.data?.message || "An error occured with data transfer server",
         };
       }
     } catch (error) {
-      console.log({ error: error });
-      console.log("ERROROR");
+      console.log("AUTOPILOT ERROR:", { 
+        error: error?.response?.data || error.message,
+        status: error?.response?.status 
+      });
 
       return {
         error: true,
-        status: 400,
-        message: "An error occured with data transfer server",
+        status: error?.response?.status || 400,
+        message: error?.response?.data?.data?.message || "An error occured with data transfer server",
       };
     }
   }

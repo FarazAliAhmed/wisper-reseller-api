@@ -257,7 +257,7 @@ const validateCreate = (fields) => {
   const schema = Joi.object({
     plan_id: Joi.number().required(),
     network: Joi.string().valid("mtn", "airtel", "glo", "9mobile").required(),
-    plan_type: Joi.string().valid("gifting", "sme").required(),
+    plan_type: Joi.string().valid("gifting", "sme", "data_transfer").required(),
     price: Joi.number().required(),
     volume: Joi.number().required(),
     unit: Joi.string().valid("mb", "gb", "tb").required(),
@@ -271,7 +271,7 @@ const validateUpdate = (fields) => {
   const schema = Joi.object({
     plan_id: Joi.number(),
     network: Joi.string().valid("mtn", "airtel", "glo", "9mobile"),
-    plan_type: Joi.string().valid("gifting", "sme"),
+    plan_type: Joi.string().valid("gifting", "sme", "data_transfer"),
     price: Joi.number(),
     volume: Joi.number(),
     unit: Joi.string().valid("mb", "gb", "tb"),

@@ -274,6 +274,14 @@ exports.autopilot_mtn_size_map = (size) => {
     dataType;
 
   switch (f_size) {
+    case "50mb":
+      plan_id = "MTN_DT_50MB";
+      dataType = "DATA TRANSFER";
+      break;
+    case "100mb":
+      plan_id = "MTN_DT_100MB";
+      dataType = "DATA TRANSFER";
+      break;
     case "200mb":
       plan_id = "MTN_DT_200MB";
       dataType = "DATA TRANSFER";
@@ -298,6 +306,36 @@ exports.autopilot_mtn_size_map = (size) => {
       plan_id = "MTN_DT_5GB";
       dataType = "DATA TRANSFER";
       break;
+    // Weekly plans (7 days)
+    case "500mb_weekly":
+    case "500mbweekly":
+      plan_id = "MTN_DT_500MB_WK";
+      dataType = "DATA TRANSFER";
+      break;
+    case "1gb_weekly":
+    case "1gbweekly":
+      plan_id = "MTN_DT_1GB_WK";
+      dataType = "DATA TRANSFER";
+      break;
+    case "2gb_weekly":
+    case "2gbweekly":
+      plan_id = "MTN_DT_2GB_WK";
+      dataType = "DATA TRANSFER";
+      break;
+    case "3gb_weekly":
+    case "3gbweekly":
+      plan_id = "MTN_DT_3GB_WK";
+      dataType = "DATA TRANSFER";
+      break;
+    case "5gb_weekly":
+    case "5gbweekly":
+      plan_id = "MTN_DT_5GB_WK";
+      dataType = "DATA TRANSFER";
+      break;
+    default:
+      error = true;
+      plan_id = null;
+      dataType = null;
   }
 
   return { error, plan_id, dataType };
