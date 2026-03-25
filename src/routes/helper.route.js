@@ -39,4 +39,18 @@ router.post(
 
 router.delete("/deleteUser", helperController.deleteUserFromWisper);
 
+// Get Railway IP address for Superjara whitelist
+router.get("/ip", async (req, res) => {
+  try {
+    const axios = require('axios');
+    const response = await axios.get('https://api.ipify.org?format=json');
+    res.json({ 
+      ip: response.data.ip,
+      message: "Use this IP address to whitelist in Superjara settings"
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to get IP address" });
+  }
+});
+
 module.exports = router;
