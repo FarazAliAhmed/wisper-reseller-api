@@ -104,6 +104,7 @@ const integrationTypes = {
   EAZYMOBILE: "EAZYMOBILE",
   ZOEDATA: "ZOEDATA",
   MSORG: "MSORG",
+  AUTOPILOT: "AUTOPILOT",
   UNKNOWN: "UNKNOWN",
 };
 
@@ -849,37 +850,59 @@ exports.initiate_data_transfer = async (
 
       // end of 9mobile integration
     }
-    // ANYINLAK MTN/ // // // // // // // // // //
+    // MTN DATA PURCHASE WITH SWITCH SERVICE
     else if (requestPayload.network == 1) {
-      // SECTION - PURCHASE FOR ANYINLAK MTN
+      // SECTION - PURCHASE FOR MTN with API switching capability
 
-      // Switch to Autopilot for MTN Data Transfer
-      const { error, plan_id, dataType } = autopilot_mtn_size_map(size);
+      const dataSwitch = await switchService.getDataSwitchByNetwork("mtn");
+      console.log({ mtnDataSwitch: dataSwitch });
 
-      console.log({ error, plan_id, dataType });
+      if (dataSwitch && dataSwitch.api == "superjara") {
+        // SUPERJARA MTN
+        integName = integrationTypes.SUPERJARA;
 
-      if (error)
-        return {
-          error: true,
-          status: 400,
-          message: "This data plan is currently not available",
-        };
+        const { error, plan_id } = superjara_mtn_size_map(size);
 
-      // Using Autopilot API for MTN Data Transfer
-      const response = await ApiDataHelper.Autopilot(
-        requestPayload.network,
-        plan_id,
-        requestPayload.mobile_number,
-        dataType,
-        ref
-      );
+        if (error)
+          return {
+            error: true,
+            status: 400,
+            message: "This data plan is currently not available",
+          };
 
-      console.log({ response });
+        return await ApiDataHelper.Superjara(
+          plan_id,
+          requestPayload.mobile_number,
+          ref
+        );
+      } else {
+        // DEFAULT: AUTOPILOT MTN Data Transfer
+        integName = integrationTypes.AUTOPILOT;
 
-      return response;
+        const { error, plan_id, dataType } = autopilot_mtn_size_map(size);
 
-      // update api balance
-      // await n3tdataApiUpdateBalance(response);
+        console.log({ error, plan_id, dataType });
+
+        if (error)
+          return {
+            error: true,
+            status: 400,
+            message: "This data plan is currently not available",
+          };
+
+        // Using Autopilot API for MTN Data Transfer
+        const response = await ApiDataHelper.Autopilot(
+          requestPayload.network,
+          plan_id,
+          requestPayload.mobile_number,
+          dataType,
+          ref
+        );
+
+        console.log({ response });
+
+        return response;
+      }
     } else {
       // Data purchase for other network
       integName = integrationTypes.FASTLINK;

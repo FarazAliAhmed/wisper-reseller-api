@@ -9,6 +9,8 @@ const APIPROVIDER_ENUM = [
     'vtpass',
     'gsubz',
     'smeplug',
+    'autopilot',
+    'superjara',
 ];
 
 // Define the enum for networks
