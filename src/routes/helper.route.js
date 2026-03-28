@@ -53,4 +53,19 @@ router.get("/ip", async (req, res) => {
   }
 });
 
+// Check Superjara environment variables
+router.get("/check-superjara-env", async (req, res) => {
+  const hasToken = !!process.env.SUPERJARA_AUTH_NEW_KEY;
+  const tokenLength = process.env.SUPERJARA_AUTH_NEW_KEY?.length || 0;
+  const tokenPreview = process.env.SUPERJARA_AUTH_NEW_KEY?.substring(0, 15) || 'NOT SET';
+  
+  res.json({
+    SUPERJARA_AUTH_NEW_KEY_exists: hasToken,
+    token_length: tokenLength,
+    token_preview: tokenPreview + '...',
+    superjara_url: "https://www.superjara.com/api/data/",
+    all_superjara_keys: Object.keys(process.env).filter(k => k.includes('SUPERJARA'))
+  });
+});
+
 module.exports = router;
