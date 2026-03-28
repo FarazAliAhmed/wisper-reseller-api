@@ -299,7 +299,7 @@ class ApiDataHelper {
     const req_header = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${superjara_token}`,
+        Authorization: `Token ${superjara_token}`,
         Accept: "application/json",
       },
     };
@@ -314,7 +314,7 @@ class ApiDataHelper {
     console.log({ req_body });
 
     let response = await axios.post(
-      `https://superjara.com/autobiz_vending_index.php`,
+      superjara_url,
       req_body,
       req_header
     );
