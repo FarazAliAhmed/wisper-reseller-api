@@ -158,6 +158,9 @@ exports.get_network_provider = (network_provider) => {
 };
 
 exports.validate_phone_number = (number, network_provider) => {
+  if (!number || typeof number !== 'string') {
+    return { error: true, status: 401, message: "Invalid Phone Number" };
+  }
   if (number.length !== 11 && parseInt(number).length !== 10) {
     return { error: true, status: 401, message: "Invalid Phone Number" };
   }
