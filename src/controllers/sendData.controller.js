@@ -72,6 +72,15 @@ const sendData = async (req, res, next) => {
   if (maintenance.error)
     return res.status(maintenance.status).json(maintenance);
 
+  // Check if phone number is provided
+  if (!phone_number) {
+    return res.status(400).json({
+      error: true,
+      status: 400,
+      message: "Phone number is required"
+    });
+  }
+
   // check that phone number is valid
   const validNumber = validate_phone_number(phone_number, providerId.network);
   if (validNumber.error)
