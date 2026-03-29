@@ -114,6 +114,76 @@ router.get("/test-superjara", async (req, res) => {
     });
   }
 
+  // Test 1b: New URL with Bearer auth
+  try {
+    const response = await axios.post(
+      "https://www.superjara.com/api/data/",
+      {
+        product_code: "data_share_1gb",
+        phone_number: "08131635113",
+        action: "vend",
+        user_reference: "test-bearer-" + Date.now(),
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      }
+    );
+
+    testResults.tests.push({
+      name: "New URL with Bearer auth",
+      url: "https://www.superjara.com/api/data/",
+      success: true,
+      response: response.data
+    });
+  } catch (error) {
+    testResults.tests.push({
+      name: "New URL with Bearer auth",
+      url: "https://www.superjara.com/api/data/",
+      success: false,
+      status: error?.response?.status,
+      error: error?.response?.data
+    });
+  }
+
+  // Test 1c: New URL with api_key in body
+  try {
+    const response = await axios.post(
+      "https://www.superjara.com/api/data/",
+      {
+        product_code: "data_share_1gb",
+        phone_number: "08131635113",
+        action: "vend",
+        user_reference: "test-apikey-" + Date.now(),
+        api_key: token
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+
+    testResults.tests.push({
+      name: "New URL with api_key in body",
+      url: "https://www.superjara.com/api/data/",
+      success: true,
+      response: response.data
+    });
+  } catch (error) {
+    testResults.tests.push({
+      name: "New URL with api_key in body",
+      url: "https://www.superjara.com/api/data/",
+      success: false,
+      status: error?.response?.status,
+      error: error?.response?.data
+    });
+  }
+
   // Test 2: Old URL with Token auth
   try {
     const response = await axios.post(
