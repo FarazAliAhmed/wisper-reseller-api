@@ -63,7 +63,7 @@ router.get("/check-superjara-env", async (req, res) => {
     SUPERJARA_AUTH_NEW_KEY_exists: hasToken,
     token_length: tokenLength,
     token_preview: tokenPreview + '...',
-    superjara_url: "https://www.superjara.com/api/data/",
+    superjara_url: "https://superjara.com/autobiz_vending_index.php",
     all_superjara_keys: Object.keys(process.env).filter(k => k.includes('SUPERJARA'))
   });
 });
