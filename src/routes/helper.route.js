@@ -71,152 +71,49 @@ router.get("/check-superjara-env", async (req, res) => {
 // Test Superjara API directly from Railway
 router.get("/test-superjara", async (req, res) => {
   const axios = require('axios');
-  const token = process.env.SUPERJARA_AUTH_NEW_KEY || 'zXTgJqLSb8wJ0VUpa7iIQpUDWN5MxaF2qruCsHg5Z8XVOcAa1JEVKRQqb8q8ChCs';
+  const token = process.env.SUPERJARA_AUTH_NEW_KEY;
   
+  if (!token) {
+    return res.json({
+      error: "SUPERJARA_AUTH_NEW_KEY not set in environment variables"
+    });
+  }
+
   const testResults = {
-    token_exists: !!process.env.SUPERJARA_AUTH_NEW_KEY,
-    using_hardcoded: !process.env.SUPERJARA_AUTH_NEW_KEY,
-    tests: []
+    token_preview: token.substring(0, 15) + '...',
+    endpoint: "https://superjara.com/autobiz_vending_index.php",
+    test: {}
   };
 
-  // Test 1: New URL with Token auth
-  try {
-    const response = await axios.post(
-      "https://www.superjara.com/api/data/",
-      {
-        product_code: "data_share_1gb",
-        phone_number: "08131635113",
-        action: "vend",
-        user_reference: "test-new-" + Date.now(),
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
-          Accept: "application/json",
-        },
-      }
-    );
-
-    testResults.tests.push({
-      name: "New URL with Token auth",
-      url: "https://www.superjara.com/api/data/",
-      success: true,
-      response: response.data
-    });
-  } catch (error) {
-    testResults.tests.push({
-      name: "New URL with Token auth",
-      url: "https://www.superjara.com/api/data/",
-      success: false,
-      status: error?.response?.status,
-      error: error?.response?.data
-    });
-  }
-
-  // Test 1b: New URL with Bearer auth
-  try {
-    const response = await axios.post(
-      "https://www.superjara.com/api/data/",
-      {
-        product_code: "data_share_1gb",
-        phone_number: "08131635113",
-        action: "vend",
-        user_reference: "test-bearer-" + Date.now(),
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      }
-    );
-
-    testResults.tests.push({
-      name: "New URL with Bearer auth",
-      url: "https://www.superjara.com/api/data/",
-      success: true,
-      response: response.data
-    });
-  } catch (error) {
-    testResults.tests.push({
-      name: "New URL with Bearer auth",
-      url: "https://www.superjara.com/api/data/",
-      success: false,
-      status: error?.response?.status,
-      error: error?.response?.data
-    });
-  }
-
-  // Test 1c: New URL with api_key in body
-  try {
-    const response = await axios.post(
-      "https://www.superjara.com/api/data/",
-      {
-        product_code: "data_share_1gb",
-        phone_number: "08131635113",
-        action: "vend",
-        user_reference: "test-apikey-" + Date.now(),
-        api_key: token
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
-
-    testResults.tests.push({
-      name: "New URL with api_key in body",
-      url: "https://www.superjara.com/api/data/",
-      success: true,
-      response: response.data
-    });
-  } catch (error) {
-    testResults.tests.push({
-      name: "New URL with api_key in body",
-      url: "https://www.superjara.com/api/data/",
-      success: false,
-      status: error?.response?.status,
-      error: error?.response?.data
-    });
-  }
-
-  // Test 2: Old URL with Token auth
+  // Test with Bearer header (as per Superjara's PHP example)
   try {
     const response = await axios.post(
       "https://superjara.com/autobiz_vending_index.php",
       {
-        product_code: "data_share_1gb",
+        product_code: "mtn_sme_1gb",
         phone_number: "08131635113",
         action: "vend",
-        user_reference: "test-old-" + Date.now(),
+        user_reference: "test-" + Date.now(),
       },
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
+          "Bearer": token,
           Accept: "application/json",
         },
       }
     );
 
-    testResults.tests.push({
-      name: "Old URL with Token auth",
-      url: "https://superjara.com/autobiz_vending_index.php",
+    testResults.test = {
       success: true,
       response: response.data
-    });
+    };
   } catch (error) {
-    testResults.tests.push({
-      name: "Old URL with Token auth",
-      url: "https://superjara.com/autobiz_vending_index.php",
+    testResults.test = {
       success: false,
       status: error?.response?.status,
-      error: error?.response?.data
-    });
+      error: error?.response?.data || error.message
+    };
   }
 
   res.json(testResults);

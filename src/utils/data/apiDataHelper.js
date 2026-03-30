@@ -299,7 +299,7 @@ class ApiDataHelper {
     const req_header = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${superjara_token}`,
+        "Bearer": superjara_token,
         Accept: "application/json",
       },
     };
@@ -311,31 +311,44 @@ class ApiDataHelper {
       user_reference: ref,
     };
 
-    console.log({ req_body });
+    console.log("SUPERJARA REQUEST:", { req_body, headers: req_header.headers });
 
-    let response = await axios.post(
-      superjara_url,
-      req_body,
-      req_header
-    );
+    try {
+      let response = await axios.post(
+        superjara_url,
+        req_body,
+        req_header
+      );
 
-    console.log({ response: response.data });
+      console.log("SUPERJARA RESPONSE:", { response: response.data });
 
-    if (response.data.text_status.toLowerCase() == "COMPLETED".toLowerCase()) {
-      console.log(response.data.Status);
+      if (response.data.status && response.data.text_status && 
+          response.data.text_status.toLowerCase() === "completed") {
+        console.log("SUPERJARA DATA PURCHASE SUCCESSFUL");
 
-      return {
-        error: false,
-        response: response.data,
-        message: `Topup purchase of ₦${
-          response?.data?.data?.amount || 0
-        } for ${phone} successful`,
-      };
-    } else {
+        return {
+          error: false,
+          response: response.data,
+          message: `Topup purchase of ₦${
+            response?.data?.data?.amount_charged || 0
+          } for ${phone} successful`,
+        };
+      } else {
+        return {
+          error: true,
+          status: 400,
+          message: response?.data?.server_message || "An error occured with data transfer server",
+        };
+      }
+    } catch (error) {
+      console.log("SUPERJARA ERROR:", { 
+        error: error?.response?.data || error.message 
+      });
+
       return {
         error: true,
         status: 400,
-        message: "An error occured with data transfer server",
+        message: error?.response?.data?.server_message || "An error occured with data transfer server",
       };
     }
   }
