@@ -79,7 +79,7 @@ const eazymobile_url = process.env.EAZYMOBILE_URL;
 const eazymobile_key = process.env.EAZYMOBILE_API_KEY;
 const eazymobile_token = process.env.EAZYMOBILE_TOKEN;
 
-const superjara_url = "https://www.superjara.com/api/data/";
+const superjara_url = "https://superjara.com/autobiz_vending_index.php";
 const superjara_token = process.env.SUPERJARA_AUTH_NEW_KEY;
 
 const zoedata_url = "https://zoedatahub.com/api/data/";

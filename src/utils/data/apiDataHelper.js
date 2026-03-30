@@ -14,7 +14,7 @@ const autopilot_token = process.env.AUTOPILOT_API_KEY;
 const autopilot_url = process.env.AUTOPILOT_URL;
 
 const superjara_token = process.env.SUPERJARA_AUTH_NEW_KEY;
-const superjara_url = "https://www.superjara.com/api/data/";
+const superjara_url = "https://superjara.com/autobiz_vending_index.php";
 
 class ApiDataHelper {
   static async Ayinlak(network, plan_id, phone) {
