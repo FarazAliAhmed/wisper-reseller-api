@@ -299,7 +299,7 @@ class ApiDataHelper {
     const req_header = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Token ${superjara_token}`,
+        Authorization: `Bearer ${superjara_token}`,
         Accept: "application/json",
       },
     };
