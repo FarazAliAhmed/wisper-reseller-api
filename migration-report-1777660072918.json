@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-05-01T18:27:52.918Z",
+  "dryRun": false,
+  "statistics": {
+    "totalUsers": 4,
+    "alreadyMigrated": 0,
+    "successfullyMigrated": 0,
+    "failed": 4,
+    "skipped": 0,
+    "errors": [
+      {
+        "userId": "69c0091bcaece05fc8696d51",
+        "message": "Failed to migrate user faraz (farar0@gmail.com)",
+        "error": "PaymentPoint account creation failed: Invalid businessId",
+        "timestamp": "2026-05-01T18:27:48.640Z"
+      },
+      {
+        "userId": "69c00a54caece05fc8696e5b",
+        "message": "Failed to migrate user Chisom Alaoma (chisomalaoma@gmail.com)",
+        "error": "PaymentPoint account creation failed: Invalid businessId",
+        "timestamp": "2026-05-01T18:27:50.089Z"
+      },
+      {
+        "userId": "69c2512a9b62425cb6ad4991",
+        "message": "Failed to migrate user Michael Alaoma (macalaoma12@gmail.com)",
+        "error": "PaymentPoint account creation failed: Invalid businessId",
+        "timestamp": "2026-05-01T18:27:51.496Z"
+      },
+      {
+        "userId": "69f3bbcbb7a0543048486483",
+        "message": "Failed to migrate user Faraz ali (alifaraz22561@gmail.com)",
+        "error": "PaymentPoint account creation failed: Invalid businessId",
+        "timestamp": "2026-05-01T18:27:52.912Z"
+      }
+    ]
+  },
+  "configuration": {
+    "delayMs": 500,
+    "mongoUri": "***configured***",
+    "paymentPointConfigured": true
+  }
+}

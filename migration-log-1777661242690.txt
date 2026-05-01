@@ -1,0 +1,38 @@
+[2026-05-01T18:47:22.690Z] ================================================================================
+[2026-05-01T18:47:22.698Z] PaymentPoint Virtual Account Migration Script
+[2026-05-01T18:47:22.698Z] ================================================================================
+[2026-05-01T18:47:22.698Z] Log file: /Users/apple/Documents/project/wisper-dashboard/wisper-reseller-api/migration-log-1777661242690.txt
+[2026-05-01T18:47:22.698Z] 
+[2026-05-01T18:47:22.698Z] ✓ PaymentPoint configuration validated
+[2026-05-01T18:47:22.698Z] Connecting to MongoDB...
+[2026-05-01T18:47:24.128Z] ✓ Connected to MongoDB successfully
+[2026-05-01T18:47:24.129Z] 
+[2026-05-01T18:47:24.129Z] ================================================================================
+[2026-05-01T18:47:24.129Z] Fetching Users from Database
+[2026-05-01T18:47:24.129Z] ================================================================================
+[2026-05-01T18:47:24.756Z] Found 4 users in database
+[2026-05-01T18:47:24.756Z] 
+[2026-05-01T18:47:24.756Z] ================================================================================
+[2026-05-01T18:47:24.757Z] Starting Migration Process
+[2026-05-01T18:47:24.757Z] ================================================================================
+[2026-05-01T18:47:24.757Z] Processing 4 users with 500ms delay between API calls
+[2026-05-01T18:47:24.757Z] 
+[2026-05-01T18:47:24.757Z] [1/4]
+[2026-05-01T18:47:24.757Z] 
+📝 Processing user: faraz (farar0@gmail.com)
+[2026-05-01T18:47:24.758Z]    ℹ️  NIN available: 731********
+[2026-05-01T18:47:24.758Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T18:47:26.207Z] ❌ ERROR: Failed to migrate user faraz (farar0@gmail.com)
+[2026-05-01T18:47:26.208Z]    Details: PaymentPoint account creation failed: The business id field is required.
+[2026-05-01T18:47:26.709Z] [2/4]
+[2026-05-01T18:47:26.710Z] 
+📝 Processing user: Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T18:47:26.711Z]    ℹ️  NIN available: 278********
+[2026-05-01T18:47:26.711Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T18:47:27.644Z] ❌ ERROR: Failed to migrate user Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T18:47:27.644Z]    Details: PaymentPoint account creation failed: The business id field is required.
+[2026-05-01T18:47:28.146Z] [3/4]
+[2026-05-01T18:47:28.146Z] 
+📝 Processing user: Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T18:47:28.148Z]    ℹ️  NIN available: 956********
+[2026-05-01T18:47:28.148Z]    🔄 Creating PaymentPoint virtual account...

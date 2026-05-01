@@ -34,8 +34,8 @@ class PaymentPointService {
   getHeaders() {
     return {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${this.apiKey}`,
-      "X-Secret-Key": this.secretKey,
+      "Authorization": `Bearer ${this.secretKey}`,
+      "api-key": this.apiKey,
     };
   }
 
@@ -86,47 +86,59 @@ class PaymentPointService {
         };
       }
 
-      // Prepare payload for account creation
-      const payload = {
-        account_reference: accountReference,
-        account_name: accountName,
-        customer_email: customerEmail,
-        customer_name: customerName,
-        currency: "NGN",
-      };
-
-      // Add BVN or NIN if provided
-      if (bvn) {
-        payload.bvn = bvn;
-        console.log("Creating account with BVN");
-      } else if (nin) {
-        payload.nin = nin;
-        console.log("Creating account with NIN");
-      }
-
-      // Create virtual account via PaymentPoint API
-      const response = await axios.post(
-        this.getApiUrl("/v1/virtual-accounts/create"),
-        payload,
-        { headers: this.getHeaders() }
-      );
-
-      const accountData = response.data.data || response.data;
-
-      // Update user record with PaymentPoint account details
+      // Get user for phone number
       const user = await Account.findOne({ email: customerEmail });
       if (!user) {
         throw new Error("User not found in database");
       }
 
-      const bankAccounts = accountData.accounts || [];
+      // Prepare payload for account creation
+      // Use the registered PaymentPoint business ID
+      const PAYMENTPOINT_BUSINESS_ID = "71e885f182ed5ea4454ef5e1d7e9a2ec40d1b36";
+      
+      const payload = {
+        email: customerEmail,
+        name: customerName,
+        phoneNumber: user.phone || user.phoneNumber || "07000000000", // Use default if not available
+        bankCode: ['20946', '20897'], // Palmpay and other banks
+        businessId: PAYMENTPOINT_BUSINESS_ID,
+      };
+
+      console.log("PaymentPoint API Payload:", JSON.stringify(payload, null, 2));
+
+      // Note: PaymentPoint doesn't use BVN/NIN in their API
+      if (bvn) {
+        console.log("BVN provided but not used by PaymentPoint API");
+      }
+      if (nin) {
+        console.log("NIN provided but not used by PaymentPoint API");
+      }
+
+      // Create virtual account via PaymentPoint API
+      const response = await axios.post(
+        this.getApiUrl("/api/v1/createVirtualAccount"),
+        payload,
+        { headers: this.getHeaders() }
+      );
+
+      const accountData = response.data;
+
+      // Extract bank accounts from response
+      const bankAccounts = accountData.bankAccounts || [];
+      
+      // Update user record with PaymentPoint account details
+      const newBankAcct = bankAccounts.map(account => ({
+        bankName: account.bankName,
+        accountNumber: account.accountNumber,
+        accountName: account.accountName,
+      }));
       
       await Account.findOneAndUpdate(
         { email: customerEmail },
         { 
           $set: { 
-            paymentpointAccounts: bankAccounts,
-            paymentpointAccountReference: accountReference,
+            paymentpointAccounts: newBankAcct,
+            paymentpointAccountReference: accountData.customer?.customer_id || accountReference,
           } 
         },
         { new: true }

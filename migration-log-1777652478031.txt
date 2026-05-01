@@ -1,0 +1,94 @@
+[2026-05-01T16:21:18.031Z] ================================================================================
+[2026-05-01T16:21:18.037Z] PaymentPoint Virtual Account Migration Script
+[2026-05-01T16:21:18.037Z] ================================================================================
+[2026-05-01T16:21:18.037Z] Log file: /Users/apple/Documents/project/wisper-dashboard/wisper-reseller-api/migration-log-1777652478031.txt
+[2026-05-01T16:21:18.037Z] 
+[2026-05-01T16:21:18.037Z] ✓ PaymentPoint configuration validated
+[2026-05-01T16:21:18.037Z] Connecting to MongoDB...
+[2026-05-01T16:21:20.706Z] ✓ Connected to MongoDB successfully
+[2026-05-01T16:21:20.707Z] 
+[2026-05-01T16:21:20.707Z] ================================================================================
+[2026-05-01T16:21:20.707Z] Fetching Users from Database
+[2026-05-01T16:21:20.707Z] ================================================================================
+[2026-05-01T16:21:21.368Z] Found 5 users in database
+[2026-05-01T16:21:21.369Z] 
+[2026-05-01T16:21:21.369Z] ================================================================================
+[2026-05-01T16:21:21.369Z] Starting Migration Process
+[2026-05-01T16:21:21.369Z] ================================================================================
+[2026-05-01T16:21:21.369Z] Processing 5 users with 500ms delay between API calls
+[2026-05-01T16:21:21.369Z] 
+[2026-05-01T16:21:21.369Z] [1/5]
+[2026-05-01T16:21:21.370Z] 
+📝 Processing user: Edward Oboh (obohedward@gmail.com)
+[2026-05-01T16:21:21.371Z]    ℹ️  No BVN/NIN available (optional)
+[2026-05-01T16:21:21.371Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:21:23.064Z] ❌ ERROR: Failed to migrate user Edward Oboh (obohedward@gmail.com)
+[2026-05-01T16:21:23.064Z]    Details: PaymentPoint account creation failed: Invalid businessId
+[2026-05-01T16:21:23.566Z] [2/5]
+[2026-05-01T16:21:23.566Z] 
+📝 Processing user: faraz (farar0@gmail.com)
+[2026-05-01T16:21:23.566Z]    ℹ️  NIN available: 731********
+[2026-05-01T16:21:23.566Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:21:24.543Z] ❌ ERROR: Failed to migrate user faraz (farar0@gmail.com)
+[2026-05-01T16:21:24.543Z]    Details: PaymentPoint account creation failed: Invalid businessId
+[2026-05-01T16:21:25.044Z] [3/5]
+[2026-05-01T16:21:25.045Z] 
+📝 Processing user: Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T16:21:25.045Z]    ℹ️  NIN available: 278********
+[2026-05-01T16:21:25.045Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:21:25.948Z] ❌ ERROR: Failed to migrate user Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T16:21:25.949Z]    Details: PaymentPoint account creation failed: Invalid businessId
+[2026-05-01T16:21:26.450Z] [4/5]
+[2026-05-01T16:21:26.451Z] 
+📝 Processing user: Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T16:21:26.451Z]    ℹ️  NIN available: 956********
+[2026-05-01T16:21:26.451Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:21:27.327Z] ❌ ERROR: Failed to migrate user Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T16:21:27.328Z]    Details: PaymentPoint account creation failed: Invalid businessId
+[2026-05-01T16:21:27.830Z] [5/5]
+[2026-05-01T16:21:27.831Z] 
+📝 Processing user: Faraz ali (alifaraz22561@gmail.com)
+[2026-05-01T16:21:27.831Z]    ℹ️  BVN available: 213********
+[2026-05-01T16:21:27.832Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:21:28.778Z] ❌ ERROR: Failed to migrate user Faraz ali (alifaraz22561@gmail.com)
+[2026-05-01T16:21:28.779Z]    Details: PaymentPoint account creation failed: Invalid businessId
+[2026-05-01T16:21:28.779Z] 
+[2026-05-01T16:21:28.779Z] ================================================================================
+[2026-05-01T16:21:28.779Z] Migration Summary
+[2026-05-01T16:21:28.780Z] ================================================================================
+[2026-05-01T16:21:28.780Z] Total Users:              5
+[2026-05-01T16:21:28.780Z] Already Migrated:         0 (skipped)
+[2026-05-01T16:21:28.780Z] Successfully Migrated:    0
+[2026-05-01T16:21:28.780Z] Failed:                   5
+[2026-05-01T16:21:28.780Z] Skipped (missing data):   0
+[2026-05-01T16:21:28.780Z] 
+[2026-05-01T16:21:28.780Z] ================================================================================
+[2026-05-01T16:21:28.781Z] Error Details
+[2026-05-01T16:21:28.781Z] ================================================================================
+[2026-05-01T16:21:28.781Z] 1. User ID: 6217ff2f78302dcf826aa7a6
+[2026-05-01T16:21:28.781Z]    Message: Failed to migrate user Edward Oboh (obohedward@gmail.com)
+[2026-05-01T16:21:28.781Z]    Error: PaymentPoint account creation failed: Invalid businessId
+[2026-05-01T16:21:28.781Z] 
+[2026-05-01T16:21:28.782Z] 2. User ID: 69c0091bcaece05fc8696d51
+[2026-05-01T16:21:28.782Z]    Message: Failed to migrate user faraz (farar0@gmail.com)
+[2026-05-01T16:21:28.782Z]    Error: PaymentPoint account creation failed: Invalid businessId
+[2026-05-01T16:21:28.782Z] 
+[2026-05-01T16:21:28.782Z] 3. User ID: 69c00a54caece05fc8696e5b
+[2026-05-01T16:21:28.782Z]    Message: Failed to migrate user Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T16:21:28.782Z]    Error: PaymentPoint account creation failed: Invalid businessId
+[2026-05-01T16:21:28.782Z] 
+[2026-05-01T16:21:28.782Z] 4. User ID: 69c2512a9b62425cb6ad4991
+[2026-05-01T16:21:28.782Z]    Message: Failed to migrate user Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T16:21:28.783Z]    Error: PaymentPoint account creation failed: Invalid businessId
+[2026-05-01T16:21:28.783Z] 
+[2026-05-01T16:21:28.783Z] 5. User ID: 69f3bbcbb7a0543048486483
+[2026-05-01T16:21:28.783Z]    Message: Failed to migrate user Faraz ali (alifaraz22561@gmail.com)
+[2026-05-01T16:21:28.783Z]    Error: PaymentPoint account creation failed: Invalid businessId
+[2026-05-01T16:21:28.783Z] 
+[2026-05-01T16:21:28.786Z] Summary report saved to: /Users/apple/Documents/project/wisper-dashboard/wisper-reseller-api/migration-report-1777652488785.json
+[2026-05-01T16:21:28.786Z] 
+[2026-05-01T16:21:28.786Z] ================================================================================
+[2026-05-01T16:21:28.786Z] Migration Complete
+[2026-05-01T16:21:28.786Z] ================================================================================
+[2026-05-01T16:21:28.794Z] Database connection closed
+[2026-05-01T16:21:28.794Z] Script execution completed

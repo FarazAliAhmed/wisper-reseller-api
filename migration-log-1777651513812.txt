@@ -1,0 +1,80 @@
+[2026-05-01T16:05:13.812Z] ================================================================================
+[2026-05-01T16:05:13.819Z] PaymentPoint Virtual Account Migration Script
+[2026-05-01T16:05:13.819Z] ================================================================================
+[2026-05-01T16:05:13.819Z] 🔍 RUNNING IN DRY-RUN MODE - No accounts will be created
+[2026-05-01T16:05:13.819Z] 
+[2026-05-01T16:05:13.819Z] Log file: /Users/apple/Documents/project/wisper-dashboard/wisper-reseller-api/migration-log-1777651513812.txt
+[2026-05-01T16:05:13.819Z] 
+[2026-05-01T16:05:13.819Z] ✓ PaymentPoint configuration validated
+[2026-05-01T16:05:13.819Z] Connecting to MongoDB...
+[2026-05-01T16:05:16.475Z] ✓ Connected to MongoDB successfully
+[2026-05-01T16:05:16.476Z] 
+[2026-05-01T16:05:16.476Z] ================================================================================
+[2026-05-01T16:05:16.476Z] Fetching Users from Database
+[2026-05-01T16:05:16.476Z] ================================================================================
+[2026-05-01T16:05:17.139Z] Found 5 users in database
+[2026-05-01T16:05:17.139Z] 
+[2026-05-01T16:05:17.139Z] ================================================================================
+[2026-05-01T16:05:17.140Z] Starting Migration Process
+[2026-05-01T16:05:17.140Z] ================================================================================
+[2026-05-01T16:05:17.140Z] Processing 5 users with 500ms delay between API calls
+[2026-05-01T16:05:17.140Z] 
+[2026-05-01T16:05:17.141Z] [1/5]
+[2026-05-01T16:05:17.141Z] 
+📝 Processing user: Edward Oboh (obohedward@gmail.com)
+[2026-05-01T16:05:17.141Z]    ℹ️  No BVN/NIN available (optional)
+[2026-05-01T16:05:17.141Z]    🔍 DRY RUN: Would create PaymentPoint account
+[2026-05-01T16:05:17.141Z]       Account Reference: 6217ff2f78302dcf826aa7a6
+[2026-05-01T16:05:17.141Z]       Account Name: Edward Oboh
+[2026-05-01T16:05:17.142Z]       Email: obohedward@gmail.com
+[2026-05-01T16:05:17.142Z] [2/5]
+[2026-05-01T16:05:17.142Z] 
+📝 Processing user: faraz (farar0@gmail.com)
+[2026-05-01T16:05:17.142Z]    ℹ️  NIN available: 731********
+[2026-05-01T16:05:17.142Z]    🔍 DRY RUN: Would create PaymentPoint account
+[2026-05-01T16:05:17.142Z]       Account Reference: 69c0091bcaece05fc8696d51
+[2026-05-01T16:05:17.142Z]       Account Name: faraz
+[2026-05-01T16:05:17.142Z]       Email: farar0@gmail.com
+[2026-05-01T16:05:17.142Z] [3/5]
+[2026-05-01T16:05:17.142Z] 
+📝 Processing user: Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T16:05:17.142Z]    ℹ️  NIN available: 278********
+[2026-05-01T16:05:17.142Z]    🔍 DRY RUN: Would create PaymentPoint account
+[2026-05-01T16:05:17.142Z]       Account Reference: 69c00a54caece05fc8696e5b
+[2026-05-01T16:05:17.143Z]       Account Name: Chisom Alaoma
+[2026-05-01T16:05:17.143Z]       Email: chisomalaoma@gmail.com
+[2026-05-01T16:05:17.143Z] [4/5]
+[2026-05-01T16:05:17.143Z] 
+📝 Processing user: Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T16:05:17.143Z]    ℹ️  NIN available: 956********
+[2026-05-01T16:05:17.143Z]    🔍 DRY RUN: Would create PaymentPoint account
+[2026-05-01T16:05:17.143Z]       Account Reference: 69c2512a9b62425cb6ad4991
+[2026-05-01T16:05:17.143Z]       Account Name: Michael Alaoma
+[2026-05-01T16:05:17.143Z]       Email: macalaoma12@gmail.com
+[2026-05-01T16:05:17.143Z] [5/5]
+[2026-05-01T16:05:17.143Z] 
+📝 Processing user: Faraz ali (alifaraz22561@gmail.com)
+[2026-05-01T16:05:17.143Z]    ℹ️  BVN available: 213********
+[2026-05-01T16:05:17.143Z]    🔍 DRY RUN: Would create PaymentPoint account
+[2026-05-01T16:05:17.143Z]       Account Reference: 69f3bbcbb7a0543048486483
+[2026-05-01T16:05:17.143Z]       Account Name: Faraz ali
+[2026-05-01T16:05:17.143Z]       Email: alifaraz22561@gmail.com
+[2026-05-01T16:05:17.143Z] 
+[2026-05-01T16:05:17.144Z] ================================================================================
+[2026-05-01T16:05:17.144Z] Migration Summary
+[2026-05-01T16:05:17.144Z] ================================================================================
+[2026-05-01T16:05:17.144Z] Total Users:              5
+[2026-05-01T16:05:17.144Z] Already Migrated:         0 (skipped)
+[2026-05-01T16:05:17.144Z] Successfully Migrated:    5
+[2026-05-01T16:05:17.144Z] Failed:                   0
+[2026-05-01T16:05:17.144Z] Skipped (missing data):   0
+[2026-05-01T16:05:17.144Z] 
+[2026-05-01T16:05:17.145Z] Summary report saved to: /Users/apple/Documents/project/wisper-dashboard/wisper-reseller-api/migration-report-1777651517144.json
+[2026-05-01T16:05:17.145Z] 
+[2026-05-01T16:05:17.145Z] ================================================================================
+[2026-05-01T16:05:17.145Z] Migration Complete
+[2026-05-01T16:05:17.145Z] ================================================================================
+[2026-05-01T16:05:17.145Z] 🔍 This was a DRY RUN - no accounts were actually created
+[2026-05-01T16:05:17.145Z] Run without --dry-run flag to perform actual migration
+[2026-05-01T16:05:17.254Z] Database connection closed
+[2026-05-01T16:05:17.254Z] Script execution completed

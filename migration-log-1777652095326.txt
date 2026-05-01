@@ -1,0 +1,94 @@
+[2026-05-01T16:14:55.326Z] ================================================================================
+[2026-05-01T16:14:55.333Z] PaymentPoint Virtual Account Migration Script
+[2026-05-01T16:14:55.333Z] ================================================================================
+[2026-05-01T16:14:55.334Z] Log file: /Users/apple/Documents/project/wisper-dashboard/wisper-reseller-api/migration-log-1777652095326.txt
+[2026-05-01T16:14:55.334Z] 
+[2026-05-01T16:14:55.334Z] ✓ PaymentPoint configuration validated
+[2026-05-01T16:14:55.334Z] Connecting to MongoDB...
+[2026-05-01T16:14:57.990Z] ✓ Connected to MongoDB successfully
+[2026-05-01T16:14:57.990Z] 
+[2026-05-01T16:14:57.990Z] ================================================================================
+[2026-05-01T16:14:57.990Z] Fetching Users from Database
+[2026-05-01T16:14:57.990Z] ================================================================================
+[2026-05-01T16:14:58.645Z] Found 5 users in database
+[2026-05-01T16:14:58.646Z] 
+[2026-05-01T16:14:58.646Z] ================================================================================
+[2026-05-01T16:14:58.647Z] Starting Migration Process
+[2026-05-01T16:14:58.647Z] ================================================================================
+[2026-05-01T16:14:58.647Z] Processing 5 users with 500ms delay between API calls
+[2026-05-01T16:14:58.647Z] 
+[2026-05-01T16:14:58.647Z] [1/5]
+[2026-05-01T16:14:58.648Z] 
+📝 Processing user: Edward Oboh (obohedward@gmail.com)
+[2026-05-01T16:14:58.648Z]    ℹ️  No BVN/NIN available (optional)
+[2026-05-01T16:14:58.648Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:15:00.061Z] ❌ ERROR: Failed to migrate user Edward Oboh (obohedward@gmail.com)
+[2026-05-01T16:15:00.061Z]    Details: PaymentPoint account creation failed: The phone number field is required.
+[2026-05-01T16:15:00.563Z] [2/5]
+[2026-05-01T16:15:00.564Z] 
+📝 Processing user: faraz (farar0@gmail.com)
+[2026-05-01T16:15:00.564Z]    ℹ️  NIN available: 731********
+[2026-05-01T16:15:00.564Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:15:01.512Z] ❌ ERROR: Failed to migrate user faraz (farar0@gmail.com)
+[2026-05-01T16:15:01.513Z]    Details: PaymentPoint account creation failed: The phone number field is required.
+[2026-05-01T16:15:02.015Z] [3/5]
+[2026-05-01T16:15:02.016Z] 
+📝 Processing user: Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T16:15:02.016Z]    ℹ️  NIN available: 278********
+[2026-05-01T16:15:02.017Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:15:02.946Z] ❌ ERROR: Failed to migrate user Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T16:15:02.947Z]    Details: PaymentPoint account creation failed: The phone number field is required.
+[2026-05-01T16:15:03.448Z] [4/5]
+[2026-05-01T16:15:03.449Z] 
+📝 Processing user: Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T16:15:03.450Z]    ℹ️  NIN available: 956********
+[2026-05-01T16:15:03.450Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:15:04.332Z] ❌ ERROR: Failed to migrate user Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T16:15:04.333Z]    Details: PaymentPoint account creation failed: The phone number field is required.
+[2026-05-01T16:15:04.835Z] [5/5]
+[2026-05-01T16:15:04.835Z] 
+📝 Processing user: Faraz ali (alifaraz22561@gmail.com)
+[2026-05-01T16:15:04.835Z]    ℹ️  BVN available: 213********
+[2026-05-01T16:15:04.835Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:15:05.737Z] ❌ ERROR: Failed to migrate user Faraz ali (alifaraz22561@gmail.com)
+[2026-05-01T16:15:05.738Z]    Details: PaymentPoint account creation failed: The phone number field is required.
+[2026-05-01T16:15:05.738Z] 
+[2026-05-01T16:15:05.738Z] ================================================================================
+[2026-05-01T16:15:05.738Z] Migration Summary
+[2026-05-01T16:15:05.738Z] ================================================================================
+[2026-05-01T16:15:05.738Z] Total Users:              5
+[2026-05-01T16:15:05.738Z] Already Migrated:         0 (skipped)
+[2026-05-01T16:15:05.739Z] Successfully Migrated:    0
+[2026-05-01T16:15:05.739Z] Failed:                   5
+[2026-05-01T16:15:05.739Z] Skipped (missing data):   0
+[2026-05-01T16:15:05.739Z] 
+[2026-05-01T16:15:05.739Z] ================================================================================
+[2026-05-01T16:15:05.739Z] Error Details
+[2026-05-01T16:15:05.739Z] ================================================================================
+[2026-05-01T16:15:05.739Z] 1. User ID: 6217ff2f78302dcf826aa7a6
+[2026-05-01T16:15:05.739Z]    Message: Failed to migrate user Edward Oboh (obohedward@gmail.com)
+[2026-05-01T16:15:05.740Z]    Error: PaymentPoint account creation failed: The phone number field is required.
+[2026-05-01T16:15:05.740Z] 
+[2026-05-01T16:15:05.740Z] 2. User ID: 69c0091bcaece05fc8696d51
+[2026-05-01T16:15:05.740Z]    Message: Failed to migrate user faraz (farar0@gmail.com)
+[2026-05-01T16:15:05.740Z]    Error: PaymentPoint account creation failed: The phone number field is required.
+[2026-05-01T16:15:05.740Z] 
+[2026-05-01T16:15:05.740Z] 3. User ID: 69c00a54caece05fc8696e5b
+[2026-05-01T16:15:05.740Z]    Message: Failed to migrate user Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T16:15:05.740Z]    Error: PaymentPoint account creation failed: The phone number field is required.
+[2026-05-01T16:15:05.740Z] 
+[2026-05-01T16:15:05.741Z] 4. User ID: 69c2512a9b62425cb6ad4991
+[2026-05-01T16:15:05.741Z]    Message: Failed to migrate user Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T16:15:05.741Z]    Error: PaymentPoint account creation failed: The phone number field is required.
+[2026-05-01T16:15:05.741Z] 
+[2026-05-01T16:15:05.741Z] 5. User ID: 69f3bbcbb7a0543048486483
+[2026-05-01T16:15:05.741Z]    Message: Failed to migrate user Faraz ali (alifaraz22561@gmail.com)
+[2026-05-01T16:15:05.741Z]    Error: PaymentPoint account creation failed: The phone number field is required.
+[2026-05-01T16:15:05.741Z] 
+[2026-05-01T16:15:05.742Z] Summary report saved to: /Users/apple/Documents/project/wisper-dashboard/wisper-reseller-api/migration-report-1777652105741.json
+[2026-05-01T16:15:05.742Z] 
+[2026-05-01T16:15:05.742Z] ================================================================================
+[2026-05-01T16:15:05.742Z] Migration Complete
+[2026-05-01T16:15:05.743Z] ================================================================================
+[2026-05-01T16:15:05.748Z] Database connection closed
+[2026-05-01T16:15:05.749Z] Script execution completed

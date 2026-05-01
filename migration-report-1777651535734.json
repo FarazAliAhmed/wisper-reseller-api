@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-05-01T16:05:35.734Z",
+  "dryRun": false,
+  "statistics": {
+    "totalUsers": 5,
+    "alreadyMigrated": 0,
+    "successfullyMigrated": 0,
+    "failed": 5,
+    "skipped": 0,
+    "errors": [
+      {
+        "userId": "6217ff2f78302dcf826aa7a6",
+        "message": "Failed to migrate user Edward Oboh (obohedward@gmail.com)",
+        "error": "PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.",
+        "timestamp": "2026-05-01T16:05:30.807Z"
+      },
+      {
+        "userId": "69c0091bcaece05fc8696d51",
+        "message": "Failed to migrate user faraz (farar0@gmail.com)",
+        "error": "PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.",
+        "timestamp": "2026-05-01T16:05:32.011Z"
+      },
+      {
+        "userId": "69c00a54caece05fc8696e5b",
+        "message": "Failed to migrate user Chisom Alaoma (chisomalaoma@gmail.com)",
+        "error": "PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.",
+        "timestamp": "2026-05-01T16:05:33.195Z"
+      },
+      {
+        "userId": "69c2512a9b62425cb6ad4991",
+        "message": "Failed to migrate user Michael Alaoma (macalaoma12@gmail.com)",
+        "error": "PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.",
+        "timestamp": "2026-05-01T16:05:34.458Z"
+      },
+      {
+        "userId": "69f3bbcbb7a0543048486483",
+        "message": "Failed to migrate user Faraz ali (alifaraz22561@gmail.com)",
+        "error": "PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.",
+        "timestamp": "2026-05-01T16:05:35.729Z"
+      }
+    ]
+  },
+  "configuration": {
+    "delayMs": 500,
+    "mongoUri": "***configured***",
+    "paymentPointConfigured": true
+  }
+}

@@ -232,21 +232,23 @@ const updateSellingPlan = async (req, res) => {
 
 const deletePlanUser = async (req, res) => {
   try {
+    const planId = req.body.planId || Number(req.params.planId);
+    
     const planData = await userPlan.findOne({
       business: req.params.userId,
-      plan_id: req.body.planId,
+      plan_id: planId,
     });
 
     if (!planData) {
       return res.status(404).json({ error: "Plan not found" });
     }
 
-    await plan.deleteOne({
+    await userPlan.deleteOne({
       business: req.params.userId,
-      plan_id: req.body.planId,
+      plan_id: planId,
     });
 
-    res.sendStatus(204);
+    res.status(200).json({ message: "Plan deleted successfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });

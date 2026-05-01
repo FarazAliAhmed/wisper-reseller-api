@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-05-01T16:05:17.144Z",
+  "dryRun": true,
+  "statistics": {
+    "totalUsers": 5,
+    "alreadyMigrated": 0,
+    "successfullyMigrated": 5,
+    "failed": 0,
+    "skipped": 0,
+    "errors": []
+  },
+  "configuration": {
+    "delayMs": 500,
+    "mongoUri": "***configured***",
+    "paymentPointConfigured": true
+  }
+}

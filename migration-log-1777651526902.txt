@@ -1,0 +1,94 @@
+[2026-05-01T16:05:26.902Z] ================================================================================
+[2026-05-01T16:05:26.904Z] PaymentPoint Virtual Account Migration Script
+[2026-05-01T16:05:26.904Z] ================================================================================
+[2026-05-01T16:05:26.904Z] Log file: /Users/apple/Documents/project/wisper-dashboard/wisper-reseller-api/migration-log-1777651526902.txt
+[2026-05-01T16:05:26.905Z] 
+[2026-05-01T16:05:26.905Z] ✓ PaymentPoint configuration validated
+[2026-05-01T16:05:26.905Z] Connecting to MongoDB...
+[2026-05-01T16:05:28.488Z] ✓ Connected to MongoDB successfully
+[2026-05-01T16:05:28.489Z] 
+[2026-05-01T16:05:28.489Z] ================================================================================
+[2026-05-01T16:05:28.490Z] Fetching Users from Database
+[2026-05-01T16:05:28.490Z] ================================================================================
+[2026-05-01T16:05:29.158Z] Found 5 users in database
+[2026-05-01T16:05:29.158Z] 
+[2026-05-01T16:05:29.158Z] ================================================================================
+[2026-05-01T16:05:29.159Z] Starting Migration Process
+[2026-05-01T16:05:29.159Z] ================================================================================
+[2026-05-01T16:05:29.159Z] Processing 5 users with 500ms delay between API calls
+[2026-05-01T16:05:29.159Z] 
+[2026-05-01T16:05:29.159Z] [1/5]
+[2026-05-01T16:05:29.159Z] 
+📝 Processing user: Edward Oboh (obohedward@gmail.com)
+[2026-05-01T16:05:29.160Z]    ℹ️  No BVN/NIN available (optional)
+[2026-05-01T16:05:29.160Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:05:30.806Z] ❌ ERROR: Failed to migrate user Edward Oboh (obohedward@gmail.com)
+[2026-05-01T16:05:30.806Z]    Details: PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.
+[2026-05-01T16:05:31.308Z] [2/5]
+[2026-05-01T16:05:31.309Z] 
+📝 Processing user: faraz (farar0@gmail.com)
+[2026-05-01T16:05:31.309Z]    ℹ️  NIN available: 731********
+[2026-05-01T16:05:31.309Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:05:32.010Z] ❌ ERROR: Failed to migrate user faraz (farar0@gmail.com)
+[2026-05-01T16:05:32.010Z]    Details: PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.
+[2026-05-01T16:05:32.512Z] [3/5]
+[2026-05-01T16:05:32.512Z] 
+📝 Processing user: Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T16:05:32.513Z]    ℹ️  NIN available: 278********
+[2026-05-01T16:05:32.513Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:05:33.194Z] ❌ ERROR: Failed to migrate user Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T16:05:33.195Z]    Details: PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.
+[2026-05-01T16:05:33.697Z] [4/5]
+[2026-05-01T16:05:33.698Z] 
+📝 Processing user: Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T16:05:33.698Z]    ℹ️  NIN available: 956********
+[2026-05-01T16:05:33.699Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:05:34.455Z] ❌ ERROR: Failed to migrate user Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T16:05:34.457Z]    Details: PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.
+[2026-05-01T16:05:34.959Z] [5/5]
+[2026-05-01T16:05:34.961Z] 
+📝 Processing user: Faraz ali (alifaraz22561@gmail.com)
+[2026-05-01T16:05:34.961Z]    ℹ️  BVN available: 213********
+[2026-05-01T16:05:34.961Z]    🔄 Creating PaymentPoint virtual account...
+[2026-05-01T16:05:35.728Z] ❌ ERROR: Failed to migrate user Faraz ali (alifaraz22561@gmail.com)
+[2026-05-01T16:05:35.728Z]    Details: PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.
+[2026-05-01T16:05:35.729Z] 
+[2026-05-01T16:05:35.729Z] ================================================================================
+[2026-05-01T16:05:35.729Z] Migration Summary
+[2026-05-01T16:05:35.729Z] ================================================================================
+[2026-05-01T16:05:35.730Z] Total Users:              5
+[2026-05-01T16:05:35.730Z] Already Migrated:         0 (skipped)
+[2026-05-01T16:05:35.730Z] Successfully Migrated:    0
+[2026-05-01T16:05:35.730Z] Failed:                   5
+[2026-05-01T16:05:35.730Z] Skipped (missing data):   0
+[2026-05-01T16:05:35.730Z] 
+[2026-05-01T16:05:35.730Z] ================================================================================
+[2026-05-01T16:05:35.731Z] Error Details
+[2026-05-01T16:05:35.731Z] ================================================================================
+[2026-05-01T16:05:35.731Z] 1. User ID: 6217ff2f78302dcf826aa7a6
+[2026-05-01T16:05:35.731Z]    Message: Failed to migrate user Edward Oboh (obohedward@gmail.com)
+[2026-05-01T16:05:35.731Z]    Error: PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.
+[2026-05-01T16:05:35.731Z] 
+[2026-05-01T16:05:35.732Z] 2. User ID: 69c0091bcaece05fc8696d51
+[2026-05-01T16:05:35.732Z]    Message: Failed to migrate user faraz (farar0@gmail.com)
+[2026-05-01T16:05:35.732Z]    Error: PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.
+[2026-05-01T16:05:35.732Z] 
+[2026-05-01T16:05:35.732Z] 3. User ID: 69c00a54caece05fc8696e5b
+[2026-05-01T16:05:35.732Z]    Message: Failed to migrate user Chisom Alaoma (chisomalaoma@gmail.com)
+[2026-05-01T16:05:35.732Z]    Error: PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.
+[2026-05-01T16:05:35.732Z] 
+[2026-05-01T16:05:35.733Z] 4. User ID: 69c2512a9b62425cb6ad4991
+[2026-05-01T16:05:35.733Z]    Message: Failed to migrate user Michael Alaoma (macalaoma12@gmail.com)
+[2026-05-01T16:05:35.733Z]    Error: PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.
+[2026-05-01T16:05:35.733Z] 
+[2026-05-01T16:05:35.733Z] 5. User ID: 69f3bbcbb7a0543048486483
+[2026-05-01T16:05:35.734Z]    Message: Failed to migrate user Faraz ali (alifaraz22561@gmail.com)
+[2026-05-01T16:05:35.734Z]    Error: PaymentPoint account creation failed: The route v1/virtual-accounts/create could not be found.
+[2026-05-01T16:05:35.734Z] 
+[2026-05-01T16:05:35.735Z] Summary report saved to: /Users/apple/Documents/project/wisper-dashboard/wisper-reseller-api/migration-report-1777651535734.json
+[2026-05-01T16:05:35.735Z] 
+[2026-05-01T16:05:35.735Z] ================================================================================
+[2026-05-01T16:05:35.735Z] Migration Complete
+[2026-05-01T16:05:35.735Z] ================================================================================
+[2026-05-01T16:05:35.743Z] Database connection closed
+[2026-05-01T16:05:35.743Z] Script execution completed
