@@ -55,15 +55,8 @@ const register = async (requestBody) => {
       { new: true }
     ).exec();
 
-    // Create Monnify account during registration
-    await monnifyService.createAccount(
-      user._id,
-      user.name,
-      user.email,
-      user.name,
-      user.bvn || null,
-      user.nin || null
-    );
+    // PaymentPoint accounts will be created when user clicks "Create Virtual Account" in wallet
+    // No need to create account during registration
 
     await storeFrontUserPlanSingle(user._id);
 
