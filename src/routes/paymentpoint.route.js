@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const paymentpointService = require("../services/paymentpoint.service");
-const { authenticate, authorizeAdmin } = require("../middleware/auth");
+const getUser = require("../utils/middleware/getUser");
+const getAdmin = require("../utils/middleware/getAdmin");
 
 /**
  * @route   POST /api/paymentpoint/create-account
  * @desc    Create a virtual account for a user
  * @access  Private
  */
-router.post("/create-account", authenticate, async (req, res) => {
+router.post("/create-account", getUser, async (req, res) => {
   try {
     const { accountName, bvn, nin } = req.body;
     const user = req.user;
@@ -44,7 +45,7 @@ router.post("/create-account", authenticate, async (req, res) => {
  * @desc    Get user's PaymentPoint account details
  * @access  Private
  */
-router.get("/account-details", authenticate, async (req, res) => {
+router.get("/account-details", getUser, async (req, res) => {
   try {
     const user = req.user;
     const accountReference = user._id.toString();
@@ -112,7 +113,7 @@ router.post("/webhook", async (req, res) => {
  * @desc    Get user's PaymentPoint transaction history
  * @access  Private
  */
-router.get("/history", authenticate, async (req, res) => {
+router.get("/history", getUser, async (req, res) => {
   try {
     const user = req.user;
     const limit = parseInt(req.query.limit) || 50;
@@ -137,7 +138,7 @@ router.get("/history", authenticate, async (req, res) => {
  * @desc    Admin: Manually credit user wallet
  * @access  Admin only
  */
-router.post("/admin/credit", authenticate, authorizeAdmin, async (req, res) => {
+router.post("/admin/credit", getAdmin, async (req, res) => {
   try {
     const { business_id, amount, reason } = req.body;
 
@@ -176,7 +177,7 @@ router.post("/admin/credit", authenticate, authorizeAdmin, async (req, res) => {
  * @desc    Admin: Manually debit user wallet
  * @access  Admin only
  */
-router.post("/admin/debit", authenticate, authorizeAdmin, async (req, res) => {
+router.post("/admin/debit", getAdmin, async (req, res) => {
   try {
     const { business_id, amount, reason } = req.body;
 
@@ -215,7 +216,7 @@ router.post("/admin/debit", authenticate, authorizeAdmin, async (req, res) => {
  * @desc    Admin: Get user's transaction history
  * @access  Admin only
  */
-router.get("/admin/history/:userId", authenticate, authorizeAdmin, async (req, res) => {
+router.get("/admin/history/:userId", getAdmin, async (req, res) => {
   try {
     const { userId } = req.params;
     const limit = parseInt(req.query.limit) || 100;
