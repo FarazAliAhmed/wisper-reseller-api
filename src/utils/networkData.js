@@ -1006,36 +1006,60 @@ exports.n3tdata_glo_size_map = (size) => {
   return { error, plan_id };
 };
 
-// Superjara GLO size map
+// Superjara GLO size map - confirmed codes from Superjara dashboard
 exports.superjara_glo_size_map = (size) => {
-  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
-  let error = false, plan_id;
-  // GLO codes not yet confirmed from Superjara dashboard - mark as unavailable
-  error = true;
-  return { error, plan_id };
-};
-
-// Superjara Airtel size map - confirmed working codes
-exports.superjara_airtel_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
   let error = false, plan_id;
 
   switch (f_size) {
-    case "500mb": plan_id = "airtel_500mb_30days"; break;
-    case "1gb":   plan_id = "airtel_1gb_30days";   break;
-    case "2gb":   plan_id = "airtel_2gb_30days";   break;
-    case "5gb":   plan_id = "airtel_5gb_30days";   break;
-    case "10gb":  plan_id = "airtel_10gb_30days";  break;
+    case "2.5gb":   plan_id = "glo_2_5gb30days";    break;
+    case "5.8gb":   plan_id = "glo_5_8gb30days";    break;
+    case "7.7gb":   plan_id = "glo_7_7gb30days";    break;
+    case "10gb":    plan_id = "glo_10gbdays";        break;
+    case "13.25gb": plan_id = "glo_13_25gb30days";  break;
+    case "18.25gb": plan_id = "glo_18_25gb30days";  break;
+    case "29.5gb":  plan_id = "glo_29_5gb30days";   break;
+    case "50gb":    plan_id = "glo_50gb30days";      break;
+    case "93gb":    plan_id = "glo_93gb30days";      break;
     default: error = true;
   }
   return { error, plan_id };
 };
 
-// Superjara 9mobile size map
+// Superjara Airtel size map - confirmed codes from Superjara dashboard
+exports.superjara_airtel_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
+  let error = false, plan_id;
+
+  switch (f_size) {
+    case "2gb":  plan_id = "airtel_data_plan_2gb_monthly";  break;
+    case "3gb":  plan_id = "airtel_data_plan_3gb_monthly";  break;
+    case "4gb":  plan_id = "airtel_data_plan_4gb_30days";   break;
+    case "10gb": plan_id = "airtel_data_plan_10gb_30days";  break;
+    case "13gb": plan_id = "airtel_data_plan_13gb_30days";  break;
+    case "18gb": plan_id = "airtel_data_plan_18gb_30days";  break;
+    case "25gb": plan_id = "airtel_data_plan_25gb_30days";  break;
+    default: error = true;
+  }
+  return { error, plan_id };
+};
+
+// Superjara 9mobile size map - confirmed codes from Superjara dashboard
 exports.superjara_9mobile_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
   let error = false, plan_id;
-  // 9mobile codes not yet confirmed from Superjara dashboard - mark as unavailable
-  error = true;
+
+  switch (f_size) {
+    case "500mb": plan_id = "9mobile_500mb30days";   break;
+    case "1.5gb": plan_id = "9mobile_1_5gb30days";   break;
+    case "2gb":   plan_id = "9mobile_2gb30days";     break;
+    case "3gb":   plan_id = "9mobile_3gb30days";     break;
+    case "4.5gb": plan_id = "9mobile_4_5gb30days";   break;
+    case "11gb":  plan_id = "9mobile_11gb30days";    break;
+    case "15gb":  plan_id = "9mobile_15gb30days";    break;
+    case "40gb":  plan_id = "9mobile_40gb30days";    break;
+    case "75gb":  plan_id = "9mobile_75gb30days";    break;
+    default: error = true;
+  }
   return { error, plan_id };
 };

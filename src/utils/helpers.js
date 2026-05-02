@@ -1022,7 +1022,7 @@ exports.format_transaction_response = ({
   responseObject.network_provider = providerId.network;
   responseObject.data_volume = debitAccount.debited;
   responseObject.plan_id = planDetails.id;
-  // responseObject.price = planDetails.price;
+  responseObject.price = planDetails.price;
   responseObject.transaction_ref = uuid.v4();
   responseObject.created_at = getCurrentTime();
   return responseObject;
