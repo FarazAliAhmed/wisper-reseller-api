@@ -200,61 +200,98 @@ class PaymentPointService {
    */
   async processWebhook(webhookData) {
     try {
-      console.log("Processing PaymentPoint webhook:", webhookData);
+      console.log("Processing PaymentPoint webhook - FULL PAYLOAD:", JSON.stringify(webhookData, null, 2));
 
-      // Extract payment details from webhook
-      const {
-        transaction_reference,
-        account_reference,
-        amount,
-        customer_name,
-        customer_email,
-        payment_date,
-        status,
-        bank_name,
-        account_number,
-      } = webhookData;
+      // Official PaymentPoint webhook fields (from docs):
+      // transaction_id, amount_paid, settlement_amount, transaction_status
+      // sender: { name, account_number, bank }
+      // receiver: { name, account_number, bank }
+      // customer: { name, email, phone, customer_id }
+      // notification_status, description, timestamp
 
-      // Validate webhook data
-      if (!transaction_reference || !account_reference || !amount) {
+      const transaction_id = webhookData.transaction_id;
+      const amount_paid = webhookData.amount_paid;
+      const settlement_amount = webhookData.settlement_amount;
+      const transaction_status = webhookData.transaction_status;
+      const notification_status = webhookData.notification_status;
+      const customer = webhookData.customer || {};
+      const receiver = webhookData.receiver || {};
+      const sender = webhookData.sender || {};
+
+      console.log("Extracted fields:", {
+        transaction_id,
+        amount_paid,
+        settlement_amount,
+        transaction_status,
+        notification_status,
+        customer_email: customer.email,
+        receiver_account: receiver.account_number,
+      });
+
+      // Validate required fields
+      if (!transaction_id || !amount_paid) {
+        console.error("Missing required fields. Full payload:", JSON.stringify(webhookData, null, 2));
         throw new Error("Invalid webhook data: missing required fields");
       }
 
       // Check if transaction already processed
       const existingTransaction = await paymentpointHistory.findOne({
-        payment_ref: transaction_reference,
+        payment_ref: transaction_id,
       });
 
       if (existingTransaction) {
-        console.log("Transaction already processed:", transaction_reference);
-        return {
-          success: true,
-          message: "Transaction already processed",
-        };
+        console.log("Transaction already processed:", transaction_id);
+        return { success: true, message: "Transaction already processed" };
       }
 
       // Only process successful payments
-      if (status !== "successful" && status !== "success") {
-        console.log("Payment not successful, skipping:", status);
-        return {
-          success: false,
-          message: `Payment status is ${status}, not processing`,
-        };
+      const successStatuses = ["successful", "success", "payment_successful"];
+      const isSuccess = successStatuses.includes(transaction_status) || 
+                        successStatuses.includes(notification_status);
+
+      if (!isSuccess) {
+        console.log("Payment not successful, skipping. Status:", transaction_status, notification_status);
+        return { success: false, message: `Payment not successful: ${transaction_status}` };
       }
 
-      // Find user's balance record
-      const balance = await dataBalance.findOne({
-        business: account_reference,
-      });
+      // Find user by customer email or receiver account number
+      let userAccount = null;
+      let balance = null;
 
+      // Try by customer email first
+      if (customer.email) {
+        userAccount = await Account.findOne({ email: customer.email.toLowerCase() });
+      }
+
+      // Try by receiver account number (virtual account number)
+      if (!userAccount && receiver.account_number) {
+        userAccount = await Account.findOne({
+          "paymentpointAccounts.accountNumber": receiver.account_number,
+        });
+      }
+
+      // Try by customer_id (stored as paymentpointAccountReference)
+      if (!userAccount && customer.customer_id) {
+        userAccount = await Account.findOne({
+          paymentpointAccountReference: customer.customer_id,
+        });
+      }
+
+      if (!userAccount) {
+        console.error("Could not find user. customer:", customer, "receiver:", receiver);
+        throw new Error("User not found for this payment");
+      }
+
+      balance = await dataBalance.findOne({ business: userAccount._id });
       if (!balance) {
-        throw new Error(`Balance record not found for account: ${account_reference}`);
+        throw new Error(`Balance record not found for user: ${userAccount.email}`);
       }
 
-      // Calculate amount to credit (deduct ₦50 processing fee)
+      // Use settlement_amount (already has fee deducted by PaymentPoint)
+      // But we still deduct our own ₦50 processing fee
       const processingFee = 50;
-      const amountToCredit = Number(amount) > processingFee 
-        ? Number(amount) - processingFee 
+      const amountToCredit = Number(settlement_amount || amount_paid) > processingFee
+        ? Number(settlement_amount || amount_paid) - processingFee
         : 0;
 
       const oldBalance = balance.wallet_balance;
@@ -262,41 +299,36 @@ class PaymentPointService {
       // Credit user's wallet
       if (amountToCredit > 0) {
         await dataBalance.findOneAndUpdate(
-          { business: account_reference },
-          {
-            $inc: { wallet_balance: amountToCredit },
-            last_purchase: new Date(),
-          },
+          { business: userAccount._id },
+          { $inc: { wallet_balance: amountToCredit }, last_purchase: new Date() },
           { new: true }
         );
-
-        console.log(`Credited ${amountToCredit} to account ${account_reference}`);
+        console.log(`✓ Credited ₦${amountToCredit} to ${userAccount.email}`);
       }
 
       const newBalance = oldBalance + amountToCredit;
 
-      // Create transaction history record
+      // Save transaction history
       const transactionHistory = new paymentpointHistory({
-        business_name: customer_name,
-        business_id: account_reference,
+        business_name: customer.name || userAccount.name,
+        business_id: userAccount._id.toString(),
         amount: amountToCredit,
         resolvedAmount: amountToCredit,
         new_bal: String(newBalance),
         old_bal: oldBalance,
         purpose: "Funding - PaymentPoint",
-        desc: `Deposit of ₦${amountToCredit} made by ${customer_name} via PaymentPoint.`,
-        bankAccountNum: account_number,
-        bank: bank_name,
+        desc: `Deposit of ₦${amountToCredit} from ${sender.name || "Unknown"} via ${receiver.bank || "PaymentPoint"}.`,
+        bankAccountNum: receiver.account_number,
+        bank: receiver.bank || sender.bank,
         pay_type: "credit",
-        date_of_payment: payment_date || new Date(),
-        payment_ref: transaction_reference,
+        date_of_payment: webhookData.timestamp || new Date(),
+        payment_ref: transaction_id,
         payment_status: "successful",
         metadata: webhookData,
       });
 
       await transactionHistory.save();
-
-      console.log("PaymentPoint webhook processed successfully");
+      console.log("PaymentPoint webhook processed successfully for:", userAccount.email);
 
       return {
         success: true,
@@ -462,16 +494,16 @@ class PaymentPointService {
    * @returns {boolean} True if signature is valid
    */
   verifyWebhookSignature(webhookData, signature) {
-    // Implement signature verification based on PaymentPoint documentation
-    // This is a placeholder - update when PaymentPoint provides signature method
     try {
       const crypto = require("crypto");
+      // PaymentPoint uses HMAC-SHA256 of the raw JSON payload with secret key
       const payload = JSON.stringify(webhookData);
       const hash = crypto
-        .createHmac("sha512", this.secretKey)
+        .createHmac("sha256", this.secretKey)
         .update(payload)
         .digest("hex");
 
+      console.log("Signature check - received:", signature, "calculated:", hash);
       return hash === signature;
     } catch (error) {
       console.error("Webhook signature verification error:", error);

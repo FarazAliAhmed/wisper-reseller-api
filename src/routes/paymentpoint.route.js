@@ -80,7 +80,7 @@ router.get("/account-details", getUser, async (req, res) => {
 router.post("/webhook", async (req, res) => {
   try {
     const webhookData = req.body;
-    const signature = req.headers["x-paymentpoint-signature"] || req.headers["x-signature"];
+    const signature = req.headers["paymentpoint-signature"];
 
     // Verify webhook signature if provided
     if (signature) {
@@ -95,12 +95,10 @@ router.post("/webhook", async (req, res) => {
     }
 
     const result = await paymentpointService.processWebhook(webhookData);
-
     res.status(200).json(result);
   } catch (error) {
     console.error("PaymentPoint webhook error:", error);
-    
-    // Still return 200 to prevent webhook retries for known errors
+    // Always return 200 to prevent webhook retries
     res.status(200).json({
       success: false,
       message: error.message,
