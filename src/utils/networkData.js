@@ -1010,31 +1010,22 @@ exports.n3tdata_glo_size_map = (size) => {
 exports.superjara_glo_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
   let error = false, plan_id;
-
-  switch (f_size) {
-    case "1gb":   plan_id = "glo_1gb";   break;
-    case "2gb":   plan_id = "glo_2gb";   break;
-    case "3gb":   plan_id = "glo_3gb";   break;
-    case "5gb":   plan_id = "glo_5gb";   break;
-    case "7gb":   plan_id = "glo_7gb";   break;
-    case "10gb":  plan_id = "glo_10gb";  break;
-    default: error = true;
-  }
+  // GLO codes not yet confirmed from Superjara dashboard - mark as unavailable
+  error = true;
   return { error, plan_id };
 };
 
-// Superjara Airtel size map
+// Superjara Airtel size map - confirmed working codes
 exports.superjara_airtel_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
   let error = false, plan_id;
 
   switch (f_size) {
-    case "1gb":   plan_id = "airtel_1gb";   break;
-    case "2gb":   plan_id = "airtel_2gb";   break;
-    case "3gb":   plan_id = "airtel_3gb";   break;
-    case "5gb":   plan_id = "airtel_5gb";   break;
-    case "7gb":   plan_id = "airtel_7gb";   break;
-    case "10gb":  plan_id = "airtel_10gb";  break;
+    case "500mb": plan_id = "airtel_500mb_30days"; break;
+    case "1gb":   plan_id = "airtel_1gb_30days";   break;
+    case "2gb":   plan_id = "airtel_2gb_30days";   break;
+    case "5gb":   plan_id = "airtel_5gb_30days";   break;
+    case "10gb":  plan_id = "airtel_10gb_30days";  break;
     default: error = true;
   }
   return { error, plan_id };
@@ -1044,15 +1035,7 @@ exports.superjara_airtel_size_map = (size) => {
 exports.superjara_9mobile_size_map = (size) => {
   const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
   let error = false, plan_id;
-
-  switch (f_size) {
-    case "1gb":   plan_id = "9mobile_1gb";   break;
-    case "2gb":   plan_id = "9mobile_2gb";   break;
-    case "3gb":   plan_id = "9mobile_3gb";   break;
-    case "5gb":   plan_id = "9mobile_5gb";   break;
-    case "7gb":   plan_id = "9mobile_7gb";   break;
-    case "10gb":  plan_id = "9mobile_10gb";  break;
-    default: error = true;
-  }
+  // 9mobile codes not yet confirmed from Superjara dashboard - mark as unavailable
+  error = true;
   return { error, plan_id };
 };
