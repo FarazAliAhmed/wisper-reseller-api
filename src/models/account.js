@@ -94,6 +94,28 @@ const accountSchema = mongoose.Schema(
       },
     ],
 
+    // PaymentPoint virtual accounts
+    paymentpointAccounts: [
+      {
+        bankName: {
+          type: String,
+          default: null,
+        },
+        accountNumber: {
+          type: String,
+          default: null,
+        },
+        accountName: {
+          type: String,
+          default: null,
+        },
+      },
+    ],
+    paymentpointAccountReference: {
+      type: String,
+      default: null,
+    },
+
     glo_almamgt: String,
 
     whitelistStatus: {
