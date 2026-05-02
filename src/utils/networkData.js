@@ -349,14 +349,13 @@ exports.superjara_mtn_size_map = (size) => {
 
   switch (f_size) {
     case "500mb":
-      plan_id = "mtn_sme_500mb_"
+      plan_id = "mtn_sme_500mb_";
       break;
     case "1gb":
-      plan_id = "data_share_1gb"
+      plan_id = "data_share_1gb";
       break;
     case "2gb":
-      plan_id = "data_share_2gb"
-      break;
+      plan_id = "data_share_2gb";
       break;
     case "3gb":
       plan_id = "data_share_3gb";
@@ -364,6 +363,23 @@ exports.superjara_mtn_size_map = (size) => {
     case "5gb":
       plan_id = "data_share_5gb";
       break;
+    case "7gb":
+      plan_id = "data_share_7gb";
+      break;
+    case "10gb":
+      plan_id = "data_share_10gb";
+      break;
+    case "15gb":
+      plan_id = "data_share_15gb";
+      break;
+    case "20gb":
+      plan_id = "data_share_20gb";
+      break;
+    case "40gb":
+      plan_id = "data_share_40gb";
+      break;
+    default:
+      error = true;
   }
 
   return { error, plan_id, dataType };
@@ -984,5 +1000,56 @@ exports.n3tdata_glo_size_map = (size) => {
       error = true;
   }
 
+  return { error, plan_id };
+};
+
+// Superjara GLO size map
+exports.superjara_glo_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false, plan_id;
+
+  switch (f_size) {
+    case "1gb":   plan_id = "glo_1gb";   break;
+    case "2gb":   plan_id = "glo_2gb";   break;
+    case "3gb":   plan_id = "glo_3gb";   break;
+    case "5gb":   plan_id = "glo_5gb";   break;
+    case "7gb":   plan_id = "glo_7gb";   break;
+    case "10gb":  plan_id = "glo_10gb";  break;
+    default: error = true;
+  }
+  return { error, plan_id };
+};
+
+// Superjara Airtel size map
+exports.superjara_airtel_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false, plan_id;
+
+  switch (f_size) {
+    case "1gb":   plan_id = "airtel_1gb";   break;
+    case "2gb":   plan_id = "airtel_2gb";   break;
+    case "3gb":   plan_id = "airtel_3gb";   break;
+    case "5gb":   plan_id = "airtel_5gb";   break;
+    case "7gb":   plan_id = "airtel_7gb";   break;
+    case "10gb":  plan_id = "airtel_10gb";  break;
+    default: error = true;
+  }
+  return { error, plan_id };
+};
+
+// Superjara 9mobile size map
+exports.superjara_9mobile_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(" ", "");
+  let error = false, plan_id;
+
+  switch (f_size) {
+    case "1gb":   plan_id = "9mobile_1gb";   break;
+    case "2gb":   plan_id = "9mobile_2gb";   break;
+    case "3gb":   plan_id = "9mobile_3gb";   break;
+    case "5gb":   plan_id = "9mobile_5gb";   break;
+    case "7gb":   plan_id = "9mobile_7gb";   break;
+    case "10gb":  plan_id = "9mobile_10gb";  break;
+    default: error = true;
+  }
   return { error, plan_id };
 };

@@ -42,6 +42,9 @@ const {
   gladtidings_mtn_size_map,
   autopilot_mtn_size_map,
   superjara_mtn_size_map,
+  superjara_glo_size_map,
+  superjara_airtel_size_map,
+  superjara_9mobile_size_map,
 } = require("./networkData");
 const { wazobia_glo_size_map } = require("./mapping/wazobianet.mapping");
 const { default: fetch } = require("node-fetch");
@@ -399,25 +402,22 @@ exports.initiate_data_transfer = async (
 
     if (requestPayload.network == 4) {
       // SECTION - AIRTEL PURCHASE
+      const dataSwitch = await switchService.getDataSwitchByNetwork("airtel");
+      console.log({ airtelDataSwitch: dataSwitch });
 
-      // const { error, plan_id } = ayinlak_airtel_size_map(size);
+      if (dataSwitch && dataSwitch.api == "superjara") {
+        integName = integrationTypes.SUPERJARA;
+        const { error, plan_id } = superjara_airtel_size_map(size);
+        if (error)
+          return { error: true, status: 400, message: "This data plan is currently not available" };
+        return await ApiDataHelper.Superjara(plan_id, requestPayload.mobile_number, ref);
+      }
+
+      // DEFAULT: n3tdata airtel
       const { error, plan_id } = n3tdata_airtel_size_map(size);
       if (error)
-        return {
-          error: true,
-          status: 400,
-          message: "This data plan is currently not available",
-        };
-
-      return await ApiDataHelper.N3tdata(
-        2,
-        plan_id,
-        requestPayload.mobile_number,
-        ref
-      );
-
-      // update api balance
-      // await n3tdataApiUpdateBalance(response);
+        return { error: true, status: 400, message: "This data plan is currently not available" };
+      return await ApiDataHelper.N3tdata(2, plan_id, requestPayload.mobile_number, ref);
     } else if (requestPayload.network == 2) {
       // // wazobia glo
       // const { error, plan_id } = wazobia_glo_size_map(size);
@@ -771,6 +771,17 @@ exports.initiate_data_transfer = async (
     } else if (requestPayload.network == 3) {
       integName = integrationTypes.OGDAMS_9MOBILE;
       // start of 9mobile integration
+
+      const dataSwitch9m = await switchService.getDataSwitchByNetwork("9mobile");
+      console.log({ nineMobileDataSwitch: dataSwitch9m });
+
+      if (dataSwitch9m && dataSwitch9m.api == "superjara") {
+        integName = integrationTypes.SUPERJARA;
+        const { error, plan_id } = superjara_9mobile_size_map(size);
+        if (error)
+          return { error: true, status: 400, message: "This data plan is currently not available" };
+        return await ApiDataHelper.Superjara(plan_id, requestPayload.mobile_number, ref);
+      }
 
       const { error, plan_id } = gladtidings_9mobile_size_map(size);
       if (error)
