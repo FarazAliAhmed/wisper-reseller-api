@@ -10,7 +10,8 @@ const getUser = async (req, res, next) => {
       req.user = decode;
       return next();
     } catch (e) {
-      return res.status(400).json({ error: "Authorization Token is invalid" });
+      console.error("JWT verification error:", e.message);
+      return res.status(400).json({ error: "Authorization Token is invalid", details: e.message });
     }
   }
   return res.status(400).json({ error: "Authorization Token not provided" });
