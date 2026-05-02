@@ -94,12 +94,12 @@ class PaymentPointService {
 
       // Prepare payload for account creation
       // Use the registered PaymentPoint business ID
-      const PAYMENTPOINT_BUSINESS_ID = "71e885f182ed5ea4454ef5e1d7e9a2ec40d1b36";
+      const PAYMENTPOINT_BUSINESS_ID = "71e885f182ed5ea4454ef5e1d7e9a2ec40d11b36";
       
       const payload = {
         email: customerEmail,
         name: customerName,
-        phoneNumber: user.phone || user.phoneNumber || "07000000000", // Use default if not available
+        phoneNumber: user.mobile_number || user.phone || user.phoneNumber || "07000000000", // Use default if not available
         bankCode: ['20946', '20897'], // Palmpay and other banks
         businessId: PAYMENTPOINT_BUSINESS_ID,
       };
