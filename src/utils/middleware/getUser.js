@@ -6,7 +6,15 @@ const getUser = async (req, res, next) => {
   if (req.headers && req.headers.authorization) {
     const authToken = req.get("authorization").split(" ")[1];
     try {
-      const decode = await jwt.verify(authToken, config.get("jwtSecret"));
+      // Get JWT secret from environment or config
+      const jwtSecret = process.env.JWT_SECRET || config.get("jwtSecret");
+      
+      // Log first 10 chars of secret for debugging (only in development)
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("JWT_SECRET (first 10 chars):", jwtSecret.substring(0, 10));
+      }
+      
+      const decode = await jwt.verify(authToken, jwtSecret);
       req.user = decode;
       return next();
     } catch (e) {
