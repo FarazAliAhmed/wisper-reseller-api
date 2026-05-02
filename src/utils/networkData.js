@@ -342,7 +342,10 @@ exports.autopilot_mtn_size_map = (size) => {
 };
 
 exports.superjara_mtn_size_map = (size) => {
-  const f_size = size.trim().toLowerCase().replace(" ", "");
+  // Normalize: "2.0 gb" -> "2gb", "500.0 mb" -> "500mb"
+  const f_size = size.trim().toLowerCase()
+    .replace(/\.0\s*/g, '')  // remove .0
+    .replace(/\s+/g, '');    // remove spaces
   let error = false,
     plan_id,
     dataType;
@@ -1005,7 +1008,7 @@ exports.n3tdata_glo_size_map = (size) => {
 
 // Superjara GLO size map
 exports.superjara_glo_size_map = (size) => {
-  const f_size = size.trim().toLowerCase().replace(" ", "");
+  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
   let error = false, plan_id;
 
   switch (f_size) {
@@ -1022,7 +1025,7 @@ exports.superjara_glo_size_map = (size) => {
 
 // Superjara Airtel size map
 exports.superjara_airtel_size_map = (size) => {
-  const f_size = size.trim().toLowerCase().replace(" ", "");
+  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
   let error = false, plan_id;
 
   switch (f_size) {
@@ -1039,7 +1042,7 @@ exports.superjara_airtel_size_map = (size) => {
 
 // Superjara 9mobile size map
 exports.superjara_9mobile_size_map = (size) => {
-  const f_size = size.trim().toLowerCase().replace(" ", "");
+  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
   let error = false, plan_id;
 
   switch (f_size) {
