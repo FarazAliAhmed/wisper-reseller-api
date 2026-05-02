@@ -165,24 +165,30 @@ class PaymentPointService {
 
   /**
    * Get virtual account details
-   * @param {string} accountReference - Account reference to query
+   * @param {string} accountReference - Account reference to query (user ID)
    * @returns {Promise<Object|null>} Account details or null if not found
    */
   async getAccountDetails(accountReference) {
     try {
-      const response = await axios.get(
-        this.getApiUrl(`/v1/virtual-accounts/${accountReference}`),
-        { headers: this.getHeaders() }
-      );
-
-      return response.data.data || response.data;
-    } catch (error) {
-      if (error?.response?.status === 404) {
-        return null; // Account doesn't exist
+      // First check database for saved PaymentPoint accounts
+      const user = await Account.findById(accountReference).select('paymentpointAccounts paymentpointAccountReference email name');
+      
+      if (user && user.paymentpointAccounts && user.paymentpointAccounts.length > 0) {
+        // Return accounts from database
+        return {
+          status: "active",
+          accounts: user.paymentpointAccounts,
+          accountReference: user.paymentpointAccountReference || accountReference,
+          customerEmail: user.email,
+          customerName: user.name,
+        };
       }
 
-      console.error("PaymentPoint getAccountDetails error:", error?.response?.data);
-      throw error;
+      // If not in database, return null (account doesn't exist)
+      return null;
+    } catch (error) {
+      console.error("PaymentPoint getAccountDetails error:", error?.message);
+      return null;
     }
   }
 
