@@ -210,6 +210,35 @@ router.post("/admin/debit", getAdmin, async (req, res) => {
 });
 
 /**
+ * @route   GET /api/paymentpoint/admin/history
+ * @desc    Admin: Get ALL wallet transactions across all users
+ * @access  Admin only
+ */
+router.get("/admin/history", getAdmin, async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 100;
+    const paymentpointHistory = require("../models/paymentpointHistory");
+
+    const transactions = await paymentpointHistory
+      .find({})
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .exec();
+
+    res.status(200).json({
+      success: true,
+      transactions,
+    });
+  } catch (error) {
+    console.error("Admin get all wallet transactions error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to fetch transactions",
+    });
+  }
+});
+
+/**
  * @route   GET /api/paymentpoint/admin/history/:userId
  * @desc    Admin: Get user's transaction history
  * @access  Admin only
