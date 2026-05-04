@@ -16,6 +16,9 @@ const autopilot_url = process.env.AUTOPILOT_URL;
 const superjara_token = process.env.SUPERJARA_AUTH_NEW_KEY;
 const superjara_url = "https://superjara.com/autobiz_vending_index.php";
 
+const gsubz_token = process.env.GSUBZ_API_KEY;
+const gsubz_url = "https://gsubz.com/api/pay";
+
 class ApiDataHelper {
   static async Ayinlak(network, plan_id, phone) {
     const req_header = {
@@ -412,6 +415,53 @@ class ApiDataHelper {
       };
     }
   }
+  static async Gsubz(serviceID, plan_id, phone, ref) {
+    console.log("GSUBZ REQUEST:", { serviceID, plan_id, phone, ref });
+
+    try {
+      const response = await axios.post(
+        gsubz_url,
+        {
+          serviceID: serviceID,
+          plan: plan_id,
+          phone: phone,
+          requestID: ref,
+          amount: 0, // amount is determined by plan
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${gsubz_token}`,
+            "Accept": "application/json",
+          },
+        }
+      );
+
+      console.log("GSUBZ RESPONSE:", response.data);
+
+      if (response.data.code == 200 || response.data.status === "TRANSACTION_SUCCESSFUL") {
+        return {
+          error: false,
+          response: response.data,
+          message: `Data purchase of for ${phone} successful via GSUBZ`,
+        };
+      } else {
+        return {
+          error: true,
+          status: 400,
+          message: response.data.description || "GSUBZ data purchase failed",
+        };
+      }
+    } catch (error) {
+      console.log("GSUBZ ERROR:", error?.response?.data || error.message);
+      return {
+        error: true,
+        status: 400,
+        message: error?.response?.data?.description || "An error occurred with GSUBZ data transfer",
+      };
+    }
+  }
+
 }
 
 module.exports = { ApiDataHelper };

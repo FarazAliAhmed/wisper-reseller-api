@@ -1063,3 +1063,60 @@ exports.superjara_9mobile_size_map = (size) => {
   }
   return { error, plan_id };
 };
+
+// ============================================================
+// GSUBZ SIZE MAPS - Fallback when Superjara is down
+// Plans from: https://gsubz.com/api/plans?service=mtn_datashare
+// ============================================================
+
+// GSUBZ MTN Data Share size map
+exports.gsubz_mtn_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
+  let error = false, plan_id, serviceID = "mtn_datashare";
+
+  switch (f_size) {
+    case "500mb": plan_id = "179"; break;
+    case "1gb":   plan_id = "166"; break;
+    case "2gb":   plan_id = "167"; break;
+    case "3gb":   plan_id = "168"; break;
+    case "5gb":   plan_id = "357"; break;
+    default: error = true;
+  }
+  return { error, plan_id, serviceID };
+};
+
+// GSUBZ GLO size map
+exports.gsubz_glo_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
+  let error = false, plan_id, serviceID = "glo_data";
+
+  switch (f_size) {
+    case "500mb": plan_id = "500";   break;
+    case "1gb":   plan_id = "1000";  break;
+    case "2gb":   plan_id = "2000";  break;
+    case "3gb":   plan_id = "3000";  break;
+    case "5gb":   plan_id = "5000";  break;
+    case "10gb":  plan_id = "10000"; break;
+    default: error = true;
+  }
+  return { error, plan_id, serviceID };
+};
+
+// GSUBZ 9mobile size map
+exports.gsubz_9mobile_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
+  let error = false, plan_id, serviceID = "etisalat_data";
+
+  switch (f_size) {
+    case "500mb": plan_id = "182"; break;
+    case "1gb":   plan_id = "298"; break;
+    case "1.5gb": plan_id = "300"; break;
+    case "2gb":   plan_id = "299"; break;
+    case "3gb":   plan_id = "303"; break;
+    case "5gb":   plan_id = "304"; break;
+    case "10gb":  plan_id = "305"; break;
+    case "11gb":  plan_id = "362"; break;
+    default: error = true;
+  }
+  return { error, plan_id, serviceID };
+};

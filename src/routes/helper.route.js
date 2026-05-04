@@ -53,6 +53,17 @@ router.get("/ip", async (req, res) => {
   }
 });
 
+// Check GSUBZ balance
+router.get("/gsubz-balance", async (req, res) => {
+  try {
+    const { GsubzHelper } = require('../utils/data/gsubzHelper');
+    const balance = await GsubzHelper.checkBalance();
+    res.json({ balance });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Check Superjara environment variables
 router.get("/check-superjara-env", async (req, res) => {
   const hasToken = !!process.env.SUPERJARA_AUTH_NEW_KEY;

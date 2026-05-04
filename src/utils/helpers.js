@@ -46,6 +46,7 @@ const {
   superjara_airtel_size_map,
   superjara_9mobile_size_map,
 } = require("./networkData");
+const { GsubzHelper, gsubz_mtn_size_map, gsubz_glo_size_map, gsubz_9mobile_size_map } = require("./data/gsubzHelper");
 const { wazobia_glo_size_map } = require("./mapping/wazobianet.mapping");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
@@ -411,6 +412,13 @@ exports.initiate_data_transfer = async (
         if (error)
           return { error: true, status: 400, message: "This data plan is currently not available" };
         return await ApiDataHelper.Superjara(plan_id, requestPayload.mobile_number, ref);
+      } else if (dataSwitch && dataSwitch.api == "gsubz") {
+        // GSUBZ GLO
+        integName = "GSUBZ";
+        const { error, plan_id, amount } = gsubz_glo_size_map(size);
+        if (error)
+          return { error: true, status: 400, message: "This data plan is currently not available" };
+        return await GsubzHelper.purchaseData("glo_data", plan_id, requestPayload.mobile_number, ref, amount);
       }
 
       // DEFAULT: n3tdata airtel
@@ -437,7 +445,20 @@ exports.initiate_data_transfer = async (
       const dataSwitch = await switchService.getDataSwitchByNetwork("glo");
       console.log({ dataSwitch });
 
-      if (dataSwitch.api == "n3tdata") {
+      if (dataSwitch.api == "gsubz") {
+        // GSUBZ GLO
+        integName = "GSUBZ";
+        const { error, plan_id, amount } = gsubz_glo_size_map(size);
+        if (error)
+          return { error: true, status: 400, message: "This data plan is currently not available" };
+        return await GsubzHelper.purchaseData("glo_data", plan_id, requestPayload.mobile_number, ref, amount);
+      } else if (dataSwitch.api == "superjara") {
+        integName = integrationTypes.SUPERJARA;
+        const { error, plan_id } = superjara_glo_size_map(size);
+        if (error)
+          return { error: true, status: 400, message: "This data plan is currently not available" };
+        return await ApiDataHelper.Superjara(plan_id, requestPayload.mobile_number, ref);
+      } else if (dataSwitch.api == "n3tdata") {
         // n3tdata glo
         const { error, plan_id } = n3tdata_glo_size_map(size);
         if (error)
@@ -781,6 +802,13 @@ exports.initiate_data_transfer = async (
         if (error)
           return { error: true, status: 400, message: "This data plan is currently not available" };
         return await ApiDataHelper.Superjara(plan_id, requestPayload.mobile_number, ref);
+      } else if (dataSwitch9m && dataSwitch9m.api == "gsubz") {
+        // GSUBZ 9mobile
+        integName = "GSUBZ";
+        const { error, plan_id, amount } = gsubz_9mobile_size_map(size);
+        if (error)
+          return { error: true, status: 400, message: "This data plan is currently not available" };
+        return await GsubzHelper.purchaseData("etisalat_data", plan_id, requestPayload.mobile_number, ref, amount);
       }
 
       const { error, plan_id } = gladtidings_9mobile_size_map(size);
@@ -889,6 +917,13 @@ exports.initiate_data_transfer = async (
           requestPayload.mobile_number,
           ref
         );
+      } else if (dataSwitch && dataSwitch.api == "gsubz") {
+        // GSUBZ MTN
+        integName = "GSUBZ";
+        const { error, plan_id, amount } = gsubz_mtn_size_map(size);
+        if (error)
+          return { error: true, status: 400, message: "This data plan is currently not available" };
+        return await GsubzHelper.purchaseData("mtn_datashare", plan_id, requestPayload.mobile_number, ref, amount);
       } else {
         // DEFAULT: AUTOPILOT MTN Data Transfer
         integName = integrationTypes.AUTOPILOT;
