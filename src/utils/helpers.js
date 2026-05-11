@@ -40,6 +40,8 @@ const {
   // autopilot_mtn_size_map,
   n3tdata_glo_size_map,
   gladtidings_mtn_size_map,
+  gladtidings_glo_size_map,
+  gladtidings_airtel_size_map,
   autopilot_mtn_size_map,
   superjara_mtn_size_map,
   superjara_glo_size_map,
@@ -413,12 +415,39 @@ exports.initiate_data_transfer = async (
           return { error: true, status: 400, message: "This data plan is currently not available" };
         return await ApiDataHelper.Superjara(plan_id, requestPayload.mobile_number, ref);
       } else if (dataSwitch && dataSwitch.api == "gsubz") {
-        // GSUBZ GLO
         integName = "GSUBZ";
         const { error, plan_id, amount } = gsubz_glo_size_map(size);
         if (error)
           return { error: true, status: 400, message: "This data plan is currently not available" };
         return await GsubzHelper.purchaseData("glo_data", plan_id, requestPayload.mobile_number, ref, amount);
+      } else if (dataSwitch && dataSwitch.api == "gladtidings") {
+        // GLADTIDINGS AIRTEL
+        integName = "GLADTIDINGS";
+        const { error, plan_id } = gladtidings_airtel_size_map(size);
+        if (error)
+          return { error: true, status: 400, message: "This data plan is currently not available" };
+        const req_header = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${gladtidings_token}`,
+            Accept: "application/json",
+          },
+        };
+        const req_body = {
+          network: 3, // Airtel network ID on Gladtidings
+          mobile_number: `${requestPayload.mobile_number}`,
+          plan: plan_id,
+          Ported_number: false,
+        };
+        try {
+          const response = await axios.post(`https://www.gladtidingsdata.com/api/data/`, req_body, req_header);
+          if (response.data.Status == "successful" || response.data.Status) {
+            return { error: false, response: response.data, message: "processing" };
+          }
+          return { error: true, status: 400, message: "An error occured with data transfer server" };
+        } catch (error) {
+          return { error: true, status: 400, message: "An error occured with data transfer server" };
+        }
       }
 
       // DEFAULT: n3tdata airtel

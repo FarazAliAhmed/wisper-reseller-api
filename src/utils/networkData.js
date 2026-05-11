@@ -235,35 +235,52 @@ exports.n3tdata_9mobile_size_map = (size) => {
   return { error, plan_id };
 };
 
-// mtn gladtidings jara
+// mtn gladtidings - using SME plans (best value)
 exports.gladtidings_mtn_size_map = (size) => {
-  const f_size = size.trim().toLowerCase().replace(" ", "");
-  let error = false,
-    plan_id;
+  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
+  let error = false, plan_id;
 
   switch (f_size) {
-    case "500mb":
-      plan_id = 179;
-      break;
-    case "1gb":
-      plan_id = 166;
-      break;
-    case "2gb":
-      plan_id = 167;
-      break;
-    case "3gb":
-      plan_id = 168;
-      break;
-    case "5gb":
-      plan_id = 169;
-      break;
-    case "10gb":
-      plan_id = 160;
-      break;
-    default:
-      error = true;
+    case "500mb": plan_id = 471;  break; // 500MB DATA SHARE ₦300
+    case "1gb":   plan_id = 486;  break; // 1GB SME ₦620
+    case "2gb":   plan_id = 506;  break; // 2GB SME ₦1,240
+    case "3gb":   plan_id = 355;  break; // 3GB SME ₦1,740
+    case "5gb":   plan_id = 356;  break; // 5GB SME ₦1,790
+    case "7gb":   plan_id = 593;  break; // 7GB GIFTING ₦3,395
+    case "10gb":  plan_id = 539;  break; // 10GB SME ₦4,343
+    default: error = true;
   }
+  return { error, plan_id };
+};
 
+// glo gladtidings - corporate gifting plans
+exports.gladtidings_glo_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
+  let error = false, plan_id;
+
+  switch (f_size) {
+    case "500mb": plan_id = 331;  break; // 500MB corp gifting ₦198.50
+    case "1gb":   plan_id = 334;  break; // 1GB corp gifting ₦397
+    case "2gb":   plan_id = 332;  break; // 2GB corp gifting ₦800
+    case "3gb":   plan_id = 336;  break; // 3GB corp gifting ₦1,191
+    case "5gb":   plan_id = 329;  break; // 5GB corp gifting ₦1,985
+    case "10gb":  plan_id = 335;  break; // 10GB corp gifting ₦3,970
+    default: error = true;
+  }
+  return { error, plan_id };
+};
+
+// airtel gladtidings - gifting plans (only profitable ones)
+exports.gladtidings_airtel_size_map = (size) => {
+  const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
+  let error = false, plan_id;
+
+  switch (f_size) {
+    case "10gb":  plan_id = 150;  break; // 10GB gifting ₦3,800
+    case "15gb":  plan_id = 432;  break; // 18GB gifting ₦5,700
+    case "20gb":  plan_id = 436;  break; // 160GB - skip, use 20GB
+    default: error = true;
+  }
   return { error, plan_id };
 };
 
