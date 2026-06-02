@@ -49,6 +49,7 @@ const {
   superjara_9mobile_size_map,
 } = require("./networkData");
 const { GsubzHelper, gsubz_mtn_size_map, gsubz_glo_size_map, gsubz_9mobile_size_map } = require("./data/gsubzHelper");
+const { CoolSubHelper, coolsub_glo_size_map } = require("./data/coolsubHelper");
 const { wazobia_glo_size_map } = require("./mapping/wazobianet.mapping");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
@@ -481,6 +482,13 @@ exports.initiate_data_transfer = async (
         if (error)
           return { error: true, status: 400, message: "This data plan is currently not available" };
         return await GsubzHelper.purchaseData("glo_data", plan_id, requestPayload.mobile_number, ref, amount);
+      } else if (dataSwitch.api == "coolsub") {
+        // COOL-SUB GLO CG
+        integName = "COOLSUB";
+        const { error, plan_id } = coolsub_glo_size_map(size);
+        if (error)
+          return { error: true, status: 400, message: "This data plan is currently not available" };
+        return await CoolSubHelper.purchaseData(2, plan_id, requestPayload.mobile_number);
       } else if (dataSwitch.api == "superjara") {
         integName = integrationTypes.SUPERJARA;
         const { error, plan_id } = superjara_glo_size_map(size);
