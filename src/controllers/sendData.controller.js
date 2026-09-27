@@ -107,6 +107,14 @@ const sendData = async (req, res, next) => {
   price = price || planDetails.price;
   volume = volume || planDetails.volume;
 
+  // Special GLO bundle price for Director: N383 per GB
+  if (
+    req.user.username?.toLowerCase() === "director" &&
+    planDetails.network === "glo"
+  ) {
+    price = Math.round((planDetails.volume / 1024) * 383);
+  }
+
   // console.log("Request payloadsshsh", requestPayload)
 
   // Transaction block
