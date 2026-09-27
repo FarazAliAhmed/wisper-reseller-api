@@ -1,7 +1,8 @@
 const axios = require("axios");
 
 const coolsub_token = process.env.COOLSUB_API_KEY;
-const coolsub_base_url = "https://www.cool-sub.com";
+// Cool-Sub moved to a new platform; v2 serves the old MSORG endpoints with the same request format
+const coolsub_base_url = process.env.COOLSUB_BASE_URL || "https://v2.cool-sub.com";
 
 /**
  * Cool-Sub API Helper
@@ -41,18 +42,20 @@ class CoolSubHelper {
       console.log("COOLSUB RESPONSE:", response.data);
 
       const data = response.data;
+      // Old Cool-Sub returns { Status }, v2 may return { status } or { success, data: { status } }
+      const status = String(data.Status || data.status || data.data?.status || "").toLowerCase();
 
-      if (data.Status === "successful" || data.Status === "success") {
+      if (status === "successful" || status === "success" || data.success === true) {
         return {
           error: false,
           response: data,
-          message: data.api_response || `Data purchase successful for ${phone}`,
+          message: data.api_response || data.message || `Data purchase successful for ${phone}`,
         };
       } else {
         return {
           error: true,
           status: 400,
-          message: data.api_response || data.Status || "Cool-Sub data purchase failed",
+          message: data.api_response || data.error || data.message || data.Status || "Cool-Sub data purchase failed",
         };
       }
     } catch (error) {
@@ -60,7 +63,7 @@ class CoolSubHelper {
       return {
         error: true,
         status: 400,
-        message: error?.response?.data?.message || "Cool-Sub data purchase failed",
+        message: error?.response?.data?.error || error?.response?.data?.message || "Cool-Sub data purchase failed",
       };
     }
   }
@@ -88,12 +91,13 @@ const coolsub_glo_size_map = (size) => {
   let error = false, plan_id;
 
   switch (f_size) {
-    case "500mb": plan_id = 233; break; // 500MB Monthly ₦197.5
-    case "1gb":   plan_id = 235; break; // 1GB Monthly ₦395
-    case "2gb":   plan_id = 236; break; // 2GB Monthly ₦790
-    case "3gb":   plan_id = 237; break; // 3GB Monthly ₦1,179
-    case "5gb":   plan_id = 238; break; // 5GB Monthly ₦1,975
-    case "10gb":  plan_id = 239; break; // 10GB Monthly ₦3,950
+    // Legacy plan IDs, still accepted by v2 (wallet prices as of Sep 2026)
+    case "500mb": plan_id = 233; break; // 500MB Monthly ₦208
+    case "1gb":   plan_id = 235; break; // 1GB Monthly ₦425
+    case "2gb":   plan_id = 236; break; // 2GB Monthly ₦850
+    case "3gb":   plan_id = 237; break; // 3GB Monthly ₦1,275
+    case "5gb":   plan_id = 238; break; // 5GB Monthly ₦2,125
+    case "10gb":  plan_id = 239; break; // 10GB Monthly ₦4,250
     default: error = true;
   }
   return { error, plan_id };
