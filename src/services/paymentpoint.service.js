@@ -104,15 +104,19 @@ class PaymentPointService {
         businessId: PAYMENTPOINT_BUSINESS_ID,
       };
 
-      console.log("PaymentPoint API Payload:", JSON.stringify(payload, null, 2));
+      // PaymentPoint now accepts KYC as idType ("bvn" | "nin") + 11-digit idNumber;
+      // PalmPay rejects reserved accounts without it
+      const idBvn = String(bvn || user.bvn || "").replace(/\D/g, "");
+      const idNin = String(nin || user.nin || "").replace(/\D/g, "");
+      if (idBvn.length === 11) {
+        payload.idType = "bvn";
+        payload.idNumber = idBvn;
+      } else if (idNin.length === 11) {
+        payload.idType = "nin";
+        payload.idNumber = idNin;
+      }
 
-      // Note: PaymentPoint doesn't use BVN/NIN in their API
-      if (bvn) {
-        console.log("BVN provided but not used by PaymentPoint API");
-      }
-      if (nin) {
-        console.log("NIN provided but not used by PaymentPoint API");
-      }
+      console.log("PaymentPoint API Payload:", JSON.stringify({ ...payload, idNumber: payload.idNumber ? "***" : undefined }, null, 2));
 
       // Create virtual account via PaymentPoint API
       const response = await axios.post(
@@ -125,7 +129,17 @@ class PaymentPointService {
 
       // Extract bank accounts from response
       const bankAccounts = accountData.bankAccounts || [];
-      
+
+      // PaymentPoint returns "success" even when no bank account was created
+      if (bankAccounts.length === 0) {
+        const reason = (accountData.errors || []).join(" ") || "No bank account was returned";
+        throw new Error(
+          payload.idType
+            ? reason
+            : `${reason} Please provide your BVN or NIN and try again.`
+        );
+      }
+
       // Update user record with PaymentPoint account details
       const newBankAcct = bankAccounts.map(account => ({
         bankName: account.bankName,
