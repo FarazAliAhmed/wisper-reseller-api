@@ -92,6 +92,7 @@ const coolsub_glo_size_map = (size) => {
 
   switch (f_size) {
     // Legacy plan IDs, still accepted by v2 (wallet prices as of Sep 2026)
+    case "200mb": plan_id = 234; break; // 200MB Monthly ₦83
     case "500mb": plan_id = 233; break; // 500MB Monthly ₦208
     case "1gb":   plan_id = 235; break; // 1GB Monthly ₦425
     case "2gb":   plan_id = 236; break; // 2GB Monthly ₦850
