@@ -112,7 +112,10 @@ const sendData = async (req, res, next) => {
     req.user.username?.toLowerCase() === "director" &&
     planDetails.network === "glo"
   ) {
-    price = Math.round((planDetails.volume / 1024) * 383);
+    price =
+      planDetails.volume === 200
+        ? 77
+        : Math.round((planDetails.volume / 1024) * 383);
   }
 
   // console.log("Request payloadsshsh", requestPayload)
