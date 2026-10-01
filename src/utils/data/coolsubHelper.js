@@ -85,8 +85,21 @@ class CoolSubHelper {
   }
 }
 
+// Our 3-day / 7-day GLO plan_ids -> Cool-Sub legacy plan IDs
+const coolsub_glo_short_validity_plans = {
+  709: 358, // 1GB 3 days
+  710: 359, // 3GB 3 days
+  711: 360, // 5GB 3 days
+  712: 361, // 1GB 7 days
+  713: 362, // 3GB 7 days
+  714: 363, // 5GB 7 days
+};
+
 // Cool-Sub GLO Corporate Gifting size map (Network ID = 2)
-const coolsub_glo_size_map = (size) => {
+const coolsub_glo_size_map = (size, our_plan_id) => {
+  const short_plan = coolsub_glo_short_validity_plans[Number(our_plan_id)];
+  if (short_plan) return { error: false, plan_id: short_plan };
+
   const f_size = size.trim().toLowerCase().replace(/\.0\s*/g, '').replace(/\s+/g, '');
   let error = false, plan_id;
 

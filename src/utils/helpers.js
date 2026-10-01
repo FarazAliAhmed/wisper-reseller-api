@@ -485,7 +485,7 @@ exports.initiate_data_transfer = async (
       } else if (dataSwitch.api == "coolsub") {
         // COOL-SUB GLO CG
         integName = "COOLSUB";
-        const { error, plan_id } = coolsub_glo_size_map(size);
+        const { error, plan_id } = coolsub_glo_size_map(size, requestPayload.plan);
         if (error)
           return { error: true, status: 400, message: "This data plan is currently not available" };
         return await CoolSubHelper.purchaseData(2, plan_id, requestPayload.mobile_number);

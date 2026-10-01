@@ -25,6 +25,12 @@ const {
 } = require("../utils");
 const transactionHistory = require("../models/transactionHistory");
 
+// Per-user GLO prices: N per GB keyed by plan validity (days), plus fixed MB prices
+const GLO_SPECIAL_PRICES = {
+  director: { 3: 328, 7: 342, 30: 383, fixed: { 200: 77, 500: 192 } },
+  uzobest: { 3: 329, 7: 344, 30: 387 },
+};
+
 const sendData = async (req, res, next) => {
   const { _id, type } = req.user;
 
@@ -107,15 +113,18 @@ const sendData = async (req, res, next) => {
   price = price || planDetails.price;
   volume = volume || planDetails.volume;
 
-  // Special GLO bundle price for Director: N383 per GB
-  if (
-    req.user.username?.toLowerCase() === "director" &&
-    planDetails.network === "glo"
-  ) {
-    const directorFixedPrices = { 200: 77, 500: 192 };
-    price =
-      directorFixedPrices[planDetails.volume] ||
-      Math.round((planDetails.volume / 1024) * 383);
+  // Special GLO bundle prices (N per GB by validity in days) for selected users
+  const specialGlo =
+    planDetails.network === "glo" &&
+    GLO_SPECIAL_PRICES[req.user.username?.toLowerCase()];
+  if (specialGlo) {
+    const days = parseInt(planDetails.validity, 10);
+    const perGB = specialGlo[days] || specialGlo[30];
+    if (specialGlo.fixed?.[planDetails.volume]) {
+      price = specialGlo.fixed[planDetails.volume];
+    } else if (planDetails.volume >= 1024) {
+      price = Math.round((planDetails.volume / 1024) * perGB);
+    }
   }
 
   // console.log("Request payloadsshsh", requestPayload)
