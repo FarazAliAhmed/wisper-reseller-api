@@ -367,36 +367,22 @@ exports.superjara_mtn_size_map = (size) => {
     plan_id,
     dataType;
 
+  // Superjara MTN SME plan IDs (30 days), from their Plan ID list (Oct 2026)
   switch (f_size) {
     case "500mb":
-      plan_id = "mtn_sme_500mb_";
+      plan_id = "279"; // N188
       break;
     case "1gb":
-      plan_id = "data_share_1gb";
+      plan_id = "7"; // N360
       break;
     case "2gb":
-      plan_id = "data_share_2gb";
+      plan_id = "8"; // N680
       break;
     case "3gb":
-      plan_id = "data_share_3gb";
+      plan_id = "496"; // N900
       break;
     case "5gb":
-      plan_id = "data_share_5gb";
-      break;
-    case "7gb":
-      plan_id = "data_share_7gb";
-      break;
-    case "10gb":
-      plan_id = "data_share_10gb";
-      break;
-    case "15gb":
-      plan_id = "data_share_15gb";
-      break;
-    case "20gb":
-      plan_id = "data_share_20gb";
-      break;
-    case "40gb":
-      plan_id = "data_share_40gb";
+      plan_id = "9"; // N1,280
       break;
     default:
       error = true;
