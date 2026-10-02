@@ -13,7 +13,8 @@ const wazobia_url = process.env.WAZOBIA_URL;
 const autopilot_token = process.env.AUTOPILOT_API_KEY;
 const autopilot_url = process.env.AUTOPILOT_URL;
 
-const superjara_token = process.env.SUPERJARA_AUTH_NEW_KEY;
+const superjara_token =
+  process.env.SUPERJARA_API_KEY || process.env.SUPERJARA_AUTH_NEW_KEY;
 const superjara_url = "https://superjara.com/autobiz_vending_index.php";
 
 const gsubz_token = process.env.GSUBZ_API_KEY;
