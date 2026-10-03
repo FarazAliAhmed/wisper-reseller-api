@@ -113,7 +113,7 @@ router.post("/users", handleRegister);
 router.post("/updateConfirm", updateConfirmedFieldForExistingUsers);
 router.post("/updateWhitelist", updateWhitelist);
 router.post("/deleteIPAddress", deleteIPAddress);
-router.get("/changeAccessToken/:id", changeAccessToken);
+router.get("/changeAccessToken/:id", getUser, changeAccessToken);
 
 //handleUpdate route should be protected
 router.patch("/users/:username", getUser, handleUpdate);

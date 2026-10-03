@@ -128,6 +128,10 @@ const uuid = require("uuid");
 
 async function changeAccessToken(req, res) {
   const accountId = req.params.id; // Assuming you're passing the account ID in the route params
+  // Only the account owner (or an admin) may reset their API key
+  if (String(req.user?._id) !== String(accountId) && !req.user?.isAdmin) {
+    return res.status(403).json({ message: "Not allowed to change this API key." });
+  }
   const newAccessToken = uuid.v4(); // Generate a new unique access token
 
   try {
