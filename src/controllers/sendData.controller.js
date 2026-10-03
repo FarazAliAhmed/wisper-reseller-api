@@ -149,7 +149,7 @@ const sendData = async (req, res, next) => {
         _id,
         planDetails,
         type,
-        planDetails.price
+        price
       );
 
       return res
@@ -168,6 +168,8 @@ const sendData = async (req, res, next) => {
       uuid,
       getCurrentTime,
     });
+    // Show the amount actually charged (special prices differ from the plan price)
+    responseObject.price = type === "lite" ? price : planDetails.price;
 
     // save the transaction to database
     const savedTransaction = await save_transaction(
@@ -181,7 +183,7 @@ const sendData = async (req, res, next) => {
         _id,
         planDetails,
         type,
-        planDetails.price
+        price
       );
 
       return res.status(400).json({
@@ -212,7 +214,7 @@ const sendData = async (req, res, next) => {
         _id,
         planDetails,
         type,
-        planDetails.price
+        price
       );
 
       return res
@@ -262,7 +264,7 @@ const sendData = async (req, res, next) => {
       _id,
       planDetails,
       type,
-      planDetails.price
+      price
     );
 
     return res.status(500).json({
