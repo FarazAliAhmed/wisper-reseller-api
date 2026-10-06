@@ -10,6 +10,7 @@ const {
   validate_phone_number,
   getCurrentTime,
   checkMaintenance,
+  customer_safe_message,
 } = require("../utils").helpers;
 
 const {
@@ -145,7 +146,10 @@ const SFSendData = async (req, res) => {
     console.log({ message: send_response.message, status: "success" });
     return res
       .status(201)
-      .json({ message: send_response.message, status: "success" });
+      .json({
+        message: customer_safe_message(send_response.message, "Data sent successfully"),
+        status: "success",
+      });
   } catch (error) {
     console.log(error);
     // console.log("In catch: " + error.message);
@@ -181,7 +185,9 @@ const SFSendData = async (req, res) => {
       status: "failed",
     });
     return res.status(500).json({
-      message: error.message || "Data allocation failed",
+      message: /currently not available/i.test(error.message || "")
+        ? error.message
+        : "Data allocation failed. Please try again.",
       status: "failed",
     });
   }

@@ -12,6 +12,7 @@ const {
   validate_phone_number,
   getCurrentTime,
   checkMaintenance,
+  customer_safe_message,
 } = require("../utils").helpers;
 
 const {
@@ -242,7 +243,10 @@ const sendData = async (req, res, next) => {
     }
 
     // send gateway response along with API response
-    responseObject["gateway_response"] = send_response.message;
+    responseObject["gateway_response"] = customer_safe_message(
+      send_response.message,
+      "Data sent successfully"
+    );
 
     // If endpoint is called by Admin
     if (allocate_for_business && allocate_for_business == true && business_id) {

@@ -1202,3 +1202,13 @@ const generateTransactionId = () => {
   const trxId = `AD-trx-${timestamp}${random}`; // Concatenate timestamp and random number
   return trxId;
 };
+
+// Supplier text must never reach customers (it would advertise the supplier)
+const SUPPLIER_NAMES =
+  /cool-?sub|gsubz|superjara|gladtidings|autopilot|n3tdata|smeplug|ayinlak|zoedata|cloudsim|eazymobile|wazobia|almamgt|simserver|dancity|msorg|autobiz/i;
+
+exports.customer_safe_message = (message, fallback) => {
+  const text = String(message || "");
+  if (!text || SUPPLIER_NAMES.test(text)) return fallback;
+  return text;
+};
