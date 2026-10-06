@@ -25,6 +25,26 @@ class CoolSubHelper {
    * @param {boolean} ported - whether number is ported
    */
   static async purchaseData(network, plan_id, phone, ported = false) {
+    // The network rate-limits bursts ("HTTP 429 RATE_LIMIT_EXCEEDED, retryAfterSeconds: 1").
+    // Retry only on that explicit reply: the order was rejected, so a retry cannot double-deliver.
+    const MAX_RETRIES = 3;
+    for (let attempt = 0; ; attempt++) {
+      const result = await this.purchaseDataOnce(network, plan_id, phone, ported);
+      if (!result.rateLimited || attempt >= MAX_RETRIES) return result;
+      const waitMs = (result.retryAfterSeconds || 1) * 1000 + Math.floor(Math.random() * 500);
+      console.log(`COOLSUB RATE LIMITED: retry ${attempt + 1} in ${waitMs}ms`);
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+    }
+  }
+
+  static async purchaseDataOnce(network, plan_id, phone, ported = false) {
+    const rateLimitInfo = (body, httpStatus) => {
+      const text = String(body?.api_response || body?.error || body?.message || "");
+      const rateLimited = httpStatus === 429 || /RATE_LIMIT|HTTP 429/i.test(text);
+      const retryAfterSeconds = Number((text.match(/retryAfterSeconds:\s*(\d+)/i) || [])[1]) || 1;
+      return { rateLimited, retryAfterSeconds };
+    };
+
     try {
       console.log("COOLSUB REQUEST:", { network, plan_id, phone });
 
@@ -56,14 +76,17 @@ class CoolSubHelper {
           error: true,
           status: 400,
           message: data.api_response || data.error || data.message || data.Status || "Data purchase failed",
+          ...rateLimitInfo(data),
         };
       }
     } catch (error) {
       console.log("COOLSUB ERROR:", error?.response?.data || error.message);
+      const body = error?.response?.data;
       return {
         error: true,
         status: 400,
-        message: error?.response?.data?.error || error?.response?.data?.message || "Data purchase failed",
+        message: body?.api_response || body?.error || body?.message || "Data purchase failed",
+        ...rateLimitInfo(body, error?.response?.status),
       };
     }
   }
