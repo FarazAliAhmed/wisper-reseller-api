@@ -217,9 +217,15 @@ const sendData = async (req, res, next) => {
         price
       );
 
+      // Never pass supplier error text to customers (it can name the supplier)
+      console.log("SUPPLIER ERROR:", send_response.message);
+      const customerMessage = /currently not available/i.test(send_response.message || "")
+        ? send_response.message
+        : "Data purchase failed. Please try again.";
+
       return res
         .status(400)
-        .json({ ...responseObject, message: send_response.message });
+        .json({ ...responseObject, message: customerMessage });
     }
 
     // glo resolution start

@@ -444,13 +444,13 @@ class ApiDataHelper {
         return {
           error: false,
           response: response.data,
-          message: `Data purchase of for ${phone} successful via GSUBZ`,
+          message: `Data purchase for ${phone} successful`,
         };
       } else {
         return {
           error: true,
           status: 400,
-          message: response.data.description || "GSUBZ data purchase failed",
+          message: response.data.description || "Data purchase failed",
         };
       }
     } catch (error) {
@@ -458,7 +458,7 @@ class ApiDataHelper {
       return {
         error: true,
         status: 400,
-        message: error?.response?.data?.description || "An error occurred with GSUBZ data transfer",
+        message: error?.response?.data?.description || "Data purchase failed",
       };
     }
   }

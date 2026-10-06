@@ -63,20 +63,20 @@ class GsubzHelper {
         return {
           error: false,
           response: data,
-          message: data.api_response || `Data purchase for ${phone} successful via GSUBZ`,
+          message: data.api_response || `Data purchase for ${phone} successful`,
         };
       } else {
         return {
           error: true,
           status: 400,
-          message: data.api_response || data.description || data.status || "GSUBZ data purchase failed",
+          message: data.api_response || data.description || data.status || "Data purchase failed",
         };
       }    } catch (error) {
       console.log("GSUBZ ERROR:", error?.response?.data || error.message);
       return {
         error: true,
         status: 400,
-        message: error?.response?.data?.description || "GSUBZ data purchase failed",
+        message: error?.response?.data?.description || "Data purchase failed",
       };
     }
   }

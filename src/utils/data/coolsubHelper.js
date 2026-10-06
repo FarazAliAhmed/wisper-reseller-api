@@ -55,7 +55,7 @@ class CoolSubHelper {
         return {
           error: true,
           status: 400,
-          message: data.api_response || data.error || data.message || data.Status || "Cool-Sub data purchase failed",
+          message: data.api_response || data.error || data.message || data.Status || "Data purchase failed",
         };
       }
     } catch (error) {
@@ -63,7 +63,7 @@ class CoolSubHelper {
       return {
         error: true,
         status: 400,
-        message: error?.response?.data?.error || error?.response?.data?.message || "Cool-Sub data purchase failed",
+        message: error?.response?.data?.error || error?.response?.data?.message || "Data purchase failed",
       };
     }
   }
