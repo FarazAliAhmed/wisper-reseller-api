@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 const { Account } = require("../models/account");
+const { reserveSpend } = require("../utils/spendLimit");
 const dataBalance = require("../models/dataBalance");
 const megaPrice = require("../models/megaPrice");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
@@ -118,6 +119,12 @@ class MegaPriceService {
 
       if (userBalance.wallet_balance < amountToPay) {
         throw new Error("Insufficient wallet balance");
+      }
+
+      // Per-account spend limit
+      const spend = await reserveSpend(business_id, amountToPay);
+      if (spend.error) {
+        throw new Error(spend.message);
       }
 
       const oldwalletBalance = Number(userBalance.wallet_balance);

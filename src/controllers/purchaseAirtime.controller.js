@@ -6,6 +6,7 @@ const {
   AirtimePurchaseService,
 } = require("../services/airtimePurchase.service");
 const trxHelper = require("../utils/trx.helper");
+const { reserveSpend, releaseSpend } = require("../utils/spendLimit");
 const addAirtimeTransaction = trxHelper.addAirtimeTransaction;
 const revertTransactionStatus = trxHelper.revertTransactionStatus;
 
@@ -49,6 +50,16 @@ const purchaseAirtime = async (req, res) => {
 
   let savedTransaction = null;
 
+  // Per-account spend limit (wallet-funded purchases only)
+  let reservedSpend = 0;
+  if (req.user) {
+    const amount = Number(price) * (req.user.type == "lite" ? 0.985 : 0.98);
+    const spend = await reserveSpend(businessIdentity, amount);
+    if (spend.error)
+      return res.status(spend.status).json({ error: true, status: "failed", message: spend.message });
+    if (spend.reserved) reservedSpend = amount;
+  }
+
   try {
     if (!req.user) {
       const verfiyFlw = await verifyFlutterWaveTransaction(trx_ref, price);
@@ -70,6 +81,7 @@ const purchaseAirtime = async (req, res) => {
       name
     );
   } catch (error) {
+    if (reservedSpend) await releaseSpend(businessIdentity, reservedSpend);
     return res.status(500).json({
       error: true,
       status: "failed",
@@ -114,6 +126,7 @@ const purchaseAirtime = async (req, res) => {
       }
 
       // revert transaction
+      if (reservedSpend) await releaseSpend(businessIdentity, reservedSpend);
       await revertTransactionStatus(
         savedTransaction._id,
         Number(chargedPrice),
@@ -150,6 +163,7 @@ const purchaseAirtime = async (req, res) => {
       });
     }
     // revert transaction
+    if (reservedSpend) await releaseSpend(businessIdentity, reservedSpend);
     await revertTransactionStatus(
       savedTransaction._id,
       Number(chargedPrice),

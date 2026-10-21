@@ -44,6 +44,15 @@ const accountSchema = mongoose.Schema(
       unique: true,
       index: true,
     },
+    // Optional cap on how much (N) the account may spend from its wallet; null = no cap
+    spend_limit: {
+      type: Number,
+      default: null,
+    },
+    spend_used: {
+      type: Number,
+      default: 0,
+    },
     isAdmin: {
       type: Boolean,
       default: false,

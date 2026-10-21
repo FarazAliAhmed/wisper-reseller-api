@@ -25,6 +25,7 @@ const {
   update_transaction_status,
 } = require("../utils");
 const transactionHistory = require("../models/transactionHistory");
+const { reserveSpend, releaseSpend } = require("../utils/spendLimit");
 
 // Per-user GLO prices: N per GB keyed by plan validity (days), plus fixed MB prices
 const GLO_SPECIAL_PRICES = {
@@ -130,6 +131,15 @@ const sendData = async (req, res, next) => {
 
   // console.log("Request payloadsshsh", requestPayload)
 
+  // Per-account spend limit (wallet-funded purchases only)
+  let reservedSpend = false;
+  if (type === "lite") {
+    const spend = await reserveSpend(_id, price);
+    if (spend.error)
+      return res.status(spend.status).json({ error: true, status: spend.status, message: spend.message });
+    reservedSpend = spend.reserved;
+  }
+
   // Transaction block
   try {
     // check account balance and debit
@@ -152,6 +162,7 @@ const sendData = async (req, res, next) => {
         type,
         price
       );
+      if (reservedSpend) await releaseSpend(_id, price);
 
       return res
         .status(debitAccount.status)
@@ -186,6 +197,7 @@ const sendData = async (req, res, next) => {
         type,
         price
       );
+      if (reservedSpend) await releaseSpend(_id, price);
 
       return res.status(400).json({
         error: true,
@@ -217,6 +229,7 @@ const sendData = async (req, res, next) => {
         type,
         price
       );
+      if (reservedSpend) await releaseSpend(_id, price);
 
       // Never pass supplier error text to customers (it can name the supplier)
       console.log("SUPPLIER ERROR:", send_response.message);
@@ -276,6 +289,7 @@ const sendData = async (req, res, next) => {
       type,
       price
     );
+      if (reservedSpend) await releaseSpend(_id, price);
 
     return res.status(500).json({
       error: true,
