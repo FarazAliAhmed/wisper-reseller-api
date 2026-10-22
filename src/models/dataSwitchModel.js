@@ -11,6 +11,8 @@ const APIPROVIDER_ENUM = [
     'smeplug',
     'autopilot',
     'superjara',
+    'coolsub',
+    'egms',
 ];
 
 // Define the enum for networks

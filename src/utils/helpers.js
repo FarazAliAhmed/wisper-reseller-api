@@ -50,6 +50,7 @@ const {
 } = require("./networkData");
 const { GsubzHelper, gsubz_mtn_size_map, gsubz_glo_size_map, gsubz_9mobile_size_map } = require("./data/gsubzHelper");
 const { CoolSubHelper, coolsub_glo_size_map } = require("./data/coolsubHelper");
+const { EgmsHelper, egms_glo_plan } = require("./data/egmsHelper");
 const { wazobia_glo_size_map } = require("./mapping/wazobianet.mapping");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
@@ -475,7 +476,22 @@ exports.initiate_data_transfer = async (
       const dataSwitch = await switchService.getDataSwitchByNetwork("glo");
       console.log({ dataSwitch });
 
-      if (dataSwitch.api == "gsubz") {
+      if (dataSwitch.api == "egms") {
+        // GLO DIRECT (EGMS), with Cool-Sub as backup
+        const egmsPlan = egms_glo_plan(requestPayload.plan);
+        if (EgmsHelper.isConfigured() && !egmsPlan.error) {
+          integName = "EGMS";
+          const egmsResult = await EgmsHelper.purchaseData(egmsPlan.plan_id, requestPayload.mobile_number, ref);
+          // Fall back only when GLO confirms nothing was gifted, so a number is never credited twice
+          if (!egmsResult.error || !egmsResult.definiteFailure) return egmsResult;
+          console.log("EGMS FAILED, FALLING BACK TO COOLSUB:", egmsResult.message);
+        }
+        integName = "COOLSUB";
+        const { error, plan_id } = coolsub_glo_size_map(size, requestPayload.plan);
+        if (error)
+          return { error: true, status: 400, message: "This data plan is currently not available" };
+        return await CoolSubHelper.purchaseData(2, plan_id, requestPayload.mobile_number);
+      } else if (dataSwitch.api == "gsubz") {
         // GSUBZ GLO
         integName = "GSUBZ";
         const { error, plan_id, amount } = gsubz_glo_size_map(size);
