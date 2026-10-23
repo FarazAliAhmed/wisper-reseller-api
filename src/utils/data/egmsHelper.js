@@ -11,7 +11,7 @@ const EGMS_BASE_URL = "https://gift-api.gloworld.com";
 const EGMS_ALLOWED_BUCKET_ID = 306; // client's bucket ("palmpay3", 157.5 TB)
 
 const egms_api_key = process.env.GLO_EGMS_API_KEY;
-const egms_sponsor_id = process.env.GLO_EGMS_SPONSOR_ID;
+const egms_sponsor_id = process.env.GLO_EGMS_SPONSOR_ID || "palmpay";
 
 // Result codes that mean GLO did NOT gift anything, so another supplier can safely be tried
 const EGMS_DEFINITE_FAILURES = new Set([
@@ -20,13 +20,28 @@ const EGMS_DEFINITE_FAILURES = new Set([
   "405001", "405002", "405003", "405004", "405005", "405006", "405007", "405008", "405009",
 ]);
 
-// Our GLO plan_id -> EGMS planId, e.g. {"709": 12, "235": 15}. Set in GLO_EGMS_PLANS (JSON).
+// Our GLO plan_id -> EGMS planId (bucket 306 plan list, Oct 2026). GLO_EGMS_PLANS (JSON) can override entries.
+const EGMS_DEFAULT_PLANS = {
+  701: 910, // 200MB 14 days  (CGIFT_200_14)
+  702: 912, // 500MB 30 days  (CGIFT_500_30)
+  703: 913, // 1GB 30 days    (CGIFT_1GB)
+  704: 914, // 2GB 30 days    (CGIFT_2GB)
+  705: 915, // 3GB 30 days    (CGIFT_ 3GB)
+  706: 916, // 5GB 30 days    (CGIFT_5GB)
+  707: 917, // 10GB 30 days   (CGIFT_10GB)
+  709: 919, // 1GB 3 days     (CGIFT_1GB_3)
+  710: 920, // 3GB 3 days     (CGIFT_3GB_3)
+  711: 921, // 5GB 3 days     (CGIFT_5GB_3)
+  712: 922, // 1GB 7 days     (CGIFT_1GB_7)
+  713: 923, // 3GB 7 days     (CGIFT_3GB_7)
+  714: 924, // 5GB 7 days     (CGIFT_5GB_7)
+};
 const egms_plan_map = (() => {
   try {
-    return JSON.parse(process.env.GLO_EGMS_PLANS || "{}");
+    return { ...EGMS_DEFAULT_PLANS, ...JSON.parse(process.env.GLO_EGMS_PLANS || "{}") };
   } catch (e) {
     console.log("GLO_EGMS_PLANS is not valid JSON");
-    return {};
+    return EGMS_DEFAULT_PLANS;
   }
 })();
 
