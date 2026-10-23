@@ -10,7 +10,7 @@ const axios = require("axios");
 const EGMS_BASE_URL = "https://gift-api.gloworld.com";
 const EGMS_ALLOWED_BUCKET_ID = 306; // client's bucket ("palmpay3", 157.5 TB)
 
-const egms_api_key = process.env.GLO_EGMS_API_KEY;
+const egms_api_key = process.env.GLO_EGMS_API_KEY || process.env.PALM_PAY_KEY;
 const egms_sponsor_id = process.env.GLO_EGMS_SPONSOR_ID || "palmpay";
 
 // Result codes that mean GLO did NOT gift anything, so another supplier can safely be tried
