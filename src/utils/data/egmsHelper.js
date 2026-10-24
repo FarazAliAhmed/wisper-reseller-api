@@ -36,6 +36,24 @@ const EGMS_DEFAULT_PLANS = {
   713: 923, // 3GB 7 days     (CGIFT_3GB_7)
   714: 924, // 5GB 7 days     (CGIFT_5GB_7)
 };
+// Actual GB each of our GLO plans delivers (EGMS gift-plan list); used for GLO wallet deductions and reporting
+const GLO_PLAN_ACTUAL_GB = {
+  701: 0.195, // 200MB 14 days
+  702: 0.488, // 500MB 30 days
+  703: 1.0,   // 1GB 30 days
+  704: 2.0,   // 2GB 30 days
+  705: 3.0,   // 3GB 30 days
+  706: 5.0,   // 5GB 30 days
+  707: 10.0,  // 10GB 30 days
+  709: 0.85,  // 1GB 3 days
+  710: 2.55,  // 3GB 3 days
+  711: 4.25,  // 5GB 3 days
+  712: 0.888, // 1GB 7 days
+  713: 2.663, // 3GB 7 days
+  714: 4.438, // 5GB 7 days
+};
+const glo_actual_gb = (our_plan_id) => GLO_PLAN_ACTUAL_GB[Number(our_plan_id)] || null;
+
 const egms_plan_map = (() => {
   try {
     return { ...EGMS_DEFAULT_PLANS, ...JSON.parse(process.env.GLO_EGMS_PLANS || "{}") };
@@ -140,4 +158,4 @@ class EgmsHelper {
   }
 }
 
-module.exports = { EgmsHelper, egms_glo_plan, EGMS_ALLOWED_BUCKET_ID };
+module.exports = { EgmsHelper, egms_glo_plan, glo_actual_gb, EGMS_ALLOWED_BUCKET_ID };

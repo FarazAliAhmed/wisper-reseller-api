@@ -33,6 +33,7 @@ const purchaseRoutes = require("./routes/purchase.route");
 const apiBalanceRoutes = require("./routes/apiBalance.route.js");
 const webhookRoutes = require("./routes/webhook.route.js");
 const switchRoutes = require("./routes/switch.routes");
+const gloCreditRoutes = require("./routes/gloCredit.route");
 
 const apiV2Routes = require("./routes/v2");
 const apiV2AdminRoutes = require("./routes/v2/admin");
@@ -91,6 +92,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api", notiRoutes);
 app.use("/api/agent", agentsRoutes);
 app.use("/api", megaPriceRoutes);
+app.use("/api", gloCreditRoutes);
 app.use("/api", monnifyRoutes);
 app.use("/api/paymentpoint", paymentpointRoutes);
 app.use("/api", megamaintenanceRoutes);

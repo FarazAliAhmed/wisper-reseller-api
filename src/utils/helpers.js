@@ -50,7 +50,7 @@ const {
 } = require("./networkData");
 const { GsubzHelper, gsubz_mtn_size_map, gsubz_glo_size_map, gsubz_9mobile_size_map } = require("./data/gsubzHelper");
 const { CoolSubHelper, coolsub_glo_size_map } = require("./data/coolsubHelper");
-const { EgmsHelper, egms_glo_plan } = require("./data/egmsHelper");
+const { EgmsHelper, egms_glo_plan, glo_actual_gb } = require("./data/egmsHelper");
 const { wazobia_glo_size_map } = require("./mapping/wazobianet.mapping");
 const { default: fetch } = require("node-fetch");
 const { Account } = require("../models/account");
@@ -219,6 +219,10 @@ const getFieldAndAmount = (type, planDetails, price, volume) => {
   }
 
   if (type != "lite") {
+    // GLO plans: debit the GB they actually deliver (e.g. 3-day 1GB = 0.850GB)
+    const actualGB = network === "glo" ? glo_actual_gb(planDetails.id) : null;
+    if (actualGB) return { field: "mega_wallet.glo", amount: Math.round(actualGB * 1000) };
+
     let pType;
     let volume = convertStorageSize(size);
     if (network === "mtn") {
@@ -310,7 +314,7 @@ exports.debit_account_balance = async (
 
   if (updatedBalance.error) return updatedBalance;
 
-  if (userAcct.type == "lite") {
+  if (userAcct.type == "lite" && type == "lite") {
     const newMonnifyHistory = new monnifyHistory({
       business_name: userAcct.name,
       business_id: account_id,
@@ -359,7 +363,7 @@ exports.revert_debit_account_balance = async (
   // add to wallet
   const userAcct = await Account.findOne({ _id: account_id });
 
-  if (userAcct.type == "lite") {
+  if (userAcct.type == "lite" && type == "lite") {
     console.log("REVERRRT PRICE", price);
 
     const newMonnifyHistory = new monnifyHistory({

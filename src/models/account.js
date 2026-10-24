@@ -53,6 +53,17 @@ const accountSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    // Set when admin funds the account's GLO wallet: its GLO orders are then paid in GB only
+    glo_wallet: {
+      type: Boolean,
+      default: false,
+    },
+    // GLO credit facility: GB given on credit, repaid in naira for the GB actually used
+    glo_credit_rate: { type: Number, default: 383 }, // N per GB
+    glo_credit_block_gb: { type: Number, default: 10000 }, // GB re-credited per block repaid
+    glo_credit_allocated: { type: Number, default: 0 }, // total GLO wallet units ever credited (1000 = 1GB)
+    glo_credit_repaid: { type: Number, default: 0 }, // total N repaid
+    glo_credit_auto_blocks: { type: Number, default: 0 }, // blocks re-credited automatically after repayment
     isAdmin: {
       type: Boolean,
       default: false,

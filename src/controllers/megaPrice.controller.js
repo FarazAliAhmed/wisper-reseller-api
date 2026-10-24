@@ -127,6 +127,26 @@ class MegaPriceController {
     }
   }
 
+  async creditAdminMegaData(req, res) {
+    try {
+      const { error } = purchaseMegaDataSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
+
+      const { business_id, network, amountInGB } = req.body;
+      const updatedBalance = await megaPriceService.creditAdminMegaData(
+        business_id,
+        network,
+        amountInGB
+      );
+      res.json(updatedBalance);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
   async debitAdminMegaData(req, res) {
     try {
       // Validate the request body

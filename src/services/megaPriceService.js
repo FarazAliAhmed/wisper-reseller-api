@@ -5,6 +5,7 @@ const dataBalance = require("../models/dataBalance");
 const megaPrice = require("../models/megaPrice");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const monnifyHistory = require("../models/monnifyHistory");
+const gloCredit = require("./gloCredit.service");
 const specialBusiness = require("../models/specialBusiness");
 
 class MegaPriceService {
@@ -275,6 +276,40 @@ class MegaPriceService {
     } catch (error) {
       throw error;
     }
+  }
+
+  // Admin funds a data wallet with GB (no naira charged)
+  async creditAdminMegaData(business_id, network, amountInGB) {
+    const gb = Number(amountInGB);
+    if (!(gb > 0)) throw new Error("Enter a valid GB amount");
+
+    // GLO is a credit facility: GB given now, repaid in naira for what is used
+    if (network === "glo") return gloCredit.creditGB(business_id, gb, "Funding - Admin (GLO credit)");
+
+    const userBalance = await dataBalance.findOne({ business: business_id });
+    if (!userBalance) throw new Error("User data balance not found");
+
+    const oldUser_bal = Number(userBalance.mega_wallet?.[network] || 0);
+    const updatedUserBalance = await dataBalance.findOneAndUpdate(
+      { business: business_id },
+      { $inc: { [`mega_wallet.${network}`]: gb * 1000 } },
+      { new: true }
+    );
+
+    const user = await Account.findOne({ _id: business_id });
+    await new megaPurchaseHistory({
+      business_id: business_id,
+      username: user?.username,
+      amount: 0,
+      volume: gb,
+      channel: "Funding - Admin (GB)",
+      old_bal: oldUser_bal,
+      new_bal: updatedUserBalance.mega_wallet[network],
+      network: network,
+      status: "success",
+    }).save();
+
+    return updatedUserBalance;
   }
 
   async debitAdminMegaData(business_id, network, amountInGB) {

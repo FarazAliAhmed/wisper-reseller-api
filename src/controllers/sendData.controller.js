@@ -24,6 +24,7 @@ const {
   format_transaction_response,
   update_transaction_status,
 } = require("../utils");
+const { Account } = require("../models/account");
 const transactionHistory = require("../models/transactionHistory");
 const { reserveSpend, releaseSpend } = require("../utils/spendLimit");
 
@@ -131,9 +132,16 @@ const sendData = async (req, res, next) => {
 
   // console.log("Request payloadsshsh", requestPayload)
 
-  // Per-account spend limit (wallet-funded purchases only)
+  // Accounts with a GLO wallet pay GLO orders in GB only (orders stop when the GB runs out)
+  let payType = type;
+  if (type === "lite" && planDetails.network === "glo") {
+    const acct = await Account.findById(_id).select("glo_wallet").lean();
+    if (acct?.glo_wallet) payType = "mega";
+  }
+
+  // Per-account spend limit (naira wallet purchases only)
   let reservedSpend = false;
-  if (type === "lite") {
+  if (payType === "lite") {
     const spend = await reserveSpend(_id, price);
     if (spend.error)
       return res.status(spend.status).json({ error: true, status: spend.status, message: spend.message });
@@ -146,7 +154,7 @@ const sendData = async (req, res, next) => {
     const debitAccount = await debit_account_balance(
       _id,
       planDetails,
-      type,
+      payType,
       price,
       volume
     );
@@ -159,7 +167,7 @@ const sendData = async (req, res, next) => {
       await revert_debit_account_balance(
         _id,
         planDetails,
-        type,
+        payType,
         price
       );
       if (reservedSpend) await releaseSpend(_id, price);
@@ -172,7 +180,7 @@ const sendData = async (req, res, next) => {
 
     // **********************
     const responseObject = format_transaction_response({
-      type,
+      type: payType,
       debitAccount,
       validNumber,
       providerId,
@@ -181,7 +189,7 @@ const sendData = async (req, res, next) => {
       getCurrentTime,
     });
     // Show the amount actually charged (special prices differ from the plan price)
-    responseObject.price = type === "lite" ? price : planDetails.price;
+    responseObject.price = payType === "lite" ? price : type === "lite" ? 0 : planDetails.price;
 
     // save the transaction to database
     const savedTransaction = await save_transaction(
@@ -194,7 +202,7 @@ const sendData = async (req, res, next) => {
       await revert_debit_account_balance(
         _id,
         planDetails,
-        type,
+        payType,
         price
       );
       if (reservedSpend) await releaseSpend(_id, price);
@@ -226,7 +234,7 @@ const sendData = async (req, res, next) => {
       await revert_debit_account_balance(
         _id,
         planDetails,
-        type,
+        payType,
         price
       );
       if (reservedSpend) await releaseSpend(_id, price);
@@ -286,7 +294,7 @@ const sendData = async (req, res, next) => {
     await revert_debit_account_balance(
       _id,
       planDetails,
-      type,
+      payType,
       price
     );
       if (reservedSpend) await releaseSpend(_id, price);

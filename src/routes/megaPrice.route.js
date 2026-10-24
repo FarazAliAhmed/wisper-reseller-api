@@ -13,6 +13,11 @@ router.post(
   megaPriceController.purchaseAdminMegaData
 );
 router.post(
+  "/creditAdminMegaData",
+  getAdmin,
+  megaPriceController.creditAdminMegaData
+);
+router.post(
   "/debitAdminMegaData",
   getAdmin,
   megaPriceController.debitAdminMegaData
