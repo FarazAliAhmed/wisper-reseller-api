@@ -35,6 +35,11 @@ const EGMS_DEFAULT_PLANS = {
   712: 922, // 1GB 7 days     (CGIFT_1GB_7)
   713: 923, // 3GB 7 days     (CGIFT_3GB_7)
   714: 924, // 5GB 7 days     (CGIFT_5GB_7)
+  715: 911, // 500MB 14 days  (CGIFT_500_14)
+  716: 925, // 1GB 14 days    (CGIFT_N_1GB_14)
+  717: 926, // 3GB 14 days    (CGIFT_N_3GB_14)
+  718: 927, // 5GB 14 days    (CGIFT_N_5GB_14)
+  719: 928, // 10GB 14 days   (CGIFT_N_10GB_14)
 };
 // Actual GB each of our GLO plans delivers (EGMS gift-plan list); used for GLO wallet deductions and reporting
 const GLO_PLAN_ACTUAL_GB = {
@@ -51,6 +56,11 @@ const GLO_PLAN_ACTUAL_GB = {
   712: 0.888, // 1GB 7 days
   713: 2.663, // 3GB 7 days
   714: 4.438, // 5GB 7 days
+  715: 0.488, // 500MB 14 days
+  716: 0.888, // 1GB 14 days
+  717: 2.663, // 3GB 14 days
+  718: 4.438, // 5GB 14 days
+  719: 8.875, // 10GB 14 days
 };
 const glo_actual_gb = (our_plan_id) => GLO_PLAN_ACTUAL_GB[Number(our_plan_id)] || null;
 
