@@ -10,6 +10,11 @@ const megaPurchaseHistory = require("../models/megaPurchaseHistory");
  * Each time repayments cover another full block (e.g. 10,000GB), another block is credited automatically.
  */
 const UNITS_PER_GB = 1000;
+// Accounts created before these fields existed have no stored value, so fall back to the defaults
+const DEFAULT_RATE = 383;
+const DEFAULT_BLOCK_GB = 10000;
+const rateOf = (acct) => Number(acct.glo_credit_rate ?? DEFAULT_RATE);
+const blockOf = (acct) => Number(acct.glo_credit_block_gb ?? DEFAULT_BLOCK_GB);
 const round2 = (n) => Math.round(n * 100) / 100;
 
 const ref = () => `GLOCR${Date.now()}${Math.floor(Math.random() * 1000)}`;
@@ -22,13 +27,13 @@ async function getStatus(business_id) {
   const remainingUnits = Number(bal?.mega_wallet?.glo || 0);
   const allocatedUnits = Number(acct.glo_credit_allocated || 0);
   const usedUnits = Math.max(0, allocatedUnits - remainingUnits);
-  const rate = Number(acct.glo_credit_rate || 0);
+  const rate = rateOf(acct);
   const repaid = Number(acct.glo_credit_repaid || 0);
 
   return {
     enabled: Boolean(acct.glo_wallet),
     rate,
-    block_gb: Number(acct.glo_credit_block_gb || 0),
+    block_gb: blockOf(acct),
     allocated_gb: allocatedUnits / UNITS_PER_GB,
     used_gb: usedUnits / UNITS_PER_GB,
     remaining_gb: remainingUnits / UNITS_PER_GB,
@@ -75,7 +80,7 @@ async function creditGB(business_id, gb, channel) {
 // Credit another block for every full block covered by repayments (safe to call repeatedly)
 async function applyAutoCredit(business_id) {
   const acct = await Account.findById(business_id).lean();
-  const blockValue = Number(acct.glo_credit_block_gb) * Number(acct.glo_credit_rate);
+  const blockValue = blockOf(acct) * rateOf(acct);
   if (!(blockValue > 0)) return 0;
 
   const earned = Math.floor(Number(acct.glo_credit_repaid || 0) / blockValue);
@@ -89,7 +94,7 @@ async function applyAutoCredit(business_id) {
   );
   if (!claimed) return 0;
 
-  const gb = (earned - given) * Number(acct.glo_credit_block_gb);
+  const gb = (earned - given) * blockOf(acct);
   await creditGB(business_id, gb, "Auto credit - GLO repayment");
   return gb;
 }
