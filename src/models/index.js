@@ -28,6 +28,11 @@ const dbSetUp = async () => {
       await loadPlans();
       console.log("plans loaded");
       console.log(`Connected to DB`);
+
+      // Give back GB for GLO credit repayments made before the revolving rule
+      require("../services/gloCredit.service")
+        .restoreAllRepaidGB()
+        .catch((e) => console.log("GLO CREDIT RESTORE ERROR:", e.message));
     }
   } catch (error) {
     console.error("Database connection error:", error.message);

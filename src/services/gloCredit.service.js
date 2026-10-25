@@ -3,12 +3,13 @@ const dataBalance = require("../models/dataBalance");
 const monnifyHistory = require("../models/monnifyHistory");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
 const transaction = require("../models/transactionHistory");
+const postmark = require("postmark");
 
 /**
  * GLO credit facility.
  * Admin credits GB to the account's GLO wallet (mega_wallet.glo, 1000 units = 1GB).
  * GLO orders consume that GB; the user owes (GB used x rate) and repays from the naira wallet.
- * Each time repayments cover another full block (e.g. 10,000GB), another block is credited automatically.
+ * Every repayment gives back the GB it pays for (repaid / rate), so the credit line revolves up to the block (e.g. 10,000GB).
  */
 const UNITS_PER_GB = 1000;
 // Accounts created before these fields existed have no stored value, so fall back to the defaults
@@ -78,26 +79,76 @@ async function creditGB(business_id, gb, channel) {
   return updated;
 }
 
-// Credit another block for every full block covered by repayments (safe to call repeatedly)
-async function applyAutoCredit(business_id) {
+// Give back the GB every repayment covers (repaid / rate), so the credit line revolves and never
+// exceeds the block. Safe to call repeatedly: only GB not yet given back is credited.
+async function restoreRepaidGB(business_id) {
   const acct = await Account.findById(business_id).lean();
-  const blockValue = blockOf(acct) * rateOf(acct);
-  if (!(blockValue > 0)) return 0;
+  const rate = rateOf(acct);
+  if (!acct?.glo_wallet || !(rate > 0)) return 0;
 
-  const earned = Math.floor(Number(acct.glo_credit_repaid || 0) / blockValue);
-  const given = Number(acct.glo_credit_auto_blocks || 0);
-  if (earned <= given) return 0;
+  const restored = Number(acct.glo_credit_restored || 0);
+  const due = Math.floor((Number(acct.glo_credit_repaid || 0) / rate) * UNITS_PER_GB) - restored;
+  if (!(due > 0)) return 0;
 
-  // Claim the new blocks first so two repayments at once cannot double-credit
+  // Claim first so two repayments at once cannot double-credit
   const claimed = await Account.findOneAndUpdate(
-    { _id: business_id, glo_credit_auto_blocks: given },
-    { $set: { glo_credit_auto_blocks: earned } }
+    { _id: business_id, glo_credit_restored: restored ? restored : { $in: [0, null] } },
+    { $set: { glo_credit_restored: restored + due } }
   );
   if (!claimed) return 0;
 
-  const gb = (earned - given) * blockOf(acct);
-  await creditGB(business_id, gb, "Auto credit - GLO repayment");
+  const gb = due / UNITS_PER_GB;
+  await creditGB(business_id, gb, "Repayment - GLO credit restored");
   return gb;
+}
+
+// Email the customer when 50%, 80% or 90% of the credit line is used (each level once until repaid)
+const ALERT_LEVELS = [90, 80, 50];
+async function checkUsageAlert(business_id) {
+  const acct = await Account.findById(business_id).select("glo_wallet glo_alert_level glo_credit_block_gb email name").lean();
+  if (!acct?.glo_wallet) return;
+  const status = await getStatus(business_id);
+  const usedPct = 100 * (1 - status.remaining_gb / status.block_gb);
+  const level = ALERT_LEVELS.find((l) => usedPct >= l) || 0;
+  const last = Number(acct.glo_alert_level || 0);
+  if (level === last) return;
+  // Without email set up, leave the level unclaimed so the alert still goes out once it is
+  if (level > last && !emailConfigured()) return console.log("GLO ALERT EMAIL SKIPPED (email not configured):", acct.email, level);
+
+  const claimed = await Account.findOneAndUpdate(
+    { _id: business_id, glo_alert_level: last ? last : { $in: [0, null] } },
+    { $set: { glo_alert_level: level } }
+  );
+  // Only a rise sends an email; a drop (after repayment) just re-arms the alerts
+  if (!claimed || level < last) return;
+
+  await sendLowBalanceEmail(acct, status, level);
+}
+
+const emailConfigured = () => Boolean(process.env.POSTMARK_API_TOKEN && process.env.ALERT_FROM_EMAIL);
+
+async function sendLowBalanceEmail(acct, status, level) {
+  const token = process.env.POSTMARK_API_TOKEN;
+  const from = process.env.ALERT_FROM_EMAIL;
+
+  const gb = (n) => `${Number(n).toLocaleString("en-NG", { maximumFractionDigits: 2 })}GB`;
+  const naira = (n) => `₦${Number(n).toLocaleString("en-NG", { maximumFractionDigits: 2 })}`;
+  try {
+    await new postmark.ServerClient(token).sendEmail({
+      From: from,
+      To: acct.email,
+      Subject: `GLO wallet ${level}% used - please repay to avoid interruption`,
+      TextBody:
+        `Hello ${acct.name || ""},\n\n` +
+        `You have used ${level}% of your GLO wallet. Only ${gb(status.remaining_gb)} is left.\n\n` +
+        `Outstanding bill: ${naira(status.owed)} (${gb(status.used_gb)} used at ${naira(status.rate)}/GB).\n\n` +
+        `Please fund your wallet and click "Repay" on your dashboard. Every repayment adds the same GB back ` +
+        `to your GLO wallet instantly, so your service is not interrupted.\n\nXTES`,
+    });
+    console.log("GLO ALERT EMAIL SENT:", acct.email, level);
+  } catch (error) {
+    console.log("GLO ALERT EMAIL FAILED:", acct.email, error.message);
+  }
 }
 
 // Repay the GLO credit from the naira wallet; amount defaults to everything owed
@@ -134,8 +185,9 @@ async function repay(business_id, amount) {
     payment_ref: ref(),
   }).save();
 
-  const autoCreditedGB = await applyAutoCredit(business_id);
-  return { paid: pay, auto_credited_gb: autoCreditedGB, ...(await getStatus(business_id)) };
+  const restoredGB = await restoreRepaidGB(business_id);
+  checkUsageAlert(business_id).catch((e) => console.log("GLO ALERT ERROR:", e.message));
+  return { paid: pay, auto_credited_gb: restoredGB, ...(await getStatus(business_id)) };
 }
 
 // Admin overview: every account on the GLO credit facility, with GB used today (Nigeria time)
@@ -165,4 +217,13 @@ async function listAll() {
   );
 }
 
-module.exports = { getStatus, creditGB, repay, applyAutoCredit, listAll };
+// On startup: give back GB for repayments made before the revolving rule existed
+async function restoreAllRepaidGB() {
+  const accts = await Account.find({ glo_wallet: true }).select("username").lean();
+  for (const acct of accts) {
+    const gb = await restoreRepaidGB(acct._id);
+    if (gb) console.log(`GLO CREDIT RESTORED: ${acct.username} +${gb}GB`);
+  }
+}
+
+module.exports = { getStatus, creditGB, repay, restoreRepaidGB, restoreAllRepaidGB, checkUsageAlert, listAll };

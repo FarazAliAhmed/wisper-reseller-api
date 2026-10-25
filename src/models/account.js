@@ -63,7 +63,9 @@ const accountSchema = mongoose.Schema(
     glo_credit_block_gb: { type: Number, default: 10000 }, // GB re-credited per block repaid
     glo_credit_allocated: { type: Number, default: 0 }, // total GLO wallet units ever credited (1000 = 1GB)
     glo_credit_repaid: { type: Number, default: 0 }, // total N repaid
-    glo_credit_auto_blocks: { type: Number, default: 0 }, // blocks re-credited automatically after repayment
+    glo_credit_auto_blocks: { type: Number, default: 0 }, // legacy: blocks re-credited under the old full-block rule
+    glo_credit_restored: { type: Number, default: 0 }, // GLO wallet units given back for repayments (1000 = 1GB)
+    glo_alert_level: { type: Number, default: 0 }, // last low-balance email sent (50/80/90 % used), 0 = none
     isAdmin: {
       type: Boolean,
       default: false,

@@ -27,6 +27,7 @@ const {
 const { Account } = require("../models/account");
 const transactionHistory = require("../models/transactionHistory");
 const { reserveSpend, releaseSpend } = require("../utils/spendLimit");
+const gloCredit = require("../services/gloCredit.service");
 
 // Per-user GLO prices: N per GB keyed by plan validity (days), plus fixed MB prices
 const GLO_SPECIAL_PRICES = {
@@ -275,6 +276,10 @@ const sendData = async (req, res, next) => {
       responseObject.transaction_ref = uuid.v4();
       await save_transaction(business_id, responseObject);
     }
+
+    // GLO wallet order: email the customer if the wallet is running low (does not delay the response)
+    if (payType !== type)
+      gloCredit.checkUsageAlert(_id).catch((e) => console.log("GLO ALERT ERROR:", e.message));
 
     // Fire callback event to send callback
     if (callback)
