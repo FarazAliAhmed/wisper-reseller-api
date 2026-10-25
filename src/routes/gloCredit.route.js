@@ -6,6 +6,7 @@ const gloCreditController = require("../controllers/gloCredit.controller");
 
 router.get("/glo-credit", getUser, gloCreditController.getGloCredit);
 router.post("/glo-credit/repay", getUser, gloCreditController.repayGloCredit);
+router.get("/admin/glo-credit", getAdmin, gloCreditController.adminListGloCredit);
 router.get("/admin/glo-credit/:id", getAdmin, gloCreditController.adminGetGloCredit);
 
 module.exports = router;

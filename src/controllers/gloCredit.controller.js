@@ -27,4 +27,13 @@ const adminGetGloCredit = async (req, res) => {
   }
 };
 
-module.exports = { getGloCredit, repayGloCredit, adminGetGloCredit };
+// GET /api/admin/glo-credit - all GLO credit customers with consumption and outstanding bill
+const adminListGloCredit = async (req, res) => {
+  try {
+    res.json(await gloCredit.listAll());
+  } catch (error) {
+    res.status(400).json({ error: true, message: error.message });
+  }
+};
+
+module.exports = { getGloCredit, repayGloCredit, adminGetGloCredit, adminListGloCredit };

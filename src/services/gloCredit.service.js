@@ -2,6 +2,7 @@ const { Account } = require("../models/account");
 const dataBalance = require("../models/dataBalance");
 const monnifyHistory = require("../models/monnifyHistory");
 const megaPurchaseHistory = require("../models/megaPurchaseHistory");
+const transaction = require("../models/transactionHistory");
 
 /**
  * GLO credit facility.
@@ -137,4 +138,31 @@ async function repay(business_id, amount) {
   return { paid: pay, auto_credited_gb: autoCreditedGB, ...(await getStatus(business_id)) };
 }
 
-module.exports = { getStatus, creditGB, repay, applyAutoCredit };
+// Admin overview: every account on the GLO credit facility, with GB used today (Nigeria time)
+async function listAll() {
+  const accts = await Account.find({ glo_wallet: true }).select("username name email").lean();
+  const dayStart = new Date(new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Lagos" }) + "T00:00:00+01:00");
+
+  return Promise.all(
+    accts.map(async (acct) => {
+      const [status, today] = await Promise.all([
+        getStatus(acct._id),
+        transaction.aggregate([
+          { $match: { business_id: String(acct._id), network_provider: "glo", status: "success", price: 0, createdAt: { $gte: dayStart } } },
+          { $group: { _id: null, units: { $sum: { $toDouble: "$data_volume" } }, orders: { $sum: 1 } } },
+        ]),
+      ]);
+      return {
+        _id: acct._id,
+        username: acct.username,
+        name: acct.name,
+        email: acct.email,
+        ...status,
+        used_today_gb: round2((today[0]?.units || 0) / UNITS_PER_GB),
+        orders_today: today[0]?.orders || 0,
+      };
+    })
+  );
+}
+
+module.exports = { getStatus, creditGB, repay, applyAutoCredit, listAll };
