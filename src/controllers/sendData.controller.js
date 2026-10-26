@@ -35,6 +35,9 @@ const GLO_SPECIAL_PRICES = {
   uzobest: { 3: 329, 7: 344, 30: 387, fixed: { 200: 77.4, 500: 193.5 } },
 };
 
+// Users whose orders skip the phone prefix check, so ported numbers can buy (the provider rejects wrong networks)
+const NO_PREFIX_CHECK_USERS = ["alwayzgud"];
+
 const sendData = async (req, res, next) => {
   const { _id, type } = req.user;
 
@@ -92,7 +95,11 @@ const sendData = async (req, res, next) => {
   }
 
   // check that phone number is valid
-  const validNumber = validate_phone_number(phone_number, providerId.network);
+  const validNumber = validate_phone_number(
+    phone_number,
+    providerId.network,
+    NO_PREFIX_CHECK_USERS.includes(req.user.username?.toLowerCase())
+  );
   if (validNumber.error)
     return res.status(validNumber.status).json(validNumber);
 

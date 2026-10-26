@@ -165,7 +165,8 @@ exports.get_network_provider = (network_provider) => {
   return { error: true, status: 400, message: "Network Provider is Invalid" };
 };
 
-exports.validate_phone_number = (number, network_provider) => {
+// skipPrefixCheck: let numbers with another network's prefix through (ported numbers); the provider decides
+exports.validate_phone_number = (number, network_provider, skipPrefixCheck = false) => {
   if (!number || typeof number !== 'string') {
     return { error: true, status: 401, message: "Invalid Phone Number" };
   }
@@ -173,12 +174,14 @@ exports.validate_phone_number = (number, network_provider) => {
     return { error: true, status: 401, message: "Invalid Phone Number" };
   }
   const init = number.slice(0, 4);
-  if (!network_numbers[network_provider].includes(init))
+  if (!network_numbers[network_provider].includes(init)) {
+    if (skipPrefixCheck) return { number, ported: "true", error: false, message: "Phone Number is Valid" };
     return {
       error: true,
       status: 401,
       message: "Network Provider and Phone Number do not match",
     };
+  }
 
   const ported = ported_numbers.includes(init) ? "true" : "false";
   return { number, ported, error: false, message: "Phone Number is Valid" };
