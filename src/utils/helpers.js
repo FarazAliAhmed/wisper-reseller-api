@@ -173,9 +173,14 @@ exports.validate_phone_number = (number, network_provider) => {
     return { error: true, status: 401, message: "Invalid Phone Number" };
   }
   const init = number.slice(0, 4);
-  // No prefix check: ported numbers keep their old prefix, so the provider decides if the number is on its network.
-  // A prefix from another network means the number was ported.
-  const ported = ported_numbers.includes(init) || !(network_numbers[network_provider] || []).includes(init) ? "true" : "false";
+  if (!network_numbers[network_provider].includes(init))
+    return {
+      error: true,
+      status: 401,
+      message: "Network Provider and Phone Number do not match",
+    };
+
+  const ported = ported_numbers.includes(init) ? "true" : "false";
   return { number, ported, error: false, message: "Phone Number is Valid" };
 };
 

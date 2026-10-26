@@ -242,12 +242,8 @@ const sendData = async (req, res, next) => {
 
       // Never pass supplier error text to customers (it can name the supplier)
       console.log("SUPPLIER ERROR:", send_response.message);
-      // Wrong-network numbers (no prefix check, so ported numbers can buy) are shown a plain reason instead
-      const supplierText = send_response.message || "";
-      const customerMessage = /currently not available/i.test(supplierText)
-        ? supplierText
-        : planDetails.network === "glo" && /not (a |an )?(valid )?glo|not glo|not.{0,20}(subscriber|user)/i.test(supplierText)
-        ? "Number is not a GLO user. Please check the number."
+      const customerMessage = /currently not available/i.test(send_response.message || "")
+        ? send_response.message
         : "Data purchase failed. Please try again.";
 
       return res
