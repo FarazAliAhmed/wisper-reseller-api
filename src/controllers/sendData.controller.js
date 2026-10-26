@@ -33,6 +33,7 @@ const gloCredit = require("../services/gloCredit.service");
 const GLO_SPECIAL_PRICES = {
   director: { 3: 328, 7: 342, 30: 383, fixed: { 200: 77, 500: 192 } },
   uzobest: { 3: 329, 7: 344, 30: 387, fixed: { 200: 77.4, 500: 193.5 } },
+  bardetech: { 3: 328, 7: 342, 30: 383, fixed: { 200: 77, 500: 192 } },
 };
 
 // Users whose orders skip the phone prefix check, so ported numbers can buy (the provider rejects wrong networks)
